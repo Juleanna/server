@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd">
+	<npcs>
+		<npc>31756</npc> <!-- Mr. Cat (Test Server Helper) -->
+	</npcs>
+	<item>
+		<!-- Adena -->
+		<ingredient count="3" id="57" />
+		<!-- Tallum -->
+		<production count="1" id="1341" />
+	</item>
+	<item>
+		<!-- Adena -->
+		<ingredient count="5" id="57" />
+		<!-- Tallum -->
+		<production count="1" id="1342" />
+	</item>
+	<item>
+		<!-- Adena -->
+		<ingredient count="7" id="57" />
+		<!-- Tallum -->
+		<production count="1" id="1343" />
+	</item>
+	<item>
+		<!-- Adena -->
+		<ingredient count="8" id="57" />
+		<!-- Tallum -->
+		<production count="1" id="1344" />
+	</item>
+	<item>
+		<!-- Adena -->
+		<ingredient count="3" id="57" />
+		<!-- Tallum -->
+		<production count="1" id="9633" />
+	</item>
+	<item>
+		<!-- Adena -->
+		<ingredient count="5" id="57" />
+		<!-- Tallum -->
+		<production count="1" id="9634" />
+	</item>
+	<item>
+		<!-- Adena -->
+		<ingredient count="7" id="57" />
+		<!-- Tallum -->
+		<production count="1" id="9635" />
+	</item>
+	<item>
+		<!-- Adena -->
+		<ingredient count="8" id="57" />
+		<!-- Tallum -->
+		<production count="1" id="9636" />
+	</item>
+	<item>
+		<!-- Adena -->
+		<ingredient count="100000" id="57" />
+		<!-- Tallum -->
+		<production count="1" id="20393" />
+	</item>
+	<item>
+		<!-- Adena -->
+		<ingredient count="100000" id="57" />
+		<!-- Tallum -->
+		<production count="1" id="20394" />
+	</item>
+</list>
