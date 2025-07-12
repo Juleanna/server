@@ -229,6 +229,7 @@ import com.l2jserver.datapack.handlers.voicedcommandhandlers.ChangePassword;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.ChatAdmin;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Debug;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Lang;
+import com.l2jserver.datapack.handlers.voicedcommandhandlers.PlayerPanel;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.StatsVCmd;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Wedding;
 import com.l2jserver.gameserver.handler.ActionHandler;
@@ -483,6 +484,7 @@ public class MasterHandler {
 	private static final Class<?>[] VOICED_COMMAND_HANDLERS = {
 		AutoLoot.class,
 		StatsVCmd.class,
+		PlayerPanel.class,
 		// TODO: Add configuration options for this voiced commands:
 		// CastleVCmd.class,
 		// SetVCmd.class,
@@ -493,6 +495,7 @@ public class MasterHandler {
 		(customs().debugVoiceCommand() ? Debug.class : null),
 		(customs().allowChangePassword() ? ChangePassword.class : null),
 		(customs().AutoPotionsEnabled() ? AutoPotion.class : null),
+
 	};
 	
 	// TODO(Zoey76): Add this handler.
