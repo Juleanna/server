@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import org.aeonbits.owner.ConfigFactory;
 
 import com.l2jserver.gameserver.GameServer;
+import com.l2jserver.gameserver.config.PlayerPanelConfig;
 
 /**
  * Configuration.
@@ -100,7 +101,10 @@ public class Configuration {
 	private static final DiscordConfiguration discord = ConfigFactory.create(DiscordConfiguration.class);
 	
 	private static final LuckyPigConfig LuckyPig = ConfigFactory.create(LuckyPigConfig.class);
-	private static final RewardsOnlineConfig RewardsOnline = ConfigFactory.create(RewardsOnlineConfig.class);
+
+	private static final PlayerPanelConfig PlayerPanel = ConfigFactory.create(PlayerPanelConfig.class);
+	
+	
 
 	private Configuration() {
 		// Do nothing.
@@ -242,10 +246,11 @@ public class Configuration {
 		return LuckyPig;
 	}
 
-	public static RewardsOnlineConfig RewardsOnline() {
-		return RewardsOnline;
+	public static PlayerPanelConfig PlayerPanel() {
+    	return PlayerPanel;
 	}
-	
+
+
 	/**
 	 * Returns either the custom or default path of the config file.<br>
 	 * When the L2J_HOME variable is defined, the custom path to the config file is returned. If not, the default path to the config file is returned.

@@ -153,6 +153,7 @@ import com.l2jserver.gameserver.taskmanager.TaskManager;
 import com.l2jserver.gameserver.util.DeadLockDetector;
 import com.l2jserver.mmocore.SelectorConfig;
 import com.l2jserver.mmocore.SelectorThread;
+import com.l2jserver.gameserver.loader.PlayerPanelLoader;
 
 public final class GameServer {
 	
@@ -499,6 +500,8 @@ public final class GameServer {
 		s = sBuilder.toString();
 		LOG.info(s);
 	}
+
+	
 	
 	/**
 	 * Returns either the value of the L2J_HOME variable or null.<br>
