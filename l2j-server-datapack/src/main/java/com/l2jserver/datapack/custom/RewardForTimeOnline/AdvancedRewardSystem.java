@@ -3,7 +3,6 @@ package com.l2jserver.datapack.custom.RewardForTimeOnline;
 import com.l2jserver.datapack.custom.RewardForTimeOnline.models.*;
 import com.l2jserver.datapack.custom.RewardForTimeOnline.systems.*;
 import com.l2jserver.datapack.custom.RewardForTimeOnline.database.RewardDatabase;
-import com.l2jserver.datapack.custom.RewardForTimeOnline.web.RewardWebAPI;
 import com.l2jserver.datapack.custom.RewardForTimeOnline.utils.*;
 import com.l2jserver.datapack.custom.RewardForTimeOnline.tasks.*;
 
@@ -44,7 +43,6 @@ public final class AdvancedRewardSystem extends Quest {
     // Основные компоненты системы
     private final Map<Integer, PlayerHolder> activePlayers;
     private final RewardDatabase database;
-    private final RewardWebAPI webAPI;
     private final AntiAFKSystem antiAFK;
     private final ProgressiveRewardManager progressiveManager;
     private final CalendarEventManager calendarManager;
@@ -79,7 +77,7 @@ public final class AdvancedRewardSystem extends Quest {
         this.progressiveManager = new ProgressiveRewardManager(database);
         this.calendarManager = new CalendarEventManager(database);
         this.antiAFK = new AntiAFKSystem();
-        this.webAPI = new RewardWebAPI(this);
+       
         
         // Инициализируем систему
         if (!initialize()) {
@@ -188,7 +186,7 @@ public final class AdvancedRewardSystem extends Quest {
         progressiveManager.initialize();
         calendarManager.initialize();
         antiAFK.initialize();
-        webAPI.initialize();
+        
         
         LOG.info("All subsystems initialized successfully");
     }
@@ -313,60 +311,7 @@ public final class AdvancedRewardSystem extends Quest {
         }
     }
     
-    /**
-     * Регистрация обработчиков событий
-     */
-    private void registerEventListeners() {
-        LOG.debug("Registering event listeners...");
-        
-        Containers.Global().addListener(new ConsumerEventListener(
-            Containers.Global(), 
-            EventType.ON_PLAYER_LOGIN, 
-            this::onPlayerLogin, 
-            this
-        ));
-        
-        Containers.Global().addListener(new ConsumerEventListener(
-            Containers.Global(), 
-            EventType.ON_PLAYER_LOGOUT, 
-            this::onPlayerLogout, 
-            this
-        ));
-        
-        LOG.debug("Event listeners registered successfully");
-    }
-    
-    /**
-     * Настройка периодических задач
-     */
-    private void setupPeriodicTasks() {
-        LOG.debug("Setting up periodic tasks...");
-        
-        // Задача очистки
-        cleanupTask = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(() -> {
-            try {
-                performCleanup();
-            } catch (Exception e) {
-                LOG.warn("Error during cleanup: {}", e.getMessage());
-            }
-        }, CLEANUP_INTERVAL, CLEANUP_INTERVAL);
-        
-        // Задача перезагрузки конфигурации
-        configReloadTask = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(() -> {
-            try {
-                // Проверяем изменения в БД и перезагружаем при необходимости
-                if (database.hasConfigurationChanged()) {
-                    reloadConfiguration();
-                }
-            } catch (Exception e) {
-                LOG.warn("Error during config reload check: {}", e.getMessage());
-            }
-        }, CONFIG_RELOAD_INTERVAL, CONFIG_RELOAD_INTERVAL);
-        
-        LOG.debug("Periodic tasks setup completed");
-    }
-    
-    /**
+/**
      * Обработка входа игрока
      */
     private void onPlayerLogin(OnPlayerLogin event) {
@@ -408,6 +353,87 @@ public final class AdvancedRewardSystem extends Quest {
                 player.getName(), e.getMessage());
         }
     }
+
+     /**
+     * Обработка выхода игрока
+     */
+    private void onPlayerLogout(OnPlayerLogout event) {
+        int objectId = event.getActiveChar().getObjectId();
+        PlayerHolder holder = activePlayers.remove(objectId);
+        
+        if (holder != null) {
+            try {
+                // Завершаем сессию игрока
+                holder.onPlayerLogout();
+                
+                // Обновляем статистику
+                statistics.addSessionTime(holder.getOnlineTime());
+                
+                // Убираем из anti-AFK системы
+                antiAFK.removePlayer(objectId);
+                
+                PlayerHolder.PlayerSessionStats stats = holder.getSessionStats();
+                LOG.info("Ended reward session for player: {} (Duration: {}, Rewards: {})", 
+                    event.getActiveChar().getName(), 
+                    stats.getFormattedSessionDuration(),
+                    stats.getRewardsReceived());
+                    
+            } catch (Exception e) {
+                LOG.warn("Error during player logout processing: {}", e.getMessage());
+            }
+        }
+    }
+/**
+     * Регистрация обработчиков событий
+     */
+    private void registerEventListeners() {
+    Containers.Global().addListener(new ConsumerEventListener(
+        Containers.Global(), 
+        EventType.ON_PLAYER_LOGIN, 
+        event -> onPlayerLogin((OnPlayerLogin) event), 
+        this
+    ));
+
+    Containers.Global().addListener(new ConsumerEventListener(
+        Containers.Global(), 
+        EventType.ON_PLAYER_LOGOUT, 
+        event -> onPlayerLogout((OnPlayerLogout) event), 
+        this
+    ));
+    }
+
+    
+    /**
+     * Настройка периодических задач
+     */
+    private void setupPeriodicTasks() {
+        LOG.debug("Setting up periodic tasks...");
+        
+        // Задача очистки
+        cleanupTask = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(() -> {
+            try {
+                performCleanup();
+            } catch (Exception e) {
+                LOG.warn("Error during cleanup: {}", e.getMessage());
+            }
+        }, CLEANUP_INTERVAL, CLEANUP_INTERVAL);
+        
+        // Задача перезагрузки конфигурации
+        configReloadTask = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(() -> {
+            try {
+                // Проверяем изменения в БД и перезагружаем при необходимости
+                if (database.hasConfigurationChanged()) {
+                    reloadConfiguration();
+                }
+            } catch (Exception e) {
+                LOG.warn("Error during config reload check: {}", e.getMessage());
+            }
+        }, CONFIG_RELOAD_INTERVAL, CONFIG_RELOAD_INTERVAL);
+        
+        LOG.debug("Periodic tasks setup completed");
+    }
+    
+    
     
     /**
      * Создает сессию игрока с наградами
@@ -475,35 +501,7 @@ public final class AdvancedRewardSystem extends Quest {
         return false;
     }
     
-    /**
-     * Обработка выхода игрока
-     */
-    private void onPlayerLogout(OnPlayerLogout event) {
-        int objectId = event.getActiveChar().getObjectId();
-        PlayerHolder holder = activePlayers.remove(objectId);
-        
-        if (holder != null) {
-            try {
-                // Завершаем сессию игрока
-                holder.onPlayerLogout();
-                
-                // Обновляем статистику
-                statistics.addSessionTime(holder.getOnlineTime());
-                
-                // Убираем из anti-AFK системы
-                antiAFK.removePlayer(objectId);
-                
-                PlayerHolder.PlayerSessionStats stats = holder.getSessionStats();
-                LOG.info("Ended reward session for player: {} (Duration: {}, Rewards: {})", 
-                    event.getActiveChar().getName(), 
-                    stats.getFormattedSessionDuration(),
-                    stats.getRewardsReceived());
-                    
-            } catch (Exception e) {
-                LOG.warn("Error during player logout processing: {}", e.getMessage());
-            }
-        }
-    }
+   
     
     /**
      * Принудительная очистка системы
@@ -578,7 +576,7 @@ public final class AdvancedRewardSystem extends Quest {
             activePlayers.clear();
             
             // Завершаем компоненты в обратном порядке
-            webAPI.shutdown();
+           
             antiAFK.shutdown();
             calendarManager.shutdown();
             progressiveManager.shutdown();
@@ -600,22 +598,7 @@ public final class AdvancedRewardSystem extends Quest {
     // Публичные API методы
     // ===============================
     
-    /**
-     * Обработка Web API запросов
-     */
-    public Map<String, Object> handleWebAPIRequest(String method, String path, 
-                                                  Map<String, String> params, String body) {
-        try {
-            return webAPI.handleRequest(method, path, params, body);
-        } catch (Exception e) {
-            LOG.error("Error handling web API request {} {}: {}", method, path, e.getMessage());
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("success", false);
-            errorResponse.put("error", "Internal server error: " + e.getMessage());
-            return errorResponse;
-        }
-    }
-    
+        
     /**
      * Принудительная перезагрузка конфигурации
      */

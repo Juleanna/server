@@ -229,7 +229,6 @@ import com.l2jserver.datapack.handlers.voicedcommandhandlers.ChangePassword;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.ChatAdmin;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Debug;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Lang;
-import com.l2jserver.datapack.handlers.voicedcommandhandlers.PlayerPanel;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.StatsVCmd;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Wedding;
 import com.l2jserver.gameserver.handler.ActionHandler;
