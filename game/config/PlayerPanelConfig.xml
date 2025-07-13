@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PlayerPanelConfig>
+    <!-- Общие настройки панели -->
+    <General>
+        <enabled>true</enabled>
+        <requireLevel>1</requireLevel>
+        <cooldownSeconds>5</cooldownSeconds>
+        <enableForGMs>true</enableForGMs>
+        <enableInCombat>false</enableInCombat>
+        <enableInOlympiad>false</enableInOlympiad>
+        <enableInSiege>false</enableInSiege>
+    </General>
+    
+    <!-- Настройки системы заточки -->
+    <EnchantSystem>
+        <enabled>true</enabled>
+        <maxEnchantWeapon>25</maxEnchantWeapon>
+        <maxEnchantArmor>20</maxEnchantArmor>
+        <maxEnchantJewelry>15</maxEnchantJewelry>
+        <safeEnchantCostMultiplier>3.0</safeEnchantCostMultiplier>
+        <enchantEffectRange>600</enchantEffectRange>
+        
+        <!-- Настройки шансов по грейдам -->
+        <Grades>
+            <Grade type="NONE" safeChance="90" normalChance="80" dangerChance="70" baseCost="100000"/>
+            <Grade type="D" safeChance="80" normalChance="70" dangerChance="60" baseCost="200000"/>
+            <Grade type="C" safeChance="70" normalChance="60" dangerChance="50" baseCost="500000"/>
+            <Grade type="B" safeChance="60" normalChance="50" dangerChance="40" baseCost="1000000"/>
+            <Grade type="A" safeChance="50" normalChance="40" dangerChance="30" baseCost="2000000"/>
+            <Grade type="S" safeChance="40" normalChance="30" dangerChance="20" baseCost="5000000"/>
+            <Grade type="S80" safeChance="35" normalChance="25" dangerChance="15" baseCost="10000000"/>
+            <Grade type="S84" safeChance="30" normalChance="20" dangerChance="10" baseCost="20000000"/>
+        </Grades>
+        
+        <!-- Уровни безопасной заточки (не ломается) -->
+        <SafeLevels>3</SafeLevels>
+        
+        <!-- Эффекты заточки -->
+        <Effects>
+            <success>2061</success>
+            <failure>2062</failure>
+            <break>2063</break>
+            <maxReached>2064</maxReached>
+        </Effects>
+    </EnchantSystem>
+    
+    <!-- Настройки системы бафов -->
+    <BuffSystem>
+        <enabled>true</enabled>
+        <allowInCombat>false</allowInCombat>
+        <allBuffsDiscount>0.2</allBuffsDiscount>
+        <categoryDiscountThreshold>5</categoryDiscountThreshold>
+        <categoryDiscount>0.1</categoryDiscount>
+        <effectRange>600</effectRange>
+        
+        <!-- VIP настройки -->
+        <VIP>
+            <useNobleAsVIP>true</useNobleAsVIP>
+            <clanLevelForVIP>8</clanLevelForVIP>
+            <vipDiscount>0.15</vipDiscount>
+        </VIP>
+        
+        <!-- Эффекты бафов -->
+        <Effects>
+            <singleBuff>skill_id</singleBuff>
+            <categoryBuffs>2024</categoryBuffs>
+            <allBuffs>2025</allBuffs>
+            <removeBuffs>2026</removeBuffs>
+        </Effects>
+    </BuffSystem>
+    
+    <!-- Настройки магазина -->
+    <ShopSystem>
+        <enabled>true</enabled>
+        <newbieDiscount>0.2</newbieDiscount>
+        <newbieLevelThreshold>20</newbieLevelThreshold>
+        <nobleDiscount>0.1</nobleDiscount>
+        <clanDiscount>0.05</clanDiscount>
+        <clanLevelThreshold>5</clanLevelThreshold>
+        
+        <!-- Ограничения покупок -->
+        <Restrictions>
+            <dailyPurchaseLimit>1000000</dailyPurchaseLimit>
+            <maxItemsPerPurchase>1000</maxItemsPerPurchase>
+            <blockItemsInCombat>true</blockItemsInCombat>
+        </Restrictions>
+        
+        <!-- Категории товаров -->
+        <Categories>
+            <Category name="weapons" displayName="🗡️ Оружие" enabled="true"/>
+            <Category name="armor" displayName="🛡️ Броня" enabled="true"/>
+            <Category name="potions" displayName="🧪 Зелья" enabled="true"/>
+            <Category name="shots" displayName="💥 Снаряды" enabled="true"/>
+            <Category name="scrolls" displayName="📜 Свитки" enabled="true"/>
+            <Category name="materials" displayName="💎 Материалы" enabled="true"/>
+            <Category name="accessories" displayName="💍 Аксессуары" enabled="true"/>
+            <Category name="special" displayName="⭐ Особые" enabled="true"/>
+        </Categories>
+    </ShopSystem>
+    
+    <!-- Настройки телепортации -->
+    <TeleportSystem>
+        <enabled>true</enabled>
+        <baseCost>50000</baseCost>
+        <allowInCombat>false</allowInCombat>
+        <allowInOlympiad>false</allowInOlympiad>
+        <allowInSiege>false</allowInSiege>
+        <castTime>3000</castTime>
+        <effectSkillId>2013</effectSkillId>
+        
+        <!-- Локации телепортации -->
+        <Locations>
+            <Location name="Giran" x="82698" y="148638" z="-3473" cost="50000"/>
+            <Location name="Heine" x="111409" y="219364" z="-3545" cost="50000"/>
+            <Location name="Talking Island" x="-84318" y="244579" z="-3730" cost="30000"/>
+            <Location name="Elven Village" x="-44836" y="-112524" z="-235" cost="30000"/>
+            <Location name="Dark Elven Village" x="115113" y="-178212" z="-901" cost="30000"/>
+            <Location name="Orc Village" x="-80826" y="149775" z="-3043" cost="30000"/>
+            <Location name="Dwarven Village" x="-12672" y="122776" z="-3116" cost="30000"/>
+            <Location name="Floran" x="17144" y="170156" z="-3502" cost="40000"/>
+            <Location name="Giran Harbor" x="83400" y="147943" z="-3404" cost="55000"/>
+            <Location name="Aden" x="146331" y="25762" z="-2018" cost="60000"/>
+            <Location name="Hunters Village" x="116819" y="76994" z="-2714" cost="70000"/>
+            <Location name="Goddard" x="-117251" y="46890" z="360" cost="80000"/>
+            <Location name="Rune" x="38160" y="-48905" z="-1112" cost="100000"/>
+            <Location name="Schuttgart" x="87386" y="-143246" z="-1293" cost="100000"/>
+        </Locations>
+        
+        <!-- Скидки на телепортацию -->
+        <Discounts>
+            <newbie level="20" discount="0.5"/>
+            <noble discount="0.2"/>
+            <clan minLevel="5" discount="0.1"/>
+        </Discounts>
+    </TeleportSystem>
+    
+    <!-- Настройки информационной панели -->
+    <InfoSystem>
+        <enabled>true</enabled>
+        <showDetailedStats>true</showDetailedStats>
+        <showOnlineTime>true</showOnlineTime>
+        <showEconomicInfo>true</showEconomicInfo>
+        <showPvPStats>true</showPvPStats>
+        <showClanInfo>true</showClanInfo>
+        <refreshCooldown>1000</refreshCooldown>
+        
+        <!-- Отображаемые характеристики -->
+        <DisplayStats>
+            <stat name="level" display="Уровень"/>
+            <stat name="class" display="Класс"/>
+            <stat name="race" display="Раса"/>
+            <stat name="hp" display="HP"/>
+            <stat name="mp" display="MP"/>
+            <stat name="cp" display="CP"/>
+            <stat name="patk" display="P.Atk"/>
+            <stat name="matk" display="M.Atk"/>
+            <stat name="pdef" display="P.Def"/>
+            <stat name="mdef" display="M.Def"/>
+            <stat name="speed" display="Скорость"/>
+            <stat name="adena" display="Адена"/>
+            <stat name="pvp" display="PvP"/>
+            <stat name="pk" display="PK"/>
+        </DisplayStats>
+    </InfoSystem>
+    
+    <!-- Настройки безопасности -->
+    <Security>
+        <enableAntiSpam>true</enableAntiSpam>
+        <spamDelay>1000</spamDelay>
+        <maxActionsPerMinute>20</maxActionsPerMinute>
+        <logAllActions>true</logAllActions>
+        <banOnExploit>false</banOnExploit>
+        
+        <!-- Заблокированные зоны -->
+        <BlockedZones>
+            <zone name="SIEGE"/>
+            <zone name="OLYMPIAD"/>
+            <zone name="JAIL"/>
+        </BlockedZones>
+        
+        <!-- Заблокированные состояния -->
+        <BlockedStates>
+            <state name="DEAD"/>
+            <state name="CASTING"/>
+            <state name="TRADING"/>
+            <state name="IN_VEHICLE"/>
+        </BlockedStates>
+    </Security>
+    
+    <!-- Настройки интерфейса -->
+    <Interface>
+        <useCustomHTML>true</useCustomHTML>
+        <htmlPath>data/html/panel/</htmlPath>
+        <useAnimations>true</useAnimations>
+        <showTooltips>true</showTooltips>
+        <compactMode>false</compactMode>
+        
+        <!-- Цветовая схема -->
+        <Colors>
+            <primary>#3498db</primary>
+            <secondary>#2c3e50</secondary>
+            <success>#27ae60</success>
+            <warning>#f39c12</warning>
+            <danger>#e74c3c</danger>
+            <info>#17a2b8</info>
+        </Colors>
+        
+        <!-- Размеры элементов -->
+        <Dimensions>
+            <buttonWidth>130</buttonWidth>
+            <buttonHeight>25</buttonHeight>
+            <panelWidth>320</panelWidth>
+            <maxItemsPerPage>10</maxItemsPerPage>
+        </Dimensions>
+    </Interface>
+    
+    <!-- Настройки уведомлений -->
+    <Notifications>
+        <showSystemMessages>true</showSystemMessages>
+        <showSuccessMessages>true</showSuccessMessages>
+        <showErrorMessages>true</showErrorMessages>
+        <useScreenMessages>false</useScreenMessages>
+        <useHtmlNotifications>true</useHtmlNotifications>
+        
+        <!-- Сообщения -->
+        <Messages>
+            <enchantSuccess>⚔️ Предмет успешно заточен!</enchantSuccess>
+            <enchantFailure>❌ Заточка не удалась!</enchantFailure>
+            <enchantBreak>💥 Предмет разрушен!</enchantBreak>
+            <buffReceived>✨ Получен баф: %buff_name%</buffReceived>
+            <teleportSuccess>🌀 Телепортация выполнена!</teleportSuccess>
+            <purchaseSuccess>🛒 Покупка совершена!</purchaseSuccess>
+            <insufficientFunds>💰 Недостаточно адены!</insufficientFunds>
+        </Messages>
+    </Notifications>
+    
+    <!-- Настройки для разработчиков -->
+    <Debug>
+        <enabled>false</enabled>
+        <logLevel>INFO</logLevel>
+        <showDebugInfo>false</showDebugInfo>
+        <enablePerformanceMonitoring>false</enablePerformanceMonitoring>
+    </Debug>
+</PlayerPanelConfig>

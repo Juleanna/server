@@ -1,0 +1,35 @@
+[INFO] 2025-07-13 12:18:23 GameServer: ------------------------------------------------=[ Database ]
+[INFO] 2025-07-13 12:18:23 GameServer: -----------------------------------=[ Network Configuration ]
+[INFO] 2025-07-13 12:18:23 IPConfigData: Using automatic network configuration.
+[INFO] 2025-07-13 12:18:24 IPConfigData: Adding new subnet: 127.0.0.0/8 address: 127.0.0.1
+[INFO] 2025-07-13 12:18:24 IPConfigData: Adding new subnet: 10.0.0.0/24 address: 10.0.0.38
+[INFO] 2025-07-13 12:18:24 IPConfigData: Adding new subnet: 0.0.0.0/0 address: 46.200.183.220
+[INFO] 2025-07-13 12:18:26 HikariDataSource: HikariPool-1 - Starting...
+[INFO] 2025-07-13 12:18:27 HikariPool: HikariPool-1 - Added connection org.mariadb.jdbc.Connection@27f9e982
+[INFO] 2025-07-13 12:18:27 HikariDataSource: HikariPool-1 - Start completed.
+[INFO] 2025-07-13 12:18:27 IdFactory: Updated characters online status.
+[INFO] 2025-07-13 12:18:28 IdFactory: Cleaned 0 elements from database in 0s.
+[INFO] 2025-07-13 12:18:28 IdFactory: Cleaned 0 expired timestamps from database.
+[INFO] 2025-07-13 12:18:28 BitSetIDFactory: 102912 Ids available.
+[INFO] 2025-07-13 12:18:28 GameServer: ---------------------------------------------------=[ World ]
+[INFO] 2025-07-13 12:18:28 InstanceManager: Multiverse Instance created.
+[INFO] 2025-07-13 12:18:28 InstanceManager: Universe Instance created.
+[INFO] 2025-07-13 12:18:28 InstanceManager: Loaded 160 instance names.
+[INFO] 2025-07-13 12:18:34 L2World: 128 by 136 world region grid set up.
+[INFO] 2025-07-13 12:18:35 MapRegionManager: Loaded 57 map regions.
+[INFO] 2025-07-13 12:18:36 GlobalVariablesManager: Loaded 0 variables.
+[INFO] 2025-07-13 12:18:36 GameServer: ----------------------------------------------------=[ Data ]
+[INFO] 2025-07-13 12:18:36 CategoryData: Loaded 124 Categories.
+[INFO] 2025-07-13 12:18:36 SecondaryAuthData: Loaded 328 forbidden passwords.
+[INFO] 2025-07-13 12:18:37 GameServer: -------------------------------------------------=[ Effects ]
+[WARN] 2025-07-13 12:18:39 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:18:39 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:18:39 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:18:39 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:18:40 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:18:40 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:18:40 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:18:41 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:18:42 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:18:45 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:18:50 ErrorPacket: Error: 1040-HY000: Too many connections

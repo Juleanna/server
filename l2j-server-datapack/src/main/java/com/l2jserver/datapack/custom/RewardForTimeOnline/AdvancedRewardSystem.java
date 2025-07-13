@@ -6,6 +6,7 @@ import com.l2jserver.datapack.custom.RewardForTimeOnline.database.RewardDatabase
 import com.l2jserver.datapack.custom.RewardForTimeOnline.utils.*;
 import com.l2jserver.datapack.custom.RewardForTimeOnline.tasks.*;
 
+
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.Containers;
@@ -55,6 +56,7 @@ public final class AdvancedRewardSystem extends Quest {
     private ScheduledFuture<?> cleanupTask;
     private ScheduledFuture<?> configReloadTask;
     private final long startTime;
+    private final CacheManager cacheManager;
     
     /**
      * Конструктор - инициализирует все компоненты системы

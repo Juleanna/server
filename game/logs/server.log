@@ -1,0 +1,201 @@
+[INFO] 2025-07-13 12:29:02 GameServer: ------------------------------------------------=[ Database ]
+[INFO] 2025-07-13 12:29:03 GameServer: -----------------------------------=[ Network Configuration ]
+[INFO] 2025-07-13 12:29:03 IPConfigData: Using automatic network configuration.
+[INFO] 2025-07-13 12:29:03 IPConfigData: Adding new subnet: 127.0.0.0/8 address: 127.0.0.1
+[INFO] 2025-07-13 12:29:03 IPConfigData: Adding new subnet: 10.0.0.0/24 address: 10.0.0.38
+[INFO] 2025-07-13 12:29:03 IPConfigData: Adding new subnet: 0.0.0.0/0 address: 46.200.183.220
+[INFO] 2025-07-13 12:29:05 HikariDataSource: HikariPool-1 - Starting...
+[INFO] 2025-07-13 12:29:05 HikariPool: HikariPool-1 - Added connection org.mariadb.jdbc.Connection@27f9e982
+[INFO] 2025-07-13 12:29:05 HikariDataSource: HikariPool-1 - Start completed.
+[INFO] 2025-07-13 12:29:05 IdFactory: Updated characters online status.
+[INFO] 2025-07-13 12:29:05 IdFactory: Cleaned 0 elements from database in 0s.
+[INFO] 2025-07-13 12:29:06 IdFactory: Cleaned 0 expired timestamps from database.
+[INFO] 2025-07-13 12:29:06 BitSetIDFactory: 102912 Ids available.
+[INFO] 2025-07-13 12:29:06 GameServer: ---------------------------------------------------=[ World ]
+[INFO] 2025-07-13 12:29:06 InstanceManager: Multiverse Instance created.
+[INFO] 2025-07-13 12:29:06 InstanceManager: Universe Instance created.
+[INFO] 2025-07-13 12:29:06 InstanceManager: Loaded 160 instance names.
+[INFO] 2025-07-13 12:29:09 L2World: 128 by 136 world region grid set up.
+[INFO] 2025-07-13 12:29:10 MapRegionManager: Loaded 57 map regions.
+[INFO] 2025-07-13 12:29:10 GlobalVariablesManager: Loaded 0 variables.
+[INFO] 2025-07-13 12:29:10 GameServer: ----------------------------------------------------=[ Data ]
+[INFO] 2025-07-13 12:29:10 CategoryData: Loaded 124 Categories.
+[INFO] 2025-07-13 12:29:10 SecondaryAuthData: Loaded 328 forbidden passwords.
+[INFO] 2025-07-13 12:29:10 GameServer: -------------------------------------------------=[ Effects ]
+[INFO] 2025-07-13 12:29:22 EffectMasterHandler: Loaded 170 effect handlers.
+[INFO] 2025-07-13 12:29:22 GameServer: ------------------------------------=[ Enchant Skill Groups ]
+[INFO] 2025-07-13 12:29:22 EnchantSkillGroupsData: Loaded 4 groups and 90 routes.
+[INFO] 2025-07-13 12:29:22 GameServer: ---------------------------------------------=[ Skill Trees ]
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 17176 Class Skills for 103 Class Skill Trees.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 76 Sub-Class Skills.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 77 Transfer Skills for 3 Transfer Skill Trees.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 117 Fishing Skills, 8 Dwarven only Fishing Skills.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 3 Collect Skills.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 74 Pledge Skills, 44 for Pledge and 30 Residential.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 18 Sub-Pledge Skills.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 32 Transform Skills.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 8 Noble Skills.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 5 Hero Skills.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 46 Game Master Skills.
+[INFO] 2025-07-13 12:29:24 SkillTreesData: Loaded 46 Game Master Aura Skills.
+[INFO] 2025-07-13 12:29:24 GameServer: --------------------------------------------------=[ Skills ]
+[INFO] 2025-07-13 12:30:10 DocumentEngine: Loaded 65973 skill templates from XML files.
+[INFO] 2025-07-13 12:30:10 SummonSkillsTable: Loaded 1891 summon skills.
+[INFO] 2025-07-13 12:30:10 GameServer: ---------------------------------------------------=[ Items ]
+[INFO] 2025-07-13 12:30:16 ItemTable: Highest item Id used 22567.
+[INFO] 2025-07-13 12:30:16 ItemTable: Loaded 11481 Etc items.
+[INFO] 2025-07-13 12:30:16 ItemTable: Loaded 3825 Armor items.
+[INFO] 2025-07-13 12:30:16 ItemTable: Loaded 3893 Weapon items.
+[INFO] 2025-07-13 12:30:16 ItemTable: Loaded 19199 items in total.
+[INFO] 2025-07-13 12:30:16 EnchantItemGroupsData: Loaded 4 item group templates.
+[INFO] 2025-07-13 12:30:16 EnchantItemGroupsData: Loaded 1 scroll group templates.
+[INFO] 2025-07-13 12:30:16 EnchantItemData: Loaded 63 enchant scrolls.
+[INFO] 2025-07-13 12:30:16 EnchantItemData: Loaded 20 support items.
+[INFO] 2025-07-13 12:30:16 EnchantItemOptionsData: Loaded 23 items and 1093 options.
+[INFO] 2025-07-13 12:30:23 OptionData: Loaded 24985 item options.
+[INFO] 2025-07-13 12:30:23 EnchantItemHPBonusData: Loaded 6 Enchant HP Bonuses.
+[INFO] 2025-07-13 12:30:23 MerchantPriceConfigTable: Loaded 28 merchant price configs.
+[INFO] 2025-07-13 12:30:31 BuyListData: Loaded 760 buy lists.
+[WARN] 2025-07-13 12:30:34 MultisellData: MultisellData: Cannot find product with item ID: 26090 in list: 1027!
+[INFO] 2025-07-13 12:30:34 MultisellData: Loaded 236 multisell lists.
+[INFO] 2025-07-13 12:30:35 RecipeData: Loaded 1000 recipes.
+[INFO] 2025-07-13 12:30:35 ArmorSetsData: Loaded 204 armor sets.
+[INFO] 2025-07-13 12:30:36 FishData: Loaded 278 fish.
+[INFO] 2025-07-13 12:30:36 FishingMonstersData: Loaded 8 fishing monsters.
+[INFO] 2025-07-13 12:30:36 FishingRodsData: Loaded 6 fishing rods.
+[INFO] 2025-07-13 12:30:36 HennaData: Loaded 180 Henna data.
+[INFO] 2025-07-13 12:30:36 GameServer: ----------------------------------------------=[ Characters ]
+[INFO] 2025-07-13 12:30:36 ClassListData: Loaded 107 class data.
+[INFO] 2025-07-13 12:30:36 InitialEquipmentData: Loaded 11 initial equipment data.
+[INFO] 2025-07-13 12:30:36 InitialShortcutData: Loaded 5 initial dlobal shortcuts data.
+[INFO] 2025-07-13 12:30:36 InitialShortcutData: Loaded 4 initial shortcuts data.
+[INFO] 2025-07-13 12:30:36 InitialShortcutData: Loaded 0 macros presets.
+[INFO] 2025-07-13 12:30:37 KarmaData: Loaded 85 karma modifiers.
+[INFO] 2025-07-13 12:30:37 HitConditionBonusData: Loaded Hit Condition bonuses.
+[INFO] 2025-07-13 12:30:38 PlayerTemplateData: Loaded 103 character templates.
+[INFO] 2025-07-13 12:30:38 PlayerTemplateData: Loaded 52530 level up gain records.
+[INFO] 2025-07-13 12:30:39 PlayerCreationPointData: Loaded 62 character creation points.
+[INFO] 2025-07-13 12:30:39 CharNameTable: Loaded 0 char names.
+[INFO] 2025-07-13 12:30:39 AdminData: Loaded 10 access levels.
+[INFO] 2025-07-13 12:30:39 AdminData: Loaded 445 access commands.
+[INFO] 2025-07-13 12:30:39 RaidBossPointsManager: Loaded 0 characters raid points.
+[INFO] 2025-07-13 12:30:41 PetDataTable: Loaded 52 Pets.
+[INFO] 2025-07-13 12:30:41 GameServer: -----------------------------------------------------=[ BBS ]
+[INFO] 2025-07-13 12:30:41 ForumsBBSManager: Loaded 4 forums.
+[INFO] 2025-07-13 12:30:41 GameServer: ---------------------------------------------------=[ Clans ]
+[INFO] 2025-07-13 12:30:41 ClanTable: Restored 0 clans from the database.
+[INFO] 2025-07-13 12:30:41 AuctionManager: Loaded 0 auction(s).
+[INFO] 2025-07-13 12:30:41 AuctionManager: Created auction for clan hall Id 22.
+[INFO] 2025-07-13 12:30:41 AuctionManager: Created auction for clan hall Id 23.
+[INFO] 2025-07-13 12:30:41 AuctionManager: Created auction for clan hall Id 24.
+[INFO] 2025-07-13 12:30:41 AuctionManager: Created auction for clan hall Id 25.
+[INFO] 2025-07-13 12:30:41 AuctionManager: Created auction for clan hall Id 26.
+[INFO] 2025-07-13 12:30:41 AuctionManager: Created auction for clan hall Id 27.
+[INFO] 2025-07-13 12:30:41 AuctionManager: Created auction for clan hall Id 28.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 29.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 30.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 31.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 32.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 33.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 36.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 37.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 38.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 39.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 40.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 41.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 42.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 43.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 44.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 45.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 46.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 47.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 48.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 49.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 50.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 51.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 52.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 53.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 54.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 55.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 56.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 57.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 58.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 59.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 60.
+[INFO] 2025-07-13 12:30:42 AuctionManager: Created auction for clan hall Id 61.
+[INFO] 2025-07-13 12:30:42 ClanHallManager: Loaded 0 clan halls.
+[INFO] 2025-07-13 12:30:42 ClanHallManager: Loaded 38 free clan halls.
+[INFO] 2025-07-13 12:30:42 ClanHallSiegeManager: Loaded 6 conquerable clan halls.
+[INFO] 2025-07-13 12:30:42 GameServer: -------------------------------------------------=[ Geodata ]
+[INFO] 2025-07-13 12:30:42 GeoData: Loaded 0 regions.
+[INFO] 2025-07-13 12:30:42 GameServer: ----------------------------------------------------=[ NPCs ]
+[INFO] 2025-07-13 12:30:42 SkillLearnData: Loaded 256 skill learn data.
+[INFO] 2025-07-13 12:30:42 NpcData$MinionData: Loaded 128 minions data.
+[INFO] 2025-07-13 12:31:08 NpcData: Loaded 10461 NPCs.
+[INFO] 2025-07-13 12:31:20 WalkingManager: Loaded 127 walking routes.
+[INFO] 2025-07-13 12:31:20 StaticObjectData: Loaded 51 static object templates.
+[INFO] 2025-07-13 12:31:22 GrandBossManager: Queen Ant (29001) status is 0.
+[INFO] 2025-07-13 12:31:22 GrandBossManager: Core (29006) status is 0.
+[INFO] 2025-07-13 12:31:22 GrandBossManager: Orfen (29014) status is 0.
+[INFO] 2025-07-13 12:31:22 GrandBossManager: Baium (29020) status is 0.
+[INFO] 2025-07-13 12:31:22 GrandBossManager: Valakas (29028) status is 0.
+[INFO] 2025-07-13 12:31:22 GrandBossManager: Antharas (29068) status is 0.
+[INFO] 2025-07-13 12:31:22 GrandBossManager: Beleth (29118) status is 0.
+[INFO] 2025-07-13 12:31:22 GrandBossManager: Loaded 7 grand boss instances.
+[INFO] 2025-07-13 12:31:30 DoorData: Loaded 1301 door templates for 22 regions.
+[INFO] 2025-07-13 12:31:36 ZoneManager: Loaded 28 zone classes and 2848 zones.
+[INFO] 2025-07-13 12:31:36 ZoneManager: Loaded 0 NPC spawn territoriers.
+[INFO] 2025-07-13 12:31:36 CastleManager: Loaded 9 castles.
+[INFO] 2025-07-13 12:31:36 NpcBufferTable: Loaded 1 buffers and 10 skills.
+[INFO] 2025-07-13 12:31:36 GrandBossManager: Initialized 12 grand boss zones.
+[INFO] 2025-07-13 12:31:36 GameServer: -----------------------------------------=[ Auction Manager ]
+[INFO] 2025-07-13 12:31:36 ItemAuctionInstance: Loaded 82 item(s) and registered 0 auction(s) for NPC ID 32320.
+[INFO] 2025-07-13 12:31:36 ItemAuctionInstance: Schedule next auction ID 1 on 17:00:00 18.07.25 for NPC ID 32320.
+[INFO] 2025-07-13 12:31:36 ItemAuctionInstance: Loaded 82 item(s) and registered 0 auction(s) for NPC ID 32321.
+[INFO] 2025-07-13 12:31:36 ItemAuctionInstance: Schedule next auction ID 2 on 17:00:00 14.07.25 for NPC ID 32321.
+[INFO] 2025-07-13 12:31:36 ItemAuctionInstance: Loaded 82 item(s) and registered 0 auction(s) for NPC ID 32322.
+[INFO] 2025-07-13 12:31:36 ItemAuctionInstance: Schedule next auction ID 3 on 17:00:00 16.07.25 for NPC ID 32322.
+[INFO] 2025-07-13 12:31:36 ItemAuctionManager: Loaded 3 auction manager instance(s).
+[INFO] 2025-07-13 12:31:36 GameServer: ------------------------------------------------=[ Olympiad ]
+[INFO] 2025-07-13 12:31:36 Olympiad: Failed to load data from database, trying to load from file.
+[INFO] 2025-07-13 12:31:38 Olympiad: Loading Olympiad System....
+[INFO] 2025-07-13 12:31:38 Olympiad: Currently in Olympiad Period
+[INFO] 2025-07-13 12:31:38 Olympiad: 27328 minutes until period ends
+[INFO] 2025-07-13 12:31:38 Olympiad: Next weekly change is in 10079 minutes
+[INFO] 2025-07-13 12:31:38 Olympiad: Loaded 0 Nobles
+[INFO] 2025-07-13 12:31:38 Olympiad: Competition Period Starts in 0 days, 5 hours and 28 mins.
+[INFO] 2025-07-13 12:31:38 Olympiad: Event starts/started : Sun Jul 13 18:00:38 EEST 2025
+[INFO] 2025-07-13 12:31:38 Hero: Loaded 0 Heroes.
+[INFO] 2025-07-13 12:31:38 Hero: Loaded 0 all time Heroes.
+[INFO] 2025-07-13 12:31:38 GameServer: ---------------------------------------------=[ Seven Signs ]
+[INFO] 2025-07-13 12:31:38 SevenSigns: Currently in the Competition (Quest Event) period.
+[INFO] 2025-07-13 12:31:38 SevenSigns: The Seal of Avarice remains unclaimed.
+[INFO] 2025-07-13 12:31:38 SevenSigns: The Seal of Gnosis remains unclaimed.
+[INFO] 2025-07-13 12:31:38 SevenSigns: The Seal of Strife remains unclaimed.
+[INFO] 2025-07-13 12:31:38 SevenSigns: The competition, if the current trend continues, will end in a tie this week.
+[INFO] 2025-07-13 12:31:38 SevenSigns: Next period change set to 2025-07-14T18:00:38.586+0300.
+[INFO] 2025-07-13 12:31:38 SevenSigns: Next period begins in 1 days, 5 hours and 28 mins.
+[INFO] 2025-07-13 12:31:38 GameServer: ---------------------------------------------------=[ Cache ]
+[INFO] 2025-07-13 12:31:38 HtmCache: Running lazy cache.
+[INFO] 2025-07-13 12:31:38 CrestTable: Loaded 0 crests.
+[INFO] 2025-07-13 12:31:38 TeleportLocationTable: Loaded 929 teleport location templates.
+[INFO] 2025-07-13 12:31:38 UIData: Loaded 4 keys 5 categories.
+[INFO] 2025-07-13 12:31:39 AugmentationData: Loaded 33960 augmentations.
+[INFO] 2025-07-13 12:31:39 AugmentationData: Loaded 2754 accessory augmentations.
+[INFO] 2025-07-13 12:31:39 CursedWeaponsManager: Loaded 2 cursed weapon(s).
+[INFO] 2025-07-13 12:31:40 TransformData: Loaded 111 transform templates.
+[INFO] 2025-07-13 12:31:41 BotReportTable: Loaded 0 bot reports.
+[INFO] 2025-07-13 12:31:41 AirShipManager: Loaded 0 private airships.
+[INFO] 2025-07-13 12:31:41 GameServer: ------------------------------------------------=[ Handlers ]
+[INFO] 2025-07-13 12:32:12 MasterHandler: Loaded 5 Voiced Command Handler.
+[INFO] 2025-07-13 12:32:12 MasterHandler: Loaded 10 Action Handler.
+[INFO] 2025-07-13 12:32:12 MasterHandler: Loaded 6 Action Shift Handler.
+[INFO] 2025-07-13 12:32:12 MasterHandler: Loaded 448 Admin Command Handler.
+[INFO] 2025-07-13 12:32:12 MasterHandler: Loaded 45 Bypass Handler.
+[INFO] 2025-07-13 12:32:12 MasterHandler: Loaded 14 Chat Handler.
+[INFO] 2025-07-13 12:32:12 MasterHandler: Loaded 15 Community Board Handler.
+[INFO] 2025-07-13 12:32:12 MasterHandler: Loaded 31 Item Handler.
+[INFO] 2025-07-13 12:32:12 MasterHandler: Loaded 3 Punishment Handler.
+[INFO] 2025-07-13 12:32:12 MasterHandler: Loaded 17 User Command Handler.
+[INFO] 2025-07-13 12:32:13 MasterHandler: Loaded 20 Telnet Handler.
+[INFO] 2025-07-13 12:32:13 GameServer: ------------------------------------------------------=[ AI ]

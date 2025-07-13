@@ -1,0 +1,78 @@
+[INFO] 2025-07-13 12:08:20 GameServer: ------------------------------------------------=[ Database ]
+[INFO] 2025-07-13 12:08:20 GameServer: -----------------------------------=[ Network Configuration ]
+[INFO] 2025-07-13 12:08:20 IPConfigData: Using automatic network configuration.
+[INFO] 2025-07-13 12:08:21 IPConfigData: Adding new subnet: 127.0.0.0/8 address: 127.0.0.1
+[INFO] 2025-07-13 12:08:21 IPConfigData: Adding new subnet: 10.0.0.0/24 address: 10.0.0.38
+[INFO] 2025-07-13 12:08:21 IPConfigData: Adding new subnet: 0.0.0.0/0 address: 46.200.183.220
+[INFO] 2025-07-13 12:08:23 HikariDataSource: HikariPool-1 - Starting...
+[INFO] 2025-07-13 12:08:24 HikariPool: HikariPool-1 - Added connection org.mariadb.jdbc.Connection@27f9e982
+[INFO] 2025-07-13 12:08:24 HikariDataSource: HikariPool-1 - Start completed.
+[INFO] 2025-07-13 12:08:24 IdFactory: Updated characters online status.
+[INFO] 2025-07-13 12:08:24 IdFactory: Cleaned 0 elements from database in 0s.
+[INFO] 2025-07-13 12:08:24 IdFactory: Cleaned 0 expired timestamps from database.
+[INFO] 2025-07-13 12:08:25 BitSetIDFactory: 102912 Ids available.
+[INFO] 2025-07-13 12:08:25 GameServer: ---------------------------------------------------=[ World ]
+[INFO] 2025-07-13 12:08:25 InstanceManager: Multiverse Instance created.
+[INFO] 2025-07-13 12:08:25 InstanceManager: Universe Instance created.
+[INFO] 2025-07-13 12:08:25 InstanceManager: Loaded 160 instance names.
+[WARN] 2025-07-13 12:08:29 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:29 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:29 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:29 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:29 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:29 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:30 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:30 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:32 ErrorPacket: Error: 1040-HY000: Too many connections
+[INFO] 2025-07-13 12:08:33 L2World: 128 by 136 world region grid set up.
+[INFO] 2025-07-13 12:08:35 MapRegionManager: Loaded 57 map regions.
+[WARN] 2025-07-13 12:08:35 ErrorPacket: Error: 1040-HY000: Too many connections
+[INFO] 2025-07-13 12:08:37 GlobalVariablesManager: Loaded 0 variables.
+[INFO] 2025-07-13 12:08:37 GameServer: ----------------------------------------------------=[ Data ]
+[INFO] 2025-07-13 12:08:37 CategoryData: Loaded 124 Categories.
+[INFO] 2025-07-13 12:08:38 SecondaryAuthData: Loaded 328 forbidden passwords.
+[INFO] 2025-07-13 12:08:38 GameServer: -------------------------------------------------=[ Effects ]
+[WARN] 2025-07-13 12:08:42 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:47 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:53 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:08:58 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:09:04 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:09:09 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:09:15 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:09:20 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:09:26 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:09:32 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:09:38 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:09:43 ErrorPacket: Error: 1040-HY000: Too many connections
+[INFO] 2025-07-13 12:09:47 EffectMasterHandler: Loaded 170 effect handlers.
+[INFO] 2025-07-13 12:09:48 GameServer: ------------------------------------=[ Enchant Skill Groups ]
+[INFO] 2025-07-13 12:09:48 EnchantSkillGroupsData: Loaded 4 groups and 90 routes.
+[INFO] 2025-07-13 12:09:48 GameServer: ---------------------------------------------=[ Skill Trees ]
+[WARN] 2025-07-13 12:09:50 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:09:56 ErrorPacket: Error: 1040-HY000: Too many connections
+[INFO] 2025-07-13 12:10:00 SkillTreesData: Loaded 17176 Class Skills for 103 Class Skill Trees.
+[INFO] 2025-07-13 12:10:00 SkillTreesData: Loaded 76 Sub-Class Skills.
+[INFO] 2025-07-13 12:10:00 SkillTreesData: Loaded 77 Transfer Skills for 3 Transfer Skill Trees.
+[INFO] 2025-07-13 12:10:01 SkillTreesData: Loaded 117 Fishing Skills, 8 Dwarven only Fishing Skills.
+[INFO] 2025-07-13 12:10:01 SkillTreesData: Loaded 3 Collect Skills.
+[WARN] 2025-07-13 12:10:01 ErrorPacket: Error: 1040-HY000: Too many connections
+[INFO] 2025-07-13 12:10:01 SkillTreesData: Loaded 74 Pledge Skills, 44 for Pledge and 30 Residential.
+[INFO] 2025-07-13 12:10:02 SkillTreesData: Loaded 18 Sub-Pledge Skills.
+[INFO] 2025-07-13 12:10:02 SkillTreesData: Loaded 32 Transform Skills.
+[INFO] 2025-07-13 12:10:02 SkillTreesData: Loaded 8 Noble Skills.
+[INFO] 2025-07-13 12:10:02 SkillTreesData: Loaded 5 Hero Skills.
+[INFO] 2025-07-13 12:10:03 SkillTreesData: Loaded 46 Game Master Skills.
+[INFO] 2025-07-13 12:10:03 SkillTreesData: Loaded 46 Game Master Aura Skills.
+[INFO] 2025-07-13 12:10:03 GameServer: --------------------------------------------------=[ Skills ]
+[WARN] 2025-07-13 12:10:07 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:10:13 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:10:18 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:10:24 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:10:29 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:10:34 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:10:40 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:10:45 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:10:51 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:10:56 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:11:02 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:11:07 ErrorPacket: Error: 1040-HY000: Too many connections

@@ -1,0 +1,40 @@
+[INFO] 2025-07-13 12:16:04 GameServer: ------------------------------------------------=[ Database ]
+[INFO] 2025-07-13 12:16:04 GameServer: -----------------------------------=[ Network Configuration ]
+[INFO] 2025-07-13 12:16:04 IPConfigData: Using automatic network configuration.
+[INFO] 2025-07-13 12:16:05 IPConfigData: Adding new subnet: 127.0.0.0/8 address: 127.0.0.1
+[INFO] 2025-07-13 12:16:06 IPConfigData: Adding new subnet: 10.0.0.0/24 address: 10.0.0.38
+[INFO] 2025-07-13 12:16:06 IPConfigData: Adding new subnet: 0.0.0.0/0 address: 46.200.183.220
+[INFO] 2025-07-13 12:16:11 HikariDataSource: HikariPool-1 - Starting...
+[INFO] 2025-07-13 12:16:15 HikariPool: HikariPool-1 - Added connection org.mariadb.jdbc.Connection@27f9e982
+[INFO] 2025-07-13 12:16:15 HikariDataSource: HikariPool-1 - Start completed.
+[INFO] 2025-07-13 12:16:15 IdFactory: Updated characters online status.
+[INFO] 2025-07-13 12:16:16 IdFactory: Cleaned 0 elements from database in 0s.
+[INFO] 2025-07-13 12:16:16 IdFactory: Cleaned 0 expired timestamps from database.
+[INFO] 2025-07-13 12:16:16 BitSetIDFactory: 102912 Ids available.
+[INFO] 2025-07-13 12:16:16 GameServer: ---------------------------------------------------=[ World ]
+[INFO] 2025-07-13 12:16:16 InstanceManager: Multiverse Instance created.
+[INFO] 2025-07-13 12:16:16 InstanceManager: Universe Instance created.
+[INFO] 2025-07-13 12:16:18 InstanceManager: Loaded 160 instance names.
+[WARN] 2025-07-13 12:16:21 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:22 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:22 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:22 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:23 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:23 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:24 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:24 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:26 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:29 ErrorPacket: Error: 1040-HY000: Too many connections
+[INFO] 2025-07-13 12:16:32 L2World: 128 by 136 world region grid set up.
+[WARN] 2025-07-13 12:16:34 ErrorPacket: Error: 1040-HY000: Too many connections
+[INFO] 2025-07-13 12:16:34 MapRegionManager: Loaded 57 map regions.
+[INFO] 2025-07-13 12:16:34 GlobalVariablesManager: Loaded 0 variables.
+[INFO] 2025-07-13 12:16:34 GameServer: ----------------------------------------------------=[ Data ]
+[INFO] 2025-07-13 12:16:35 CategoryData: Loaded 124 Categories.
+[INFO] 2025-07-13 12:16:35 SecondaryAuthData: Loaded 328 forbidden passwords.
+[INFO] 2025-07-13 12:16:35 GameServer: -------------------------------------------------=[ Effects ]
+[WARN] 2025-07-13 12:16:39 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:44 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:49 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:16:55 ErrorPacket: Error: 1040-HY000: Too many connections
+[WARN] 2025-07-13 12:17:00 ErrorPacket: Error: 1040-HY000: Too many connections
