@@ -484,7 +484,7 @@ public class MasterHandler {
 	private static final Class<?>[] VOICED_COMMAND_HANDLERS = {
 		AutoLoot.class,
 		StatsVCmd.class,
-		PlayerPanel.class,
+		
 		// TODO: Add configuration options for this voiced commands:
 		// CastleVCmd.class,
 		// SetVCmd.class,
