@@ -18,15 +18,6 @@
  */
 package com.l2jserver.datapack.handlers.voicedcommandhandlers;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-
-/**
- * Конфигурация магазина для панели игрока
- * @author YourName
- */
 public class ShopConfig {
     
     /**
