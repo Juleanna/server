@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.l2jserver.commons.network.BaseRecievePacket;
 import com.l2jserver.loginserver.GameServerThread;
 import com.l2jserver.loginserver.LoginController;
+import com.l2jserver.loginserver.audit.AuditLogger;
 
 /**
  * Change Access Level packet.
@@ -50,5 +51,6 @@ public class ChangeAccessLevel extends BaseRecievePacket {
 
 		LoginController.getInstance().setAccountAccessLevel(account, level);
 		LOG.info("Changed {} access level to {} (by GS {}).", account, level, server.getServerId());
+		AuditLogger.accessLevelChanged(account, level, "gs=" + server.getServerId());
 	}
 }

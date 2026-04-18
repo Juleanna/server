@@ -33,9 +33,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.loginserver.GameServerTable;
 import com.l2jserver.loginserver.LoginController;
 import com.l2jserver.loginserver.LoginServer;
+import com.l2jserver.loginserver.security.TOTP;
 
 public final class LoginStatusThread extends Thread {
 
@@ -201,6 +203,11 @@ public final class LoginStatusThread extends Thread {
 					_print.println("help                - shows this help.");
 					_print.println("status              - displays basic server statistics.");
 					_print.println("unblock <ip>        - removes <ip> from the ban list.");
+					_print.println("ban-subnet <cidr>   - adds CIDR subnet to ban list.");
+					_print.println("pw-stats            - legacy/PBKDF2 password counts.");
+					_print.println("pw-expire-legacy <d>- sets accessLevel=-100 for legacy accounts inactive N days.");
+					_print.println("totp-set <login>    - generate & enable TOTP for login; prints base32 secret.");
+					_print.println("totp-clear <login>  - disable TOTP for login.");
 					_print.println("shutdown            - shuts down server.");
 					_print.println("restart             - restarts the server.");
 					_print.println("RedirectLogger      - Telnet will give you some info about server in real time.");
@@ -222,6 +229,89 @@ public final class LoginStatusThread extends Thread {
 						}
 					} catch (StringIndexOutOfBoundsException e) {
 						_print.println("Please Enter the IP to Unblock!");
+					}
+				} else if (_usrCommand.startsWith("ban-subnet")) {
+					String cidr = _usrCommand.length() > 10 ? _usrCommand.substring(10).trim() : "";
+					if (cidr.isEmpty()) {
+						_print.println("Usage: ban-subnet <cidr>");
+					} else {
+						try {
+							LoginController.getInstance().addBannedSubnet(cidr);
+							_print.println("Subnet " + cidr + " added to ban list.");
+						} catch (Exception ex) {
+							_print.println("Invalid CIDR: " + ex.getMessage());
+						}
+					}
+				} else if (_usrCommand.equals("pw-stats")) {
+					try (var con = ConnectionFactory.getInstance().getConnection();
+						var ps = con.prepareStatement(
+							"SELECT SUM(CASE WHEN password LIKE '$pbkdf2%' THEN 1 ELSE 0 END),"
+								+ " SUM(CASE WHEN password NOT LIKE '$pbkdf2%' OR password IS NULL THEN 1 ELSE 0 END)"
+								+ " FROM accounts");
+						var rs = ps.executeQuery()) {
+						if (rs.next()) {
+							_print.println("PBKDF2 accounts: " + rs.getLong(1));
+							_print.println("Legacy accounts: " + rs.getLong(2));
+						}
+					} catch (Exception ex) {
+						_print.println("Error: " + ex.getMessage());
+					}
+				} else if (_usrCommand.startsWith("pw-expire-legacy")) {
+					String arg = _usrCommand.length() > 16 ? _usrCommand.substring(16).trim() : "";
+					int days;
+					try {
+						days = Integer.parseInt(arg);
+					} catch (Exception ex) {
+						_print.println("Usage: pw-expire-legacy <days>");
+						continue;
+					}
+					long cutoff = System.currentTimeMillis() - (days * 86400000L);
+					try (var con = ConnectionFactory.getInstance().getConnection();
+						var ps = con.prepareStatement(
+							"UPDATE accounts SET accessLevel=-100 WHERE accessLevel>=0"
+								+ " AND (password NOT LIKE '$pbkdf2%' OR password IS NULL)"
+								+ " AND lastactive<?")) {
+						ps.setLong(1, cutoff);
+						int n = ps.executeUpdate();
+						_print.println("Expired " + n + " legacy accounts inactive > " + days + " days.");
+					} catch (Exception ex) {
+						_print.println("Error: " + ex.getMessage());
+					}
+				} else if (_usrCommand.startsWith("totp-set")) {
+					String login = _usrCommand.length() > 8 ? _usrCommand.substring(8).trim() : "";
+					if (login.isEmpty()) {
+						_print.println("Usage: totp-set <login>");
+					} else {
+						String secret = TOTP.generateSecret();
+						try (var con = ConnectionFactory.getInstance().getConnection();
+							var ps = con.prepareStatement("UPDATE accounts SET totp_secret=? WHERE login=?")) {
+							ps.setString(1, secret);
+							ps.setString(2, login);
+							int n = ps.executeUpdate();
+							if (n > 0) {
+								_print.println("TOTP secret for " + login + ": " + secret);
+								_print.println("Enter in authenticator app. Login as 'password:123456'.");
+							} else {
+								_print.println("Account not found.");
+							}
+						} catch (Exception ex) {
+							_print.println("Error: " + ex.getMessage()
+								+ " (ensure accounts.totp_secret column exists)");
+						}
+					}
+				} else if (_usrCommand.startsWith("totp-clear")) {
+					String login = _usrCommand.length() > 10 ? _usrCommand.substring(10).trim() : "";
+					if (login.isEmpty()) {
+						_print.println("Usage: totp-clear <login>");
+					} else {
+						try (var con = ConnectionFactory.getInstance().getConnection();
+							var ps = con.prepareStatement("UPDATE accounts SET totp_secret=NULL WHERE login=?")) {
+							ps.setString(1, login);
+							int n = ps.executeUpdate();
+							_print.println(n > 0 ? "TOTP disabled for " + login : "Account not found.");
+						} catch (Exception ex) {
+							_print.println("Error: " + ex.getMessage());
+						}
 					}
 				} else if (_usrCommand.startsWith("shutdown")) {
 					LoginServer.getInstance().shutdown(false);

@@ -20,9 +20,18 @@ package com.l2jserver.loginserver;
 
 import static com.l2jserver.loginserver.config.Configuration.server;
 
+import java.io.FileInputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyStore;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
 
 /**
  * Game Server listener.
@@ -31,10 +40,41 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class GameServerListener extends FloodProtectedListener {
 	private static final List<GameServerThread> _gameServers = new CopyOnWriteArrayList<>();
-	
+
 	public GameServerListener() throws Exception {
-		super(server().getGameServerHost(), server().getGameServerPort());
+		super(server().getGameServerHost(), server().getGameServerPort(), buildProvider());
 		setName(getClass().getSimpleName());
+	}
+
+	/**
+	 * Если GameServerTlsEnabled=true — поднимаем SSLServerSocket.
+	 * Требует PKCS12-keystore с приватным ключом и сертификатом LS.
+	 * Game server должен соединяться TLS-клиентом и доверять этому сертификату.
+	 */
+	private static ServerSocketProvider buildProvider() {
+		if (!server().isGameServerTlsEnabled()) {
+			return null;
+		}
+		return (listenIp, port) -> {
+			final char[] pw = server().getGameServerTlsKeystorePassword().toCharArray();
+			final KeyStore ks = KeyStore.getInstance("PKCS12");
+			try (FileInputStream fis = new FileInputStream(server().getGameServerTlsKeystore())) {
+				ks.load(fis, pw);
+			}
+			final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+			kmf.init(ks, pw);
+			final SSLContext ctx = SSLContext.getInstance("TLSv1.3");
+			ctx.init(kmf.getKeyManagers(), null, null);
+			final SSLServerSocketFactory sf = ctx.getServerSocketFactory();
+			final ServerSocket s;
+			if ("*".equals(listenIp)) {
+				s = sf.createServerSocket(port);
+			} else {
+				s = sf.createServerSocket(port, 50, InetAddress.getByName(listenIp));
+			}
+			((SSLServerSocket) s).setEnabledProtocols(new String[] { "TLSv1.3", "TLSv1.2" });
+			return s;
+		};
 	}
 	
 	@Override

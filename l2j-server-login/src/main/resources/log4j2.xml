@@ -1,13 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Два appender'а:
+    console — человеко-читаемый, по умолчанию активен.
+    json-file — NDJSON через обычный PatternLayout (без доп. зависимостей
+    log4j-layout-template-json/Jackson). Одна строка = один JSON-объект,
+    совместимо с fluent-bit / filebeat / promtail.
+  Чтобы включить JSON-лог — раскомментируйте AppenderRef "json-file" в Root.
+-->
 <Configuration status="INFO">
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
 			<PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss} %c{1}: %msg%n" />
 		</Console>
+		<RollingFile name="json-file"
+			fileName="log/loginserver.json"
+			filePattern="log/loginserver-%d{yyyy-MM-dd}-%i.json.gz">
+			<PatternLayout>
+				<Pattern>{"ts":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}","level":"%p","logger":"%c","thread":"%t","msg":"%enc{%m}{JSON}","exception":"%enc{%xEx}{JSON}"}%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="50 MB"/>
+			</Policies>
+			<DefaultRolloverStrategy max="10"/>
+		</RollingFile>
 	</Appenders>
 	<Loggers>
 		<Root level="info" additivity="false">
 			<AppenderRef ref="console" />
+			<!-- <AppenderRef ref="json-file" /> -->
 		</Root>
 	</Loggers>
 </Configuration>

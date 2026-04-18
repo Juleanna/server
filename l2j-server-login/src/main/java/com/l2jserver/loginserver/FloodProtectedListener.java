@@ -38,6 +38,14 @@ public abstract class FloodProtectedListener extends Thread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FloodProtectedListener.class);
 
+	/**
+	 * Фабрика серверного сокета — позволяет подклассу создать TLS-сокет
+	 * (SSLServerSocketFactory) вместо plain TCP.
+	 */
+	public interface ServerSocketProvider {
+		ServerSocket create(String listenIp, int port) throws Exception;
+	}
+
 	/** TTL записи в карте. Записи с ctime старше TTL и нулевым счётчиком удаляются. */
 	private static final long ENTRY_TTL_MS = 10L * 60_000L;
 	/** Как часто (accept-tick) запускать eviction, чтобы не считать currentTimeMillis на каждую запись. */
@@ -52,7 +60,13 @@ public abstract class FloodProtectedListener extends Thread {
 	private int _acceptCounter;
 
 	public FloodProtectedListener(String listenIp, int port) throws Exception {
-		if (listenIp.equals("*")) {
+		this(listenIp, port, null);
+	}
+
+	public FloodProtectedListener(String listenIp, int port, ServerSocketProvider provider) throws Exception {
+		if (provider != null) {
+			_serverSocket = provider.create(listenIp, port);
+		} else if (listenIp.equals("*")) {
 			_serverSocket = new ServerSocket(port);
 		} else {
 			_serverSocket = new ServerSocket(port, 50, InetAddress.getByName(listenIp));

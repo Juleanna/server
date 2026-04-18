@@ -16,5 +16,7 @@ CREATE TABLE IF NOT EXISTS `accounts` (
   `hop2` VARCHAR(45) DEFAULT NULL,
   `hop3` VARCHAR(45) DEFAULT NULL,
   `hop4` VARCHAR(45) DEFAULT NULL,
+  -- Base32 TOTP secret для 2FA (RFC 6238). NULL = 2FA отключена.
+  `totp_secret` VARCHAR(64) DEFAULT NULL,
   PRIMARY KEY (`login`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

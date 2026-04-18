@@ -170,6 +170,11 @@ public class GameServerThread extends Thread {
 
 				LOG.info("Server {}[{}] is now disconnected.", ServerNameDAO.getServer(getServerId()), getServerId());
 			}
+			// Чистим кэш account→GS от всех игроков этого GS.
+			for (String acct : _accountsOnGameServer) {
+				LoginController.getInstance().onAccountLeftGameServer(acct, this);
+			}
+			_accountsOnGameServer.clear();
 			try {
 				if (!_connection.isClosed()) {
 					_connection.close();
@@ -353,10 +358,13 @@ public class GameServerThread extends Thread {
 	
 	public void addAccountOnGameServer(String account) {
 		_accountsOnGameServer.add(account);
+		// Обновляем кэш в LoginController, чтобы isAccountInAnyGameServer работал O(1).
+		LoginController.getInstance().onAccountJoinedGameServer(account, this);
 	}
-	
+
 	public void removeAccountOnGameServer(String account) {
 		_accountsOnGameServer.remove(account);
+		LoginController.getInstance().onAccountLeftGameServer(account, this);
 	}
 	
 	public GameServerState getLoginConnectionState() {

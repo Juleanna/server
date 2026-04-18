@@ -25,6 +25,7 @@ import static org.aeonbits.owner.Config.LoadType.MERGE;
 import java.util.Set;
 
 import org.aeonbits.owner.Config;
+import org.aeonbits.owner.Config.DefaultValue;
 import org.aeonbits.owner.Config.HotReload;
 import org.aeonbits.owner.Config.LoadPolicy;
 import org.aeonbits.owner.Config.Sources;
@@ -96,6 +97,32 @@ public interface ServerConfiguration extends Config {
 	
 	@Key("AutoCreateAccountsAccessLevel")
 	int autoCreateAccountsAccessLevel();
+
+	// ---- Health-check HTTP (опционально) ----
+	@Key("HealthCheckEnabled")
+	@DefaultValue("false")
+	boolean isHealthCheckEnabled();
+
+	@Key("HealthCheckHost")
+	@DefaultValue("127.0.0.1")
+	String getHealthCheckHost();
+
+	@Key("HealthCheckPort")
+	@DefaultValue("8080")
+	int getHealthCheckPort();
+
+	// ---- TLS для LS<->GS (опционально) ----
+	@Key("GameServerTlsEnabled")
+	@DefaultValue("false")
+	boolean isGameServerTlsEnabled();
+
+	@Key("GameServerTlsKeystore")
+	@DefaultValue("config/tls/keystore.p12")
+	String getGameServerTlsKeystore();
+
+	@Key("GameServerTlsKeystorePassword")
+	@DefaultValue("")
+	String getGameServerTlsKeystorePassword();
 	
 	@Key("DatapackRoot")
 	String getDatapackRoot();

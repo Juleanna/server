@@ -27,7 +27,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.l2jserver.commons.util.IPv4Filter;
 import com.l2jserver.loginserver.network.L2LoginClient;
 import com.l2jserver.loginserver.network.serverpackets.Init;
 import com.l2jserver.mmocore.AcceptFilter;
@@ -47,12 +46,9 @@ public class SelectorHelper implements MMOExecutor<L2LoginClient>, ClientFactory
 	private static final Logger LOG = LoggerFactory.getLogger(SelectorHelper.class);
 	
 	private final ThreadPoolExecutor _generalPacketsThreadPool;
-	
-	private final IPv4Filter _ipv4filter;
-	
+
 	public SelectorHelper() {
 		_generalPacketsThreadPool = new ThreadPoolExecutor(4, 6, 15L, SECONDS, new LinkedBlockingQueue<>());
-		_ipv4filter = new IPv4Filter();
 	}
 	
 	@Override
@@ -69,11 +65,18 @@ public class SelectorHelper implements MMOExecutor<L2LoginClient>, ClientFactory
 	
 	@Override
 	public boolean accept(SocketChannel sc) {
+		// Убран IPv4Filter — он отвергал IPv6-клиентов на уровне accept.
+		// Остаётся только проверка ban-листа (работает с IPv4 и IPv6).
 		try {
-			return _ipv4filter.accept(sc) && !LoginController.getInstance().isBannedAddress(sc.socket().getInetAddress());
+			return !LoginController.getInstance().isBannedAddress(sc.socket().getInetAddress());
 		} catch (Exception ex) {
 			LOG.error("Invalid address {}!", sc.socket().getInetAddress(), ex);
 		}
 		return false;
+	}
+
+	/** Для graceful shutdown. */
+	public ThreadPoolExecutor getPacketsThreadPool() {
+		return _generalPacketsThreadPool;
 	}
 }

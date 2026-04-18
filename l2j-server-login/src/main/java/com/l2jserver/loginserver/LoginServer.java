@@ -24,6 +24,8 @@ import static com.l2jserver.loginserver.config.Configuration.mmo;
 import static com.l2jserver.loginserver.config.Configuration.server;
 import static com.l2jserver.loginserver.config.Configuration.telnet;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.InetAddress;
@@ -33,7 +35,9 @@ import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.UPnPService;
 import com.l2jserver.commons.database.ConnectionFactory;
+import com.l2jserver.loginserver.health.HealthCheckServer;
 import com.l2jserver.loginserver.mail.MailSystem;
+import com.l2jserver.loginserver.metrics.LoginMetrics;
 import com.l2jserver.loginserver.network.L2LoginClient;
 import com.l2jserver.loginserver.network.L2LoginPacketHandler;
 import com.l2jserver.loginserver.status.Status;
@@ -47,18 +51,24 @@ import com.l2jserver.mmocore.SelectorThread;
  * @version 2.6.1.0
  */
 public final class LoginServer {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(LoginServer.class);
-	
-	private static final String BANNED_IPS = "/config/banned_ip.cfg";
-	
+
+	private static final String BANNED_IPS = "config/banned_ip.cfg";
+
 	private static LoginServer _instance;
-	
+
 	private GameServerListener _gameServerListener;
-	
+
 	private SelectorThread<L2LoginClient> _selectorThread;
-	
+
 	private Status _statusServer;
+
+	private SelectorHelper _selectorHelper;
+
+	private HealthCheckServer _healthCheckServer;
+
+	private volatile boolean _shuttingDown = false;
 	
 	public static void main(String[] args) {
 		new LoginServer();
@@ -97,9 +107,9 @@ public final class LoginServer {
 		sc.HELPER_BUFFER_COUNT = mmo().getHelperBufferCount();
 		
 		final L2LoginPacketHandler loginPacketHandler = new L2LoginPacketHandler();
-		final SelectorHelper selectorHelper = new SelectorHelper();
+		_selectorHelper = new SelectorHelper();
 		try {
-			_selectorThread = new SelectorThread<>(sc, selectorHelper, loginPacketHandler, selectorHelper, selectorHelper);
+			_selectorThread = new SelectorThread<>(sc, _selectorHelper, loginPacketHandler, _selectorHelper, _selectorHelper);
 		} catch (Exception ex) {
 			LOG.error("Failed to open Selector!", ex);
 			System.exit(1);
@@ -145,6 +155,23 @@ public final class LoginServer {
 		if (server().isUPnPEnabled()) {
 			UPnPService.getInstance().load(server().getPort(), "L2J Login Server");
 		}
+
+		// JMX-метрики.
+		LoginMetrics.register();
+
+		// HTTP health-check (опционально).
+		if (server().isHealthCheckEnabled()) {
+			try {
+				_healthCheckServer = new HealthCheckServer();
+				_healthCheckServer.start(server().getHealthCheckHost(), server().getHealthCheckPort());
+			} catch (Exception ex) {
+				LOG.warn("Failed to start health-check HTTP server.", ex);
+			}
+		}
+
+		// Graceful shutdown при SIGTERM/Ctrl+C: иначе selector / telnet / purge
+		// потоки могут оставлять висячие соединения и коннекты к БД.
+		Runtime.getRuntime().addShutdownHook(new Thread(this::gracefulShutdown, "LS-Shutdown-Hook"));
 	}
 	
 	public Status getStatusServer() {
@@ -156,7 +183,16 @@ public final class LoginServer {
 	}
 	
 	private void loadBanFile() {
-		try (var fis = getClass().getResourceAsStream(BANNED_IPS);
+		// Загружаем из файловой системы (путь относительно рабочей директории
+		// сервера). Прежняя реализация через getResourceAsStream пыталась взять
+		// файл из classpath/jar — там его нет, так что ban-list молча терялся.
+		final File banFile = new File(BANNED_IPS);
+		if (!banFile.exists() || !banFile.isFile()) {
+			LOG.info("Ban file {} not found; skipping.", banFile.getAbsolutePath());
+			return;
+		}
+
+		try (var fis = new FileInputStream(banFile);
 			var is = new InputStreamReader(fis);
 			var lnr = new LineNumberReader(is)) {
 			lnr.lines() //
@@ -168,7 +204,7 @@ public final class LoginServer {
 					parts = line.split("\\s+"); // durations might be aligned via multiple spaces
 					String address = parts[0];
 					long duration = 0;
-					
+
 					if (parts.length > 1) {
 						try {
 							duration = Long.parseLong(parts[1]);
@@ -177,9 +213,14 @@ public final class LoginServer {
 							return;
 						}
 					}
-					
+
 					try {
-						LoginController.getInstance().addBanForAddress(address, duration);
+						// CIDR-нотация (a.b.c.0/24) попадает в ban-subnets, остальное — точный адрес.
+						if (address.contains("/")) {
+							LoginController.getInstance().addBannedSubnet(address);
+						} else {
+							LoginController.getInstance().addBanForAddress(address, duration);
+						}
 					} catch (Exception ex) {
 						LOG.warn("Invalid address {} on line {} on file {}!", address, lnr.getLineNumber(), BANNED_IPS, ex);
 					}
@@ -187,7 +228,9 @@ public final class LoginServer {
 		} catch (Exception ex) {
 			LOG.warn("Error while reading the bans file {}!", BANNED_IPS, ex);
 		}
-		LOG.info("Loaded {} banned IPs.", LoginController.getInstance().getBannedIps().size());
+		LOG.info("Loaded {} banned IPs and {} banned subnets.",
+			LoginController.getInstance().getBannedIps().size(),
+			LoginController.getInstance().getBannedSubnets().size());
 		
 		if (server().isLoginRestartEnabled()) {
 			final var restartLoginServer = new LoginServerRestart();
@@ -216,6 +259,66 @@ public final class LoginServer {
 	}
 	
 	public void shutdown(boolean restart) {
+		gracefulShutdown();
 		Runtime.getRuntime().exit(restart ? 2 : 0);
+	}
+
+	private synchronized void gracefulShutdown() {
+		if (_shuttingDown) {
+			return;
+		}
+		_shuttingDown = true;
+		LOG.info("Graceful shutdown starting...");
+
+		// Останавливаем приём новых клиентов / GS.
+		try {
+			if (_selectorThread != null) {
+				_selectorThread.shutdown();
+			}
+		} catch (Exception ex) {
+			LOG.warn("Failed to shutdown selector.", ex);
+		}
+		try {
+			if (_gameServerListener != null) {
+				_gameServerListener.interrupt();
+				_gameServerListener.close();
+			}
+		} catch (Exception ex) {
+			LOG.warn("Failed to close GS listener.", ex);
+		}
+		try {
+			if (_statusServer != null) {
+				_statusServer.interrupt();
+			}
+		} catch (Exception ex) {
+			LOG.warn("Failed to stop telnet.", ex);
+		}
+		try {
+			if (_healthCheckServer != null) {
+				_healthCheckServer.stop();
+			}
+		} catch (Exception ex) {
+			LOG.warn("Failed to stop health-check HTTP.", ex);
+		}
+		com.l2jserver.loginserver.audit.AuditLogger.shutdown();
+		// Drain пула пакетов.
+		try {
+			if (_selectorHelper != null) {
+				_selectorHelper.getPacketsThreadPool().shutdown();
+				_selectorHelper.getPacketsThreadPool().awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
+			}
+		} catch (Exception ignore) {
+		}
+		// Закрываем пул БД.
+		try {
+			ConnectionFactory.getInstance().close();
+		} catch (Exception ex) {
+			LOG.warn("Failed to close DB pool.", ex);
+		}
+		LOG.info("Graceful shutdown completed.");
+	}
+
+	public boolean isShuttingDown() {
+		return _shuttingDown;
 	}
 }

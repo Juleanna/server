@@ -1,0 +1,39 @@
+# Упрощённый compose для локального запуска login-server + MySQL.
+# Это не production-ready манифест — секреты захардкожены для удобства разработки.
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: l2jdb
+      MYSQL_USER: l2j
+      MYSQL_PASSWORD: l2j
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ../login/sql:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      retries: 10
+
+  login:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "2106:2106"   # game client
+      - "9014:9014"   # game server
+      - "8080:8080"   # health-check
+    volumes:
+      - ../login/config:/app/config:ro
+      - ../login/data:/app/data
+      - ./log:/app/log
+    environment:
+      # Перекрывают database.properties через JVM-сис-проп, если нужно.
+      JAVA_TOOL_OPTIONS: "-Dfile.encoding=UTF-8"
+
+volumes:
+  db-data:

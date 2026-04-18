@@ -25,6 +25,7 @@ import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.commons.network.BaseRecievePacket;
 import com.l2jserver.loginserver.GameServerThread;
 import com.l2jserver.loginserver.LoginController;
+import com.l2jserver.loginserver.audit.AuditLogger;
 
 /**
  * Request Temp Ban packet.
@@ -83,6 +84,7 @@ public class RequestTempBan extends BaseRecievePacket {
 			ps.setString(3, Long.toString(_banTime));
 			ps.setString(4, Long.toString(_banTime));
 			ps.execute();
+			AuditLogger.banned(_accountName, "gs=" + _server.getServerId(), _banTime);
 		} catch (Exception ex) {
 			LOG.warn("There has been an error inserting ban for account {}!", _accountName, ex);
 		}

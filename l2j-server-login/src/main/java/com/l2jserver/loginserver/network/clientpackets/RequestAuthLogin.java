@@ -31,6 +31,7 @@ import com.l2jserver.loginserver.GameServerTable.GameServerInfo;
 import com.l2jserver.loginserver.LoginController;
 import com.l2jserver.loginserver.LoginController.AuthLoginResult;
 import com.l2jserver.loginserver.model.AccountInfo;
+import com.l2jserver.loginserver.security.TOTP;
 import com.l2jserver.loginserver.network.L2LoginClient;
 import com.l2jserver.loginserver.network.L2LoginClient.LoginClientState;
 import com.l2jserver.loginserver.network.serverpackets.AccountKicked;
@@ -102,15 +103,43 @@ public class RequestAuthLogin extends L2LoginClientPacket {
 		}
 		
 		InetAddress clientAddr = getClient().getConnection().getInetAddress();
-		
+
+		// TOTP: если у аккаунта настроен 2FA-секрет, пользователь вводит пароль
+		// в формате "password:123456", где 123456 — 6-значный TOTP-код.
+		// Для аккаунтов без TOTP формат пароля не меняется.
 		final LoginController lc = LoginController.getInstance();
-		AccountInfo info = lc.retrieveAccountInfo(clientAddr, _user, _password);
+		String realPassword = _password;
+		Integer totpCode = null;
+		int sep = _password.lastIndexOf(':');
+		if (sep > 0 && sep < _password.length() - 1) {
+			final String maybeCode = _password.substring(sep + 1);
+			if (maybeCode.length() == 6 && maybeCode.chars().allMatch(Character::isDigit)) {
+				try {
+					totpCode = Integer.parseInt(maybeCode);
+					realPassword = _password.substring(0, sep);
+				} catch (NumberFormatException ignore) {
+					// Оставляем пароль как есть.
+				}
+			}
+		}
+
+		AccountInfo info = lc.retrieveAccountInfo(clientAddr, _user, realPassword);
 		if (info == null) {
 			// user or pass wrong
 			client.close(LoginFailReason.REASON_USER_OR_PASS_WRONG);
 			return;
 		}
-		
+
+		// Проверка TOTP после успешного пароля — только если секрет настроен.
+		final String totpSecret = lc.getTotpSecret(info.getLogin());
+		if (totpSecret != null) {
+			if (totpCode == null || !TOTP.verify(totpSecret, totpCode)) {
+				LOG.info("TOTP check failed for account {}.", info.getLogin());
+				client.close(LoginFailReason.REASON_USER_OR_PASS_WRONG);
+				return;
+			}
+		}
+
 		AuthLoginResult result = lc.tryCheckinAccount(client, clientAddr, info);
 		switch (result) {
 			case AUTH_SUCCESS -> {

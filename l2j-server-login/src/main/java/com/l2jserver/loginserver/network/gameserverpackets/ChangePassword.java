@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.loginserver.GameServerThread;
 import com.l2jserver.loginserver.LoginController;
+import com.l2jserver.loginserver.audit.AuditLogger;
+import com.l2jserver.loginserver.util.PasswordPolicy;
 
 /**
  * Change Password packet.
@@ -67,8 +69,9 @@ public class ChangePassword {
 			server.ChangePasswordResponse((byte) 0, characterName, "Invalid password data! Try again.");
 			return;
 		}
-		if (newPassword.length() < 6) {
-			server.ChangePasswordResponse((byte) 0, characterName, "New password is too short (min 6 chars).");
+		final PasswordPolicy.Result policy = PasswordPolicy.validate(newPassword);
+		if (!policy.ok) {
+			server.ChangePasswordResponse((byte) 0, characterName, policy.message);
 			return;
 		}
 
@@ -108,6 +111,7 @@ public class ChangePassword {
 			// Логируем факт смены, но БЕЗ хэшей: прежняя версия писала в info старый/новый
 			// хэш, из логов восстанавливался пароль через rainbow-table.
 			LOG.info("Password changed for account {} (by GS {}).", accountName, server.getServerId());
+			AuditLogger.passwordChanged(accountName, "gs=" + server.getServerId() + "/" + characterName);
 
 			if (updated > 0) {
 				server.ChangePasswordResponse((byte) 1, characterName, "You have successfully changed your password!");
