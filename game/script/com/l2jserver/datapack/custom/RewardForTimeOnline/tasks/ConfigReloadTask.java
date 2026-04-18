@@ -256,8 +256,8 @@ public class ConfigReloadTask implements Runnable {
             // Проверяем кэш ItemData
             var itemDataInfo = system.getItemDataWrapper().getSystemInfo();
             if (itemDataInfo.getCacheHitRatio() < 50 && itemDataInfo.getCacheHits() > 100) {
-                LOG.info("ItemData cache hit ratio is low ({:.1f}%), consider warming up cache", 
-                    itemDataInfo.getCacheHitRatio());
+                LOG.info("ItemData cache hit ratio is low ({}%), consider warming up cache",
+                    String.format("%.1f", itemDataInfo.getCacheHitRatio()));
             }
             
             // Проверяем кэши других компонентов

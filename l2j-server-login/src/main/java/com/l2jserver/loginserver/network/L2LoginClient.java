@@ -21,14 +21,14 @@ package com.l2jserver.loginserver.network;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.loginserver.LoginController;
 import com.l2jserver.loginserver.SessionKey;
 import com.l2jserver.loginserver.network.serverpackets.L2LoginServerPacket;
@@ -48,8 +48,11 @@ import com.l2jserver.mmocore.SendablePacket;
  * @version 2.6.1.0
  */
 public final class L2LoginClient extends MMOClient<MMOConnection<L2LoginClient>> {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(L2LoginClient.class);
+
+	/** SecureRandom для sessionId: предсказуемый Rnd.nextInt() позволял угадать чужой session. */
+	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 	
 	public enum LoginClientState {
 		CONNECTED,
@@ -88,7 +91,7 @@ public final class L2LoginClient extends MMOClient<MMOConnection<L2LoginClient>>
 		_state = LoginClientState.CONNECTED;
 		_scrambledPair = LoginController.getInstance().getScrambledRSAKeyPair();
 		_blowfishKey = LoginController.getInstance().getBlowfishKey();
-		_sessionId = Rnd.nextInt();
+		_sessionId = SECURE_RANDOM.nextInt();
 		_connectionStartTime = System.currentTimeMillis();
 		_loginCrypt = new LoginCrypt();
 		_loginCrypt.setKey(_blowfishKey);
@@ -208,19 +211,20 @@ public final class L2LoginClient extends MMOClient<MMOConnection<L2LoginClient>>
 	}
 	
 	public void setCharsOnServ(int servId, int chars) {
+		// CHM, потому что пишется из пакет-потока, читается из ServerList-пакет-потока.
 		if (_charsOnServers == null) {
-			_charsOnServers = new HashMap<>();
+			_charsOnServers = new ConcurrentHashMap<>();
 		}
 		_charsOnServers.put(servId, chars);
 	}
-	
+
 	public Map<Integer, Integer> getCharsOnServ() {
 		return _charsOnServers;
 	}
-	
+
 	public void serCharsWaitingDelOnServ(int servId, long[] charsToDel) {
 		if (_charsToDelete == null) {
-			_charsToDelete = new HashMap<>();
+			_charsToDelete = new ConcurrentHashMap<>();
 		}
 		_charsToDelete.put(servId, charsToDel);
 	}

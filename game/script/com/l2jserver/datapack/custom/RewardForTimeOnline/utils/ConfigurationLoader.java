@@ -314,18 +314,19 @@ public class ConfigurationLoader {
     }
     
     /**
-     * Получает имена всех групп из properties
+     * Получает имена advanced-групп: ищем ключи вида {@code <groupName>.reward.<N>.itemId}
+     * и вытаскиваем префикс до {@code .reward.}. Это надёжный маркер advanced-группы,
+     * исключающий случайное совпадение с legacy-ключами ({@code reward.item.N.id})
+     * и прочими одноуровневыми ключами.
      */
     private static Set<String> getGroupNames(Properties props) {
         Set<String> groupNames = new HashSet<>();
-        
         for (String key : props.stringPropertyNames()) {
-            if (key.contains(".") && !key.endsWith(".reward.1.itemId")) {
-                String groupName = key.substring(0, key.indexOf('.'));
-                groupNames.add(groupName);
+            int idx = key.indexOf(".reward.");
+            if (idx > 0 && key.endsWith(".itemId")) {
+                groupNames.add(key.substring(0, idx));
             }
         }
-        
         return groupNames;
     }
     

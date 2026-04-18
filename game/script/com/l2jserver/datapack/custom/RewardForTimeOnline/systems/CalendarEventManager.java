@@ -3,6 +3,7 @@ package com.l2jserver.datapack.custom.RewardForTimeOnline.systems;
 import com.l2jserver.datapack.custom.RewardForTimeOnline.database.RewardDatabase;
 import com.l2jserver.datapack.custom.RewardForTimeOnline.models.CalendarEvent;
 import com.l2jserver.datapack.custom.RewardForTimeOnline.models.ItemReward;
+import com.l2jserver.gameserver.ThreadPoolManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,9 +92,10 @@ public class CalendarEventManager {
             
             // Логируем загруженные события
             for (CalendarEvent event : loadedEvents) {
-                LOG.debug("Loaded event: {} ({} - {}) multiplier: {:.1f}", 
-                    event.getName(), event.getFormattedStartDate(), 
-                    event.getFormattedEndDate(), event.getRewardMultiplier());
+                LOG.debug("Loaded event: {} ({} - {}) multiplier: {}",
+                    event.getName(), event.getFormattedStartDate(),
+                    event.getFormattedEndDate(),
+                    String.format("%.1f", event.getRewardMultiplier()));
             }
             
         } catch (Exception e) {
@@ -205,8 +207,8 @@ public class CalendarEventManager {
                     .findFirst().orElse(null);
                 if (event != null) {
                     eventActivations++;
-                    LOG.info("Calendar event activated: {} (multiplier: {:.1f})", 
-                        event.getName(), event.getRewardMultiplier());
+                    LOG.info("Calendar event activated: {} (multiplier: {})",
+                        event.getName(), String.format("%.1f", event.getRewardMultiplier()));
                 }
             }
         }
@@ -224,19 +226,19 @@ public class CalendarEventManager {
     }
     
     /**
-     * Запускает периодические задачи
+     * Запускает периодические задачи.
+     * Используем общий ThreadPoolManager — отдельный Executor бы плодился при
+     * каждом reload и никем не shutdown'ился (утечка потоков).
      */
     private void startPeriodicTasks() {
-        // Задача проверки событий
-        eventCheckTask = java.util.concurrent.Executors.newSingleThreadScheduledExecutor()
-            .scheduleAtFixedRate(this::updateActiveEvents, 
-                EVENT_CHECK_INTERVAL, EVENT_CHECK_INTERVAL, TimeUnit.MILLISECONDS);
-        
-        // Задача очистки устаревших событий
-        cleanupTask = java.util.concurrent.Executors.newSingleThreadScheduledExecutor()
-            .scheduleAtFixedRate(this::cleanupExpiredEvents, 
-                EVENT_CLEANUP_INTERVAL, EVENT_CLEANUP_INTERVAL, TimeUnit.MILLISECONDS);
-        
+        eventCheckTask = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(
+            this::updateActiveEvents,
+            EVENT_CHECK_INTERVAL, EVENT_CHECK_INTERVAL, TimeUnit.MILLISECONDS);
+
+        cleanupTask = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(
+            this::cleanupExpiredEvents,
+            EVENT_CLEANUP_INTERVAL, EVENT_CLEANUP_INTERVAL, TimeUnit.MILLISECONDS);
+
         LOG.debug("Calendar event periodic tasks started");
     }
     

@@ -378,4 +378,6 @@ public final class PlayerPanelUtils {
                   .replace("<", "&lt;")
                   .replace(">", "&gt;")
                   .replace("\"", "&quot;")
-                  .
+                  .replace("'", "&#39;");
+    }
+}

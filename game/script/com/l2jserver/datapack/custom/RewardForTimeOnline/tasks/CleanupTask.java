@@ -114,7 +114,8 @@ public class CleanupTask implements Runnable {
             // Проверка состояния anti-AFK системы
             var afkStats = system.getAntiAFK().getStatistics();
             if (afkStats.getAfkPercentage() > 80) {
-                LOG.warn("High AFK percentage detected: {:.1f}%", afkStats.getAfkPercentage());
+                LOG.warn("High AFK percentage detected: {}%",
+                    String.format("%.1f", afkStats.getAfkPercentage()));
             }
             
         } catch (Exception e) {
@@ -135,7 +136,7 @@ public class CleanupTask implements Runnable {
             
             LOG.info("Cleanup Statistics Summary:");
             LOG.info("- Total executions: {}", executionCount);
-            LOG.info("- Average execution time: {:.2f}ms", avgExecutionTime);
+            LOG.info("- Average execution time: {}ms", String.format("%.2f", avgExecutionTime));
             LOG.info("- Total cleanup time: {}ms", totalCleanupTime);
             LOG.info("- System uptime: {}", formatDuration(timeSinceStart));
             LOG.info("- Current execution time: {}ms", executionTime);

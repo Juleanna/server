@@ -100,14 +100,14 @@ public class L2JGameServerPacketHandler {
 						break;
 					case 0x09:
 						if (email().isEnabled()) {
-							msg = new RequestSendMail(data);
+							msg = new RequestSendMail(data, server);
 						}
 						break;
 					case 0x0A:
-						msg = new RequestTempBan(data);
+						msg = new RequestTempBan(data, server);
 						break;
 					case 0x0B:
-						new ChangePassword(data);
+						new ChangePassword(data, server);
 						break;
 					default:
 						LOG.warn("Unknown Opcode {} in state {} from GameServer, closing connection!", Integer.toHexString(opcode).toUpperCase(), state);

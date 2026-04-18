@@ -18,6 +18,8 @@
  */
 package com.l2jserver.loginserver.model;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Objects;
 
 /**
@@ -48,10 +50,26 @@ public final class AccountInfo {
 		_lastServer = lastServer;
 	}
 	
+	/**
+	 * Constant-time сравнение хэшей, чтобы исключить timing-атаку на
+	 * определение правильной длины/префикса.
+	 */
 	public boolean checkPassHash(final String passHash) {
-		return _passHash.equals(passHash);
+		if (passHash == null) {
+			return false;
+		}
+		byte[] a = _passHash.getBytes(StandardCharsets.UTF_8);
+		byte[] b = passHash.getBytes(StandardCharsets.UTF_8);
+		return MessageDigest.isEqual(a, b);
 	}
-	
+
+	/**
+	 * Возвращает сырой хэш/формат пароля из БД (для определения нужна ли миграция).
+	 */
+	public String getPassHash() {
+		return _passHash;
+	}
+
 	public String getLogin() {
 		return _login;
 	}

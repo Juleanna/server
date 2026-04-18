@@ -234,57 +234,71 @@ public class AntiAFKSystem {
     }
     
     /**
+     * Неизменяемый снимок позиции. Обновляется атомарно через volatile-ссылку,
+     * чтобы читатели не видели рассогласованные (x_new, y_old) координаты.
+     */
+    private static final class Position {
+        final int x;
+        final int y;
+        final int z;
+
+        Position(int x, int y, int z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        static Position of(L2PcInstance player) {
+            return new Position(player.getX(), player.getY(), player.getZ());
+        }
+
+        double distanceXYTo(L2PcInstance player) {
+            double dx = (double) player.getX() - x;
+            double dy = (double) player.getY() - y;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+    }
+
+    /**
      * Данные о AFK состоянии игрока
      */
     private static class AFKData {
         private volatile long lastActionTime;
         private volatile boolean isAFK;
-        private volatile int x, y, z;
+        private volatile Position position;
         private volatile long afkStartTime;
-        
+
         public AFKData(L2PcInstance player) {
+            this.position = Position.of(player);
             this.lastActionTime = System.currentTimeMillis();
             this.isAFK = false;
             this.afkStartTime = 0;
-            updatePosition(player);
         }
-        
+
         public void updatePosition(L2PcInstance player) {
-            int newX = player.getX();
-            int newY = player.getY();
-            int newZ = player.getZ();
-            
-            // Проверяем значительное ли это движение
-            double distance = Math.sqrt(Math.pow(newX - x, 2) + Math.pow(newY - y, 2));
-            
-            if (distance >= MOVEMENT_THRESHOLD) {
-                this.x = newX;
-                this.y = newY;
-                this.z = newZ;
+            Position current = this.position;
+            if (current.distanceXYTo(player) >= MOVEMENT_THRESHOLD) {
+                this.position = Position.of(player);
                 this.lastActionTime = System.currentTimeMillis();
-                
+
                 if (isAFK) {
                     setAFK(false);
                 }
             }
         }
-        
+
         public boolean hasMovedFrom(L2PcInstance player) {
-            double distance = Math.sqrt(
-                Math.pow(player.getX() - x, 2) + 
-                Math.pow(player.getY() - y, 2)
-            );
-            return distance >= MOVEMENT_THRESHOLD;
+            return position.distanceXYTo(player) >= MOVEMENT_THRESHOLD;
         }
-        
+
         public boolean isAFKByTime() {
             return (System.currentTimeMillis() - lastActionTime) > TimeUnit.MINUTES.toMillis(AFK_TIMEOUT_MINUTES);
         }
-        
+
         public boolean isAFK() {
             return isAFK;
         }
-        
+
         public void setAFK(boolean afk) {
             if (afk && !this.isAFK) {
                 this.afkStartTime = System.currentTimeMillis();
@@ -293,11 +307,11 @@ public class AntiAFKSystem {
             }
             this.isAFK = afk;
         }
-        
+
         public long getTimeSinceLastAction() {
             return System.currentTimeMillis() - lastActionTime;
         }
-        
+
         public long getAfkTime() {
             return isAFK && afkStartTime > 0 ? System.currentTimeMillis() - afkStartTime : 0;
         }

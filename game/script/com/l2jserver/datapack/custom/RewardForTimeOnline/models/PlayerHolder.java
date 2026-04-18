@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -26,7 +27,9 @@ public class PlayerHolder {
     
     public PlayerHolder(L2PcInstance player) {
         this.player = player;
-        this.rewardTasks = new ArrayList<>();
+        // CopyOnWriteArrayList: add из event-потока, iterate из cleanup/shutdown/logout
+        // без внешней синхронизации — ArrayList ловит ConcurrentModificationException.
+        this.rewardTasks = new CopyOnWriteArrayList<>();
         this.loginTime = System.currentTimeMillis();
         this.isActive = true;
         this.rewardsPaused = false;

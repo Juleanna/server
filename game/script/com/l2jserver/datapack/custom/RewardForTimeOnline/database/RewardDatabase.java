@@ -355,33 +355,38 @@ public class RewardDatabase {
     }
     
     /**
-     * Сохраняет группы наград в базу данных
+     * Сохраняет группы наград в базу данных.
+     * Защита: пустой список не проходит — иначе мы случайно обнулим всю таблицу.
      */
     public boolean saveRewardGroups(List<RewardGroup> groups) {
+        if (groups == null || groups.isEmpty()) {
+            LOG.warn("saveRewardGroups called with empty list — skipping to avoid wiping reward_groups table");
+            return false;
+        }
+
         try (Connection con = ConnectionFactory.getInstance().getConnection()) {
             con.setAutoCommit(false);
-            
+
             try {
-                // Очищаем старые данные
+                // Полная перезапись в рамках одной транзакции.
                 try (Statement stmt = con.createStatement()) {
                     stmt.execute("DELETE FROM reward_items");
                     stmt.execute("DELETE FROM reward_groups");
                 }
-                
-                // Сохраняем новые группы
+
                 for (RewardGroup group : groups) {
                     saveRewardGroup(con, group);
                 }
-                
+
                 con.commit();
                 LOG.info("Saved {} reward groups to database", groups.size());
                 return true;
-                
+
             } catch (SQLException e) {
                 con.rollback();
                 throw e;
             }
-            
+
         } catch (SQLException e) {
             LOG.error("Failed to save reward groups to database", e);
             return false;
@@ -616,46 +621,47 @@ public class RewardDatabase {
      */
     public Map<String, ProgressiveRewardManager.ProgressiveMultiplier> loadProgressiveMultipliers() {
         Map<String, ProgressiveRewardManager.ProgressiveMultiplier> multipliers = new HashMap<>();
-        
+
         String query = """
             SELECT player_id, item_id, multiplier_value, last_used, increment_count
             FROM progressive_multipliers
             WHERE last_used > DATE_SUB(NOW(), INTERVAL 30 DAY)
         """;
-        
+
         try (Connection con = ConnectionFactory.getInstance().getConnection();
              PreparedStatement stmt = con.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
-            
+
             while (rs.next()) {
                 int playerId = rs.getInt("player_id");
                 int itemId = rs.getInt("item_id");
                 double value = rs.getDouble("multiplier_value");
                 long lastUsed = rs.getTimestamp("last_used").getTime();
                 int incrementCount = rs.getInt("increment_count");
-                
+
                 String key = playerId + "_" + itemId;
-                // Здесь должен быть создан объект ProgressiveMultiplier
-                // multipliers.put(key, new ProgressiveMultiplier(...));
+                multipliers.put(key, new ProgressiveRewardManager.ProgressiveMultiplier(
+                    playerId, itemId, value, lastUsed, incrementCount));
             }
-            
+
             LOG.debug("Loaded {} progressive multipliers from database", multipliers.size());
-            
+
         } catch (SQLException e) {
             LOG.error("Failed to load progressive multipliers from database", e);
         }
-        
+
         return multipliers;
     }
-    
+
     /**
-     * Сохраняет прогрессивные множители
+     * Сохраняет прогрессивные множители.
+     * Принимает Map<String, ProgressiveMultiplier> (ключ не используется — playerId/itemId берутся из объекта).
      */
-    public int saveProgressiveMultipliers(Map<String, ?> multipliers) {
-        if (multipliers.isEmpty()) {
+    public int saveProgressiveMultipliers(Map<String, ProgressiveRewardManager.ProgressiveMultiplier> multipliers) {
+        if (multipliers == null || multipliers.isEmpty()) {
             return 0;
         }
-        
+
         String query = """
             INSERT INTO progressive_multipliers (player_id, item_id, multiplier_value, last_used, increment_count)
             VALUES (?, ?, ?, ?, ?)
@@ -664,42 +670,31 @@ public class RewardDatabase {
                 last_used = VALUES(last_used),
                 increment_count = VALUES(increment_count)
         """;
-        
+
         try (Connection con = ConnectionFactory.getInstance().getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
-            
+
             int batchCount = 0;
-            for (Map.Entry<String, ?> entry : multipliers.entrySet()) {
-                String[] keyParts = entry.getKey().split("_");
-                if (keyParts.length != 2) continue;
-                
-                try {
-                    int playerId = Integer.parseInt(keyParts[0]);
-                    int itemId = Integer.parseInt(keyParts[1]);
-                    
-                    // Здесь нужно получить данные из объекта ProgressiveMultiplier
-                    // Object multiplier = entry.getValue();
-                    // stmt.setInt(1, playerId);
-                    // stmt.setInt(2, itemId);
-                    // stmt.setDouble(3, multiplier.getValue());
-                    // stmt.setTimestamp(4, new Timestamp(multiplier.getLastUsed()));
-                    // stmt.setInt(5, multiplier.getIncrementCount());
-                    
-                    stmt.addBatch();
-                    batchCount++;
-                    
-                } catch (NumberFormatException e) {
-                    LOG.warn("Invalid multiplier key format: {}", entry.getKey());
+            for (ProgressiveRewardManager.ProgressiveMultiplier m : multipliers.values()) {
+                if (m == null) {
+                    continue;
                 }
+                stmt.setInt(1, m.getPlayerId());
+                stmt.setInt(2, m.getItemId());
+                stmt.setDouble(3, m.getValue());
+                stmt.setTimestamp(4, new Timestamp(m.getLastUsed()));
+                stmt.setInt(5, m.getIncrementCount());
+                stmt.addBatch();
+                batchCount++;
             }
-            
+
             if (batchCount > 0) {
                 stmt.executeBatch();
             }
-            
+
             LOG.debug("Saved {} progressive multipliers to database", batchCount);
             return batchCount;
-            
+
         } catch (SQLException e) {
             LOG.error("Failed to save progressive multipliers to database", e);
             return 0;

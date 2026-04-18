@@ -38,8 +38,17 @@ public class ChangeAccessLevel extends BaseRecievePacket {
 		super(decrypt);
 		int level = readD();
 		String account = readS();
-		
+
+		// Trust boundary: GS может менять access level ТОЛЬКО для аккаунтов,
+		// которые сейчас залогинены именно на него. Иначе rogue/скомпрометированный
+		// GS мог бы выставить GM любой учётке.
+		if (account == null || !server.hasAccountOnGameServer(account)) {
+			LOG.warn("GS {} tried to change access level of {} which is not on this server — denied.",
+				server.getServerId(), account);
+			return;
+		}
+
 		LoginController.getInstance().setAccountAccessLevel(account, level);
-		LOG.info("Changed {} access level to {}.", account, level);
+		LOG.info("Changed {} access level to {} (by GS {}).", account, level, server.getServerId());
 	}
 }

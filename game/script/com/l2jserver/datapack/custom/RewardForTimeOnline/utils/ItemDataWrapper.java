@@ -703,8 +703,9 @@ public class ItemDataWrapper {
         LOG.info("ItemData instance: {}", info.hasInstance() ? "OK" : "NULL");
         LOG.info("Using fallback: {}", info.isUsingFallback());
         LOG.info("Known items: {}", info.getKnownItemsCount());
-        LOG.info("Cache stats: {:.1f}% hit ratio ({}/{} requests)", 
-            info.getCacheHitRatio(), info.getCacheHits(), info.getCacheHits() + info.getCacheMisses());
+        LOG.info("Cache stats: {}% hit ratio ({}/{} requests)",
+            String.format("%.1f", info.getCacheHitRatio()),
+            info.getCacheHits(), info.getCacheHits() + info.getCacheMisses());
         LOG.info("Cache sizes: names={}, types={}, stacks={}", 
             info.getNameCacheSize(), info.getTypeCacheSize(), info.getStackCacheSize());
         

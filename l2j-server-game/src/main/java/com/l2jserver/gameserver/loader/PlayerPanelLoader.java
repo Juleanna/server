@@ -1,60 +1,80 @@
 /*
  * Copyright © 2004-2023 L2J Server
- * 
+ *
  * This file is part of L2J Server.
- * 
+ *
  * L2J Server is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * L2J Server is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.loader;
 
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.bbs.service.PlayerPanelBoardHandler;
 import com.l2jserver.gameserver.config.Configuration;
 import com.l2jserver.gameserver.config.PlayerPanelConfig;
 import com.l2jserver.gameserver.dao.impl.mysql.PlayerPanelDAO;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
-
+import com.l2jserver.gameserver.model.events.Containers;
+import com.l2jserver.gameserver.model.events.EventType;
+import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogout;
+import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
 
 /**
  * Загрузчик панели игрока
  * @author YourName
  */
 public class PlayerPanelLoader {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(PlayerPanelLoader.class);
-    
+
     /**
      * Инициализация панели игрока
      */
     public static void load() {
         try {
-            // Загрузка конфигурации
             PlayerPanelConfig config = Configuration.PlayerPanel();
-            
+
             if (!config.isPlayerPanelEnabled()) {
                 LOG.info("Player Panel is disabled in configuration");
                 return;
             }
-            
-            // Регистрация обработчика Community Board
-            CommunityBoardHandler.getInstance().registerHandler(new PlayerPanelBoardHandler());
-            
-            // Очистка истекших кулдаунов при запуске
-            PlayerPanelDAO.cleanExpiredCooldowns();
-            
+
+            // Регистрация обработчика Community Board.
+            PlayerPanelBoardHandler handler = new PlayerPanelBoardHandler();
+            CommunityBoardHandler.getInstance().registerHandler(handler);
+
+            // Чистим состояние игрока (антиспам + кулдауны) сразу при logout,
+            // чтобы карты не росли бесконечно и не держали objectId мёртвых сессий.
+            Containers.Global().addListener(new ConsumerEventListener(
+                Containers.Global(),
+                EventType.ON_PLAYER_LOGOUT,
+                (OnPlayerLogout event) -> {
+                    int objectId = event.getActiveChar().getObjectId();
+                    handler.onPlayerLogout(objectId);
+                    PlayerPanelDAO.clearPlayerCooldowns(objectId);
+                },
+                PlayerPanelLoader.class));
+
+            // Периодическая очистка in-memory кулдаунов (каждые 10 минут) — страховка
+            // на случай аварийного отключения клиента без logout-события.
+            ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(
+                PlayerPanelDAO::cleanExpiredCooldowns, 10, 10, TimeUnit.MINUTES);
+
             LOG.info("Player Panel system loaded successfully");
             LOG.info("Available features:");
             LOG.info("  - Enchant System: {}", config.isEnchantEnabled() ? "Enabled" : "Disabled");
@@ -65,7 +85,7 @@ public class PlayerPanelLoader {
             LOG.info("  - PvP Zones: {}", config.isPvpZonesAllowed() ? "Allowed" : "Restricted");
             LOG.info("  - Siege Zones: {}", config.isSiegeZonesAllowed() ? "Allowed" : "Restricted");
             LOG.info("  - Olympiad: {}", config.isOlympiadAllowed() ? "Allowed" : "Restricted");
-            
+
         } catch (Exception e) {
             LOG.error("Failed to load Player Panel system", e);
         }

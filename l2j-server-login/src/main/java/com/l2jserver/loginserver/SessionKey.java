@@ -67,4 +67,17 @@ public class SessionKey {
 		}
 		return ((playOkID1 == key.playOkID1) && (playOkID2 == key.playOkID2));
 	}
+
+	/**
+	 * Consistent с equals(): только playOk-часть всегда участвует, loginOk-часть
+	 * может отсутствовать (showLicense=false). Берём только стабильные поля,
+	 * иначе будут нарушены контракты для HashMap/Set.
+	 */
+	@Override
+	public int hashCode() {
+		int h = 1;
+		h = (31 * h) + playOkID1;
+		h = (31 * h) + playOkID2;
+		return h;
+	}
 }

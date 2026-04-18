@@ -55,9 +55,22 @@ import com.l2jserver.loginserver.network.loginserverpackets.RequestCharacters;
  * @version 2.6.1.0
  */
 public class GameServerThread extends Thread {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(GameServerThread.class);
-	
+
+	/** Верхняя граница размера одного пакета от GS (включая 2-байтовый заголовок). */
+	private static final int MAX_PACKET_SIZE = 65536;
+
+	/** Таймаут чтения для защиты от зависших GS-клиентов. */
+	private static final int READ_TIMEOUT_MS = 5 * 60 * 1000;
+
+	/**
+	 * Константа начального Blowfish-ключа L2J-протокола. Используется в handshake
+	 * с GameServer до того, как LS и GS обменяются реальным ключом через RSA.
+	 * Не изменять без синхронного обновления game-сервера — это часть протокола.
+	 */
+	private static final String INITIAL_BLOWFISH_KEY = "_;v.]05-31!|+-%xT!^[$\00";
+
 	private final Socket _connection;
 	
 	private InputStream _in;
@@ -84,57 +97,67 @@ public class GameServerThread extends Thread {
 	@Override
 	public void run() {
 		_connectionIPAddress = _connection.getInetAddress().getHostAddress();
-		if (GameServerThread.isBannedGameServerIP(_connectionIPAddress)) {
+		if (isBannedGameServerIP(_connectionIPAddress)) {
 			LOG.warn("IP Address {} is on banned IP list.", _connectionIPAddress);
 			forceClose(REASON_IP_BANNED);
 			return;
 		}
-		
+
+		if (_in == null || _out == null) {
+			// Конструктор не смог инициализировать streams — не стартуем вовсе.
+			LOG.warn("Aborting GS thread for {}: no I/O streams.", _connectionIPAddress);
+			return;
+		}
+
 		try {
 			sendPacket(new InitLS(_publicKey.getModulus().toByteArray()));
-			
-			int lengthHi;
-			int lengthLo;
-			int length;
-			boolean checksumOk;
+
 			for (;;) {
-				lengthLo = _in.read();
-				lengthHi = _in.read();
-				length = (lengthHi * 256) + lengthLo;
-				
-				if ((lengthHi < 0) || _connection.isClosed()) {
-					LOG.warn("Login terminated the connection!");
+				final int lengthLo = _in.read();
+				final int lengthHi = _in.read();
+				if ((lengthLo < 0) || (lengthHi < 0) || _connection.isClosed()) {
+					// EOF / соединение закрыто — выходим тихо.
 					break;
 				}
-				
-				byte[] data = new byte[length - 2];
-				
-				int receivedBytes = 0;
-				int newBytes = 0;
-				int left = length - 2;
-				while ((newBytes != -1) && (receivedBytes < (length - 2))) {
-					newBytes = _in.read(data, receivedBytes, left);
-					receivedBytes = receivedBytes + newBytes;
-					left -= newBytes;
+				final int length = (lengthHi * 256) + lengthLo;
+
+				// Защита от вырожденных и гигантских пакетов: злонамеренный GS
+				// иначе мог бы запросить new byte[-1] (NASE) или 65534 байт на
+				// соединение и держать поток до таймаута.
+				if (length < 2 || length > MAX_PACKET_SIZE) {
+					LOG.warn("Invalid packet length {} from GS {}, closing.", length, _connectionIPAddress);
+					break;
 				}
-				
-				if (receivedBytes != (length - 2)) {
+
+				final int payloadLen = length - 2;
+				final byte[] data = new byte[payloadLen];
+
+				int receivedBytes = 0;
+				while (receivedBytes < payloadLen) {
+					final int newBytes = _in.read(data, receivedBytes, payloadLen - receivedBytes);
+					if (newBytes < 0) {
+						// EOF в середине пакета.
+						break;
+					}
+					receivedBytes += newBytes;
+				}
+
+				if (receivedBytes != payloadLen) {
 					LOG.warn("Incomplete Packet is sent to the server, closing connection. (LS)");
 					break;
 				}
-				
+
 				// decrypt if we have a key
 				_blowfish.decrypt(data, 0, data.length);
-				checksumOk = NewCrypt.verifyChecksum(data);
-				if (!checksumOk) {
+				if (!NewCrypt.verifyChecksum(data)) {
 					LOG.warn("Incorrect packet checksum, closing connection. (LS)");
 					return;
 				}
-				
+
 				if (server().isDebug()) {
 					LOG.warn("[C]" + System.lineSeparator() + Util.printData(data));
 				}
-				
+
 				L2JGameServerPacketHandler.handlePacket(data, this);
 			}
 		} catch (IOException ex) {
@@ -144,8 +167,15 @@ public class GameServerThread extends Thread {
 		} finally {
 			if (isAuthed()) {
 				_gsi.setDown();
-				
+
 				LOG.info("Server {}[{}] is now disconnected.", ServerNameDAO.getServer(getServerId()), getServerId());
+			}
+			try {
+				if (!_connection.isClosed()) {
+					_connection.close();
+				}
+			} catch (IOException ignore) {
+				// уже закрыт
 			}
 			LoginServer.getInstance().getGameServerListener().removeGameServer(this);
 			LoginServer.getInstance().getGameServerListener().removeFloodProtection(_connectionIp);
@@ -190,24 +220,43 @@ public class GameServerThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Проверка GS-IP через общий ban-список LS (раньше всегда возвращало false).
+	 */
 	public static boolean isBannedGameServerIP(String ipAddress) {
-		return false;
+		try {
+			return LoginController.getInstance().isBannedAddress(java.net.InetAddress.getByName(ipAddress));
+		} catch (Exception ex) {
+			LOG.warn("Error resolving GS address {} against ban list.", ipAddress, ex);
+			return false;
+		}
 	}
-	
+
 	public GameServerThread(Socket con) {
 		_connection = con;
 		_connectionIp = con.getInetAddress().getHostAddress();
+		InputStream in = null;
+		OutputStream out = null;
 		try {
-			_in = _connection.getInputStream();
-			_out = new BufferedOutputStream(_connection.getOutputStream());
+			// Таймаут чтения: зависший GS иначе держит поток навсегда.
+			con.setSoTimeout(READ_TIMEOUT_MS);
+			con.setKeepAlive(true);
+			in = _connection.getInputStream();
+			out = new BufferedOutputStream(_connection.getOutputStream());
 		} catch (IOException ex) {
 			LOG.warn("There has been an error creating a connection!", ex);
+			try {
+				con.close();
+			} catch (IOException ignore) {
+			}
 		}
-		
+		_in = in;
+		_out = out;
+
 		KeyPair pair = GameServerTable.getInstance().getKeyPair();
 		_privateKey = (RSAPrivateKey) pair.getPrivate();
 		_publicKey = (RSAPublicKey) pair.getPublic();
-		_blowfish = new NewCrypt("_;v.]05-31!|+-%xT!^[$\00");
+		_blowfish = new NewCrypt(INITIAL_BLOWFISH_KEY);
 		setName(getClass().getSimpleName() + "-" + threadId() + "@" + _connectionIp);
 		start();
 	}

@@ -55,6 +55,10 @@ public final class AdvancedRewardSystem extends Quest {
     private ScheduledFuture<?> cleanupTask;
     private ScheduledFuture<?> configReloadTask;
     private final long startTime;
+
+    // Listeners, чтобы отписаться при unload() и не плодить дубликаты при //reload quest.
+    private ConsumerEventListener loginListener;
+    private ConsumerEventListener logoutListener;
     
     /**
      * Конструктор - инициализирует все компоненты системы
@@ -117,10 +121,12 @@ public final class AdvancedRewardSystem extends Quest {
             
             // 6. Запускаем периодические задачи
             setupPeriodicTasks();
-            
-            // 7. Регистрируем shutdown hook
-            Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
-            
+
+            // Shutdown hook через JVM здесь не нужен: Quest.unload() вызывается
+            // самим сервером при штатной остановке и при //reload quest, что
+            // покрывает оба случая. JVM-hook при reload не срабатывает и
+            // лишь плодит осиротевшие hooks.
+
             LOG.info("System initialization completed successfully");
             return true;
             
@@ -387,19 +393,41 @@ public final class AdvancedRewardSystem extends Quest {
      * Регистрация обработчиков событий
      */
     private void registerEventListeners() {
-    Containers.Global().addListener(new ConsumerEventListener(
-        Containers.Global(), 
-        EventType.ON_PLAYER_LOGIN, 
-        event -> onPlayerLogin((OnPlayerLogin) event), 
-        this
-    ));
+        loginListener = new ConsumerEventListener(
+            Containers.Global(),
+            EventType.ON_PLAYER_LOGIN,
+            event -> onPlayerLogin((OnPlayerLogin) event),
+            this);
+        Containers.Global().addListener(loginListener);
 
-    Containers.Global().addListener(new ConsumerEventListener(
-        Containers.Global(), 
-        EventType.ON_PLAYER_LOGOUT, 
-        event -> onPlayerLogout((OnPlayerLogout) event), 
-        this
-    ));
+        logoutListener = new ConsumerEventListener(
+            Containers.Global(),
+            EventType.ON_PLAYER_LOGOUT,
+            event -> onPlayerLogout((OnPlayerLogout) event),
+            this);
+        Containers.Global().addListener(logoutListener);
+    }
+
+    /**
+     * Отписка слушателей. Вызывается из shutdown() / unload().
+     * Без этого //reload quest оставляет старые listeners, и каждый вход
+     * игрока обрабатывается дважды.
+     */
+    private void unregisterEventListeners() {
+        if (loginListener != null) {
+            Containers.Global().removeListener(loginListener);
+            loginListener = null;
+        }
+        if (logoutListener != null) {
+            Containers.Global().removeListener(logoutListener);
+            logoutListener = null;
+        }
+    }
+
+    @Override
+    public boolean unload() {
+        shutdown();
+        return super.unload();
     }
 
     
@@ -554,6 +582,9 @@ public final class AdvancedRewardSystem extends Quest {
         LOG.info("Shutting down Advanced Reward System v{}...", VERSION);
         
         try {
+            // Отписываем listeners, чтобы reload не задвоил обработку.
+            unregisterEventListeners();
+
             // Останавливаем периодические задачи
             if (cleanupTask != null) {
                 cleanupTask.cancel(false);
@@ -563,7 +594,7 @@ public final class AdvancedRewardSystem extends Quest {
                 configReloadTask.cancel(false);
                 configReloadTask = null;
             }
-            
+
             // Корректно завершаем сессии игроков
             int activeSessions = activePlayers.size();
             for (PlayerHolder holder : activePlayers.values()) {

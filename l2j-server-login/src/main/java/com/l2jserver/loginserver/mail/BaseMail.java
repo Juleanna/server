@@ -81,7 +81,9 @@ public class BaseMail implements Runnable {
 		mailProp.put("mail.smtp.socketFactory.class", email().getSmtpFactory());
 		mailProp.put("mail.smtp.socketFactory.fallback", email().smtpFactoryCallback());
 		final var authenticator = (email().isSmtpAuthRequired() ? new SmtpAuthenticator() : null);
-		final var mailSession = Session.getDefaultInstance(mailProp, authenticator);
+		// getInstance, не getDefaultInstance: getDefaultInstance — глобальный singleton,
+		// захватывающий authenticator первого вызова; опасно при reload/tests.
+		final var mailSession = Session.getInstance(mailProp, authenticator);
 		
 		try {
 			_messageMime = new MimeMessage(mailSession);
@@ -101,10 +103,23 @@ public class BaseMail implements Runnable {
 	private String compileHtml(String account, String html, String[] args) {
 		if (args != null) {
 			for (int i = 0; i < args.length; i++) {
-				html = html.replace("%var" + i + "%", args[i]);
+				// Экранируем HTML-спецсимволы: шаблоны писем рендерятся как text/html,
+				// а args приходят из Game Server (возможна HTML/JS-инъекция через nickname).
+				html = html.replace("%var" + i + "%", escapeHtml(args[i]));
 			}
 		}
-		return html.replace("%accountname%", account);
+		return html.replace("%accountname%", escapeHtml(account));
+	}
+
+	private static String escapeHtml(String s) {
+		if (s == null) {
+			return "";
+		}
+		return s.replace("&", "&amp;")
+			.replace("<", "&lt;")
+			.replace(">", "&gt;")
+			.replace("\"", "&quot;")
+			.replace("'", "&#39;");
 	}
 	
 	private String getUserMail(String username) {

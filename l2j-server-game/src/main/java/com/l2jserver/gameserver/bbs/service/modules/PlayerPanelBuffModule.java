@@ -68,14 +68,18 @@ public class PlayerPanelBuffModule {
         switch (action) {
             case "add":
                 if (st.hasMoreTokens()) {
-                    int skillId = Integer.parseInt(st.nextToken());
-                    addBuff(player, skillId);
+                    int skillId = PlayerPanelUtils.safeParseInt(st.nextToken(), -1);
+                    if (skillId > 0) {
+                        addBuff(player, skillId);
+                    }
                 }
                 break;
             case "remove":
                 if (st.hasMoreTokens()) {
-                    int skillId = Integer.parseInt(st.nextToken());
-                    removeBuff(player, skillId);
+                    int skillId = PlayerPanelUtils.safeParseInt(st.nextToken(), -1);
+                    if (skillId > 0) {
+                        removeBuff(player, skillId);
+                    }
                 }
                 break;
             case "refresh":
@@ -113,7 +117,7 @@ public class PlayerPanelBuffModule {
         }
         
         // Проверить, есть ли уже этот баф
-        if (player.getFirstEffect(skillId) != null) {
+        if (player.isAffectedBySkill(skillId)) {
             player.sendMessage("У вас уже есть этот баф!");
             return;
         }
@@ -169,12 +173,12 @@ public class PlayerPanelBuffModule {
      * Убрать баф
      */
     private void removeBuff(L2PcInstance player, int skillId) {
-        if (player.getFirstEffect(skillId) == null) {
+        if (!player.isAffectedBySkill(skillId)) {
             player.sendMessage("У вас нет этого бафа!");
             return;
         }
-        
-        player.stopSkillEffects(skillId);
+
+        player.stopSkillEffects(true, skillId);
         player.sendMessage("❌ Баф убран!");
         
         PlayerPanelDAO.logAction(player, "buff_remove", "Removed buff " + skillId, 0, true);
@@ -314,17 +318,12 @@ public class PlayerPanelBuffModule {
         if (isHighTierBuff(skillId)) {
             baseCost *= 2; // Дорогие бафы
         }
-        
-        // Скидка для премиум игроков
-        if (player.hasPremiumStatus()) {
-            baseCost = (long)(baseCost * 0.8); // 20% скидка
-        }
-        
+
         // Скидка для клана
         if (player.getClan() != null && player.getClan().getLevel() >= 5) {
             baseCost = (long)(baseCost * 0.9); // 10% скидка
         }
-        
+
         return baseCost;
     }
     
@@ -339,12 +338,7 @@ public class PlayerPanelBuffModule {
         if (activeBuffs > 5) {
             baseCost = (long)(baseCost * 1.5); // Дороже, если много активных бафов
         }
-        
-        // Скидка для премиум игроков
-        if (player.hasPremiumStatus()) {
-            baseCost = (long)(baseCost * 0.7); // 30% скидка
-        }
-        
+
         return baseCost;
     }
     
@@ -369,17 +363,12 @@ public class PlayerPanelBuffModule {
      */
     private int calculateBuffDuration(L2PcInstance player, int skillId) {
         int baseDuration = _config.getBuffDuration();
-        
-        // Бонус длительности для премиум игроков
-        if (player.hasPremiumStatus()) {
-            baseDuration = (int)(baseDuration * 1.5); // +50% длительности
-        }
-        
+
         // Бонус для высокоуровневых игроков
         if (player.getLevel() >= 76) {
             baseDuration = (int)(baseDuration * 1.2); // +20% длительности
         }
-        
+
         return baseDuration;
     }
     
@@ -430,17 +419,12 @@ public class PlayerPanelBuffModule {
      */
     private int getMaxBuffsLimit(L2PcInstance player) {
         int baseLimit = 20; // Базовый лимит
-        
-        // Бонус для премиум игроков
-        if (player.hasPremiumStatus()) {
-            baseLimit += 4;
-        }
-        
+
         // Бонус для высокоуровневых игроков
         if (player.getLevel() >= 76) {
             baseLimit += 2;
         }
-        
+
         return baseLimit;
     }
     

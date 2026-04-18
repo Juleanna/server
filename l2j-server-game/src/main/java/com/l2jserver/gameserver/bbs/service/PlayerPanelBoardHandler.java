@@ -62,6 +62,14 @@ public class PlayerPanelBoardHandler implements IParseBoardHandler {
     
     // Кэш для предотвращения спама
     private final Map<Integer, Long> _lastUsed = new ConcurrentHashMap<>();
+
+    // TTL, после которого запись в _lastUsed гарантированно бесполезна.
+    // Намного больше anti-spam interval (обычно секунды), поэтому удаление безопасно.
+    private static final long ANTISPAM_ENTRY_TTL_MS = 5L * 60_000L;
+
+    // Lazy-cleanup: при превышении порога проходим по мапе и удаляем старые записи.
+    // Предотвращает рост мапы при logout игроков (listener'а logout здесь нет).
+    private static final int CLEANUP_THRESHOLD = 512;
     
     // Конфигурация и модули
     private final PlayerPanelConfig _config;
@@ -160,18 +168,24 @@ public class PlayerPanelBoardHandler implements IParseBoardHandler {
         if (!_config.isAntiSpamEnabled()) {
             return true;
         }
-        
+
         long currentTime = System.currentTimeMillis();
         Long lastUsed = _lastUsed.get(player.getObjectId());
-        
+
         if (lastUsed != null) {
             long timeDiff = currentTime - lastUsed;
-            if (timeDiff < _config.getAntiSpamInterval() * 1000) {
+            if (timeDiff < _config.getAntiSpamInterval() * 1000L) {
                 return false;
             }
         }
-        
+
         _lastUsed.put(player.getObjectId(), currentTime);
+
+        if (_lastUsed.size() > CLEANUP_THRESHOLD) {
+            long cutoff = currentTime - ANTISPAM_ENTRY_TTL_MS;
+            _lastUsed.values().removeIf(ts -> ts < cutoff);
+        }
+
         return true;
     }
     
@@ -181,5 +195,12 @@ public class PlayerPanelBoardHandler implements IParseBoardHandler {
     private void showMainPanel(L2PcInstance player, String section) {
         String html = _htmlGenerator.generateMainPanel(player, section);
         CommunityBoardHandler.separateAndSend(html, player);
+    }
+
+    /**
+     * Очистить состояние игрока при logout. Вызывается listener'ом из Loader.
+     */
+    public void onPlayerLogout(int objectId) {
+        _lastUsed.remove(objectId);
     }
 }

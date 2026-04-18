@@ -461,7 +461,7 @@ public class PlayerPanelHtmlGenerator {
         html.append("<div class=\"character-avatar\">");
         html.append("<div class=\"avatar-img\">⚔️</div>");
         html.append("<h3>").append(player.getName()).append("</h3>");
-        html.append("<p>").append(player.getTemplate().getClassName()).append("</p>");
+        html.append("<p>").append(player.getTemplate().getClassId().name()).append("</p>");
         html.append("<p>Уровень: ").append(player.getLevel()).append("</p>");
         html.append("</div>");
         
@@ -492,9 +492,11 @@ public class PlayerPanelHtmlGenerator {
         html.append("<div class=\"stat-bar\">");
         html.append("<h4>⭐ EXP</h4>");
         html.append("<div class=\"progress-bar\">");
-        double expPercent = player.getExpForLevel(player.getLevel() + 1) > 0 ? 
-            ((double)(player.getExp() - player.getExpForLevel(player.getLevel())) / 
-             (player.getExpForLevel(player.getLevel() + 1) - player.getExpForLevel(player.getLevel()))) * 100 : 100;
+        long expCurLevel = player.getStat().getExpForLevel(player.getLevel());
+        long expNextLevel = player.getStat().getExpForLevel(player.getLevel() + 1);
+        double expPercent = (expNextLevel > expCurLevel)
+            ? ((double) (player.getExp() - expCurLevel) / (expNextLevel - expCurLevel)) * 100
+            : 100;
         html.append("<div class=\"progress-fill exp-bar\" style=\"width: ").append(expPercent).append("%\"></div>");
         html.append("<div class=\"progress-text\">").append(String.format("%.1f", expPercent)).append("%</div>");
         html.append("</div>");
@@ -517,19 +519,19 @@ public class PlayerPanelHtmlGenerator {
         html.append("<h3 style=\"color: #ffd700; margin-bottom: 15px;\">⚔️ Характеристики</h3>");
         html.append("<div class=\"detail-row\">");
         html.append("<span class=\"detail-label\">P.Atk:</span>");
-        html.append("<span class=\"detail-value\">").append(player.getPAtk()).append("</span>");
+        html.append("<span class=\"detail-value\">").append(player.getPAtk(null)).append("</span>");
         html.append("</div>");
         html.append("<div class=\"detail-row\">");
         html.append("<span class=\"detail-label\">M.Atk:</span>");
-        html.append("<span class=\"detail-value\">").append(player.getMAtk()).append("</span>");
+        html.append("<span class=\"detail-value\">").append(player.getMAtk(null, null)).append("</span>");
         html.append("</div>");
         html.append("<div class=\"detail-row\">");
         html.append("<span class=\"detail-label\">P.Def:</span>");
-        html.append("<span class=\"detail-value\">").append(player.getPDef()).append("</span>");
+        html.append("<span class=\"detail-value\">").append(player.getPDef(null)).append("</span>");
         html.append("</div>");
         html.append("<div class=\"detail-row\">");
         html.append("<span class=\"detail-label\">M.Def:</span>");
-        html.append("<span class=\"detail-value\">").append(player.getMDef()).append("</span>");
+        html.append("<span class=\"detail-value\">").append(player.getMDef(null, null)).append("</span>");
         html.append("</div>");
         html.append("<div class=\"detail-row\">");
         html.append("<span class=\"detail-label\">Скорость:</span>");
@@ -637,7 +639,7 @@ public class PlayerPanelHtmlGenerator {
         
         // Оружие
         L2ItemInstance weapon = player.getActiveWeaponInstance();
-        if (weapon != null && weapon.isEnchantable()) {
+        if (weapon != null && weapon.isEnchantable() > 0) {
             html.append("<div class=\"equipment-slot\" onclick=\"location.href='bypass _bbsenchant;item;").append(weapon.getObjectId()).append("'\">");
             html.append("<div class=\"equipment-icon\">⚔️</div>");
             html.append("<div class=\"equipment-name\">").append(weapon.getName()).append("</div>");
@@ -660,7 +662,7 @@ public class PlayerPanelHtmlGenerator {
         for (int i = 0; i < slots.length; i++) {
             L2ItemInstance item = player.getInventory().getPaperdollItem(slots[i]);
             html.append("<div class=\"equipment-slot\"");
-            if (item != null && item.isEnchantable()) {
+            if (item != null && item.isEnchantable() > 0) {
                 html.append(" onclick=\"location.href='bypass _bbsenchant;item;").append(item.getObjectId()).append("'\"");
             }
             html.append(">");
@@ -828,7 +830,7 @@ public class PlayerPanelHtmlGenerator {
                 continue;
             }
             
-            boolean isActive = player.getFirstEffect(Integer.parseInt(skillId)) != null;
+            boolean isActive = player.isAffectedBySkill(Integer.parseInt(skillId));
             String cssClass = isActive ? "buff-card active" : "buff-card";
             
             html.append("<div class=\"").append(cssClass).append("\">");

@@ -87,28 +87,15 @@ public class ProgressiveRewardManager {
     }
     
     /**
-     * Загружает множители из базы данных (внутренний метод)
+     * Загружает множители из базы данных.
      */
     private Map<String, ProgressiveMultiplier> loadMultipliersFromDatabase() {
-        Map<String, ProgressiveMultiplier> multipliers = new HashMap<>();
-        
         try {
-            String query = """
-                SELECT player_id, item_id, multiplier_value, last_used, increment_count
-                FROM progressive_multipliers
-                WHERE last_used > DATE_SUB(NOW(), INTERVAL 30 DAY)
-            """;
-            
-            // Здесь должен быть вызов database.executeQuery, но для примера используем заглушку
-            // В реальной реализации нужно использовать правильный метод БД
-            
-            LOG.debug("Progressive multipliers query prepared");
-            
+            return database.loadProgressiveMultipliers();
         } catch (Exception e) {
             LOG.error("Error loading multipliers from database", e);
+            return new HashMap<>();
         }
-        
-        return multipliers;
     }
     
     /**
@@ -129,25 +116,15 @@ public class ProgressiveRewardManager {
     }
     
     /**
-     * Сохраняет множители в базу данных (внутренний метод)
+     * Сохраняет множители в базу данных.
      */
     private int saveMultipliersToDatabase() {
-        int savedCount = 0;
-        
         try {
-            // Здесь должна быть реализация сохранения в БД
-            for (Map.Entry<String, ProgressiveMultiplier> entry : playerMultipliers.entrySet()) {
-                ProgressiveMultiplier multiplier = entry.getValue();
-                
-                // Сохранение через database.saveProgressiveMultiplier(multiplier);
-                savedCount++;
-            }
-            
+            return database.saveProgressiveMultipliers(playerMultipliers);
         } catch (Exception e) {
             LOG.error("Error saving multipliers to database", e);
+            return 0;
         }
-        
-        return savedCount;
     }
     
     /**
@@ -215,8 +192,9 @@ public class ProgressiveRewardManager {
         totalIncrements.incrementAndGet();
         
         if (newValue > oldValue) {
-            LOG.debug("Progressive multiplier increased for player {} item {}: {:.2f} -> {:.2f}", 
-                player.getName(), reward.getItemId(), oldValue, newValue);
+            LOG.debug("Progressive multiplier increased for player {} item {}: {} -> {}",
+                player.getName(), reward.getItemId(),
+                String.format("%.2f", oldValue), String.format("%.2f", newValue));
         }
     }
     
@@ -229,8 +207,9 @@ public class ProgressiveRewardManager {
         
         if (multiplier != null) {
             totalResets.incrementAndGet();
-            LOG.debug("Progressive multiplier reset for player {} item {}: was {:.2f}", 
-                player.getName(), reward.getItemId(), multiplier.getValue());
+            LOG.debug("Progressive multiplier reset for player {} item {}: was {}",
+                player.getName(), reward.getItemId(),
+                String.format("%.2f", multiplier.getValue()));
         }
     }
     
@@ -284,9 +263,11 @@ public class ProgressiveRewardManager {
                     }
                     
                     totalDecays.incrementAndGet();
-                    
-                    LOG.trace("Multiplier decayed for key {}: {:.2f} -> {:.2f}", 
-                        entry.getKey(), oldValue, multiplier.getValue());
+
+                    LOG.trace("Multiplier decayed for key {}: {} -> {}",
+                        entry.getKey(),
+                        String.format("%.2f", oldValue),
+                        String.format("%.2f", multiplier.getValue()));
                 }
             }
             

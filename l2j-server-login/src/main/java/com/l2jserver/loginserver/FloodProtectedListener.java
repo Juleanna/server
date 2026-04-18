@@ -35,13 +35,22 @@ import org.slf4j.LoggerFactory;
  * @version 2.6.1.0
  */
 public abstract class FloodProtectedListener extends Thread {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(FloodProtectedListener.class);
-	
+
+	/** TTL записи в карте. Записи с ctime старше TTL и нулевым счётчиком удаляются. */
+	private static final long ENTRY_TTL_MS = 10L * 60_000L;
+	/** Как часто (accept-tick) запускать eviction, чтобы не считать currentTimeMillis на каждую запись. */
+	private static final int EVICT_EVERY_N_ACCEPTS = 256;
+	/** Пауза после ошибки accept, чтобы не крутить busy-loop при «Too many open files». */
+	private static final long ACCEPT_ERROR_BACKOFF_MS = 100L;
+
 	private final Map<String, ForeignConnection> _floodProtection = new ConcurrentHashMap<>();
-	
+
 	private final ServerSocket _serverSocket;
-	
+
+	private int _acceptCounter;
+
 	public FloodProtectedListener(String listenIp, int port) throws Exception {
 		if (listenIp.equals("*")) {
 			_serverSocket = new ServerSocket(port);
@@ -49,65 +58,94 @@ public abstract class FloodProtectedListener extends Thread {
 			_serverSocket = new ServerSocket(port, 50, InetAddress.getByName(listenIp));
 		}
 	}
-	
+
 	@Override
 	public void run() {
-		Socket connection;
 		while (!isInterrupted()) {
+			Socket connection = null;
 			try {
 				connection = _serverSocket.accept();
+
 				if (server().isFloodProtectionEnabled()) {
-					ForeignConnection fConnection = _floodProtection.get(connection.getInetAddress().getHostAddress());
+					final String ip = connection.getInetAddress().getHostAddress();
+					final long now = System.currentTimeMillis();
+
+					ForeignConnection fConnection = _floodProtection.get(ip);
 					if (fConnection != null) {
 						fConnection.connectionNumber += 1;
 						if (((fConnection.connectionNumber > server().getFastConnectionLimit()) && //
-							((System.currentTimeMillis() - fConnection.lastConnection) < server().getNormalConnectionTime())) || //
-							((System.currentTimeMillis() - fConnection.lastConnection) < server().getFastConnectionTime()) || //
+							((now - fConnection.lastConnection) < server().getNormalConnectionTime())) || //
+							((now - fConnection.lastConnection) < server().getFastConnectionTime()) || //
 							(fConnection.connectionNumber > server().getMaxConnectionPerIP())) {
-							fConnection.lastConnection = System.currentTimeMillis();
-							connection.close();
+							fConnection.lastConnection = now;
 							fConnection.connectionNumber -= 1;
 							if (!fConnection.isFlooding) {
-								LOG.warn("Potential Flood from {}!", connection.getInetAddress().getHostAddress());
+								LOG.warn("Potential Flood from {}!", ip);
 							}
 							fConnection.isFlooding = true;
+							connection.close();
 							continue;
 						}
-						if (fConnection.isFlooding) // if connection was flooding server but now passed the check
-						{
+						if (fConnection.isFlooding) {
 							fConnection.isFlooding = false;
-							LOG.info("Connection {} is not considered as flooding anymore.", connection.getInetAddress().getHostAddress());
+							LOG.info("Connection {} is not considered as flooding anymore.", ip);
 						}
-						fConnection.lastConnection = System.currentTimeMillis();
+						fConnection.lastConnection = now;
 					} else {
-						fConnection = new ForeignConnection(System.currentTimeMillis());
-						_floodProtection.put(connection.getInetAddress().getHostAddress(), fConnection);
+						_floodProtection.put(ip, new ForeignConnection(now));
+					}
+
+					// Периодический eviction: иначе _floodProtection растёт навсегда.
+					// Удаляем записи старше TTL и с нулём активных соединений.
+					if ((++_acceptCounter & (EVICT_EVERY_N_ACCEPTS - 1)) == 0) {
+						evictStale(now);
 					}
 				}
-				
+
 				addClient(connection);
 			} catch (Exception e) {
 				if (isInterrupted()) {
 					close();
 					break;
 				}
+				// Закрываем полу-принятый сокет (если accept прошёл, а затем упал addClient).
+				if (connection != null) {
+					try {
+						connection.close();
+					} catch (Exception ignore) {
+					}
+				}
+				// Логируем — раньше исключение глоталось, маскируя "Too many open files" и т.п.
+				LOG.warn("Error accepting connection.", e);
+				try {
+					Thread.sleep(ACCEPT_ERROR_BACKOFF_MS);
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+					break;
+				}
 			}
 		}
 	}
-	
+
+	private void evictStale(long now) {
+		_floodProtection.entrySet().removeIf(e ->
+			(e.getValue().connectionNumber <= 0)
+				&& ((now - e.getValue().lastConnection) > ENTRY_TTL_MS));
+	}
+
 	protected static class ForeignConnection {
 		public int connectionNumber;
 		public long lastConnection;
 		public boolean isFlooding = false;
-		
+
 		public ForeignConnection(long time) {
 			lastConnection = time;
 			connectionNumber = 1;
 		}
 	}
-	
+
 	public abstract void addClient(Socket s);
-	
+
 	public void removeFloodProtection(String ip) {
 		if (!server().isFloodProtectionEnabled()) {
 			return;
@@ -115,14 +153,15 @@ public abstract class FloodProtectedListener extends Thread {
 		ForeignConnection fConnection = _floodProtection.get(ip);
 		if (fConnection != null) {
 			fConnection.connectionNumber -= 1;
-			if (fConnection.connectionNumber == 0) {
+			if (fConnection.connectionNumber <= 0) {
 				_floodProtection.remove(ip);
 			}
-		} else {
-			LOG.warn("Removing a flood protection for a Game Server ({}) that was not in the connection map???", ip);
 		}
+		// Раньше было LOG.warn при отсутствии записи — это нормальная ситуация
+		// для клиентских подключений (их lifecycle пока не завёл removeFloodProtection),
+		// шумит лог без пользы.
 	}
-	
+
 	public void close() {
 		try {
 			_serverSocket.close();

@@ -23,8 +23,8 @@ import static com.l2jserver.loginserver.config.Configuration.telnet;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,46 +32,69 @@ import org.slf4j.LoggerFactory;
 import com.l2jserver.commons.util.Util;
 
 public class Status extends Thread {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(Status.class);
-	
+
+	/** Таймаут на чтение пароля telnet-клиентом: один тихий клиент иначе DoS'ит весь telnet. */
+	private static final int TELNET_AUTH_TIMEOUT_MS = 30_000;
+
 	private final ServerSocket statusServerSocket;
-	
+
 	private final int _uptime;
-	
+
 	private String _statusPw;
-	
+
+	// CopyOnWriteArrayList: пишется из accept-потока, читается из sendMessageToTelnets.
+	// Раньше был unsynchronized LinkedList → гонка.
 	private final List<LoginStatusThread> _loginStatus;
-	
+
 	public Status() throws IOException {
 		super("Status");
 		_statusPw = telnet().getPassword();
-		
+
 		if (_statusPw == null) {
 			_statusPw = Util.randomPassword(10);
 			LOG.info("Server's Telnet function has no password defined!");
 			LOG.info("A password has been automatically created!");
-			LOG.info("Password has been set to: {}", _statusPw);
+			// Пароль НЕ пишем в лог — логи часто смотрят третьи лица / админы других ролей.
+			// Пользователь сгенерированный пароль может взять из конфига (telnet.password).
+			LOG.warn("A random telnet password was generated. Set telnet.password in config to a known value; the generated one is not persisted.");
 		}
-		
+
 		statusServerSocket = new ServerSocket(telnet().getPort());
 		_uptime = (int) System.currentTimeMillis();
-		_loginStatus = new LinkedList<>();
+		_loginStatus = new CopyOnWriteArrayList<>();
 		LOG.info("Telnet server started successfully, listening on port {}.", telnet().getPort());
 	}
-	
+
 	@Override
 	public void run() {
 		setPriority(Thread.MAX_PRIORITY);
-		
+
 		while (!isInterrupted()) {
 			try {
 				Socket connection = statusServerSocket.accept();
-				LoginStatusThread lst = new LoginStatusThread(connection, _uptime, _statusPw);
-				if (lst.isAlive()) {
-					_loginStatus.add(lst);
+				try {
+					// Ограничиваем время на отправку пароля клиентом: без этого
+					// конструктор LoginStatusThread делает блокирующий readLine()
+					// в accept-потоке — тихий клиент замораживает listener.
+					connection.setSoTimeout(TELNET_AUTH_TIMEOUT_MS);
+				} catch (Exception ignore) {
 				}
-				
+
+				try {
+					LoginStatusThread lst = new LoginStatusThread(connection, _uptime, _statusPw);
+					if (lst.isAlive()) {
+						_loginStatus.add(lst);
+					}
+				} catch (Exception ex) {
+					LOG.warn("Failed to accept telnet client from {}.", connection.getInetAddress(), ex);
+					try {
+						connection.close();
+					} catch (Exception ignore) {
+					}
+				}
+
 				if (isInterrupted()) {
 					try {
 						statusServerSocket.close();
@@ -89,10 +112,11 @@ public class Status extends Thread {
 					}
 					break;
 				}
+				LOG.warn("Telnet accept loop error.", ex1);
 			}
 		}
 	}
-	
+
 	public void sendMessageToTelnets(String msg) {
 		for (LoginStatusThread ls : _loginStatus) {
 			if (!ls.isInterrupted()) {

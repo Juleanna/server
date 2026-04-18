@@ -25,8 +25,8 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,10 @@ public final class GameServerTable {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(GameServerTable.class);
 	
-	private static final Map<Integer, GameServerInfo> GAME_SERVER_TABLE = new HashMap<>();
+	// ConcurrentHashMap: запись идёт из handler-потоков (register*/registerServerOnDB),
+	// чтение — из LoginController.isAccountInAnyGameServer и т.д. Смешанный доступ
+	// без CHM даёт ConcurrentModificationException / stale reads.
+	private static final Map<Integer, GameServerInfo> GAME_SERVER_TABLE = new ConcurrentHashMap<>();
 	
 	private static final int KEYS_SIZE = 10;
 	
@@ -64,7 +67,9 @@ public final class GameServerTable {
 	private void initRSAKeys() {
 		try {
 			final KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-			keyGen.initialize(new RSAKeyGenParameterSpec(512, RSAKeyGenParameterSpec.F4));
+			// 2048 бит — современный минимум (NIST SP 800-57). 512 бит давно ломается
+			// за часы, а используется для RSA-обмена Blowfish-ключом между LS и GS.
+			keyGen.initialize(new RSAKeyGenParameterSpec(2048, RSAKeyGenParameterSpec.F4));
 			_keyPairs = new KeyPair[KEYS_SIZE];
 			for (int i = 0; i < KEYS_SIZE; i++) {
 				_keyPairs[i] = keyGen.genKeyPair();
@@ -120,19 +125,17 @@ public final class GameServerTable {
 	 * @return true, if successful
 	 */
 	public boolean registerWithFirstAvailableId(GameServerInfo gsi) {
-		// avoid two servers registering with the same "free" id
-		synchronized (GAME_SERVER_TABLE) {
-			for (Integer serverId : ServerNameDAO.getServers().keySet()) {
-				if (!GAME_SERVER_TABLE.containsKey(serverId)) {
-					GAME_SERVER_TABLE.put(serverId, gsi);
-					gsi.setId(serverId);
-					return true;
-				}
+		// Атомарное резервирование: putIfAbsent гарантирует, что два параллельных
+		// GS не заберут один "свободный" serverId.
+		for (Integer serverId : ServerNameDAO.getServers().keySet()) {
+			if (GAME_SERVER_TABLE.putIfAbsent(serverId, gsi) == null) {
+				gsi.setId(serverId);
+				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Register a game server.
 	 * @param id the id
@@ -140,14 +143,7 @@ public final class GameServerTable {
 	 * @return true, if successful
 	 */
 	public boolean register(int id, GameServerInfo gsi) {
-		// avoid two servers registering with the same id
-		synchronized (GAME_SERVER_TABLE) {
-			if (!GAME_SERVER_TABLE.containsKey(id)) {
-				GAME_SERVER_TABLE.put(id, gsi);
-				return true;
-			}
-		}
-		return false;
+		return GAME_SERVER_TABLE.putIfAbsent(id, gsi) == null;
 	}
 	
 	/**
@@ -182,7 +178,7 @@ public final class GameServerTable {
 	 * @return a random key pair.
 	 */
 	public KeyPair getKeyPair() {
-		return _keyPairs[Rnd.nextInt(10)];
+		return _keyPairs[Rnd.nextInt(KEYS_SIZE)];
 	}
 	
 	/**

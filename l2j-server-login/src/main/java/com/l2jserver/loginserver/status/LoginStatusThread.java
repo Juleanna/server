@@ -26,6 +26,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +38,20 @@ import com.l2jserver.loginserver.LoginController;
 import com.l2jserver.loginserver.LoginServer;
 
 public final class LoginStatusThread extends Thread {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(LoginStatusThread.class);
-	
+
+	/** Rate-limit попыток аутентификации по IP. После N неверных — временный lockout. */
+	private static final int MAX_AUTH_FAILURES = 5;
+	private static final long AUTH_LOCKOUT_MS = 15L * 60_000L;
+
+	private static final Map<String, AuthAttemptInfo> AUTH_ATTEMPTS = new ConcurrentHashMap<>();
+
+	private static final class AuthAttemptInfo {
+		final AtomicInteger failures = new AtomicInteger();
+		volatile long lockoutUntil;
+	}
+
 	private final Socket _cSocket;
 	
 	private final PrintWriter _print;
@@ -101,40 +115,75 @@ public final class LoginStatusThread extends Thread {
 	
 	public LoginStatusThread(Socket client, int uptime, String StatusPW) throws Exception {
 		_cSocket = client;
-		
+		final String clientIp = client.getInetAddress().getHostAddress();
+
 		_print = new PrintWriter(_cSocket.getOutputStream());
 		_read = new BufferedReader(new InputStreamReader(_cSocket.getInputStream()));
-		
-		if (isValidIP(client)) {
-			telnetOutput(1, client.getInetAddress().getHostAddress() + " accepted.");
-			_print.println("Welcome To The L2J Telnet Session.");
-			_print.println("Please Insert Your Password!");
-			_print.print("Password: ");
-			_print.flush();
-			String tmpLine = _read.readLine();
-			if (tmpLine == null) {
-				_print.println("Error.");
-				_print.println("Disconnected...");
-				_print.flush();
-				_cSocket.close();
-			} else {
-				if (!tmpLine.equals(StatusPW)) {
-					_print.println("Incorrect Password!");
-					_print.println("Disconnected...");
-					_print.flush();
-					_cSocket.close();
-				} else {
-					_print.println("Password Correct!");
-					_print.println("[L2J Login Server]");
-					_print.print("");
-					_print.flush();
-					start();
-				}
-			}
-		} else {
-			telnetOutput(5, "Connection attempt from " + client.getInetAddress().getHostAddress() + " rejected.");
+
+		if (!isValidIP(client)) {
+			telnetOutput(5, "Connection attempt from " + clientIp + " rejected.");
 			_cSocket.close();
+			return;
 		}
+
+		// Rate-limit по IP. После MAX_AUTH_FAILURES неудач — lockout на AUTH_LOCKOUT_MS.
+		AuthAttemptInfo info = AUTH_ATTEMPTS.computeIfAbsent(clientIp, k -> new AuthAttemptInfo());
+		if (info.lockoutUntil > System.currentTimeMillis()) {
+			telnetOutput(5, "Rate-limited telnet auth from " + clientIp + ".");
+			_print.println("Too many attempts, try again later.");
+			_print.flush();
+			_cSocket.close();
+			return;
+		}
+
+		telnetOutput(1, clientIp + " accepted.");
+		_print.println("Welcome To The L2J Telnet Session.");
+		_print.println("Please Insert Your Password!");
+		_print.print("Password: ");
+		_print.flush();
+		String tmpLine = null;
+		try {
+			tmpLine = _read.readLine();
+		} catch (Exception ex) {
+			// SocketTimeoutException: клиент не прислал пароль вовремя (Status выставил soTimeout).
+			telnetOutput(5, "Timed-out telnet auth from " + clientIp + ".");
+		}
+		if (tmpLine == null) {
+			_print.println("Error.");
+			_print.println("Disconnected...");
+			_print.flush();
+			_cSocket.close();
+			return;
+		}
+
+		// Constant-time сравнение паролей, чтобы не утекала длина правильного префикса.
+		byte[] got = tmpLine.getBytes();
+		byte[] exp = StatusPW == null ? new byte[0] : StatusPW.getBytes();
+		if (!java.security.MessageDigest.isEqual(got, exp)) {
+			int f = info.failures.incrementAndGet();
+			if (f >= MAX_AUTH_FAILURES) {
+				info.lockoutUntil = System.currentTimeMillis() + AUTH_LOCKOUT_MS;
+				info.failures.set(0);
+				LOG.warn("Telnet IP {} locked out after {} failures.", clientIp, MAX_AUTH_FAILURES);
+			}
+			_print.println("Incorrect Password!");
+			_print.println("Disconnected...");
+			_print.flush();
+			_cSocket.close();
+			return;
+		}
+
+		// Success: снимаем все ограничения для этого IP, снимаем soTimeout (был выставлен на время auth).
+		AUTH_ATTEMPTS.remove(clientIp);
+		try {
+			_cSocket.setSoTimeout(0);
+		} catch (Exception ignore) {
+		}
+		_print.println("Password Correct!");
+		_print.println("[L2J Login Server]");
+		_print.print("");
+		_print.flush();
+		start();
 	}
 	
 	@Override
@@ -162,7 +211,9 @@ public final class LoginStatusThread extends Thread {
 					_print.println("Registered Server Count: " + GameServerTable.getInstance().getRegisteredGameServers().size());
 				} else if (_usrCommand.startsWith("unblock")) {
 					try {
-						_usrCommand = _usrCommand.substring(8);
+						// substring(8).trim(): раньше substring(8) захватывал ведущий
+						// пробел ("unblock 1.2.3.4" → " 1.2.3.4"), и lookup по IP не срабатывал.
+						_usrCommand = _usrCommand.substring(8).trim();
 						if (LoginController.getInstance().removeBanForAddress(_usrCommand)) {
 							LOG.warn("IP removed via TELNET by host {}!", _cSocket.getInetAddress().getHostAddress());
 							_print.println("The IP " + _usrCommand + " has been removed from the hack protection list!");

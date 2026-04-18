@@ -47,8 +47,6 @@ public class EnhancedRewardTask implements Runnable {
     
     // Константы
     private static final long MAX_EXECUTION_TIME = TimeUnit.SECONDS.toMillis(30); // 30 секунд максимум
-    private static final int MAX_RETRY_ATTEMPTS = 3;
-    private static final long RETRY_DELAY = TimeUnit.SECONDS.toMillis(5);
     
     public EnhancedRewardTask(PlayerHolder playerHolder, ItemReward reward, 
                              String groupName, AdvancedRewardSystem system) {
@@ -137,9 +135,19 @@ public class EnhancedRewardTask implements Runnable {
                 return;
             }
             
-            // Основная логика выполнения
-            boolean success = executeRewardWithRetry();
-            
+            // Одна попытка за тик. Ретраи со Thread.sleep запрещены —
+            // они блокировали бы поток ThreadPoolManager. Если выдача не
+            // прошла (например, AFK/инвентарь полон) — следующая попытка
+            // случится через reward.getTimeInterval().
+            boolean success;
+            try {
+                success = executeReward();
+            } catch (Exception e) {
+                LOG.warn("Error during reward execution for player {}: {}",
+                    playerHolder.getPlayer().getName(), e.getMessage());
+                success = false;
+            }
+
             if (success) {
                 successfulExecutions.incrementAndGet();
             } else {
@@ -165,42 +173,6 @@ public class EnhancedRewardTask implements Runnable {
         } finally {
             isRunning.set(false);
         }
-    }
-    
-    /**
-     * Выполняет награждение с повторными попытками
-     */
-    private boolean executeRewardWithRetry() {
-        int attempts = 0;
-        while (attempts < MAX_RETRY_ATTEMPTS) {
-            try {
-                if (executeReward()) {
-                    return true;
-                }
-                attempts++;
-                
-                if (attempts < MAX_RETRY_ATTEMPTS) {
-                    LOG.debug("Reward execution failed for player {}, attempt {}/{}", 
-                        playerHolder.getPlayer().getName(), attempts, MAX_RETRY_ATTEMPTS);
-                    
-                    // Небольшая пауза перед повтором
-                    Thread.sleep(RETRY_DELAY);
-                }
-                
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                LOG.warn("Reward task interrupted for player {}", playerHolder.getPlayer().getName());
-                return false;
-            } catch (Exception e) {
-                LOG.warn("Error during reward execution attempt {} for player {}: {}", 
-                    attempts + 1, playerHolder.getPlayer().getName(), e.getMessage());
-                attempts++;
-            }
-        }
-        
-        LOG.error("All retry attempts failed for player {} and item {}", 
-            playerHolder.getPlayer().getName(), reward.getItemId());
-        return false;
     }
     
     /**
@@ -312,11 +284,11 @@ public class EnhancedRewardTask implements Runnable {
             // Обновляем состояние
             updateRewardState(player);
             
-            LOG.debug("Successfully gave reward to {}: {} (group: {}, multiplier: {:.2f})", 
-                player.getName(), 
+            LOG.debug("Successfully gave reward to {}: {} (group: {}, multiplier: {})",
+                player.getName(),
                 ItemUtils.getFormattedItemName(reward.getItemId(), finalCount),
-                groupName, 
-                system.getProgressiveManager().getPlayerMultiplier(player, reward));
+                groupName,
+                String.format("%.2f", system.getProgressiveManager().getPlayerMultiplier(player, reward)));
             
             return true;
             
@@ -338,8 +310,11 @@ public class EnhancedRewardTask implements Runnable {
         double finalMultiplier = progressiveMultiplier * eventMultiplier;
         long finalCount = Math.max(1, Math.round(baseCount * finalMultiplier));
         
-        LOG.trace("Calculated reward count for player {}: base={}, progressive={:.2f}, event={:.2f}, final={}", 
-            player.getName(), baseCount, progressiveMultiplier, eventMultiplier, finalCount);
+        LOG.trace("Calculated reward count for player {}: base={}, progressive={}, event={}, final={}",
+            player.getName(), baseCount,
+            String.format("%.2f", progressiveMultiplier),
+            String.format("%.2f", eventMultiplier),
+            finalCount);
         
         return finalCount;
     }

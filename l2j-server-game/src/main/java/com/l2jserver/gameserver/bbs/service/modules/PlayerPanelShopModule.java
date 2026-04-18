@@ -1,27 +1,27 @@
 /*
  * Copyright © 2004-2023 L2J Server
- * 
+ *
  * This file is part of L2J Server.
- * 
+ *
  * L2J Server is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * L2J Server is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.bbs.service.modules;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.config.PlayerPanelConfig;
 import com.l2jserver.gameserver.dao.impl.mysql.PlayerPanelDAO;
@@ -34,290 +34,157 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
  * @author YourName
  */
 public class PlayerPanelShopModule {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(PlayerPanelShopModule.class);
-    
+
+    /**
+     * Серверный каталог магазина: shopId -> запись.
+     * Цена берётся только отсюда — никогда из клиентского пакета.
+     */
+    private static final Map<String, ShopEntry> CATALOG;
+    static {
+        Map<String, ShopEntry> m = new HashMap<>();
+        m.put("1",  new ShopEntry(2,    1,  50_000L,    "Demon Sword"));
+        m.put("2",  new ShopEntry(23,   1,  30_000L,    "Mithril Armor"));
+        m.put("3",  new ShopEntry(729,  1,  500_000L,   "Weapon Enchant Scroll"));
+        m.put("4",  new ShopEntry(1060, 10, 5_000L,     "Healing Potion"));
+        m.put("5",  new ShopEntry(881,  1,  80_000L,    "Power Ring"));
+        m.put("6",  new ShopEntry(1458, 5,  20_000L,    "Soul Crystal"));
+        m.put("7",  new ShopEntry(4,    1,  40_000L,    "Elven Bow"));
+        m.put("8",  new ShopEntry(224,  1,  35_000L,    "Dagger"));
+        m.put("9",  new ShopEntry(1403, 1,  45_000L,    "Magic Staff"));
+        m.put("10", new ShopEntry(6569, 1,  2_000_000L, "Blessed Enchant Scroll"));
+        CATALOG = Collections.unmodifiableMap(m);
+    }
+
     private final PlayerPanelConfig _config;
     private final PlayerPanelValidator _validator;
     private final PlayerPanelHtmlGenerator _htmlGenerator;
-    
+
     public PlayerPanelShopModule(PlayerPanelConfig config) {
         _config = config;
         _validator = new PlayerPanelValidator(config);
         _htmlGenerator = new PlayerPanelHtmlGenerator(config);
     }
-    
-    /**
-     * Обработка магазина
-     */
+
     public void handleShop(L2PcInstance player, StringTokenizer st) {
         if (!_validator.canUseShop(player)) {
             showShopPanel(player);
             return;
         }
-        
+
         if (!st.hasMoreTokens()) {
             showShopPanel(player);
             return;
         }
-        
+
         String action = st.nextToken();
         if (!"buy".equals(action)) {
             showShopPanel(player);
             return;
         }
-        
+
         if (!st.hasMoreTokens()) {
             showShopPanel(player);
             return;
         }
-        
-        String itemId = st.nextToken();
-        if (!st.hasMoreTokens()) {
-            showShopPanel(player);
-            return;
+
+        String shopId = st.nextToken();
+
+        // Цена клиента игнорируется намеренно — берём из серверного каталога.
+        if (st.hasMoreTokens()) {
+            st.nextToken();
         }
-        
-        long price = Long.parseLong(st.nextToken());
-        
-        // Проверка доступности предмета
-        if (!_validator.isItemAvailableInShop(itemId)) {
+
+        if (!_validator.isItemAvailableInShop(shopId)) {
             player.sendMessage("Этот предмет недоступен для покупки!");
             showShopPanel(player);
             return;
         }
-        
-        // Проверка денег
-        if (player.getAdena() < price) {
-            player.sendMessage("Недостаточно Adena для покупки!");
-            showShopPanel(player);
-            return;
-        }
-        
-        // Получение реального ID предмета
-        int realItemId = getItemIdByShopId(itemId);
-        if (realItemId == 0) {
+
+        ShopEntry entry = CATALOG.get(shopId);
+        if (entry == null) {
             player.sendMessage("Предмет не найден!");
             showShopPanel(player);
             return;
         }
-        
-        // Проверка кулдауна
+
+        long price = (long) Math.max(1, Math.round(entry.price * _config.getShopPriceMultiplier()));
+
         if (PlayerPanelDAO.hasCooldown(player.getObjectId(), "shop")) {
             player.sendMessage("Подождите перед следующей покупкой!");
             showShopPanel(player);
             return;
         }
-        
-        // Проверка места в инвентаре
+
         if (player.getInventory().getSize() >= player.getInventoryLimit()) {
             player.sendMessage("Инвентарь переполнен!");
             showShopPanel(player);
             return;
         }
-        
-        // Выполнение покупки
-        performPurchase(player, realItemId, itemId, price);
+
+        performPurchase(player, entry, price);
     }
-    
-    /**
-     * Выполнить покупку
-     */
-    private void performPurchase(L2PcInstance player, int realItemId, String shopItemId, long price) {
-        // Снятие денег
-        player.reduceAdena("Shop", price, null, true);
-        
-        // Определение количества предметов
-        int quantity = getItemQuantity(shopItemId);
-        
-        // Добавление предмета
-        L2ItemInstance newItem = player.addItem("Shop", realItemId, quantity, null, true);
-        String itemName = newItem != null ? newItem.getName() : "Unknown Item";
-        
-        if (quantity > 1) {
-            player.sendMessage("✅ Покупка успешна! " + itemName + " x" + quantity + " добавлен в инвентарь.");
-        } else {
-            player.sendMessage("✅ Покупка успешна! " + itemName + " добавлен в инвентарь.");
+
+    private void performPurchase(L2PcInstance player, ShopEntry entry, long price) {
+        // Атомарно: проверка адены + списание + выдача под lock инвентаря.
+        synchronized (player.getInventory()) {
+            if (player.getAdena() < price) {
+                player.sendMessage("Недостаточно Adena для покупки!");
+                showShopPanel(player);
+                return;
+            }
+
+            if (!player.reduceAdena("Shop", price, player, true)) {
+                player.sendMessage("Не удалось снять Adena!");
+                showShopPanel(player);
+                return;
+            }
+
+            L2ItemInstance newItem = player.addItem("Shop", entry.itemId, entry.quantity, player, true);
+            if (newItem == null) {
+                // addItem не прошёл (overweight / slot limit) — возвращаем адену.
+                player.addAdena("ShopRefund", price, player, true);
+                player.sendMessage("Не удалось выдать предмет. Adena возвращена.");
+                showShopPanel(player);
+                return;
+            }
+
+            String itemName = newItem.getName();
+            if (entry.quantity > 1) {
+                player.sendMessage("Покупка успешна! " + itemName + " x" + entry.quantity + " добавлен в инвентарь.");
+            } else {
+                player.sendMessage("Покупка успешна! " + itemName + " добавлен в инвентарь.");
+            }
+
+            long pricePerItem = entry.quantity > 0 ? price / entry.quantity : price;
+            PlayerPanelDAO.logPurchase(player, entry.itemId, itemName, entry.quantity, pricePerItem, price, "adena");
+            PlayerPanelDAO.logAction(player, "shop_buy",
+                "Bought " + itemName + " x" + entry.quantity + " for " + price + " adena", price, true);
+
+            if (_config.getAntiSpamInterval() > 0) {
+                PlayerPanelDAO.setCooldown(player.getObjectId(), "shop", _config.getAntiSpamInterval() * 1000L);
+            }
         }
-        
-        // Проверка на специальные предметы
-        handleSpecialItems(player, realItemId, quantity);
-        
-        // Логирование покупки
-        PlayerPanelDAO.logPurchase(player, realItemId, itemName, quantity, price / quantity, price, "adena");
-        PlayerPanelDAO.logAction(player, "shop_buy", "Bought " + itemName + " x" + quantity + " for " + price + " adena", price, true);
-        
-        // Установка кулдауна
-        if (_config.getAntiSpamInterval() > 0) {
-            PlayerPanelDAO.setCooldown(player.getObjectId(), "shop", _config.getAntiSpamInterval() * 1000);
-        }
-        
+
         showShopPanel(player);
     }
-    
-    /**
-     * Обработка специальных предметов
-     */
-    private void handleSpecialItems(L2PcInstance player, int itemId, int quantity) {
-        switch (itemId) {
-            case 1060: // Healing Potion
-                if (quantity >= 10) {
-                    player.sendMessage("🎁 Бонус! Получен дополнительный опыт за покупку зелий!");
-                    player.addExpAndSp(1000, 100);
-                }
-                break;
-            case 729: // Enchant Scroll
-                if (quantity >= 5) {
-                    player.sendMessage("🎁 Бонус! Получен благословенный свиток за покупку обычных!");
-                    player.addItem("Bonus", 6569, 1, null, true); // Blessed Enchant Scroll
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    
-    /**
-     * Получить количество предмета по ID магазина
-     */
-    private int getItemQuantity(String shopItemId) {
-        switch (shopItemId) {
-            case "3": // Enchant Scroll
-            case "10": // Blessed Scroll
-                return 1;
-            case "4": // Healing Potion
-                return 10;
-            case "6": // Soul Crystal
-                return 5;
-            default:
-                return 1;
-        }
-    }
-    
-    /**
-     * Получить реальный ID предмета по ID магазина
-     */
-    private int getItemIdByShopId(String shopId) {
-        switch (shopId) {
-            case "1": return 2; // Sword
-            case "2": return 23; // Leather Armor
-            case "3": return 729; // Weapon Enchant Scroll
-            case "4": return 1060; // Lesser Healing Potion
-            case "5": return 881; // Ring
-            case "6": return 1458; // Crystal
-            case "7": return 4; // Bow
-            case "8": return 224; // Dagger
-            case "9": return 1403; // Staff
-            case "10": return 6569; // Blessed Enchant Scroll
-            default: return 0;
-        }
-    }
-    
-    /**
-     * Получить название предмета по ID магазина
-     */
-    private String getItemNameByShopId(String shopId) {
-        switch (shopId) {
-            case "1": return "Demon Sword";
-            case "2": return "Mithril Armor";
-            case "3": return "Enchant Scroll";
-            case "4": return "Healing Potion";
-            case "5": return "Power Ring";
-            case "6": return "Soul Crystal";
-            case "7": return "Elven Bow";
-            case "8": return "Dagger Set";
-            case "9": return "Magic Staff";
-            case "10": return "Blessed Scroll";
-            default: return "Unknown Item";
-        }
-    }
-    
-    /**
-     * Проверить наличие скидки для игрока
-     */
-    private double getPlayerDiscount(L2PcInstance player) {
-        double discount = 0.0;
-        
-        // Скидка для премиум игроков
-        double premiumDiscount = _config.getPremiumDiscount();
-        if (premiumDiscount > 0 && player.hasPremiumStatus()) {
-            discount += premiumDiscount / 100.0;
-        }
-        
-        // Скидка во время событий
-        if (_config.isEventsEnabled()) {
-            double eventDiscount = _config.getEventDiscount();
-            if (eventDiscount > 0 && isEventActive()) {
-                discount += eventDiscount / 100.0;
-            }
-        }
-        
-        // Скидка для клановых участников
-        if (player.getClan() != null && player.getClan().getLevel() >= 5) {
-            discount += 0.05; // 5% скидка для кланов 5+ уровня
-        }
-        
-        // Максимальная скидка 50%
-        return Math.min(discount, 0.5);
-    }
-    
-    /**
-     * Проверить, активно ли событие
-     */
-    private boolean isEventActive() {
-        // Здесь можно добавить логику проверки активных событий
-        // Например, проверка определенных дат или флагов сервера
-        return false;
-    }
-    
-    /**
-     * Рассчитать финальную цену с учетом скидок
-     */
-    private long calculateFinalPrice(L2PcInstance player, long basePrice) {
-        double discount = getPlayerDiscount(player);
-        
-        if (discount > 0) {
-            long discountedPrice = (long)(basePrice * (1.0 - discount));
-            player.sendMessage("💰 Применена скидка " + String.format("%.0f", discount * 100) + "%!");
-            return discountedPrice;
-        }
-        
-        return basePrice;
-    }
-    
-    /**
-     * Проверить лимиты покупок
-     */
-    private boolean checkPurchaseLimits(L2PcInstance player, long price) {
-        // Проверка дневного лимита покупок
-        long dailyLimit = _config.getDailyPurchaseLimit();
-        if (dailyLimit > 0) {
-            // Здесь должна быть логика проверки потраченной суммы за день
-            // Для упрощения пропускаем
-        }
-        
-        // Проверка налога на покупки
-        double taxRate = _config.getPurchaseTax();
-        if (taxRate > 0) {
-            long tax = (long)(price * taxRate / 100.0);
-            if (player.getAdena() < price + tax) {
-                player.sendMessage("Недостаточно Adena для покупки с налогом! Налог: " + tax + " Adena");
-                return false;
-            }
-            
-            // Снятие налога
-            player.reduceAdena("Tax", tax, null, true);
-            player.sendMessage("💰 Уплачен налог: " + tax + " Adena");
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Показать панель магазина
-     */
+
     private void showShopPanel(L2PcInstance player) {
         String html = _htmlGenerator.generateMainPanel(player, "shop");
         CommunityBoardHandler.separateAndSend(html, player);
+    }
+
+    /** Запись каталога магазина. Неизменяема. */
+    private static final class ShopEntry {
+        final int itemId;
+        final int quantity;
+        final long price;
+        final String name;
+
+        ShopEntry(int itemId, int quantity, long price, String name) {
+            this.itemId = itemId;
+            this.quantity = quantity;
+            this.price = price;
+            this.name = name;
+        }
     }
 }
