@@ -20,7 +20,6 @@ package com.l2jserver.datapack.custom.events.Rabbits;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,7 +57,9 @@ public final class Rabbits extends Event {
 	private static final int TOTAL_CHEST_COUNT = 75;
 	private static final int TRANSFORMATION_ID = 105;
 	private final Set<L2Npc> _npcs = ConcurrentHashMap.newKeySet(TOTAL_CHEST_COUNT + 1);
-	private final List<L2PcInstance> _players = new ArrayList<>();
+	// Было ArrayList — модифицируется из игровых и scheduler-потоков одновременно.
+	// Потеря элементов / AIOOBE при concurrent clear. CHM.newKeySet — lock-free.
+	private final Set<L2PcInstance> _players = ConcurrentHashMap.newKeySet();
 	private boolean _isActive = false;
 	
 	/**

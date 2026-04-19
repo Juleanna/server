@@ -44,6 +44,11 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.TvTEvent;
+import com.l2jserver.gameserver.model.events.Containers;
+import com.l2jserver.gameserver.model.events.EventType;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLogout;
+import com.l2jserver.gameserver.model.events.listeners.AbstractEventListener;
+import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
@@ -79,17 +84,35 @@ public final class BufferService extends CustomServiceScript {
 	private static final Map<Integer, String> ACTIVE_PLAYER_CATEGORIES = new ConcurrentHashMap<>();
 	private static final Map<Integer, String> ACTIVE_PLAYER_TARGETS = new ConcurrentHashMap<>();
 	
+	/** Listener, отписывающий логаутный cleanup — сохраняем ссылку для unload(). */
+	private AbstractEventListener _logoutListener;
+
 	BufferService() {
 		super(SCRIPT_NAME);
-		
+
 		BypassHandler.getInstance().registerHandler(BufferServiceBypassHandler.getInstance());
-		
+
 		if (Configuration.bufferService().getVoicedEnable()) {
 			VoicedCommandHandler.getInstance().registerHandler(BufferServiceVoicedCommandHandler.getInstance());
 			ItemHandler.getInstance().registerHandler(BufferServiceItemHandler.getInstance());
 		}
+
+		// Без этого listener'а 4 статические мапы растут на каждое новое подключение
+		// и никогда не сжимаются — утечка памяти на долгоживущем сервере.
+		_logoutListener = new ConsumerEventListener(
+			Containers.Global(),
+			EventType.PLAYER_LOGOUT,
+			(PlayerLogout event) -> {
+				final int objectId = event.player().getObjectId();
+				LAST_PLAYABLES_HEAL_TIME.remove(objectId);
+				ACTIVE_PLAYER_BUFFLISTS.remove(objectId);
+				ACTIVE_PLAYER_CATEGORIES.remove(objectId);
+				ACTIVE_PLAYER_TARGETS.remove(objectId);
+			},
+			this);
+		Containers.Global().addListener(_logoutListener);
 	}
-	
+
 	@Override
 	public boolean unload() {
 		BypassHandler.getInstance().removeHandler(BufferServiceBypassHandler.getInstance());
@@ -97,6 +120,16 @@ public final class BufferService extends CustomServiceScript {
 			VoicedCommandHandler.getInstance().removeHandler(BufferServiceVoicedCommandHandler.getInstance());
 			ItemHandler.getInstance().removeHandler(BufferServiceItemHandler.getInstance());
 		}
+		if (_logoutListener != null) {
+			Containers.Global().removeListener(_logoutListener);
+			_logoutListener = null;
+		}
+		// Сброс на reload, иначе после //reload script map остаются ссылки
+		// на уже не существующих клиентов.
+		LAST_PLAYABLES_HEAL_TIME.clear();
+		ACTIVE_PLAYER_BUFFLISTS.clear();
+		ACTIVE_PLAYER_CATEGORIES.clear();
+		ACTIVE_PLAYER_TARGETS.clear();
 		return super.unload();
 	}
 	

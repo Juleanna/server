@@ -225,8 +225,9 @@ public final class LuckyPig extends AbstractNpcAI
 						if (foodItem != null)
 						{
 							final int eatCount = npc.getVariables().getInt("LUCKY_PIG_EAT_COUNT", 0) + 1;
-							final int targetAdena = npc.getVariables().getInt("LUCKY_PIG_TARGET_ADENA", 0);
-							final long countAdena = npc.getVariables().getInt("LUCKY_PIG_EAT_ADENA", 0) + foodItem.getCount();
+							final long targetAdena = npc.getVariables().getLong("LUCKY_PIG_TARGET_ADENA", 0);
+							// long-арифметика: EAT_ADENA при LuckyPigTopAdena может перейти Integer.MAX_VALUE.
+							final long countAdena = npc.getVariables().getLong("LUCKY_PIG_EAT_ADENA", 0) + foodItem.getCount();
 							
 							foodItem.decayMe();
 							npc.getVariables().set("LUCKY_PIG_LAST_EAT", System.currentTimeMillis());
@@ -242,7 +243,7 @@ public final class LuckyPig extends AbstractNpcAI
 							}
 							else
 							{
-								broadcastNpcSay(npc, Say2.ALL, EATING_TEXTS[getRandom(EATING_TEXTS.length)], Util.formatAdena(targetAdena));
+								broadcastNpcSay(npc, Say2.ALL, EATING_TEXTS[getRandom(EATING_TEXTS.length)], Util.formatAdena((int) Math.min(Integer.MAX_VALUE, targetAdena)));
 							}
 							
 							npc.broadcastPacket(new MagicSkillUse(npc, npc, ENLARGE.getSkillId(), 1, 1000, 1000));
@@ -283,6 +284,14 @@ public final class LuckyPig extends AbstractNpcAI
 	@Override
 	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon)
 	{
+		// killer может быть null (DoT-смерть, зона, трап без владельца).
+		// dropItem и addSpawn тогда падут NPE — выходим.
+		if (killer == null)
+		{
+			super.onKill(npc, killer, isSummon);
+			return;
+		}
+
 		if (npc.getId() == LUCKY_PIG_WINGLESS)
 		{
 			manageDrop(npc, killer, false);
@@ -293,7 +302,8 @@ public final class LuckyPig extends AbstractNpcAI
 		}
 		else
 		{
-			final boolean LuckyPidChance = Rnd.get(100) > (100 - LUCKY_PIG_CHANCE);
+			// Corner case: при LUCKY_PIG_CHANCE=100 старая формула давала 99/100.
+			final boolean LuckyPidChance = getRandom(100) < LUCKY_PIG_CHANCE;
 			if (LuckyPig().EventLuckyPigEnabled() && LuckyPidChance/* || killer.isGM()*/)
 			{
 				final int minAdena;
@@ -347,22 +357,28 @@ public final class LuckyPig extends AbstractNpcAI
 	private boolean calculateGoldChance(L2Npc luckyPig)
 	{
 		final int eatCount = luckyPig.getVariables().getInt("LUCKY_PIG_EAT_COUNT", 0);
-		final int targetAdena = luckyPig.getVariables().getInt("LUCKY_PIG_TARGET_ADENA", 0);
-		final long countAdena = luckyPig.getVariables().getInt("LUCKY_PIG_EAT_ADENA", -1);
-		
-		//FIX
-		double finalChance = LUCKY_PIG_GOLD_BASE_CHANCE[eatCount];
-		
+		final long targetAdena = luckyPig.getVariables().getLong("LUCKY_PIG_TARGET_ADENA", 0);
+		// long-чтение: в onEvent EAT_ADENA сохраняется как long, getInt отрезал верхние биты при overflow.
+		final long countAdena = luckyPig.getVariables().getLong("LUCKY_PIG_EAT_ADENA", -1);
+
+		// Clamp eatCount на длину массива: таймер CHECK_FOOD повторяется и может
+		// успеть увеличить EAT_COUNT выше 10 до перехода в FEED_STATE=3.
+		final int idx = Math.min(eatCount, LUCKY_PIG_GOLD_BASE_CHANCE.length - 1);
+		double finalChance = LUCKY_PIG_GOLD_BASE_CHANCE[idx];
+
 		if (countAdena >= targetAdena)
 		{
 			finalChance *= 1.46;
 		}
 		return getRandom(100) < finalChance;
 	}
-	
-	private LuckyPig()
+
+	/**
+	 * Public конструктор обязателен — script-loader рефлексивно
+	 * инстанцирует AI-скрипты; при private скрипт не регистрируется.
+	 */
+	public LuckyPig()
 	{
-		// upstream Quest: конструктор без аргументов, регистрация через bindStartNpc/bindTalk/bindKill.
 		super();
 		bindStartNpc(LUCKY_PIG_LOW, LUCKY_PIG_MEDIUM, LUCKY_PIG_TOP);
 		bindTalk(LUCKY_PIG_LOW, LUCKY_PIG_MEDIUM, LUCKY_PIG_TOP);
@@ -370,10 +386,5 @@ public final class LuckyPig extends AbstractNpcAI
 		bindKill(TRIGGER_MOBS_LOW);
 		bindKill(TRIGGER_MOBS_MEDIUM);
 		bindKill(TRIGGER_MOBS_TOP);
-	}
-	
-	public static void main(String[] args)
-	{
-		new LuckyPig();
 	}
 }

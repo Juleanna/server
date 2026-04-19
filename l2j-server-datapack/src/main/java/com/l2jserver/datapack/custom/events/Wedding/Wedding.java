@@ -102,9 +102,24 @@ public final class Wedding extends AbstractNpcAI {
 				} else if ((player.getAdena() < customs().getWeddingPrice()) || (partner.getAdena() < customs().getWeddingPrice())) {
 					htmltext = sendHtml(partner, "Adena.html", "%fee%", String.valueOf(customs().getWeddingPrice()));
 				} else {
-					player.reduceAdena("Wedding", customs().getWeddingPrice(), player.getLastFolkNPC(), true);
-					partner.reduceAdena("Wedding", customs().getWeddingPrice(), player.getLastFolkNPC(), true);
-					
+					// Атомарность: если partner отключится / останется без адены между
+					// двумя reduceAdena — откатываем списание у player, иначе жених
+					// платил впустую, а брак всё равно регистрировался.
+					if (!partner.isOnline() || (partner.getAdena() < customs().getWeddingPrice())) {
+						htmltext = sendHtml(partner, "Adena.html", "%fee%", String.valueOf(customs().getWeddingPrice()));
+						break;
+					}
+					if (!player.reduceAdena("Wedding", customs().getWeddingPrice(), player.getLastFolkNPC(), true)) {
+						htmltext = sendHtml(partner, "Adena.html", "%fee%", String.valueOf(customs().getWeddingPrice()));
+						break;
+					}
+					if (!partner.reduceAdena("Wedding", customs().getWeddingPrice(), player.getLastFolkNPC(), true)) {
+						// Откат списания у жениха.
+						player.addAdena("WeddingRefund", customs().getWeddingPrice(), player.getLastFolkNPC(), true);
+						htmltext = sendHtml(partner, "Adena.html", "%fee%", String.valueOf(customs().getWeddingPrice()));
+						break;
+					}
+
 					// Accept the wedding request
 					player.setMarryAccepted(true);
 					Couple couple = CoupleManager.getInstance().getCouple(player.getCoupleId());

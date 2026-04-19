@@ -161,7 +161,11 @@ public final class Race extends Event {
 		_randspawn = COORDS[location];
 		// And spawn NPC
 		recordSpawn(STOP_NPC, _randspawn[0], _randspawn[1], _randspawn[2], _randspawn[3], false, 0);
-		// Transform players and send message
+		// Transform players and send message.
+		// Копируем через snapshot + удаляем в отдельном проходе: прежняя версия
+		// удаляла прямо в итераторе CHM, что даёт не-детерминированное поведение
+		// при параллельном signup'е из других потоков.
+		final java.util.List<L2PcInstance> toRemove = new java.util.ArrayList<>();
 		for (L2PcInstance player : _players) {
 			if (player.isOnline()) {
 				if (player.isInsideRadius(_npc, 500, false, false)) {
@@ -170,10 +174,11 @@ public final class Race extends Event {
 					showRadar(player, _randspawn[0], _randspawn[1], _randspawn[2], 1);
 				} else {
 					sendMessage(player, "I told you stay near me right? Distance was too high, you are excluded from race");
-					_players.remove(player);
+					toRemove.add(player);
 				}
 			}
 		}
+		_players.removeAll(toRemove);
 		// Schedule timeup for Race
 		_eventTask = ThreadPoolManager.getInstance().scheduleGeneral(this::timeUp, TIME_RACE * 60 * 1000);
 	}

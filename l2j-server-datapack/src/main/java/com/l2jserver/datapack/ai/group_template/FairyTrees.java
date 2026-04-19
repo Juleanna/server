@@ -52,10 +52,15 @@ public class FairyTrees extends AbstractNpcAI {
 	
 	@Override
 	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+		// killer может быть null (DoT/зона/трап). calculateDistance и
+		// getSummon() тогда падают NPE в AI-потоке.
+		if (killer == null) {
+			return;
+		}
 		if (npc.calculateDistance(killer, true, false) <= MIN_DISTANCE) {
 			for (int i = 0; i < 20; i++) {
 				final L2Npc guardian = addSpawn(SOUL_GUARDIAN, npc, false, 30000);
-				final L2Playable attacker = isSummon ? killer.getSummon() : killer;
+				final L2Playable attacker = (isSummon && (killer.getSummon() != null)) ? killer.getSummon() : killer;
 				addAttackDesire(guardian, attacker);
 				if (getRandomBoolean()) {
 					guardian.setTarget(attacker);

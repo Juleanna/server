@@ -111,6 +111,13 @@ public final class StakatoNest extends AbstractNpcAI {
 	
 	@Override
 	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+		// killer null-safe: DoT/зона могут убить NPC без killer'а.
+		// Без этого addAttackDesire падает NPE в AI-потоке, startQuestTimer
+		// ставит timer с null-контекстом.
+		if (killer == null) {
+			return;
+		}
+
 		final L2MonsterInstance monster;
 		switch (npc.getId()) {
 			case STAKATO_NURSE:
