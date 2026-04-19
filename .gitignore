@@ -1,0 +1,56 @@
+# --- Claude Code / IDE settings ---
+/.claude/
+/.idea/
+/.vscode/
+*.iml
+*.ipr
+*.iws
+/out/
+
+# --- Maven build artefacts ---
+**/target/
+dependency-reduced-pom.xml
+.flattened-pom.xml
+
+# --- Скомпилированные классы / runtime ---
+*.class
+hs_err_pid*.log
+replay_pid*.log
+
+# --- Логи ---
+**/log/
+*.log
+*.log.*.gz
+
+# --- Java/Gradle caches (на случай миграции) ---
+.gradle/
+build/
+
+# --- OS / временные ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.bak
+*.swp
+*~
+
+# --- Чувствительные данные (на всякий случай) ---
+# НЕ коммитить сгенерированные ключи, keystore, env-файлы.
+**/config/tls/keystore.p12
+**/config/hexid.txt
+.env
+.env.local
+
+# --- Runtime артефакты login/game ---
+# JAR в корне login/ — билд-выхлоп, а не исходник.
+/login/l2jlogin.jar
+/login/libs/
+/login/log/
+/game/log/
+/game/libs/
+
+# --- Прочее ---
+*.rar
+*.zip
+!l2j-server-login/src/main/assembly/zip.xml
