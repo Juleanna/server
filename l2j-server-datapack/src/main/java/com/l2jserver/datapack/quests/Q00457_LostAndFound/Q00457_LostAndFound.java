@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -55,16 +55,16 @@ public final class Q00457_LostAndFound extends Quest {
 	private static Set<L2Spawn> _escortCheckers;
 	
 	public Q00457_LostAndFound() {
-		super(457, Q00457_LostAndFound.class.getSimpleName(), "Lost and Found");
-		addStartNpc(GUMIEL);
-		addSpawnId(ESCORT_CHECKER);
-		addFirstTalkId(GUMIEL);
-		addTalkId(GUMIEL);
-		addKillId(SOLINA_CLAN);
+		super(457);
+		bindStartNpc(GUMIEL);
+		bindSpawn(ESCORT_CHECKER);
+		bindFirstTalk(GUMIEL);
+		bindTalk(GUMIEL);
+		bindKill(SOLINA_CLAN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -165,13 +165,11 @@ public final class Q00457_LostAndFound extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, true);
-		
 		if ((getRandom(100) < CHANCE_SPAWN) && st.isNowAvailable() && (player.getLevel() >= MIN_LV)) {
 			addSpawn(GUMIEL, npc);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
@@ -197,9 +195,8 @@ public final class Q00457_LostAndFound extends Quest {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		_escortCheckers = SpawnTable.getInstance().getSpawns(ESCORT_CHECKER);
-		return super.onSpawn(npc);
 	}
 	
 	public void broadcastNpcSay(L2Npc npc, L2PcInstance player, NpcStringId stringId, boolean whisper) {

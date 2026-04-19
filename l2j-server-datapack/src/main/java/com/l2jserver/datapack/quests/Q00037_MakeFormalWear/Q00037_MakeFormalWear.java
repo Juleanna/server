@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -47,14 +47,14 @@ public class Q00037_MakeFormalWear extends Quest {
 	private static final int MIN_LEVEL = 60;
 	
 	public Q00037_MakeFormalWear() {
-		super(37, Q00037_MakeFormalWear.class.getSimpleName(), "Make Formal Wear");
-		addStartNpc(ALEXIS);
-		addTalkId(ALEXIS, JEREMY, LEIKAR, MIST);
+		super(37);
+		bindStartNpc(ALEXIS);
+		bindTalk(ALEXIS, JEREMY, LEIKAR, MIST);
 		registerQuestItems(SIGNET_RING, ICE_WINE, BOX_OF_COOKIES);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

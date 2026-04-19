@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,15 +50,15 @@ public class Q00324_SweetestVenom extends Quest {
 	private static final int ADENA_COUNT = 5810;
 	
 	public Q00324_SweetestVenom() {
-		super(324, Q00324_SweetestVenom.class.getSimpleName(), "Sweetest Venom");
-		addStartNpc(ASTARON);
-		addTalkId(ASTARON);
-		addKillId(MONSTERS.keySet());
+		super(324);
+		bindStartNpc(ASTARON);
+		bindTalk(ASTARON);
+		bindKill(MONSTERS.keySet());
 		registerQuestItems(VENOM_SAC);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -94,7 +94,7 @@ public class Q00324_SweetestVenom extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && st.isCond(1)) {
 			long sacs = st.getQuestItemsCount(VENOM_SAC);
@@ -109,6 +109,5 @@ public class Q00324_SweetestVenom extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isPet);
 	}
 }

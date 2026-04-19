@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,7 +26,6 @@ import java.net.Socket;
 import java.util.StringTokenizer;
 
 import com.l2jserver.gameserver.cache.HtmCache;
-import com.l2jserver.gameserver.data.sql.impl.TeleportLocationTable;
 import com.l2jserver.gameserver.data.xml.impl.MultisellData;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.datatables.ItemTable;
@@ -79,10 +78,6 @@ public class ReloadHandler implements ITelnetHandler {
 				} else if (type.equals("zone")) {
 					_print.print("Reloading zone tables... ");
 					ZoneManager.getInstance().reload();
-					_print.println("done");
-				} else if (type.equals("teleports")) {
-					_print.print("Reloading telport location table... ");
-					TeleportLocationTable.getInstance().reloadAll();
 					_print.println("done");
 				} else if (type.equals("spawns")) {
 					_print.print("Reloading spawns... ");

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,15 +18,15 @@
  */
 package com.l2jserver.datapack.quests.Q00261_CollectorsDream;
 
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.QuestItemChanceHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.model.variables.PlayerVariables;
 import com.l2jserver.gameserver.network.NpcStringId;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 import com.l2jserver.gameserver.util.Util;
 
 /**
@@ -46,19 +46,19 @@ public final class Q00261_CollectorsDream extends Quest {
 	private static final QuestItemChanceHolder SPIDER_LEG = new QuestItemChanceHolder(1087, 8L);
 	// Misc
 	private static final int MIN_LVL = 15;
-	// Message
-	private static final ExShowScreenMessage MESSAGE = new ExShowScreenMessage(NpcStringId.LAST_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+	
+	private static final int GUIDE_MISSION = 41;
 	
 	public Q00261_CollectorsDream() {
-		super(261, Q00261_CollectorsDream.class.getSimpleName(), "Collector's Dream");
-		addStartNpc(ALSHUPES);
-		addTalkId(ALSHUPES);
-		addKillId(MONSTERS);
+		super(261);
+		bindStartNpc(ALSHUPES);
+		bindTalk(ALSHUPES);
+		bindKill(MONSTERS);
 		registerQuestItems(SPIDER_LEG.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equals("30222-03.htm")) {
 			st.startQuest();
@@ -68,14 +68,13 @@ public final class Q00261_CollectorsDream extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && st.isCond(1) && Util.checkIfInRange(1500, npc, killer, true)) {
 			if (giveItemRandomly(st.getPlayer(), npc, SPIDER_LEG, true)) {
 				st.setCond(2);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -95,7 +94,25 @@ public final class Q00261_CollectorsDream extends Quest {
 					}
 					case 2: {
 						if (hasItemsAtLimit(player, SPIDER_LEG)) {
-							giveNewbieReward(player);
+							// Newbie Guide
+							final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+							if (newbieGuide != null) {
+								final var newbieGuideQs = newbieGuide.getQuestState(player, true);
+								if (!newbieGuideQs.haveNRMemo(player, GUIDE_MISSION)) {
+									newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+									newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, 100000);
+									
+									showOnScreenMsg(player, NpcStringId.LAST_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+								} else {
+									if (((newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) % 100000000) / 10000000) != 1) {
+										newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+										newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) + 10000000);
+										
+										showOnScreenMsg(player, NpcStringId.LAST_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+									}
+								}
+							}
+							
 							st.giveAdena(1000, true);
 							st.addExpAndSp(2000, 0);
 							st.exitQuest(true, true);
@@ -108,16 +125,5 @@ public final class Q00261_CollectorsDream extends Quest {
 			}
 		}
 		return htmltext;
-	}
-	
-	public static void giveNewbieReward(L2PcInstance player) {
-		final PlayerVariables vars = player.getVariables();
-		if (vars.getString("GUIDE_MISSION", null) == null) {
-			vars.set("GUIDE_MISSION", 100000);
-			player.sendPacket(MESSAGE);
-		} else if (((vars.getInt("GUIDE_MISSION") % 100000000) / 10000000) != 1) {
-			vars.set("GUIDE_MISSION", vars.getInt("GUIDE_MISSION") + 10000000);
-			player.sendPacket(MESSAGE);
-		}
 	}
 }

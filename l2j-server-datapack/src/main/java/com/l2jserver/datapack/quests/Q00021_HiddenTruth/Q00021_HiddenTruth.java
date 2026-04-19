@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -63,16 +63,16 @@ public class Q00021_HiddenTruth extends Quest {
 	private boolean MOVE_ENDED = false;
 	
 	public Q00021_HiddenTruth() {
-		super(21, Q00021_HiddenTruth.class.getSimpleName(), "Hidden Truth");
-		addStartNpc(MYSTERIOUS_WIZARD);
-		addTalkId(MYSTERIOUS_WIZARD, TOMBSTONE, GHOST_OF_VON_HELLMAN, GHOST_OF_VON_HELLMANS_PAGE, BROKEN_BOOKSHELF, AGRIPEL, BENEDICT, DOMINIC, INNOCENTIN);
-		addSeeCreatureId(GHOST_OF_VON_HELLMANS_PAGE);
-		addRouteFinishedId(GHOST_OF_VON_HELLMANS_PAGE);
+		super(21);
+		bindStartNpc(MYSTERIOUS_WIZARD);
+		bindTalk(MYSTERIOUS_WIZARD, TOMBSTONE, GHOST_OF_VON_HELLMAN, GHOST_OF_VON_HELLMANS_PAGE, BROKEN_BOOKSHELF, AGRIPEL, BENEDICT, DOMINIC, INNOCENTIN);
+		bindSeeCreature(GHOST_OF_VON_HELLMANS_PAGE);
+		bindRouteFinished(GHOST_OF_VON_HELLMANS_PAGE);
 		registerQuestItems(CROSS_OF_EINHASAD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -341,11 +341,10 @@ public class Q00021_HiddenTruth extends Quest {
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (creature.isPlayer()) {
 			playSound((L2PcInstance) creature, Sound.HORROR_01);
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,11 +21,12 @@ package com.l2jserver.datapack.quests.Dummy;
 import com.l2jserver.gameserver.model.quest.Quest;
 
 /**
+ * Territory War (728)
  * @author Zealar
  * @since 2.6.0.0
  */
 public class Q00728_TerritoryWar extends Quest {
 	public Q00728_TerritoryWar() {
-		super(728, Q00728_TerritoryWar.class.getSimpleName(), "Territory War");
+		super(728);
 	}
 }

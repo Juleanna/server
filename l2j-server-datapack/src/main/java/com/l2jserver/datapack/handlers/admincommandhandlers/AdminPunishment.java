@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -25,8 +25,9 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.data.sql.impl.CharNameTable;
@@ -45,7 +46,7 @@ import com.l2jserver.gameserver.util.Util;
  * @author UnAfraid
  */
 public class AdminPunishment implements IAdminCommandHandler {
-	private static final Logger _log = Logger.getLogger(AdminPunishment.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminPunishment.class);
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_punishment",
@@ -61,7 +62,7 @@ public class AdminPunishment implements IAdminCommandHandler {
 		"admin_unjail"
 	};
 	
-	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 	
 	@Override
 	public boolean useAdminCommand(String command, L2PcInstance activeChar) {
@@ -79,7 +80,7 @@ public class AdminPunishment implements IAdminCommandHandler {
 						content = content.replaceAll("%affects%", Util.implode(PunishmentAffect.values(), ";"));
 						activeChar.sendPacket(new NpcHtmlMessage(0, 1, content));
 					} else {
-						_log.log(Level.WARNING, getClass().getSimpleName() + ": data/html/admin/punishment.htm is missing");
+						LOG.warn("data/html/admin/punishment.htm is missing");
 					}
 				} else {
 					final String subcmd = st.nextToken();
@@ -128,7 +129,7 @@ public class AdminPunishment implements IAdminCommandHandler {
 								content = content.replaceAll("%affect_type%", affect.name());
 								activeChar.sendPacket(new NpcHtmlMessage(0, 1, content));
 							} else {
-								_log.log(Level.WARNING, getClass().getSimpleName() + ": data/html/admin/punishment-info.htm is missing");
+								LOG.warn("data/html/admin/punishment-info.htm is missing");
 							}
 							break;
 						}
@@ -157,7 +158,7 @@ public class AdminPunishment implements IAdminCommandHandler {
 								content = content.replaceAll("%ip%", target.getIPAddress());
 								activeChar.sendPacket(new NpcHtmlMessage(0, 1, content));
 							} else {
-								_log.log(Level.WARNING, getClass().getSimpleName() + ": data/html/admin/punishment-player.htm is missing");
+								LOG.warn("data/html/admin/punishment-player.htm is missing");
 							}
 							break;
 						}
@@ -317,7 +318,7 @@ public class AdminPunishment implements IAdminCommandHandler {
 		return true;
 	}
 	
-	private static final String findCharId(String key) {
+	private static String findCharId(String key) {
 		int charId = CharNameTable.getInstance().getIdByName(key);
 		if (charId > 0) // Yeah its a char name!
 		{

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,14 +38,13 @@ import com.l2jserver.gameserver.util.Util;
  * @author BiggBoss
  */
 public final class FortressOfResistance extends ClanHallSiegeEngine {
-	private final int MESSENGER = 35382;
-	private final int BLOODY_LORD_NURKA = 35375;
+	private static final int MESSENGER = 35382;
+	private static final int BLOODY_LORD_NURKA = 35375;
 	
-	private final Location[] NURKA_COORDS = {
+	private static final Location[] NURKA_COORDS = {
 		new Location(45109, 112124, -1900), // 30%
 		new Location(47653, 110816, -2110), // 40%
-		new Location(47247, 109396, -2000)
-		// 30%
+		new Location(47247, 109396, -2000)  // 30%
 	};
 	
 	private L2Spawn _nurka;
@@ -53,10 +52,10 @@ public final class FortressOfResistance extends ClanHallSiegeEngine {
 	private NpcHtmlMessage _messengerMsg;
 	
 	private FortressOfResistance() {
-		super(FortressOfResistance.class.getSimpleName(), "conquerablehalls", FORTRESS_RESSISTANCE);
-		addFirstTalkId(MESSENGER);
-		addKillId(BLOODY_LORD_NURKA);
-		addAttackId(BLOODY_LORD_NURKA);
+		super(FORTRESS_RESSISTANCE);
+		bindFirstTalk(MESSENGER);
+		bindKill(BLOODY_LORD_NURKA);
+		bindAttack(BLOODY_LORD_NURKA);
 		buildMessengerMessage();
 		
 		try {
@@ -101,9 +100,9 @@ public final class FortressOfResistance extends ClanHallSiegeEngine {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
 		if (!_hall.isInSiege()) {
-			return null;
+			return;
 		}
 		
 		int clanId = player.getClanId();
@@ -112,13 +111,12 @@ public final class FortressOfResistance extends ClanHallSiegeEngine {
 			_damageToNurka.put(clanId, clanDmg);
 			
 		}
-		return null;
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (!_hall.isInSiege()) {
-			return null;
+			return;
 		}
 		
 		_missionAccomplished = true;
@@ -129,7 +127,6 @@ public final class FortressOfResistance extends ClanHallSiegeEngine {
 			cancelSiegeTask();
 			endSiege();
 		}
-		return null;
 	}
 	
 	@Override

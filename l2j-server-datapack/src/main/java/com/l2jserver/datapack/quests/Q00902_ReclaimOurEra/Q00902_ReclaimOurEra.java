@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -61,10 +61,10 @@ public final class Q00902_ReclaimOurEra extends Quest {
 	}
 	
 	public Q00902_ReclaimOurEra() {
-		super(902, Q00902_ReclaimOurEra.class.getSimpleName(), "Reclaim Our Era");
-		addStartNpc(MATHIAS);
-		addTalkId(MATHIAS);
-		addKillId(MONSTER_DROPS.keySet());
+		super(902);
+		bindStartNpc(MATHIAS);
+		bindTalk(MATHIAS);
+		bindKill(MONSTER_DROPS.keySet());
 		registerQuestItems(SHATTERED_BONES, CANNIBALISTIC_STAKATO_LDR_CLAW, ANAIS_SCROLL);
 	}
 	
@@ -77,7 +77,7 @@ public final class Q00902_ReclaimOurEra extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -130,7 +130,7 @@ public final class Q00902_ReclaimOurEra extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (killer.isInParty()) {
 			for (L2PcInstance member : killer.getParty().getMembers()) {
 				giveItem(npc, member);
@@ -138,7 +138,6 @@ public final class Q00902_ReclaimOurEra extends Quest {
 		} else {
 			giveItem(npc, killer);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

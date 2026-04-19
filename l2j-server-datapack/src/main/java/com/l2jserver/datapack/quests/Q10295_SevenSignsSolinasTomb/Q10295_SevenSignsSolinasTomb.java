@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -59,14 +59,14 @@ public final class Q10295_SevenSignsSolinasTomb extends Quest {
 	private static final int MIN_LEVEL = 81;
 	
 	public Q10295_SevenSignsSolinasTomb() {
-		super(10295, Q10295_SevenSignsSolinasTomb.class.getSimpleName(), "Seven Signs, Solina's Tomb");
-		addStartNpc(ERISS_EVIL_THOUGHTS);
-		addTalkId(ERISS_EVIL_THOUGHTS, SOLINAS_EVIL_THOUGHTS, SOLINA, ERIS, ANAIS, JUDE_VAN_ETINA, TELEPORT_CONTROL_DEVICE_1, POWERFUL_DEVICE_1, POWERFUL_DEVICE_2, POWERFUL_DEVICE_3, POWERFUL_DEVICE_4, TELEPORT_CONTROL_DEVICE_2, TOMB_OF_THE_SAINTESS, TELEPORT_CONTROL_DEVICE_3, ALTAR_OF_HALLOWS_1, ALTAR_OF_HALLOWS_2, ALTAR_OF_HALLOWS_3, ALTAR_OF_HALLOWS_4, ELCADIA);
+		super(10295);
+		bindStartNpc(ERISS_EVIL_THOUGHTS);
+		bindTalk(ERISS_EVIL_THOUGHTS, SOLINAS_EVIL_THOUGHTS, SOLINA, ERIS, ANAIS, JUDE_VAN_ETINA, TELEPORT_CONTROL_DEVICE_1, POWERFUL_DEVICE_1, POWERFUL_DEVICE_2, POWERFUL_DEVICE_3, POWERFUL_DEVICE_4, TELEPORT_CONTROL_DEVICE_2, TOMB_OF_THE_SAINTESS, TELEPORT_CONTROL_DEVICE_3, ALTAR_OF_HALLOWS_1, ALTAR_OF_HALLOWS_2, ALTAR_OF_HALLOWS_3, ALTAR_OF_HALLOWS_4, ELCADIA);
 		registerQuestItems(SCROLL_OF_ABSTINENCE, SHIELD_OF_SACRIFICE, SWORD_OF_HOLY_SPIRIT, STAFF_OF_BLESSING);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

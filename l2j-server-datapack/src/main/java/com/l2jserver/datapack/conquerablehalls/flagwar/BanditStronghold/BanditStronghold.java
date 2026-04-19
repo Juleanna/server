@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -82,7 +82,7 @@ public final class BanditStronghold extends FlagWar {
 	}
 	
 	private BanditStronghold() {
-		super(BanditStronghold.class.getSimpleName(), BANDIT_STRONGHOLD);
+		super(BANDIT_STRONGHOLD);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -19,11 +19,10 @@
 package com.l2jserver.datapack.ai.group_template;
 
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
-import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcEventReceived;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -58,25 +57,24 @@ public final class SilentValley extends AbstractNpcAI {
 	};
 	
 	public SilentValley() {
-		super(SilentValley.class.getSimpleName(), "ai/group_template");
-		addAttackId(MOBS);
-		addAttackId(CHEST, GUARD1, GUARD2);
-		addEventReceivedId(GUARD1, GUARD2);
-		addKillId(MOBS);
-		addSeeCreatureId(MOBS);
-		addSeeCreatureId(GUARD1, GUARD2);
-		addSpawnId(CHEST, GUARD2);
+		bindAttack(MOBS);
+		bindAttack(CHEST, GUARD1, GUARD2);
+		bindEventReceived(GUARD1, GUARD2);
+		bindKill(MOBS);
+		bindSeeCreature(MOBS);
+		bindSeeCreature(GUARD1, GUARD2);
+		bindSpawn(CHEST, GUARD2);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((npc != null) && !npc.isDead()) {
 			switch (event) {
 				case "CLEAR":
 					npc.doDie(null);
 					break;
 				case "CLEAR_EVENT":
-					npc.broadcastEvent("CLEAR_ALL_INSTANT", 2000, null);
+					npc.broadcastScriptEvent("CLEAR_ALL_INSTANT", 2000);
 					npc.doDie(null);
 					break;
 				case "SPAWN_CHEST":
@@ -88,7 +86,7 @@ public final class SilentValley extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
 		switch (npc.getId()) {
 			case CHEST: {
 				if (!isSummon && npc.isScriptValue(0)) {
@@ -98,7 +96,7 @@ public final class SilentValley extends AbstractNpcAI {
 					npc.doCast(BETRAYAL);
 				} else if (isSummon || (getRandom(100) < CHEST_DIE_CHANCE)) {
 					npc.dropItem(player, SACK, 1);
-					npc.broadcastEvent("CLEAR_ALL", 2000, null);
+					npc.broadcastScriptEvent("CLEAR_ALL", 2000);
 					npc.doDie(null);
 					cancelQuestTimer("CLEAR_EVENT", npc, null);
 				}
@@ -117,11 +115,10 @@ public final class SilentValley extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, player, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (getRandom(1000) < SPAWN_CHANCE) {
 			final int newZ = npc.getZ() + 100;
 			addSpawn(GUARD2, npc.getX() + 100, npc.getY(), newZ, 0, false, 0);
@@ -129,13 +126,12 @@ public final class SilentValley extends AbstractNpcAI {
 			addSpawn(GUARD1, npc.getX(), npc.getY() + 100, newZ, 0, false, 0);
 			addSpawn(GUARD1, npc.getX(), npc.getY() - 100, newZ, 0, false, 0);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (creature.isPlayable()) {
-			final L2PcInstance player = (isSummon) ? ((L2Summon) creature).getOwner() : creature.getActingPlayer();
+			final var player = creature.getActingPlayer();
 			if ((npc.getId() == GUARD1) || (npc.getId() == GUARD2)) {
 				npc.setTarget(player);
 				npc.doCast(BLAZE);
@@ -144,24 +140,23 @@ public final class SilentValley extends AbstractNpcAI {
 				addAttackDesire(npc, player);
 			}
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == CHEST) {
 			npc.setIsInvul(true);
 			startQuestTimer("CLEAR_EVENT", 300000, npc, null);
 		} else {
 			startQuestTimer("SPAWN_CHEST", 10000, npc, null);
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onEventReceived(String eventName, L2Npc sender, L2Npc receiver, L2Object reference) {
+	public void onEventReceived(NpcEventReceived event) {
+		final var receiver = event.receiver();
 		if ((receiver != null) && !receiver.isDead()) {
-			switch (eventName) {
+			switch (event.eventName()) {
 				case "CLEAR_ALL":
 					startQuestTimer("CLEAR", 60000, receiver, null);
 					break;
@@ -170,6 +165,5 @@ public final class SilentValley extends AbstractNpcAI {
 					break;
 			}
 		}
-		return super.onEventReceived(eventName, sender, receiver, reference);
 	}
 }

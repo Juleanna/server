@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,14 +18,16 @@
  */
 package com.l2jserver.datapack.ai.group_template;
 
+import static com.l2jserver.gameserver.ai.CtrlIntention.AI_INTENTION_ATTACK;
+
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.gameserver.ai.CtrlIntention;
-import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcEventReceived;
 import com.l2jserver.gameserver.network.NpcStringId;
 
 /**
@@ -44,14 +46,13 @@ public final class TurekOrcs extends AbstractNpcAI {
 	};
 	
 	public TurekOrcs() {
-		super(TurekOrcs.class.getSimpleName(), "ai/group_template");
-		addAttackId(MOBS);
-		addEventReceivedId(MOBS);
-		addMoveFinishedId(MOBS);
+		bindAttack(MOBS);
+		bindEventReceived(MOBS);
+		bindMoveFinished(MOBS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("checkState") && !npc.isDead() && (npc.getAI().getIntention() != CtrlIntention.AI_INTENTION_ATTACK)) {
 			if ((npc.getCurrentHp() > (npc.getMaxHp() * 0.7)) && (npc.getVariables().getInt("state") == 2)) {
 				npc.getVariables().set("state", 3);
@@ -60,11 +61,11 @@ public final class TurekOrcs extends AbstractNpcAI {
 				npc.getVariables().remove("state");
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (!npc.getVariables().hasVariable("isHit")) {
 			npc.getVariables().set("isHit", 1);
 		} else if ((npc.getCurrentHp() < (npc.getMaxHp() * 0.5)) && (npc.getCurrentHp() > (npc.getMaxHp() * 0.3)) && (attacker.getCurrentHp() > (attacker.getMaxHp() * 0.25)) && npc.hasAIValue("fleeX") && npc.hasAIValue("fleeY") && npc.hasAIValue("fleeZ") && (npc.getVariables().getInt("state") == 0)
@@ -77,18 +78,18 @@ public final class TurekOrcs extends AbstractNpcAI {
 			npc.getVariables().set("state", 1);
 			npc.getVariables().set("attacker", attacker.getObjectId());
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onEventReceived(String eventName, L2Npc sender, L2Npc receiver, L2Object reference) {
-		if (eventName.equals("WARNING") && !receiver.isDead() && (receiver.getAI().getIntention() != CtrlIntention.AI_INTENTION_ATTACK) && (reference != null) && (reference.getActingPlayer() != null) && !reference.getActingPlayer().isDead()) {
+	public void onEventReceived(NpcEventReceived event) {
+		final var receiver = event.receiver();
+		if (event.eventName().equals("WARNING") && !receiver.isDead() && (receiver.getAI().getIntention() != AI_INTENTION_ATTACK) && //
+			(event.reference() != null) && (event.reference().getActingPlayer() != null) && !event.reference().getActingPlayer().isDead()) {
 			receiver.getVariables().set("state", 3);
 			receiver.setIsRunning(true);
-			((L2Attackable) receiver).addDamageHate(reference.getActingPlayer(), 0, 99999);
-			receiver.getAI().setIntention(CtrlIntention.AI_INTENTION_ATTACK, reference.getActingPlayer());
+			((L2Attackable) receiver).addDamageHate(event.reference().getActingPlayer(), 0, 99999);
+			receiver.getAI().setIntention(AI_INTENTION_ATTACK, event.reference().getActingPlayer());
 		}
-		return super.onEventReceived(eventName, sender, receiver, reference);
 	}
 	
 	@Override
@@ -99,7 +100,7 @@ public final class TurekOrcs extends AbstractNpcAI {
 				npc.disableCoreAI(false);
 				startQuestTimer("checkState", 15000, npc, null);
 				npc.getVariables().set("state", 2);
-				npc.broadcastEvent("WARNING", 400, L2World.getInstance().getPlayer(npc.getVariables().getInt("attacker")));
+				npc.broadcastScriptEvent("WARNING", 400, L2World.getInstance().getPlayer(npc.getVariables().getInt("attacker")));
 			} else {
 				npc.getAI().setIntention(CtrlIntention.AI_INTENTION_MOVE_TO, new Location(npc.getAIValue("fleeX"), npc.getAIValue("fleeY"), npc.getAIValue("fleeZ")));
 			}

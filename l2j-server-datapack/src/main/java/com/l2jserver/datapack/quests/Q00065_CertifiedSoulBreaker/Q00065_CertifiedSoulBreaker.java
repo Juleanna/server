@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -73,21 +73,21 @@ public final class Q00065_CertifiedSoulBreaker extends Quest {
 	private static final Location MOVE_TO = new Location(16490, 145839, -3080);
 	
 	public Q00065_CertifiedSoulBreaker() {
-		super(65, Q00065_CertifiedSoulBreaker.class.getSimpleName(), "Certified Soul Breaker");
-		addStartNpc(GRAND_MASTER_VITUS);
-		addTalkId(GRAND_MASTER_VITUS, CAPTAIN_LUCAS, JACOB, GUARD_HARLAN, GUARD_XABER, GUARD_LIAM, GUARD_VESA, GUARD_ZEROME, WHARF_MANAGER_FELTON, KEKROPUS, VICE_HIERARCH_CASCA, GRAND_MASTER_HOLST, GRAND_MASTER_MELDINA, KATENAR, CARGO_BOX, SUSPICIOUS_MAN);
-		addKillId(WYRM, GUARDIAN_ANGEL);
-		addSpawnId(GUARDIAN_ANGEL, SUSPICIOUS_MAN);
+		super(65);
+		bindStartNpc(GRAND_MASTER_VITUS);
+		bindTalk(GRAND_MASTER_VITUS, CAPTAIN_LUCAS, JACOB, GUARD_HARLAN, GUARD_XABER, GUARD_LIAM, GUARD_VESA, GUARD_ZEROME, WHARF_MANAGER_FELTON, KEKROPUS, VICE_HIERARCH_CASCA, GRAND_MASTER_HOLST, GRAND_MASTER_MELDINA, KATENAR, CARGO_BOX, SUSPICIOUS_MAN);
+		bindKill(WYRM, GUARDIAN_ANGEL);
+		bindSpawn(GUARDIAN_ANGEL, SUSPICIOUS_MAN);
 		registerQuestItems(SEALED_DOCUMENT, WYRM_HEART.getId(), KEKROPUS_RECOMMENDATION);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ("DESPAWN_5".equals(event)) {
 			if (npc != null) {
 				npc.deleteMe();
 			}
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		} else if ("DESPAWN_70".equals(event)) {
 			final L2Npc npc0 = npc.getVariables().getObject("npc0", L2Npc.class);
 			final L2PcInstance c0 = npc.getVariables().getObject("player0", L2PcInstance.class);
@@ -100,7 +100,7 @@ public final class Q00065_CertifiedSoulBreaker extends Quest {
 				}
 			}
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState qs = getQuestState(player, false);
@@ -249,7 +249,7 @@ public final class Q00065_CertifiedSoulBreaker extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -279,7 +279,6 @@ public final class Q00065_CertifiedSoulBreaker extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -535,7 +534,7 @@ public final class Q00065_CertifiedSoulBreaker extends Quest {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == SUSPICIOUS_MAN) {
 			startQuestTimer("DESPAWN_5", 5000, npc, null);
 			npc.broadcastPacket(new NpcSay(npc, Say2.NPC_ALL, NpcStringId.DRATS_HOW_COULD_I_BE_SO_WRONG));
@@ -548,6 +547,5 @@ public final class Q00065_CertifiedSoulBreaker extends Quest {
 				npc.broadcastPacket(new NpcSay(npc, Say2.NPC_ALL, NpcStringId.S1_STEP_BACK_FROM_THE_CONFOUNDED_BOX_I_WILL_TAKE_IT_MYSELF).addStringParameter(c0.getAppearance().getVisibleName()));
 			}
 		}
-		return super.onSpawn(npc);
 	}
 }

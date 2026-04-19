@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -86,15 +86,15 @@ public final class Q00224_TestOfSagittarius extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00224_TestOfSagittarius() {
-		super(224, Q00224_TestOfSagittarius.class.getSimpleName(), "Test Of Sagittarius");
-		addStartNpc(GUILD_PRESIDENT_BERNARD);
-		addTalkId(GUILD_PRESIDENT_BERNARD, PREFECT_VOKIAN, SAGITTARIUS_HAMIL, SIR_ARON_TANFORD, MAGISTER_GAUEN);
-		addKillId(ANT, ANT_CAPTAIN, ANT_OVERSEER, ANT_RECRUIT, ANT_PATROL, ANT_GUARD, NOBLE_ANT, NOBLE_ANT_LEADER, MARSH_STAKATO_WORKER, MARSH_STAKATO_SOLDIER, MARSH_SPIDER, MARSH_STAKATO_DRONE, BREKA_ORC_SHAMAN, BREKA_ORC_OVERLORD, ROAD_SCAVENGER, MANASHEN_GARGOYLE, LETO_LIZARDMAN, LETO_LIZARDMAN_ARCHER, LETO_LIZARDMAN_SOLDIER, LETO_LIZARDMAN_WARRIOR, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OVERLORD, SERPENT_DEMON_KADESH);
+		super(224);
+		bindStartNpc(GUILD_PRESIDENT_BERNARD);
+		bindTalk(GUILD_PRESIDENT_BERNARD, PREFECT_VOKIAN, SAGITTARIUS_HAMIL, SIR_ARON_TANFORD, MAGISTER_GAUEN);
+		bindKill(ANT, ANT_CAPTAIN, ANT_OVERSEER, ANT_RECRUIT, ANT_PATROL, ANT_GUARD, NOBLE_ANT, NOBLE_ANT_LEADER, MARSH_STAKATO_WORKER, MARSH_STAKATO_SOLDIER, MARSH_SPIDER, MARSH_STAKATO_DRONE, BREKA_ORC_SHAMAN, BREKA_ORC_OVERLORD, ROAD_SCAVENGER, MANASHEN_GARGOYLE, LETO_LIZARDMAN, LETO_LIZARDMAN_ARCHER, LETO_LIZARDMAN_SOLDIER, LETO_LIZARDMAN_WARRIOR, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OVERLORD, SERPENT_DEMON_KADESH);
 		registerQuestItems(CRESCENT_MOON_BOW, BERNARDS_INTRODUCTION, HAMILS_1ST_LETTER, HAMILS_2ND_LETTER, HAMILS_3RD_LETTER, HUNTERS_1ST_RUNE, HUNTERS_2ND_RUNE, TALISMAN_OF_KADESH, TALISMAN_OF_SNAKE, MITHRIL_CLIP, STAKATO_CHITIN, REINFORCED_BOWSTRING, MANASHENS_HORN, BLOOD_OF_LIZARDMAN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -166,7 +166,7 @@ public final class Q00224_TestOfSagittarius extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -291,7 +291,6 @@ public final class Q00224_TestOfSagittarius extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,6 +28,7 @@ import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.NpcStringId;
@@ -71,16 +72,15 @@ public final class MonasteryOfSilence extends AbstractNpcAI {
 	};
 	
 	public MonasteryOfSilence() {
-		super(MonasteryOfSilence.class.getSimpleName(), "ai/group_template");
-		addSkillSeeId(DIVINITY_CLAN);
-		addAttackId(KNIGHT, CAPTAIN, GUIDE, SEEKER, ASCETIC);
-		addNpcHateId(GUIDE, SEEKER, SAVIOR, ASCETIC);
-		addAggroRangeEnterId(GUIDE, SEEKER, SAVIOR, ASCETIC);
-		addSpawnId(SCARECROW);
+		bindSkillSee(DIVINITY_CLAN);
+		bindAttack(KNIGHT, CAPTAIN, GUIDE, SEEKER, ASCETIC);
+		bindNpcHate(GUIDE, SEEKER, SAVIOR, ASCETIC);
+		bindAggroRangeEnter(GUIDE, SEEKER, SAVIOR, ASCETIC);
+		bindSpawn(SCARECROW);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "TRAINING": {
 				for (L2Character character : npc.getKnownList().getKnownCharactersInRadius(400)) {
@@ -116,13 +116,12 @@ public final class MonasteryOfSilence extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
 		final L2Attackable mob = (L2Attackable) npc;
-		
 		switch (npc.getId()) {
 			case KNIGHT: {
 				if ((getRandom(100) < 10) && (mob.getMostHated() == player) && mob.checkDoCastConditions(WARRIOR_THRUSTING.getSkill())) {
@@ -165,7 +164,6 @@ public final class MonasteryOfSilence extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAttack(npc, player, damage, isSummon);
 	}
 	
 	@Override
@@ -174,8 +172,10 @@ public final class MonasteryOfSilence extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		final var player = event.player();
 		if (player.getActiveWeaponInstance() != null) {
+			final var npc = event.npc();
 			SkillHolder skill = null;
 			switch (npc.getId()) {
 				case GUIDE: {
@@ -216,11 +216,10 @@ public final class MonasteryOfSilence extends AbstractNpcAI {
 			
 			addAttackDesire(npc, player);
 		}
-		return super.onAggroRangeEnter(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if (skill.hasEffectType(L2EffectType.AGGRESSION)) {
 			for (var obj : targets) {
 				if (obj.equals(npc)) {
@@ -230,14 +229,12 @@ public final class MonasteryOfSilence extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.setIsInvul(true);
 		npc.disableCoreAI(true);
 		startQuestTimer("TRAINING", 30000, npc, null, true);
-		return super.onSpawn(npc);
 	}
 }

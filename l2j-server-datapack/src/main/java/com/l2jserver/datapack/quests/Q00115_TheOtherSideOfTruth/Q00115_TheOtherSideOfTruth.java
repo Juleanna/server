@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -47,14 +47,14 @@ public class Q00115_TheOtherSideOfTruth extends Quest {
 	private static final int MIN_LEVEL = 53;
 	
 	public Q00115_TheOtherSideOfTruth() {
-		super(115, Q00115_TheOtherSideOfTruth.class.getSimpleName(), "The Other Side of Truth");
-		addStartNpc(RAFFORTY);
-		addTalkId(RAFFORTY, MISA, KIER, ICE_SCULPTURE1, ICE_SCULPTURE2, ICE_SCULPTURE3, ICE_SCULPTURE4);
+		super(115);
+		bindStartNpc(RAFFORTY);
+		bindTalk(RAFFORTY, MISA, KIER, ICE_SCULPTURE1, ICE_SCULPTURE2, ICE_SCULPTURE3, ICE_SCULPTURE4);
 		registerQuestItems(MISAS_LETTER, RAFFORTYS_LETTER, PIECE_OF_TABLET, REPORT_PIECE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

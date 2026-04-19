@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -24,7 +24,6 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.network.serverpackets.RadarControl;
 
 /**
  * Control Device of the Giants (307)
@@ -48,14 +47,14 @@ public class Q00307_ControlDeviceOfTheGiants extends Quest {
 	private static L2Npc hekaton;
 	
 	public Q00307_ControlDeviceOfTheGiants() {
-		super(307, Q00307_ControlDeviceOfTheGiants.class.getSimpleName(), "Control Device of the Giants");
-		addStartNpc(DROPH);
-		addTalkId(DROPH);
-		addKillId(GORGOLOS, LAST_TITAN_UTENUS, GIANT_MARPANAK, HEKATON_PRIME);
+		super(307);
+		bindStartNpc(DROPH);
+		bindTalk(DROPH);
+		bindKill(GORGOLOS, LAST_TITAN_UTENUS, GIANT_MARPANAK, HEKATON_PRIME);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -70,13 +69,13 @@ public class Q00307_ControlDeviceOfTheGiants extends Quest {
 				}
 				break;
 			case "32711-05a.html":
-				player.sendPacket(new RadarControl(0, 2, 186214, 61591, -4152));
+				showRadar(player, 186214, 61591, -4152, 2);
 				break;
 			case "32711-05b.html":
-				player.sendPacket(new RadarControl(0, 2, 187554, 60800, -4984));
+				showRadar(player, 187554, 60800, -4984, 2);
 				break;
 			case "32711-05c.html":
-				player.sendPacket(new RadarControl(0, 2, 193432, 53922, -4368));
+				showRadar(player, 193432, 53922, -4368, 2);
 				break;
 			case "spawn":
 				if (!hasQuestItems(player, CET_1_SHEET, CET_2_SHEET, CET_3_SHEET)) {
@@ -107,10 +106,10 @@ public class Q00307_ControlDeviceOfTheGiants extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
 		if (partyMember == null) {
-			return super.onKill(npc, player, isSummon);
+			return;
 		}
 		final QuestState st = getQuestState(partyMember, false);
 		
@@ -144,7 +143,6 @@ public class Q00307_ControlDeviceOfTheGiants extends Quest {
 				break;
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

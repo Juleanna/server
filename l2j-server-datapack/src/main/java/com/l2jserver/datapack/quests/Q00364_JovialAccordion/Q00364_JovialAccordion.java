@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -47,14 +47,14 @@ public final class Q00364_JovialAccordion extends Quest {
 	private static final int MIN_LEVEL = 15;
 	
 	public Q00364_JovialAccordion() {
-		super(364, Q00364_JovialAccordion.class.getSimpleName(), "Jovial Accordion");
-		addStartNpc(BARBADO);
-		addTalkId(BARBADO, BEER_CHEST, CLOTH_CHEST, SABRIN, XABER, SWAN);
+		super(364);
+		bindStartNpc(BARBADO);
+		bindTalk(BARBADO, BEER_CHEST, CLOTH_CHEST, SABRIN, XABER, SWAN);
 		registerQuestItems(STOLEN_BLACK_BEER, STOLEN_EVENT_CLOTHES, CLOTHES_CHEST_KEY, BEER_CHEST_KEY);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

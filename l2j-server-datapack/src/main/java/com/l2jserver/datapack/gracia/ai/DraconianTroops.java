@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -69,16 +69,14 @@ public class DraconianTroops extends AbstractNpcAI {
 	};
 	
 	public DraconianTroops() {
-		super(DraconianTroops.class.getSimpleName(), "gracia/AI");
-		addKillId(MOB_LIST);
+		bindKill(MOB_LIST);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (getRandom(10000) < 300) {
 			L2Attackable spawn = (L2Attackable) addSpawn(DRACONIAN_SHADOW_WIFE, npc.getLocation(), false, 0, false, killer.getInstanceId());
 			addAttackDesire(spawn, killer, 10000);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

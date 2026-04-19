@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -123,16 +123,16 @@ public final class Q00420_LittleWing extends Quest {
 	private static final int MIN_LVL = 35;
 	
 	public Q00420_LittleWing() {
-		super(420, Q00420_LittleWing.class.getSimpleName(), "Little Wing");
-		addStartNpc(COOPER);
-		addTalkId(MARIA, CRONOS, BYRON, MIMYU, EXARION, ZWOV, KALIBRAN, SUZET, SHAMHAI, COOPER);
-		addAttackId(DELUXE_STONE_BREAKERS);
-		addKillId(TOAD_LORD, DEAD_SEEKER, MARSH_SPIDER, BREKA_OVERLORD, ROAD_SCAVENGER, LETO_WARRIOR);
+		super(420);
+		bindStartNpc(COOPER);
+		bindTalk(MARIA, CRONOS, BYRON, MIMYU, EXARION, ZWOV, KALIBRAN, SUZET, SHAMHAI, COOPER);
+		bindAttack(DELUXE_STONE_BREAKERS);
+		bindKill(TOAD_LORD, DEAD_SEEKER, MARSH_SPIDER, BREKA_OVERLORD, ROAD_SCAVENGER, LETO_WARRIOR);
 		registerQuestItems(FAIRY_DUST, FAIRY_STONE, DELUXE_FAIRY_STONE, FAIRY_STONE_LIST, DELUXE_STONE_LIST, TOAD_SKIN.getId(), MONKSHOOD_JUICE, EXARION_SCALE, EXARION_EGG, ZWOV_SCALE, ZWOV_EGG, KALIBRAN_SCALE, KALIBRAN_EGG, SUZET_SCALE, SUZET_EGG, SHAMHAI_SCALE, SHAMHAI_EGG);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -365,14 +365,13 @@ public final class Q00420_LittleWing extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && (getQuestItemsCount(attacker, DELUXE_FAIRY_STONE) > 0) && (getRandom(100) < 30)) {
 			takeItems(attacker, DELUXE_FAIRY_STONE, -1);
 			qs.playSound(Sound.ITEMSOUND_QUEST_MIDDLE);
 			npc.broadcastPacket(new NpcSay(npc, Say2.NPC_ALL, NpcStringId.THE_STONE_THE_ELVEN_STONE_BROKE));
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
@@ -655,7 +654,7 @@ public final class Q00420_LittleWing extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 3, npc);
 		if (qs != null) {
 			if (qs.isCond(2) && (npc.getId() == TOAD_LORD)) {
@@ -668,7 +667,6 @@ public final class Q00420_LittleWing extends Quest {
 				giveItemRandomly(qs.getPlayer(), npc, EGG_DROPS.get(npc.getId()), 1, 20, 0.5, true);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	/**

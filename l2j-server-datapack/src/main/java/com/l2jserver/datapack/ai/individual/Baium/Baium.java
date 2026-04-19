@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -34,6 +34,7 @@ import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2GrandBossInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.variables.NpcVariables;
@@ -98,14 +99,13 @@ public final class Baium extends AbstractNpcAI {
 	private static long _lastAttack = 0;
 	
 	public Baium() {
-		super(Baium.class.getSimpleName(), "ai/individual");
-		addFirstTalkId(ANG_VORTEX);
-		addTalkId(ANG_VORTEX, TELE_CUBE, BAIUM_STONE);
-		addStartNpc(ANG_VORTEX, TELE_CUBE, BAIUM_STONE);
-		addAttackId(BAIUM, ARCHANGEL);
-		addKillId(BAIUM);
-		addSeeCreatureId(BAIUM);
-		addSpellFinishedId(BAIUM);
+		bindFirstTalk(ANG_VORTEX);
+		bindTalk(ANG_VORTEX, TELE_CUBE, BAIUM_STONE);
+		bindStartNpc(ANG_VORTEX, TELE_CUBE, BAIUM_STONE);
+		bindAttack(BAIUM, ARCHANGEL);
+		bindKill(BAIUM);
+		bindSeeCreature(BAIUM);
+		bindSpellFinished(BAIUM);
 		
 		final StatsSet info = GrandBossManager.getInstance().getStatsSet(BAIUM);
 		final int curr_hp = info.getInt("currentHP");
@@ -150,7 +150,7 @@ public final class Baium extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "31862-04.html": {
 				return event;
@@ -383,11 +383,11 @@ public final class Baium extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		_lastAttack = System.currentTimeMillis();
 		
 		if (npc.getId() == BAIUM) {
@@ -429,29 +429,27 @@ public final class Baium extends AbstractNpcAI {
 				npc.doCast(ANGEL_HEAL);
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (zone.isCharacterInZone(killer)) {
 			setStatus(DEAD);
 			addSpawn(TELE_CUBE, TELEPORT_CUBIC_LOC, false, 900000);
 			zone.broadcastPacket(Music.BS01_D_10000.getPacket());
-			long respawnTime = (grandBoss().getIntervalOfBaiumSpawn() + getRandom(-grandBoss().getRandomOfBaiumSpawn(), grandBoss().getRandomOfBaiumSpawn())) * 3600000;
+			final long respawnTime = grandBoss().getIntervalOfBaiumSpawn() + getRandom(-(int) grandBoss().getRandomOfBaiumSpawn(), (int) grandBoss().getRandomOfBaiumSpawn());
 			setRespawn(respawnTime);
 			startQuestTimer("CLEAR_STATUS", respawnTime, null, null);
 			startQuestTimer("CLEAR_ZONE", 900000, null, null);
 			cancelQuestTimer("CHECK_ATTACK", npc, null);
 			cancelQuestTimers("SELECT_TARGET");
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (!zone.isInsideZone(creature) || (creature.isNpc() && (creature.getId() == BAIUM_STONE))) {
-			return super.onSeeCreature(npc, creature, isSummon);
+			return;
 		}
 		
 		if (creature.isInCategory(CategoryType.CLERIC_GROUP)) {
@@ -468,17 +466,15 @@ public final class Baium extends AbstractNpcAI {
 			refreshAiParams(creature, npc, 10000, 1000);
 		}
 		manageSkills(npc);
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		startQuestTimer("MANAGE_SKILLS", 1000, npc, null);
+	public void onSpellFinished(NpcSkillFinished event) {
+		startQuestTimer("MANAGE_SKILLS", 1000, event.npc(), null);
 		
-		if (!zone.isCharacterInZone(npc) && (_baium != null)) {
+		if (!zone.isCharacterInZone(event.npc()) && (_baium != null)) {
 			_baium.teleToLocation(BAIUM_LOC);
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override

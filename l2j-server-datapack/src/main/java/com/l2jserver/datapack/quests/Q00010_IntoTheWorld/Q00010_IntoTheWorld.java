@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,14 +42,14 @@ public class Q00010_IntoTheWorld extends Quest {
 	private static final int MIN_LEVEL = 3;
 	
 	public Q00010_IntoTheWorld() {
-		super(10, Q00010_IntoTheWorld.class.getSimpleName(), "Into the World");
-		addStartNpc(BALANKI);
-		addTalkId(BALANKI, REED, GERALD);
+		super(10);
+		bindStartNpc(BALANKI);
+		bindTalk(BALANKI, REED, GERALD);
 		registerQuestItems(VERY_EXPENSIVE_NECKLACE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

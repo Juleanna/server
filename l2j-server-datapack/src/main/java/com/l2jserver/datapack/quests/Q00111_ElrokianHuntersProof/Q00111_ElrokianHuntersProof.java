@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -76,16 +76,16 @@ public final class Q00111_ElrokianHuntersProof extends Quest {
 		.build();
 	
 	public Q00111_ElrokianHuntersProof() {
-		super(111, Q00111_ElrokianHuntersProof.class.getSimpleName(), "Elrokian Hunter's Proof");
-		addStartNpc(MARQUEZ);
-		addTalkId(MARQUEZ, MUSHIKA, ASAMAH, KIRIKACHIN);
-		addKillId(DROPLIST_DIARY.getNpcIds());
-		addKillId(DROPLIST_DINO.getNpcIds());
+		super(111);
+		bindStartNpc(MARQUEZ);
+		bindTalk(MARQUEZ, MUSHIKA, ASAMAH, KIRIKACHIN);
+		bindKill(DROPLIST_DIARY.getNpcIds());
+		bindKill(DROPLIST_DINO.getNpcIds());
 		registerQuestItems(DIARY_FRAGMENT.getId(), EXPEDITION_MEMBERS_LETTER, ORNITHOMINUS_CLAW.getId(), DEINONYCHUS_BONE.getId(), PACHYCEPHALOSAURUS_SKIN.getId(), PRACTICE_ELROKIAN_TRAP);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -194,7 +194,7 @@ public final class Q00111_ElrokianHuntersProof extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 3, npc);
 		if (qs != null) {
 			if (qs.isMemoState(4) && qs.isCond(4)
@@ -207,7 +207,6 @@ public final class Q00111_ElrokianHuntersProof extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,8 +21,9 @@ package com.l2jserver.datapack.handlers.usercommandhandlers;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.handler.IUserCommandHandler;
@@ -36,7 +37,8 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @author Tempy
  */
 public class ClanWarsList implements IUserCommandHandler {
-	private static final Logger _log = Logger.getLogger(ClanWarsList.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(ClanWarsList.class);
+	
 	private static final int[] COMMAND_IDS = {
 		88,
 		89,
@@ -101,7 +103,7 @@ public class ClanWarsList implements IUserCommandHandler {
 			}
 			activeChar.sendPacket(SystemMessageId.FRIEND_LIST_FOOTER);
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "", e);
+			LOG.warn(e.getMessage(), e);
 		}
 		return true;
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -128,18 +128,18 @@ public class Q00350_EnhanceYourWeapon extends Quest {
 	private static final Map<Integer, Map<Integer, LevelingInfo>> NPC_LEVELING_INFO = new HashMap<>();
 	
 	public Q00350_EnhanceYourWeapon() {
-		super(350, Q00350_EnhanceYourWeapon.class.getSimpleName(), "Enhance Your Weapon");
-		addStartNpc(STARTING_NPCS);
-		addTalkId(STARTING_NPCS);
+		super(350);
+		bindStartNpc(STARTING_NPCS);
+		bindTalk(STARTING_NPCS);
 		load();
 		for (int npcId : NPC_LEVELING_INFO.keySet()) {
-			addSkillSeeId(npcId);
-			addKillId(npcId);
+			bindSkillSee(npcId);
+			bindKill(npcId);
 		}
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		QuestState st = getQuestState(player, false);
 		if (event.endsWith("-04.htm")) {
@@ -157,27 +157,26 @@ public class Q00350_EnhanceYourWeapon extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.isAttackable() && NPC_LEVELING_INFO.containsKey(npc.getId())) {
 			levelSoulCrystals((L2Attackable) npc, killer);
 		}
-		
-		return null;
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if ((skill == null) || (skill.getId() != 2096)) {
-			return null;
-		} else if ((caster == null) || caster.isDead()) {
-			return null;
-		}
-		if (!npc.isAttackable() || npc.isDead() || !NPC_LEVELING_INFO.containsKey(npc.getId())) {
-			return null;
+			return;
 		}
 		
+		if ((caster == null) || caster.isDead()) {
+			return;
+		}
+		
+		if (!npc.isAttackable() || npc.isDead() || !NPC_LEVELING_INFO.containsKey(npc.getId())) {
+			return;
+		}
 		((L2Attackable) npc).addAbsorber(caster);
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override

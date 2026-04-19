@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -25,7 +25,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ai.CtrlIntention;
@@ -50,7 +52,7 @@ import com.l2jserver.gameserver.util.StringUtil;
  * @version $Revision: 1.3.2.6.2.4 $ $Date: 2005/04/11 10:06:06 $ con.close() change and small typo fix by Zoey76 24/02/2011
  */
 public class AdminTeleport implements IAdminCommandHandler {
-	private static final Logger _log = Logger.getLogger(AdminTeleport.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminTeleport.class);
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_show_moves",
@@ -113,7 +115,7 @@ public class AdminTeleport implements IAdminCommandHandler {
 				activeChar.getAI().setIntention(CtrlIntention.AI_INTENTION_MOVE_TO, new Location(x, y, z, 0));
 			} catch (Exception e) {
 				if (general().debug()) {
-					_log.info("admin_walk: " + e);
+					LOG.info("admin_walk: {}", e.getMessage(), e);
 				}
 			}
 		} else if (command.startsWith("admin_move_to")) {
@@ -221,7 +223,7 @@ public class AdminTeleport implements IAdminCommandHandler {
 	}
 	
 	/**
-	 * This method sends a player to it's home town.
+	 * This method sends a player to it's hometown.
 	 * @param player the player to teleport.
 	 */
 	private void teleportHome(L2PcInstance player) {
@@ -308,11 +310,6 @@ public class AdminTeleport implements IAdminCommandHandler {
 		}
 	}
 	
-	/**
-	 * @param player
-	 * @param loc
-	 * @param activeChar
-	 */
 	private void teleportCharacter(L2PcInstance player, Location loc, L2PcInstance activeChar) {
 		if (player != null) {
 			// Check for jail
@@ -389,11 +386,11 @@ public class AdminTeleport implements IAdminCommandHandler {
 	
 	private void recallNPC(L2PcInstance activeChar) {
 		L2Object obj = activeChar.getTarget();
-		if ((obj instanceof L2Npc target) && !((L2Npc) obj).isMinion() && !(obj instanceof L2RaidBossInstance) && !(obj instanceof L2GrandBossInstance)) {
+		if ((obj instanceof L2Npc target) && !target.isMinion() && !(obj instanceof L2RaidBossInstance) && !(obj instanceof L2GrandBossInstance)) {
 			L2Spawn spawn = target.getSpawn();
 			if (spawn == null) {
 				activeChar.sendMessage("Incorrect monster spawn.");
-				_log.warning("ERROR: NPC " + target.getObjectId() + " has a 'null' spawn.");
+				LOG.warn("ERROR: NPC {} has a 'null' spawn.", target.getObjectId());
 				return;
 			}
 			int respawnTime = spawn.getRespawnDelay() / 1000;
@@ -424,8 +421,8 @@ public class AdminTeleport implements IAdminCommandHandler {
 				activeChar.sendMessage("Created " + target.getTemplate().getName() + " on " + target.getObjectId() + ".");
 				
 				if (general().debug()) {
-					_log.fine("Spawn at X=" + spawn.getX() + " Y=" + spawn.getY() + " Z=" + spawn.getZ());
-					_log.warning("GM: " + activeChar.getName() + "(" + activeChar.getObjectId() + ") moved NPC " + target.getObjectId());
+					LOG.debug("Spawn at X={} Y={} Z={}", spawn.getX(), spawn.getY(), spawn.getZ());
+					LOG.warn("GM: {}({}) moved NPC {}", activeChar.getName(), activeChar.getObjectId(), target.getObjectId());
 				}
 			} catch (Exception e) {
 				activeChar.sendMessage("Target is not in game.");
@@ -437,7 +434,7 @@ public class AdminTeleport implements IAdminCommandHandler {
 			double curMP = target.getCurrentMp();
 			if (spawn == null) {
 				activeChar.sendMessage("Incorrect raid spawn.");
-				_log.warning("ERROR: NPC Id" + target.getId() + " has a 'null' spawn.");
+				LOG.warn("ERROR: NPC Id{} has a 'null' spawn.", target.getId());
 				return;
 			}
 			RaidBossSpawnManager.getInstance().deleteSpawn(spawn, true);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -99,15 +99,15 @@ public final class Q00217_TestimonyOfTrust extends Quest {
 	private static final int MIN_LEVEL = 37;
 	
 	public Q00217_TestimonyOfTrust() {
-		super(217, Q00217_TestimonyOfTrust.class.getSimpleName(), "Testimony Of Trust");
-		addStartNpc(HIGH_PRIEST_HOLLINT);
-		addTalkId(HIGH_PRIEST_HOLLINT, HIGH_PRIEST_BIOTIN, HIERARCH_ASTERIOS, TETRARCH_THIFIELL, MAGISTER_CLAYTON, SEER_MANAKIA, IRON_GATES_LOCKIRIN, FLAME_LORD_KAKAI, MAESTRO_NIKOLA, CARDINAL_SERESIN);
-		addKillId(DRYAD, DRYAD_ELDER, LIREIN, LIREIN_ELDER, ANT_RECRUIT, ANT_PATROL, ANT_GUARD, ANT_SOLDIER, ANT_WARRIOR_CAPTAIN, MARSH_STAKATO, PORTA, MARSH_STAKATO_WORKER, MARSH_STAKATO_SOLDIER, MARSH_STAKATO_DRONE, GUARDIAN_BASILISK, WINDSUS, LUELL_OF_ZEPHYR_WINDS, ACTEA_OF_VERDANT_WILDS);
+		super(217);
+		bindStartNpc(HIGH_PRIEST_HOLLINT);
+		bindTalk(HIGH_PRIEST_HOLLINT, HIGH_PRIEST_BIOTIN, HIERARCH_ASTERIOS, TETRARCH_THIFIELL, MAGISTER_CLAYTON, SEER_MANAKIA, IRON_GATES_LOCKIRIN, FLAME_LORD_KAKAI, MAESTRO_NIKOLA, CARDINAL_SERESIN);
+		bindKill(DRYAD, DRYAD_ELDER, LIREIN, LIREIN_ELDER, ANT_RECRUIT, ANT_PATROL, ANT_GUARD, ANT_SOLDIER, ANT_WARRIOR_CAPTAIN, MARSH_STAKATO, PORTA, MARSH_STAKATO_WORKER, MARSH_STAKATO_SOLDIER, MARSH_STAKATO_DRONE, GUARDIAN_BASILISK, WINDSUS, LUELL_OF_ZEPHYR_WINDS, ACTEA_OF_VERDANT_WILDS);
 		registerQuestItems(LETTER_TO_ELF, LETTER_TO_DARKELF, LETTER_TO_DWARF, LETTER_TO_ORC, LETTER_TO_SERESIN, SCROLL_OF_DARKELF_TRUST, SCROLL_OF_ELF_TRUST, SCROLL_OF_DWARF_TRUST, SCROLL_OF_ORC_TRUST, RECOMMENDATION_OF_HOLLIN, ORDER_OF_ASTERIOS, BREATH_OF_WINDS, SEED_OF_VERDURE, LETTER_OF_THIFIELL, BLOOD_OF_GUARDIAN_BASILISK, GIANT_APHID, STAKATOS_FLUIDS, BASILISK_PLASMA, HONEY_DEW, STAKATO_ICHOR, ORDER_OF_CLAYTON, PARASITE_OF_LOTA, LETTER_TO_MANAKIA, LETTER_OF_MANAKIA, LETTER_TO_NICHOLA, ORDER_OF_NICHOLA, HEART_OF_PORTA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -212,7 +212,7 @@ public final class Q00217_TestimonyOfTrust extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -372,7 +372,6 @@ public final class Q00217_TestimonyOfTrust extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,15 +41,15 @@ public final class Q00313_CollectSpores extends Quest {
 	private static final int SPORE_FUNGUS = 20509;
 	
 	public Q00313_CollectSpores() {
-		super(313, Q00313_CollectSpores.class.getSimpleName(), "Collect Spores");
-		addStartNpc(HERBIEL);
-		addTalkId(HERBIEL);
-		addKillId(SPORE_FUNGUS);
+		super(313);
+		bindStartNpc(HERBIEL);
+		bindTalk(HERBIEL);
+		bindKill(SPORE_FUNGUS);
 		registerQuestItems(SPORE_SAC.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -72,14 +72,13 @@ public final class Q00313_CollectSpores extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && st.isCond(1) && Util.checkIfInRange(1500, npc, st.getPlayer(), false)) {
 			if (giveItemRandomly(st.getPlayer(), npc, SPORE_SAC, true)) {
 				st.setCond(2);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

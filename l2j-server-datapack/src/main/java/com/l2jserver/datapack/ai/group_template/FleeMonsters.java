@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -52,12 +52,11 @@ public final class FleeMonsters extends AbstractNpcAI {
 	private static final int FLEE_DISTANCE = 500;
 	
 	public FleeMonsters() {
-		super(FleeMonsters.class.getSimpleName(), "ai/group_template");
-		addAttackId(MOBS);
+		bindAttack(MOBS);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		npc.disableCoreAI(true);
 		npc.setRunning();
 		
@@ -70,6 +69,5 @@ public final class FleeMonsters extends AbstractNpcAI {
 		
 		final Location destination = GeoData.getInstance().moveCheck(npc.getX(), npc.getY(), npc.getZ(), posX, posY, posZ, attacker.getInstanceId());
 		npc.getAI().setIntention(CtrlIntention.AI_INTENTION_MOVE_TO, destination);
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 }

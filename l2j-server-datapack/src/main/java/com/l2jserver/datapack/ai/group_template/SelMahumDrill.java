@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,12 +21,12 @@ package com.l2jserver.datapack.ai.group_template;
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.datatables.SpawnTable;
-import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcEventReceived;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.util.Util;
@@ -113,20 +113,18 @@ public final class SelMahumDrill extends AbstractNpcAI {
 	}
 	
 	public SelMahumDrill() {
-		super(SelMahumDrill.class.getSimpleName(), "ai/group_template");
-		
-		addAttackId(MAHUM_SOLDIERS);
-		addKillId(MAHUM_CHIEFS);
-		addEventReceivedId(MAHUM_CHIEFS);
-		addEventReceivedId(MAHUM_SOLDIERS);
-		addSpawnId(MAHUM_CHIEFS);
-		addSpawnId(MAHUM_SOLDIERS);
+		bindAttack(MAHUM_SOLDIERS);
+		bindKill(MAHUM_CHIEFS);
+		bindEventReceived(MAHUM_CHIEFS);
+		bindEventReceived(MAHUM_SOLDIERS);
+		bindSpawn(MAHUM_CHIEFS);
+		bindSpawn(MAHUM_SOLDIERS);
 		// Start global return home timer
 		startQuestTimer("return_home", 120000, null, null, true);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "do_social_action": {
 				if ((npc != null) && !npc.isDead()) {
@@ -136,7 +134,7 @@ public final class SelMahumDrill extends AbstractNpcAI {
 							if (idx <= (CHIEF_SOCIAL_ACTIONS.length - 1)) {
 								npc.broadcastSocialAction(CHIEF_SOCIAL_ACTIONS[idx]);
 								npc.getVariables().set("SOCIAL_ACTION_NEXT_INDEX", idx); // Pass social action index to soldiers via script value
-								npc.broadcastEvent("do_social_action", TRAINING_RANGE, null);
+								npc.broadcastScriptEvent("do_social_action", TRAINING_RANGE);
 							}
 						}
 						
@@ -168,24 +166,24 @@ public final class SelMahumDrill extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (getRandom(10) < 1) {
-			npc.broadcastEvent("ATTACKED", 1000, null);
+			npc.broadcastScriptEvent("ATTACKED", 1000);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onEventReceived(String eventName, L2Npc sender, L2Npc receiver, L2Object reference) {
-		if ((receiver != null) && !receiver.isDead() && receiver.isInMySpawnGroup(sender)) {
-			switch (eventName) {
+	public void onEventReceived(NpcEventReceived event) {
+		final var receiver = event.receiver();
+		if ((receiver != null) && !receiver.isDead() && receiver.isInMySpawnGroup(event.sender())) {
+			switch (event.eventName()) {
 				case "do_social_action": {
 					if (Util.contains(MAHUM_SOLDIERS, receiver.getId())) {
-						final int actionIndex = sender.getVariables().getInt("SOCIAL_ACTION_NEXT_INDEX");
+						final int actionIndex = event.sender().getVariables().getInt("SOCIAL_ACTION_NEXT_INDEX");
 						receiver.getVariables().set("SOCIAL_ACTION_NEXT_INDEX", actionIndex);
 						handleSocialAction(receiver, SOLDIER_SOCIAL_ACTIONS[actionIndex], true);
 					}
@@ -215,17 +213,15 @@ public final class SelMahumDrill extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onEventReceived(eventName, sender, receiver, reference);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
-		npc.broadcastEvent("CHIEF_DIED", TRAINING_RANGE, null);
-		return null;
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+		npc.broadcastScriptEvent("CHIEF_DIED", TRAINING_RANGE);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (Util.contains(MAHUM_CHIEFS, npc.getId())) {
 			startQuestTimer("do_social_action", 15000, npc, null);
 		}
@@ -236,7 +232,6 @@ public final class SelMahumDrill extends AbstractNpcAI {
 		
 		// Restore AI handling by core
 		npc.disableCoreAI(false);
-		return super.onSpawn(npc);
 	}
 	
 	private void handleSocialAction(L2Npc npc, Actions action, boolean firstCall) {

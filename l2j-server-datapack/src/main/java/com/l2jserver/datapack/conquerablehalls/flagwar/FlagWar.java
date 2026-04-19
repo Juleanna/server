@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -93,27 +93,27 @@ public abstract class FlagWar extends ClanHallSiegeEngine {
 	protected L2Clan _winner;
 	private boolean _firstPhase;
 	
-	public FlagWar(String name, int hallId) {
-		super(name, "conquerablehalls/flagwar", hallId);
-		addStartNpc(MESSENGER);
-		addFirstTalkId(MESSENGER);
-		addTalkId(MESSENGER);
+	public FlagWar(int hallId) {
+		super(hallId);
+		bindStartNpc(MESSENGER);
+		bindFirstTalk(MESSENGER);
+		bindTalk(MESSENGER);
 		
 		for (int i = 0; i < 6; i++) {
-			addFirstTalkId(TELEPORT_1 + i);
+			bindFirstTalk(TELEPORT_1 + i);
 		}
 		
-		addKillId(ALLY_1);
-		addKillId(ALLY_2);
-		addKillId(ALLY_3);
-		addKillId(ALLY_4);
-		addKillId(ALLY_5);
+		bindKill(ALLY_1);
+		bindKill(ALLY_2);
+		bindKill(ALLY_3);
+		bindKill(ALLY_4);
+		bindKill(ALLY_5);
 		
-		addSpawnId(ALLY_1);
-		addSpawnId(ALLY_2);
-		addSpawnId(ALLY_3);
-		addSpawnId(ALLY_4);
-		addSpawnId(ALLY_5);
+		bindSpawn(ALLY_1);
+		bindSpawn(ALLY_2);
+		bindSpawn(ALLY_3);
+		bindSpawn(ALLY_4);
+		bindSpawn(ALLY_5);
 		
 		// If siege ends w/ more than 1 flag alive, winner is old owner
 		_winner = ClanTable.getInstance().getClan(_hall.getOwnerId());
@@ -145,7 +145,7 @@ public abstract class FlagWar extends ClanHallSiegeEngine {
 	}
 	
 	@Override
-	public synchronized String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public synchronized String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String html = event;
 		L2Clan clan = player.getClan();
 		
@@ -279,7 +279,7 @@ public abstract class FlagWar extends ClanHallSiegeEngine {
 	}
 	
 	@Override
-	public synchronized String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public synchronized void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (_hall.isInSiege()) {
 			final int npcId = npc.getId();
 			for (int keys : _data.keySet()) {
@@ -336,13 +336,11 @@ public abstract class FlagWar extends ClanHallSiegeEngine {
 				}
 			}
 		}
-		return null;
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.getAI().setIntention(CtrlIntention.AI_INTENTION_MOVE_TO, CENTER);
-		return null;
 	}
 	
 	@Override

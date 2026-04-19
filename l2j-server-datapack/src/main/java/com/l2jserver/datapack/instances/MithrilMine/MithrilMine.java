@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -65,15 +65,14 @@ public final class MithrilMine extends AbstractInstance {
 	private static final int TEMPLATE_ID = 138;
 	
 	public MithrilMine() {
-		super(MithrilMine.class.getSimpleName(), "instances");
-		addFirstTalkId(KEGOR);
-		addKillId(KEGOR, MITHRIL_MILLIPEDE);
-		addStartNpc(TARUN, KRUN);
-		addTalkId(TARUN, KRUN, KEGOR);
+		bindFirstTalk(KEGOR);
+		bindKill(KEGOR, MITHRIL_MILLIPEDE);
+		bindStartNpc(TARUN, KRUN);
+		bindTalk(TARUN, KRUN, KEGOR);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final InstanceWorld world = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		
 		switch (event) {
@@ -112,7 +111,7 @@ public final class MithrilMine extends AbstractInstance {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
@@ -136,7 +135,7 @@ public final class MithrilMine extends AbstractInstance {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final InstanceWorld world = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		final MMWorld _world = ((MMWorld) world);
 		
@@ -158,7 +157,6 @@ public final class MithrilMine extends AbstractInstance {
 				}
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

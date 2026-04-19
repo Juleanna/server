@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,9 +50,12 @@ public final class PolymorphingOnAttack extends AbstractNpcAI {
 		MOBSPAWNS.put(21271, Arrays.asList(21272, 66, 10, 1)); // Cave Ant -> Cave Ant Soldier
 		MOBSPAWNS.put(21272, Arrays.asList(21273, 33, 5, 2)); // Cave Ant Soldier -> Cave Noble Ant
 		MOBSPAWNS.put(21521, Arrays.asList(21522, 100, 30, -1)); // Claws of Splendor
+		MOBSPAWNS.put(21524, Arrays.asList(21525, 100, 30, -1)); // Blade of Splendor
 		MOBSPAWNS.put(21527, Arrays.asList(21528, 100, 30, -1)); // Anger of Splendor
+		MOBSPAWNS.put(21531, Arrays.asList(21658, 100, 30, -1)); // Punishment of Splendor
 		MOBSPAWNS.put(21533, Arrays.asList(21534, 100, 30, -1)); // Alliance of Splendor
 		MOBSPAWNS.put(21537, Arrays.asList(21538, 100, 30, -1)); // Fang of Splendor
+		MOBSPAWNS.put(21539, Arrays.asList(21540, 100, 30, -1)); // Wailing of Splendor
 	}
 	protected static final NpcStringId[][] MOBTEXTS = {
 		new NpcStringId[] {
@@ -73,12 +76,11 @@ public final class PolymorphingOnAttack extends AbstractNpcAI {
 	};
 	
 	public PolymorphingOnAttack() {
-		super(PolymorphingOnAttack.class.getSimpleName(), "ai/group_template");
-		addAttackId(MOBSPAWNS.keySet());
+		bindAttack(MOBSPAWNS.keySet());
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.isVisible() && !npc.isDead()) {
 			final List<Integer> tmp = MOBSPAWNS.get(npc.getId());
 			if (tmp != null) {
@@ -97,6 +99,5 @@ public final class PolymorphingOnAttack extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 }

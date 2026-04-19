@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,15 +51,15 @@ public final class Q00329_CuriosityOfADwarf extends Quest {
 		.build();
 	
 	public Q00329_CuriosityOfADwarf() {
-		super(329, Q00329_CuriosityOfADwarf.class.getSimpleName(), "Curiosity Of A Dwarf");
-		addStartNpc(TRADER_ROLENTO);
-		addTalkId(TRADER_ROLENTO);
-		addKillId(DROPLIST.getNpcIds());
+		super(329);
+		bindStartNpc(TRADER_ROLENTO);
+		bindTalk(TRADER_ROLENTO);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(GOLEM_HEARTSTONE, BROKEN_HEARTSTONE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -88,12 +88,11 @@ public final class Q00329_CuriosityOfADwarf extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && Util.checkIfInRange(1500, npc, killer, true)) {
 			giveItemRandomly(st.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

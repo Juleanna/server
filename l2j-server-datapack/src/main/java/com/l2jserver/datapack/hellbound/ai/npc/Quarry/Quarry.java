@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -56,17 +56,16 @@ public final class Quarry extends AbstractNpcAI {
 	private static final int TRUST = 50;
 	
 	public Quarry() {
-		super(Quarry.class.getSimpleName(), "hellbound/AI/NPC");
-		addSpawnId(SLAVE);
-		addFirstTalkId(SLAVE);
-		addStartNpc(SLAVE);
-		addTalkId(SLAVE);
-		addKillId(SLAVE);
-		addEnterZoneId(ZONE);
+		bindSpawn(SLAVE);
+		bindFirstTalk(SLAVE);
+		bindStartNpc(SLAVE);
+		bindTalk(SLAVE);
+		bindKill(SLAVE);
+		bindEnterZone(ZONE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "FollowMe": {
@@ -119,12 +118,11 @@ public final class Quarry extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.setAutoAttackable(false);
 		if (npc instanceof L2QuestGuardInstance) {
 			((L2QuestGuardInstance) npc).setPassive(true);
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
@@ -136,13 +134,12 @@ public final class Quarry extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		npc.setAutoAttackable(false);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onEnterZone(L2Character character, L2ZoneType zone) {
+	public void onEnterZone(L2Character character, L2ZoneType zone) {
 		if (character.isAttackable()) {
 			final L2Attackable npc = (L2Attackable) character;
 			if (npc.getId() == SLAVE) {
@@ -158,6 +155,5 @@ public final class Quarry extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onEnterZone(character, zone);
 	}
 }

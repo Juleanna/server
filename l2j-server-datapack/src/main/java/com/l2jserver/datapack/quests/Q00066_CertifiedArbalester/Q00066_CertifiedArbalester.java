@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -79,15 +79,15 @@ public final class Q00066_CertifiedArbalester extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00066_CertifiedArbalester() {
-		super(66, Q00066_CertifiedArbalester.class.getSimpleName(), "Certified Arbalester");
-		addStartNpc(MASTER_RINDY);
-		addTalkId(MASTER_RINDY, WAREHOUSE_KEEPER_HOLVAS, MAGISTER_GAIUS, BLACKSMITH_POITAN, MAGISTER_CLAYTON, MAGISTER_GAUEN, MAGISTER_KAIENA, GRAND_MASTER_MELDINA, MASTER_SELSIA);
-		addKillId(GRANITIC_GOLEM, HANGMAN_TREE, AMBER_BASILISK, STRAIN, GHOUL, DEAD_SEEKER, GRANDIS, MANASHEN_GARGOYLE, TIMAK_ORC, TIMAK_ORC_ARCHER, DELU_LIZARDMAN_SHAMAN, WATCHMAN_OF_THE_PLAINS, ROUGHLY_HEWN_ROCK_GOLEM, DELU_LIZARDMAN_SUPPLIER, DELU_LIZARDMAN_AGENT, CURSED_SEER, DELU_LIZARDMAN_COMMANDER, CRIMSON_LADY);
+		super(66);
+		bindStartNpc(MASTER_RINDY);
+		bindTalk(MASTER_RINDY, WAREHOUSE_KEEPER_HOLVAS, MAGISTER_GAIUS, BLACKSMITH_POITAN, MAGISTER_CLAYTON, MAGISTER_GAUEN, MAGISTER_KAIENA, GRAND_MASTER_MELDINA, MASTER_SELSIA);
+		bindKill(GRANITIC_GOLEM, HANGMAN_TREE, AMBER_BASILISK, STRAIN, GHOUL, DEAD_SEEKER, GRANDIS, MANASHEN_GARGOYLE, TIMAK_ORC, TIMAK_ORC_ARCHER, DELU_LIZARDMAN_SHAMAN, WATCHMAN_OF_THE_PLAINS, ROUGHLY_HEWN_ROCK_GOLEM, DELU_LIZARDMAN_SUPPLIER, DELU_LIZARDMAN_AGENT, CURSED_SEER, DELU_LIZARDMAN_COMMANDER, CRIMSON_LADY);
 		registerQuestItems(ENMITY_CRYSTAL, ENMITY_CRYSTAL_CORE, MANUSCRIPT_PAGE, ENCODED_PAGE_ON_THE_ANCIENT_RACE, KAMAEL_INQUISITOR_TRAINEE_MARK, FRAGMENT_OF_ATTACK_ORDERS, GRANDIS_ATTACK_ORDERS, MANASHENS_TALISMAN, RESEARCH_ON_THE_GIANTS_AND_THE_ANCIENT_RACE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -352,7 +352,7 @@ public final class Q00066_CertifiedArbalester extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -563,7 +563,6 @@ public final class Q00066_CertifiedArbalester extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

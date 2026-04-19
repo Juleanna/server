@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,15 +41,15 @@ public class Q00432_BirthdayPartySong extends Quest {
 	private static final int ECHO_CRYSTAL = 7061;
 	
 	public Q00432_BirthdayPartySong() {
-		super(432, Q00432_BirthdayPartySong.class.getSimpleName(), "Birthday Party Song");
-		addStartNpc(OCTAVIA);
-		addTalkId(OCTAVIA);
-		addKillId(GOLEM);
+		super(432);
+		bindStartNpc(OCTAVIA);
+		bindTalk(OCTAVIA);
+		bindKill(GOLEM);
 		registerQuestItems(RED_CRYSTAL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		
 		if (st == null) {
@@ -77,7 +77,7 @@ public class Q00432_BirthdayPartySong extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		
 		if ((st != null) && st.isCond(1) && getRandomBoolean()) {
@@ -88,7 +88,6 @@ public class Q00432_BirthdayPartySong extends Quest {
 				st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

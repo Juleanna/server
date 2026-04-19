@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -56,10 +56,8 @@ public final class VarkaSilenosSupport extends AbstractNpcAI {
 	private static final int ASHAS = 31377; // Hierarch
 	private static final int NARAN = 31378; // Messenger
 	private static final int UDAN = 31379; // Buffer
-	private static final int DIYABU = 31380; // Grocer
 	private static final int HAGOS = 31381; // Warehouse Keeper
-	private static final int SHIKON = 31382; // Trader
-	private static final int TERANU = 31383; // Teleporter
+	
 	// Items
 	private static final int SEED = 7187;
 	private static final int[] VARKA_MARKS = {
@@ -83,10 +81,9 @@ public final class VarkaSilenosSupport extends AbstractNpcAI {
 	}
 	
 	public VarkaSilenosSupport() {
-		super(VarkaSilenosSupport.class.getSimpleName(), "ai/npc");
-		addFirstTalkId(ASHAS, NARAN, UDAN, DIYABU, HAGOS, SHIKON, TERANU);
-		addTalkId(UDAN, HAGOS, TERANU);
-		addStartNpc(HAGOS, TERANU);
+		bindFirstTalk(ASHAS, NARAN, UDAN, HAGOS);
+		bindTalk(UDAN, HAGOS);
+		bindStartNpc(HAGOS);
 	}
 	
 	private int getAllianceLevel(L2PcInstance player) {
@@ -99,7 +96,7 @@ public final class VarkaSilenosSupport extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		if (Util.isDigit(event) && BUFF.containsKey(Integer.parseInt(event))) {
 			final BuffsData buff = BUFF.get(Integer.parseInt(event));
@@ -110,13 +107,6 @@ public final class VarkaSilenosSupport extends AbstractNpcAI {
 				npc.setCurrentHpMp(npc.getMaxHp(), npc.getMaxMp());
 			} else {
 				htmltext = "31379-02.html";
-			}
-		} else if (event.equals("Teleport")) {
-			final int AllianceLevel = getAllianceLevel(player);
-			if (AllianceLevel == -4) {
-				htmltext = "31383-04.html";
-			} else if (AllianceLevel == -5) {
-				htmltext = "31383-05.html";
 			}
 		}
 		return htmltext;
@@ -136,27 +126,8 @@ public final class VarkaSilenosSupport extends AbstractNpcAI {
 			case UDAN:
 				htmltext = (allianceLevel < 0) ? (allianceLevel > -3) ? "31379-01.html" : "31379-04.html" : "31379-03.html";
 				break;
-			case DIYABU:
-				htmltext = (allianceLevel < 0) ? "31380-friend.html" : "31380-no.html";
-				break;
 			case HAGOS:
 				htmltext = (allianceLevel < 0) ? (allianceLevel == -1) ? "31381-01.html" : "31381-02.html" : "31381-no.html";
-				break;
-			case SHIKON:
-				htmltext = switch (allianceLevel) {
-					case -1, -2 -> "31382-01.html";
-					case -3, -4 -> "31382-02.html";
-					case -5 -> "31382-03.html";
-					default -> "31382-no.html";
-				};
-				break;
-			case TERANU:
-				htmltext = switch (allianceLevel) {
-					case -1, -2, -3 -> "31383-01.html";
-					case -4 -> "31383-02.html";
-					case -5 -> "31383-03.html";
-					default -> "31383-no.html";
-				};
 				break;
 		}
 		return htmltext;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -34,14 +34,13 @@ public final class Budenka extends AbstractNpcAI {
 	private static final int PREMIUM_CERT = 9852;
 	
 	public Budenka() {
-		super(Budenka.class.getSimpleName(), "hellbound/AI/NPC");
-		addStartNpc(BUDENKA);
-		addFirstTalkId(BUDENKA);
-		addTalkId(BUDENKA);
+		bindStartNpc(BUDENKA);
+		bindFirstTalk(BUDENKA);
+		bindTalk(BUDENKA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "Budenka-02.html":

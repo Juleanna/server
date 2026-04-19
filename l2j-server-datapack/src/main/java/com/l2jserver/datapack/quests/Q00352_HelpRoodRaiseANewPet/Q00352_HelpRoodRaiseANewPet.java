@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -54,15 +54,15 @@ public final class Q00352_HelpRoodRaiseANewPet extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00352_HelpRoodRaiseANewPet() {
-		super(352, Q00352_HelpRoodRaiseANewPet.class.getSimpleName(), "Help Rood Raise A New Pet!");
-		addStartNpc(ROOD);
-		addTalkId(ROOD);
-		addKillId(DROPLIST.getNpcIds());
+		super(352);
+		bindStartNpc(ROOD);
+		bindTalk(ROOD);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(LIENRIK_EGG1, LIENRIK_EGG2);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -93,16 +93,13 @@ public final class Q00352_HelpRoodRaiseANewPet extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
-		
 		if ((qs == null) || !Util.checkIfInRange(1500, npc, killer, true)) {
-			return null;
+			return;
 		}
 		
 		giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

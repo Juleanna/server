@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,7 +21,9 @@ package com.l2jserver.datapack.quests.Q00166_MassOfDarkness;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.Race;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
@@ -46,6 +48,9 @@ public class Q00166_MassOfDarkness extends Quest {
 	private static final int GARMIELS_SCRIPTURE = 1091;
 	// Misc
 	private static final int MIN_LVL = 2;
+	
+	private static final int GUIDE_MISSION = 41;
+	
 	private static final Map<Integer, Integer> NPCs = new HashMap<>();
 	static {
 		NPCs.put(IRIA, CEREMONIAL_DAGGER);
@@ -54,14 +59,14 @@ public class Q00166_MassOfDarkness extends Quest {
 	}
 	
 	public Q00166_MassOfDarkness() {
-		super(166, Q00166_MassOfDarkness.class.getSimpleName(), "Mass of Darkness");
-		addStartNpc(UNDRIAS);
-		addTalkId(UNDRIAS, IRIA, DORANKUS, TRUDY);
+		super(166);
+		bindStartNpc(UNDRIAS);
+		bindTalk(UNDRIAS, IRIA, DORANKUS, TRUDY);
 		registerQuestItems(UNDRIAS_LETTER, CEREMONIAL_DAGGER, DREVIANT_WINE, GARMIELS_SCRIPTURE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equals("30130-03.htm")) {
 			st.startQuest();
@@ -84,7 +89,25 @@ public class Q00166_MassOfDarkness extends Quest {
 					}
 					case State.STARTED: {
 						if (st.isCond(2) && st.hasQuestItems(UNDRIAS_LETTER, CEREMONIAL_DAGGER, DREVIANT_WINE, GARMIELS_SCRIPTURE)) {
-							showOnScreenMsg(player, NpcStringId.DELIVERY_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000); // TODO: Newbie Guide
+							// Newbie Guide
+							final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+							if (newbieGuide != null) {
+								final var newbieGuideQs = newbieGuide.getQuestState(player, true);
+								if (!newbieGuideQs.haveNRMemo(player, GUIDE_MISSION)) {
+									newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+									newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, 1);
+									
+									showOnScreenMsg(player, NpcStringId.DELIVERY_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+								} else {
+									if ((newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) % 10) != 1) {
+										newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+										newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) + 1);
+										
+										showOnScreenMsg(player, NpcStringId.DELIVERY_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+									}
+								}
+							}
+							
 							st.addExpAndSp(5672, 466);
 							st.giveAdena(2966, true);
 							st.exitQuest(false, true);

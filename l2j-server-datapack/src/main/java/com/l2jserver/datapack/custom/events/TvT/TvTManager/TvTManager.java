@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,10 +43,9 @@ public final class TvTManager extends AbstractNpcAI implements IVoicedCommandHan
 	};
 	
 	public TvTManager() {
-		super(TvTManager.class.getSimpleName(), "custom/events/TvT");
-		addFirstTalkId(MANAGER_ID);
-		addTalkId(MANAGER_ID);
-		addStartNpc(MANAGER_ID);
+		bindFirstTalk(MANAGER_ID);
+		bindTalk(MANAGER_ID);
+		bindStartNpc(MANAGER_ID);
 		
 		if (tvt().allowVoicedInfoCommand()) {
 			VoicedCommandHandler.getInstance().registerHandler(this);
@@ -54,9 +53,9 @@ public final class TvTManager extends AbstractNpcAI implements IVoicedCommandHan
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((player == null) || !TvTEvent.isParticipating()) {
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		String htmltext = null;
@@ -128,29 +127,29 @@ public final class TvTManager extends AbstractNpcAI implements IVoicedCommandHan
 	}
 	
 	@Override
-	public boolean useVoicedCommand(String command, L2PcInstance activeChar, String params) {
+	public boolean useVoicedCommand(String command, L2PcInstance player, String params) {
 		String html = null;
 		switch (command) {
 			case "tvt": {
 				if (TvTEvent.isStarting() || TvTEvent.isStarted()) {
-					html = getTvTStatus(activeChar);
+					html = getTvTStatus(player);
 				} else {
 					html = "The event has not started.";
 				}
 				break;
 			}
 			case "tvtjoin": {
-				html = onAdvEvent("join", null, activeChar);
+				html = onEvent("join", null, player);
 				break;
 			}
 			case "tvtleave": {
-				html = onAdvEvent("remove", null, activeChar);
+				html = onEvent("remove", null, player);
 				break;
 			}
 		}
 		
 		if (html != null) {
-			activeChar.sendPacket(new NpcHtmlMessage(html));
+			player.sendPacket(new NpcHtmlMessage(html));
 		}
 		return true;
 	}

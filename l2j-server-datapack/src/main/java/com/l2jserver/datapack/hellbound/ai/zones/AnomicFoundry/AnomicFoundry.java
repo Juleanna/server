@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -31,6 +31,7 @@ import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -72,17 +73,16 @@ public final class AnomicFoundry extends AbstractNpcAI {
 	};
 	
 	public AnomicFoundry() {
-		super(AnomicFoundry.class.getSimpleName(), "hellbound/AI/Zones");
-		addAggroRangeEnterId(LABORER);
-		addAttackId(LABORER);
-		addKillId(LABORER, LESSER_EVIL, GREATER_EVIL);
-		addSpawnId(LABORER, LESSER_EVIL, GREATER_EVIL);
-		addTeleportId(LABORER, LESSER_EVIL, GREATER_EVIL);
+		bindAggroRangeEnter(LABORER);
+		bindAttack(LABORER);
+		bindKill(LABORER, LESSER_EVIL, GREATER_EVIL);
+		bindSpawn(LABORER, LESSER_EVIL, GREATER_EVIL);
+		bindTeleport(LABORER, LESSER_EVIL, GREATER_EVIL);
 		startQuestTimer("make_spawn_1", respawnTime, null, null);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("make_spawn_1")) {
 			if (HellboundEngine.getInstance().getLevel() >= 10) {
 				int idx = getRandom(3);
@@ -103,22 +103,20 @@ public final class AnomicFoundry extends AbstractNpcAI {
 		} else if (event.equalsIgnoreCase("reset_respawn_time")) {
 			respawnTime = 60000;
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
 		if (getRandom(10000) < 2000) {
-			requestHelp(npc, player, 500, FOREMAN);
-			requestHelp(npc, player, 500, LESSER_EVIL);
-			requestHelp(npc, player, 500, GREATER_EVIL);
+			requestHelp(event.npc(), event.player(), 500, FOREMAN);
+			requestHelp(event.npc(), event.player(), 500, LESSER_EVIL);
+			requestHelp(event.npc(), event.player(), 500, GREATER_EVIL);
 		}
-		
-		return super.onAggroRangeEnter(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		int atkIndex = _atkIndex.containsKey(npc.getObjectId()) ? _atkIndex.get(npc.getObjectId()) : 0;
 		if (atkIndex == 0) {
 			broadcastNpcSay(npc, Say2.NPC_ALL, NpcStringId.ENEMY_INVASION_HURRY_UP);
@@ -142,11 +140,10 @@ public final class AnomicFoundry extends AbstractNpcAI {
 				npc.getAI().setIntention(CtrlIntention.AI_INTENTION_MOVE_TO, new Location((npc.getX() + getRandom(-800, 800)), (npc.getY() + getRandom(-800, 800)), npc.getZ(), npc.getHeading()));
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (getSpawnGroup(npc) >= 0) {
 			_spawned[getSpawnGroup(npc)]--;
 			SpawnTable.getInstance().deleteSpawn(npc.getSpawn(), false);
@@ -162,11 +159,10 @@ public final class AnomicFoundry extends AbstractNpcAI {
 			_atkIndex.remove(npc.getObjectId());
 		}
 		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		SpawnTable.getInstance().addNewSpawn(npc.getSpawn(), false);
 		if (getSpawnGroup(npc) >= 0) {
 			_spawned[getSpawnGroup(npc)]++;
@@ -175,7 +171,6 @@ public final class AnomicFoundry extends AbstractNpcAI {
 		if (npc.getId() == LABORER) {
 			npc.setIsNoRndWalk(true);
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override

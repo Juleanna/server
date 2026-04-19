@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -174,14 +174,13 @@ public final class HallOfSuffering extends AbstractInstance {
 	private static final int MAX_LEVEL = 82;
 	
 	public HallOfSuffering() {
-		super(HallOfSuffering.class.getSimpleName(), "gracia/instances/SeedOfInfinity");
-		addStartNpc(MOUTH_OF_EKIMUS, TEPIOS);
-		addTalkId(MOUTH_OF_EKIMUS, TEPIOS);
-		addFirstTalkId(TEPIOS);
-		addKillId(TUMOR_ALIVE, KLODEKUS, KLANIKUS);
-		addAttackId(KLODEKUS, KLANIKUS);
-		addSkillSeeId(TUMOR_MOBIDS);
-		addKillId(TUMOR_MOBIDS);
+		bindStartNpc(MOUTH_OF_EKIMUS, TEPIOS);
+		bindTalk(MOUTH_OF_EKIMUS, TEPIOS);
+		bindFirstTalk(TEPIOS);
+		bindKill(TUMOR_ALIVE, KLODEKUS, KLANIKUS);
+		bindAttack(KLODEKUS, KLANIKUS);
+		bindSkillSee(TUMOR_MOBIDS);
+		bindKill(TUMOR_MOBIDS);
 	}
 	
 	@Override
@@ -370,7 +369,7 @@ public final class HallOfSuffering extends AbstractInstance {
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if (skill.hasEffectType(L2EffectType.REBALANCE_HP, L2EffectType.HP)) {
 			int hate = 2 * skill.getEffectPoint();
 			if (hate < 2) {
@@ -378,17 +377,16 @@ public final class HallOfSuffering extends AbstractInstance {
 			}
 			((L2Attackable) npc).addDamageHate(caster, 0, hate);
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof HSWorld world) {
 			if (event.equalsIgnoreCase("spawnBossGuards")) {
 				if (!world.klanikus.isInCombat() && !world.klodekus.isInCombat()) {
 					world.isBossesAttacked = false;
-					return "";
+					return null;
 				}
 				L2Npc mob = addSpawn(TWIN_MOBIDS[getRandom(TWIN_MOBIDS.length)], KLODEKUS_SPAWN, false, 0, false, npc.getInstanceId());
 				((L2Attackable) mob).addDamageHate(((L2Attackable) npc).getMostHated(), 0, 1);
@@ -424,11 +422,11 @@ public final class HallOfSuffering extends AbstractInstance {
 				npc.setIsInvul(false);
 			}
 		}
-		return "";
+		return null;
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof HSWorld world) {
 			if (!world.isBossesAttacked) {
@@ -450,11 +448,10 @@ public final class HallOfSuffering extends AbstractInstance {
 				}
 			}
 		}
-		return null;
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof HSWorld world) {
 			if (npc.getId() == TUMOR_ALIVE) {
@@ -483,7 +480,6 @@ public final class HallOfSuffering extends AbstractInstance {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

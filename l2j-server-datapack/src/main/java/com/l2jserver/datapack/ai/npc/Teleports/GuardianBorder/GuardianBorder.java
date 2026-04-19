@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -332,11 +332,9 @@ public final class GuardianBorder extends AbstractNpcAI {
 	private static Map<Integer, Integer> _zoneList = new HashMap<>();
 	
 	public GuardianBorder() {
-		super(GuardianBorder.class.getSimpleName(), "ai/npc/Teleports");
-		
-		addSpawnId(NPCS);
-		addStartNpc(NPCS);
-		addFirstTalkId(NPCS);
+		bindSpawn(NPCS);
+		bindStartNpc(NPCS);
+		bindFirstTalk(NPCS);
 		
 		for (int[] zone : ZONES) {
 			_zoneList.put(zone[0], zone[1]);
@@ -344,14 +342,12 @@ public final class GuardianBorder extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("2001", 1000, npc, null);
-		
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.endsWith(".htm")) {
 			return event;
 		}
@@ -442,7 +438,7 @@ public final class GuardianBorder extends AbstractNpcAI {
 			}
 		}
 		
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override

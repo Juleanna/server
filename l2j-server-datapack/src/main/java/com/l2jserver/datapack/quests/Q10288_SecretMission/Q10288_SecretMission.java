@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,15 +40,15 @@ public class Q10288_SecretMission extends Quest {
 	private static final Location TELEPORT = new Location(118833, -80589, -2688);
 	
 	public Q10288_SecretMission() {
-		super(10288, Q10288_SecretMission.class.getSimpleName(), "Secret Mission");
-		addStartNpc(AQUILANI, DOMINIC);
-		addFirstTalkId(AQUILANI);
-		addTalkId(DOMINIC, GREYMORE, AQUILANI);
+		super(10288);
+		bindStartNpc(AQUILANI, DOMINIC);
+		bindFirstTalk(AQUILANI);
+		bindTalk(DOMINIC, GREYMORE, AQUILANI);
 		registerQuestItems(LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		
 		if (st == null) {

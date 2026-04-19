@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,14 +40,14 @@ public class Q00028_ChestCaughtWithABaitOfIcyAir extends Quest {
 	private static final int ELVEN_RING = 881;
 	
 	public Q00028_ChestCaughtWithABaitOfIcyAir() {
-		super(28, Q00028_ChestCaughtWithABaitOfIcyAir.class.getSimpleName(), "Chest Caught With A Bait Of Icy Air");
-		addStartNpc(OFULLE);
-		addTalkId(OFULLE, KIKI);
+		super(28);
+		bindStartNpc(OFULLE);
+		bindTalk(OFULLE, KIKI);
 		registerQuestItems(KIKIS_LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -19,9 +19,9 @@
 package com.l2jserver.datapack.handlers.effecthandlers.instant;
 
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.TerritoryWarManager;
 import com.l2jserver.gameserver.model.StatsSet;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2SiegeFlagInstance;
 import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.effects.AbstractEffect;
@@ -45,14 +45,16 @@ public final class TakeTerritoryFlag extends AbstractEffect {
 	
 	@Override
 	public void onStart(BuffInfo info) {
-		final L2PcInstance player = info.getEffector().getActingPlayer();
+		final var player = info.getEffector().getActingPlayer();
 		if (!player.isClanLeader()) {
 			return;
 		}
 		
 		if (TerritoryWarManager.getInstance().isTWInProgress()) {
 			// Spawn a new flag
-			final L2SiegeFlagInstance flag = new L2SiegeFlagInstance(player, NpcData.getInstance().getTemplate(FLAG_NPC_ID), false, false);
+			final var objectId = IdFactory.getInstance().getNextId();
+			final var template = NpcData.getInstance().getTemplate(FLAG_NPC_ID);
+			final var flag = new L2SiegeFlagInstance(objectId, player, template, false, false);
 			flag.setTitle(player.getClan().getName());
 			flag.setCurrentHpMp(flag.getMaxHp(), flag.getMaxMp());
 			flag.setHeading(player.getHeading());

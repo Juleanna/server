@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -81,15 +81,15 @@ public final class Q00708_PathToBecomingALordGludio extends Quest {
 	private static final int MIN_TIME = 60000;
 	
 	public Q00708_PathToBecomingALordGludio() {
-		super(708, Q00708_PathToBecomingALordGludio.class.getSimpleName(), "Path To Becoming A Lord - Gludio");
-		addStartNpc(SAYRES);
-		addTalkId(SAYRES, PINTER, BATHIS);
+		super(708);
+		bindStartNpc(SAYRES);
+		bindTalk(SAYRES, PINTER, BATHIS);
 		registerQuestItems(HEADLESS_ARMOR);
-		addKillId(CASTLE_RUINS);
+		bindKill(CASTLE_RUINS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -239,7 +239,7 @@ public final class Q00708_PathToBecomingALordGludio extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final var target = killer.isInParty() ? killer.getParty().getRandomPlayer() : killer;
 		final var qs = target.getQuestState(getName());
 		if ((qs != null) && Util.checkIfInRange(1500, npc, target, true)) {
@@ -274,11 +274,10 @@ public final class Q00708_PathToBecomingALordGludio extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == HEADLESS_KNIGHT) {
 			final var target = L2World.getInstance().getPlayer(npc.getScriptValue());
 			if (target != null) {
@@ -287,7 +286,6 @@ public final class Q00708_PathToBecomingALordGludio extends Quest {
 				npc.broadcastPacket(message);
 			}
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override

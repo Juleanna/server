@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -65,11 +65,10 @@ public final class NevitsHerald extends AbstractNpcAI {
 	private static final SkillHolder FALL_OF_THE_DRAGON = new SkillHolder(23312);
 	
 	public NevitsHerald() {
-		super(NevitsHerald.class.getSimpleName(), "ai/npc");
-		addFirstTalkId(NEVITS_HERALD);
-		addStartNpc(NEVITS_HERALD);
-		addTalkId(NEVITS_HERALD);
-		addKillId(ANTHARAS, VALAKAS);
+		bindFirstTalk(NEVITS_HERALD);
+		bindStartNpc(NEVITS_HERALD);
+		bindTalk(NEVITS_HERALD);
+		bindKill(ANTHARAS, VALAKAS);
 	}
 	
 	@Override
@@ -78,7 +77,7 @@ public final class NevitsHerald extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		
 		if (npc.getId() == NEVITS_HERALD) {
@@ -102,7 +101,7 @@ public final class NevitsHerald extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isPet) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isPet) {
 		ExShowScreenMessage message = null;
 		
 		if (npc.getId() == VALAKAS) {
@@ -132,7 +131,6 @@ public final class NevitsHerald extends AbstractNpcAI {
 			startQuestTimer("despawn", 14400000, npc, killer);
 			startQuestTimer("text_spam", 3000, npc, killer);
 		}
-		return null;
 	}
 	
 	private void despawnHeralds() {

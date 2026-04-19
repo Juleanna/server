@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,8 +27,8 @@ import com.l2jserver.gameserver.enums.IllegalActionPunishmentType;
 import com.l2jserver.gameserver.model.L2SkillLearn;
 import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerProfessionCancel;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerProfessionChange;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerProfessionCancel;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerProfessionChange;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.itemcontainer.PcInventory;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -51,14 +51,13 @@ public final class SkillTransfer extends AbstractNpcAI {
 	};
 	
 	private SkillTransfer() {
-		super(SkillTransfer.class.getSimpleName(), "features");
 		setPlayerProfessionChangeId(this::onProfessionChange);
 		setPlayerProfessionCancelId(this::onProfessionCancel);
 		setOnEnterWorld(general().skillCheckEnable());
 	}
 	
-	public void onProfessionChange(OnPlayerProfessionChange event) {
-		final L2PcInstance player = event.getActiveChar();
+	public void onProfessionChange(PlayerProfessionChange event) {
+		final L2PcInstance player = event.player();
 		final int index = getTransferClassIndex(player);
 		if (index < 0) {
 			return;
@@ -71,8 +70,8 @@ public final class SkillTransfer extends AbstractNpcAI {
 		}
 	}
 	
-	public void onProfessionCancel(OnPlayerProfessionCancel event) {
-		final L2PcInstance player = event.getActiveChar();
+	public void onProfessionCancel(PlayerProfessionCancel event) {
+		final L2PcInstance player = event.player();
 		final int index = getTransferClassIndex(player);
 		
 		// is a transfer class
@@ -87,16 +86,16 @@ public final class SkillTransfer extends AbstractNpcAI {
 			inv.destroyItem("[HolyPomander - remove]", itemI, player, null);
 		}
 		// remove holy pomander variable
-		final String name = HOLY_POMANDER + event.getClassId();
+		final String name = HOLY_POMANDER + event.classId();
 		player.getVariables().remove(name);
 	}
 	
 	@Override
-	public String onEnterWorld(L2PcInstance player) {
+	public void onEnterWorld(L2PcInstance player) {
 		if (!player.canOverrideCond(PcCondOverride.SKILL_CONDITIONS) || general().skillCheckGM()) {
 			final int index = getTransferClassIndex(player);
 			if (index < 0) {
-				return super.onEnterWorld(player);
+				return;
 			}
 			long count = PORMANDERS[index].getCount() - player.getInventory().getInventoryItemCount(PORMANDERS[index].getId(), -1, false);
 			for (Skill sk : player.getAllSkills()) {
@@ -123,7 +122,6 @@ public final class SkillTransfer extends AbstractNpcAI {
 				player.getInventory().addItem("[HolyPomander- missing]", PORMANDERS[index].getId(), count, player, null);
 			}
 		}
-		return super.onEnterWorld(player);
 	}
 	
 	private static int getTransferClassIndex(L2PcInstance player) {

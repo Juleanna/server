@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -41,6 +41,8 @@ import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2GrandBossInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.zone.type.L2NoRestartZone;
@@ -131,17 +133,16 @@ public final class Antharas extends AbstractNpcAI {
 	private static int attacker_3_hate = 0;
 	
 	public Antharas() {
-		super(Antharas.class.getSimpleName(), "ai/individual");
-		addStartNpc(HEART, CUBE);
-		addTalkId(HEART, CUBE);
-		addFirstTalkId(HEART);
-		addSpawnId(INVISIBLE_NPC.keySet());
-		addSpawnId(ANTHARAS);
-		addMoveFinishedId(BOMBER);
-		addAggroRangeEnterId(BOMBER);
-		addSpellFinishedId(ANTHARAS);
-		addAttackId(ANTHARAS, BOMBER, BEHEMOTH, TERASQUE);
-		addKillId(ANTHARAS, TERASQUE, BEHEMOTH);
+		bindStartNpc(HEART, CUBE);
+		bindTalk(HEART, CUBE);
+		bindFirstTalk(HEART);
+		bindSpawn(INVISIBLE_NPC.keySet());
+		bindSpawn(ANTHARAS);
+		bindMoveFinished(BOMBER);
+		bindAggroRangeEnter(BOMBER);
+		bindSpellFinished(ANTHARAS);
+		bindAttack(ANTHARAS, BOMBER, BEHEMOTH, TERASQUE);
+		bindKill(ANTHARAS, TERASQUE, BEHEMOTH);
 		
 		final StatsSet info = GrandBossManager.getInstance().getStatsSet(ANTHARAS);
 		final int curr_hp = info.getInt("currentHP");
@@ -190,7 +191,7 @@ public final class Antharas extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "enter": {
 				String htmltext = null;
@@ -485,18 +486,17 @@ public final class Antharas extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
-		npc.doCast(DISPEL_BOM);
-		npc.doDie(player);
-		return super.onAggroRangeEnter(npc, player, isSummon);
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		event.npc().doCast(DISPEL_BOM);
+		event.npc().doDie(event.player());
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		_lastAttack = System.currentTimeMillis();
 		
 		if (npc.getId() == BOMBER) {
@@ -530,11 +530,10 @@ public final class Antharas extends AbstractNpcAI {
 			}
 			manageSkills(npc);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (zone.isCharacterInZone(killer)) {
 			if (npc.getId() == ANTHARAS) {
 				_antharas = null;
@@ -542,7 +541,7 @@ public final class Antharas extends AbstractNpcAI {
 				zone.broadcastPacket(new SpecialCamera(npc, 1200, 20, -10, 0, 10000, 13000, 0, 0, 0, 0, 0));
 				zone.broadcastPacket(Music.BS01_D_10000.getPacket());
 				addSpawn(CUBE, 177615, 114941, -7709, 0, false, 900000);
-				long respawnTime = (grandBoss().getIntervalOfAntharasSpawn() + getRandom(-grandBoss().getRandomOfAntharasSpawn(), grandBoss().getRandomOfAntharasSpawn())) * 3600000;
+				final long respawnTime = grandBoss().getIntervalOfAntharasSpawn() + getRandom(-(int) grandBoss().getRandomOfAntharasSpawn(), (int) grandBoss().getRandomOfAntharasSpawn());
 				setRespawn(respawnTime);
 				startQuestTimer("CLEAR_STATUS", respawnTime, null, null);
 				cancelQuestTimer("SET_REGEN", npc, null);
@@ -554,7 +553,6 @@ public final class Antharas extends AbstractNpcAI {
 				_minionCount--;
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -564,7 +562,7 @@ public final class Antharas extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == ANTHARAS) {
 			cancelQuestTimer("SET_REGEN", npc, null);
 			startQuestTimer("SET_REGEN", 60000, npc, null);
@@ -578,16 +576,14 @@ public final class Antharas extends AbstractNpcAI {
 			}
 			npc.deleteMe();
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		if ((skill.getId() == ANTH_FEAR.getSkillId()) || (skill.getId() == ANTH_FEAR_SHORT.getSkillId())) {
-			startQuestTimer("TID_USED_FEAR", 7000, npc, null);
+	public void onSpellFinished(NpcSkillFinished event) {
+		if ((event.skill().getId() == ANTH_FEAR.getSkillId()) || (event.skill().getId() == ANTH_FEAR_SHORT.getSkillId())) {
+			startQuestTimer("TID_USED_FEAR", 7000, event.npc(), null);
 		}
-		startQuestTimer("MANAGE_SKILL", 1000, npc, null);
-		return super.onSpellFinished(npc, player, skill);
+		startQuestTimer("MANAGE_SKILL", 1000, event.npc(), null);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -54,15 +54,15 @@ public class Q00377_ExplorationOfTheGiantsCavePart2 extends Quest {
 		.build();
 	
 	public Q00377_ExplorationOfTheGiantsCavePart2() {
-		super(377, Q00377_ExplorationOfTheGiantsCavePart2.class.getSimpleName(), "Exploration of the Giants' Cave - Part 2");
-		addStartNpc(SOBLING);
-		addTalkId(SOBLING);
-		addKillId(DROPLIST.getNpcIds());
+		super(377);
+		bindStartNpc(SOBLING);
+		bindTalk(SOBLING);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(TITAN_ANCIENT_BOOK);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -90,12 +90,11 @@ public class Q00377_ExplorationOfTheGiantsCavePart2 extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(player, -1, 3, npc);
 		if (qs != null) {
 			giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

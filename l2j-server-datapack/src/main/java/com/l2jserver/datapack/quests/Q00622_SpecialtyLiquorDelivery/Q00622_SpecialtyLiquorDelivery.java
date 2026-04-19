@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -54,15 +54,15 @@ public final class Q00622_SpecialtyLiquorDelivery extends Quest {
 	private static final List<Integer> TALKERS = Arrays.asList(KUBER, CROCUS, NAFF, PULIN);
 	
 	public Q00622_SpecialtyLiquorDelivery() {
-		super(622, Q00622_SpecialtyLiquorDelivery.class.getSimpleName(), "Specialty Liquor Delivery");
-		addStartNpc(JEREMY);
-		addTalkId(JEREMY, BOELIN, LIETTA);
-		addTalkId(TALKERS);
+		super(622);
+		bindStartNpc(JEREMY);
+		bindTalk(JEREMY, BOELIN, LIETTA);
+		bindTalk(TALKERS);
 		registerQuestItems(SPECIAL_DRINK, SPECIAL_DRINK_PRICE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {

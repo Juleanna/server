@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,15 +50,15 @@ public final class Q00279_TargetOfOpportunity extends Quest {
 		.build();
 	
 	public Q00279_TargetOfOpportunity() {
-		super(279, Q00279_TargetOfOpportunity.class.getSimpleName(), "Target of Opportunity");
-		addStartNpc(JERIAN);
-		addTalkId(JERIAN);
-		addKillId(DROPLIST_SEAL_COMPONENTS.getNpcIds());
+		super(279);
+		bindStartNpc(JERIAN);
+		bindTalk(JERIAN);
+		bindKill(DROPLIST_SEAL_COMPONENTS.getNpcIds());
 		registerQuestItems(SEAL_COMPONENTS_PART1.getId(), SEAL_COMPONENTS_PART2.getId(), SEAL_COMPONENTS_PART3.getId(), SEAL_COMPONENTS_PART4.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st == null) || (player.getLevel() < 82)) {
 			return getNoQuestMsg(player);
@@ -77,7 +77,7 @@ public final class Q00279_TargetOfOpportunity extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		L2PcInstance pl = getRandomPartyMember(player, "progress", "1");
 		if (pl != null) {
 			final QuestState st = getQuestState(pl, false);
@@ -89,7 +89,6 @@ public final class Q00279_TargetOfOpportunity extends Quest {
 				}
 			}
 		}
-		return null;
 	}
 	
 	@Override

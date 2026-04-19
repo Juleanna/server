@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,8 +18,10 @@
  */
 package com.l2jserver.datapack.quests.Q00004_LongLiveThePaagrioLord;
 
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.audio.Sound;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
@@ -51,15 +53,17 @@ public class Q00004_LongLiveThePaagrioLord extends Quest {
 	// Misc
 	private static final int MIN_LEVEL = 2;
 	
+	private static final int GUIDE_MISSION = 41;
+	
 	public Q00004_LongLiveThePaagrioLord() {
-		super(4, Q00004_LongLiveThePaagrioLord.class.getSimpleName(), "Long Live the Pa'agrio Lord");
-		addStartNpc(NAKUSIN);
-		addTalkId(NAKUSIN, VARKEES, URUTU, HESTUI, KUNAI, USKA, GROOKIN);
+		super(4);
+		bindStartNpc(NAKUSIN);
+		bindTalk(NAKUSIN, VARKEES, URUTU, HESTUI, KUNAI, USKA, GROOKIN);
 		registerQuestItems(HONEY_KHANDAR, BEAR_FUR_CLOAK, BLOODY_AXE, ANCESTOR_SKULL, SPIDER_DUST, DEEP_SEA_ORB);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -94,11 +98,29 @@ public class Q00004_LongLiveThePaagrioLord extends Quest {
 							htmltext = "30578-04.html";
 						} else {
 							giveItems(player, CLUB, 1);
-							// Newbie Guide
-							showOnScreenMsg(player, NpcStringId.DELIVERY_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
 							addExpAndSp(player, 4254, 335);
 							giveAdena(player, 1850, true);
 							st.exitQuest(false, true);
+							
+							// Newbie Guide
+							final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+							if (newbieGuide != null) {
+								final var newbieGuideQs = newbieGuide.getQuestState(player, true);
+								if (!newbieGuideQs.haveNRMemo(player, GUIDE_MISSION)) {
+									newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+									newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, 1);
+									
+									showOnScreenMsg(player, NpcStringId.DELIVERY_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+								} else {
+									if ((newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) % 10) != 1) {
+										newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+										newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) + 1);
+										
+										showOnScreenMsg(player, NpcStringId.DELIVERY_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+									}
+								}
+							}
+							
 							htmltext = "30578-06.html";
 						}
 						break;

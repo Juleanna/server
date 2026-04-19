@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -48,11 +48,10 @@ public final class TrapDetect extends AbstractEffect {
 	
 	@Override
 	public void onStart(BuffInfo info) {
-		if (!info.getEffected().isTrap() || info.getEffected().isAlikeDead()) {
+		if (!(info.getEffected() instanceof L2TrapInstance trap) || info.getEffected().isAlikeDead()) {
 			return;
 		}
 		
-		final L2TrapInstance trap = (L2TrapInstance) info.getEffected();
 		if (trap.getLevel() <= _power) {
 			trap.setDetected(info.getEffector());
 		}

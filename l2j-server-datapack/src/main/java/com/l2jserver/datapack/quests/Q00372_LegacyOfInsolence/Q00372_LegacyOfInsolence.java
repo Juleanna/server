@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -165,17 +165,17 @@ public final class Q00372_LegacyOfInsolence extends Quest {
 	};
 	
 	public Q00372_LegacyOfInsolence() {
-		super(372, Q00372_LegacyOfInsolence.class.getSimpleName(), "Legacy Of Insolence");
-		addStartNpc(WAREHOUSE_KEEPER_WALDERAL);
-		addTalkId(WAREHOUSE_KEEPER_WALDERAL, TRADER_HOLLY, MAGISTER_DESMOND, ANTIQUE_DEALER_PATRIN, CLAUDIA_ATHEBALDT);
-		addKillId(DROPLIST.getNpcIds());
+		super(372);
+		bindStartNpc(WAREHOUSE_KEEPER_WALDERAL);
+		bindTalk(WAREHOUSE_KEEPER_WALDERAL, TRADER_HOLLY, MAGISTER_DESMOND, ANTIQUE_DEALER_PATRIN, CLAUDIA_ATHEBALDT);
+		bindKill(DROPLIST.getNpcIds());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		switch (event) {
@@ -236,12 +236,11 @@ public final class Q00372_LegacyOfInsolence extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, QS_KILLER_CHANCE.get(npc.getId()), npc);
 		if (qs != null) {
 			giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -84,15 +84,15 @@ public final class Q00213_TrialOfTheSeeker extends Quest {
 	private static final int LEVEL = 36;
 	
 	public Q00213_TrialOfTheSeeker() {
-		super(213, Q00213_TrialOfTheSeeker.class.getSimpleName(), "Trial Of The Seeker");
-		addStartNpc(MASTER_DUFNER);
-		addTalkId(MASTER_DUFNER, MASTER_TERRY, BLACKSMITH_BRUNON, TRADER_VIKTOR, MAGISTER_MARINA);
-		addKillId(ANT_CAPTAIN, ANT_WARRIOR_CAPTAIN, MEDUSA, NEER_GHOUL_BERSERKER, OL_MAHUM_CAPTAIN, MARSH_STAKATO_DRONE, TURAK_BUGBEAR_WARRIOR, BREKA_ORC_OVERLORD, TUREK_ORC_WARLORD, LETO_LIZARDMAN_WARRIOR);
+		super(213);
+		bindStartNpc(MASTER_DUFNER);
+		bindTalk(MASTER_DUFNER, MASTER_TERRY, BLACKSMITH_BRUNON, TRADER_VIKTOR, MAGISTER_MARINA);
+		bindKill(ANT_CAPTAIN, ANT_WARRIOR_CAPTAIN, MEDUSA, NEER_GHOUL_BERSERKER, OL_MAHUM_CAPTAIN, MARSH_STAKATO_DRONE, TURAK_BUGBEAR_WARRIOR, BREKA_ORC_OVERLORD, TUREK_ORC_WARLORD, LETO_LIZARDMAN_WARRIOR);
 		registerQuestItems(DUFNERS_LETTER, TERRYS_1ST_ORDER, TERRYS_2ND_ORDER, TERRYS_LETTER, VIKTORS_LETTER, HAWKEYES_LETTER, MYSTERIOUS_SPIRIT_ORE, OL_MAHUM_SPIRIT_ORE, TUREK_SPIRIT_ORE, ANT_SPIRIT_ORE, TURAK_BUGBEAR_SPIRIT_ORE, TERRY_BOX, VIKTORS_REQUEST, MEDUSA_SCALES, SHILENS_SPIRIT_ORE, ANALYSIS_REQUEST, MARINAS_LETTER, EXPERIMENT_TOOLS, ANALYSIS_RESULT, TERRYS_3RD_ORDER, LIST_OF_HOST, ABYSS_SPIRIT_ORE1, ABYSS_SPIRIT_ORE2, ABYSS_SPIRIT_ORE3, ABYSS_SPIRIT_ORE4, TERRYS_REPORT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -222,7 +222,7 @@ public final class Q00213_TrialOfTheSeeker extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -328,7 +328,6 @@ public final class Q00213_TrialOfTheSeeker extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

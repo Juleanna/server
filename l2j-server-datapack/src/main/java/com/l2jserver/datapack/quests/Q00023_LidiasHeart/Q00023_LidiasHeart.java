@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -55,22 +55,22 @@ public final class Q00023_LidiasHeart extends Quest {
 	private static final Location GHOST_SPAWN = new Location(51432, -54570, -3136);
 	
 	public Q00023_LidiasHeart() {
-		super(23, Q00023_LidiasHeart.class.getSimpleName(), "Lidia's Heart");
-		addStartNpc(HIGH_PRIEST_INNOCENTIN);
-		addTalkId(HIGH_PRIEST_INNOCENTIN, TRADER_VIOLET, TOMBSTONE, GHOST_OF_VON_HELLMANN, BROKEN_BOOKSHELF, BOX);
-		addSpawnId(GHOST_OF_VON_HELLMANN);
+		super(23);
+		bindStartNpc(HIGH_PRIEST_INNOCENTIN);
+		bindTalk(HIGH_PRIEST_INNOCENTIN, TRADER_VIOLET, TOMBSTONE, GHOST_OF_VON_HELLMANN, BROKEN_BOOKSHELF, BOX);
+		bindSpawn(GHOST_OF_VON_HELLMANN);
 		registerQuestItems(LIDIAS_DIARY, SILVER_KEY, SILVER_SPEAR);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ("DESPAWN".equals(event)) {
 			final L2Npc npc0 = npc.getVariables().getObject("npc0", L2Npc.class);
 			if (npc0 != null) {
 				npc0.getVariables().set("SPAWNED", false);
 			}
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState qs = getQuestState(player, false);
@@ -391,9 +391,8 @@ public final class Q00023_LidiasHeart extends Quest {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("DESPAWN", 300000, npc, null);
 		npc.broadcastPacket(new NpcSay(npc, Say2.NPC_ALL, NpcStringId.WHO_AWOKE_ME));
-		return super.onSpawn(npc);
 	}
 }

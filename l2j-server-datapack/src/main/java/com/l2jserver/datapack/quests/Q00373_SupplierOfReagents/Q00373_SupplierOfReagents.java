@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -173,15 +173,15 @@ public final class Q00373_SupplierOfReagents extends Quest {
 	}
 	
 	public Q00373_SupplierOfReagents() {
-		super(373, Q00373_SupplierOfReagents.class.getSimpleName(), "Supplier of Reagents");
-		addStartNpc(WESLEY);
-		addKillId(HALLATE_GUARDIAN, HALLATE_MAID, HAMES_ORC_SHAMAN, LAVA_WYRM, CRENDION, PLATINUM_GUARDIAN_SHAMAN, PLATINUM_TRIBE_SHAMAN);
-		addTalkId(WESLEY, ALCHEMIST_MIXING_URN);
+		super(373);
+		bindStartNpc(WESLEY);
+		bindKill(HALLATE_GUARDIAN, HALLATE_MAID, HAMES_ORC_SHAMAN, LAVA_WYRM, CRENDION, PLATINUM_GUARDIAN_SHAMAN, PLATINUM_TRIBE_SHAMAN);
+		bindTalk(WESLEY, ALCHEMIST_MIXING_URN);
 		registerQuestItems(WESLEYS_MIXING_STONE, MIXING_MANUAL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -320,12 +320,11 @@ public final class Q00373_SupplierOfReagents extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 3, npc);
 		if (qs != null) {
 			giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

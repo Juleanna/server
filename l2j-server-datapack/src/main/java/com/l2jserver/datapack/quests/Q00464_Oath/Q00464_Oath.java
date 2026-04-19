@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -24,7 +24,7 @@ import java.util.Map;
 import com.l2jserver.gameserver.enums.QuestType;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
+import com.l2jserver.gameserver.model.events.impl.item.ItemTalk;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
@@ -76,17 +76,17 @@ public class Q00464_Oath extends Quest {
 	}
 	
 	public Q00464_Oath() {
-		super(464, Q00464_Oath.class.getSimpleName(), "Oath");
+		super(464);
 		for (int[] npc : NPC) {
-			addTalkId(npc[0]);
+			bindTalk(npc[0]);
 		}
-		addKillId(MOBS.keySet());
-		addItemTalkId(STRONGBOX);
+		bindKill(MOBS.keySet());
+		bindItemTalk(STRONGBOX);
 		registerQuestItems(BOOK, BOOK2);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -153,48 +153,40 @@ public class Q00464_Oath extends Quest {
 	}
 	
 	@Override
-	public String onItemTalk(L2ItemInstance item, L2PcInstance player) {
-		String htmltext = getNoQuestMsg(player);
-		final QuestState st = getQuestState(player, true);
-		
+	public void onItemTalk(ItemTalk event) {
+		final var player = event.player();
+		final var qs = getQuestState(player, true);
 		boolean startQuest = false;
-		switch (st.getState()) {
-			case State.CREATED:
-				startQuest = true;
-				break;
-			case State.STARTED:
-				htmltext = "strongbox-02.html";
-				break;
-			case State.COMPLETED:
-				if (st.isNowAvailable()) {
-					st.setState(State.CREATED);
+		switch (qs.getState()) {
+			case State.CREATED -> startQuest = true;
+			case State.STARTED -> showQuestPage(player, "strongbox-02.html", getId());
+			case State.COMPLETED -> {
+				if (qs.isNowAvailable()) {
+					qs.setState(State.CREATED);
 					startQuest = true;
 				} else {
-					htmltext = "strongbox-03.html";
+					showQuestPage(player, "strongbox-03.html", getId());
 				}
-				break;
+			}
 		}
 		
 		if (startQuest) {
 			if (player.getLevel() >= MIN_LEVEL) {
-				st.startQuest();
-				st.takeItems(STRONGBOX, 1);
-				st.giveItems(BOOK, 1);
-				htmltext = "strongbox-01.htm";
+				qs.startQuest();
+				qs.takeItems(STRONGBOX, 1);
+				qs.giveItems(BOOK, 1);
+				showPage(player, "strongbox-01.htm");
 			} else {
-				htmltext = "strongbox-00.htm";
+				showPage(player, "strongbox-00.htm");
 			}
 		}
-		return htmltext;
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (getRandom(1000) < MOBS.get(npc.getId())) {
 			npc.dropItem(killer, STRONGBOX, 1);
 		}
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

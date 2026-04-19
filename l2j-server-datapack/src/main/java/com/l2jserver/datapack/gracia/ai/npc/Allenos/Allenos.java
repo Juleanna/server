@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -34,10 +34,9 @@ public class Allenos extends AbstractNpcAI {
 	private static final Location TELEPORT_LOCATION = new Location(-245800, 220488, -12112);
 	
 	public Allenos() {
-		super(Allenos.class.getSimpleName(), "gracia/AI/NPC");
-		addStartNpc(ALLENOS);
-		addFirstTalkId(ALLENOS);
-		addTalkId(ALLENOS);
+		bindStartNpc(ALLENOS);
+		bindFirstTalk(ALLENOS);
+		bindTalk(ALLENOS);
 	}
 	
 	@Override
@@ -55,7 +54,7 @@ public class Allenos extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "ENTER_SOD": {
 				if (player.isFlyingMounted()) {
@@ -72,6 +71,6 @@ public class Allenos extends AbstractNpcAI {
 				return "32526-03.html";
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

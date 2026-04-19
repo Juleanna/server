@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -82,16 +82,16 @@ public final class Q00225_TestOfTheSearcher extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00225_TestOfTheSearcher() {
-		super(225, Q00225_TestOfTheSearcher.class.getSimpleName(), "Test Of The Searcher");
-		addStartNpc(MASTER_LUTHER);
-		addTalkId(MASTER_LUTHER, CAPTAIN_ALEX, TYRA, TREE, STRONG_WOODEN_CHEST, MILITIAMAN_LEIRYNN, DRUNKARD_BORYS, BODYGUARD_JAX);
-		addKillId(HANGMAN_TREE, ROAD_SCAVENGER, GIANT_FUNGUS, DELU_lIZARDMAN_SHAMAN, NEER_BODYGUARD, DELU_CHIEF_KALKIS);
-		addAttackId(DELU_lIZARDMAN_SHAMAN);
+		super(225);
+		bindStartNpc(MASTER_LUTHER);
+		bindTalk(MASTER_LUTHER, CAPTAIN_ALEX, TYRA, TREE, STRONG_WOODEN_CHEST, MILITIAMAN_LEIRYNN, DRUNKARD_BORYS, BODYGUARD_JAX);
+		bindKill(HANGMAN_TREE, ROAD_SCAVENGER, GIANT_FUNGUS, DELU_lIZARDMAN_SHAMAN, NEER_BODYGUARD, DELU_CHIEF_KALKIS);
+		bindAttack(DELU_lIZARDMAN_SHAMAN);
 		registerQuestItems(LUTHERS_LETTER, ALEXS_WARRANT, LEIRYNNS_1ST_ORDER, DELU_TOTEM, LEIRYNNS_2ND_ORDER, CHIEF_KALKIS_FANG, LEIRYNNS_REPORT, STRINGE_MAP, LAMBERTS_MAP, ALEXS_LETTER, ALEXS_ORDER, WINE_CATALOG, TYRAS_CONTRACT, RED_SPORE_DUST, MALRUKIAN_WINE, OLD_ORDER, JAXS_DIARY, TORN_MAP_PIECE_1ST, TORN_MAP_PIECE_2ND, SOLTS_MAP, MAKELS_MAP, COMBINED_MAP, RUSTED_KEY, GOLD_BAR, ALEXS_RECOMMEND);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -183,19 +183,18 @@ public final class Q00225_TestOfTheSearcher extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
-		final QuestState qs = getQuestState(attacker, false);
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+		final var qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isStarted()) {
 			if (npc.isScriptValue(0) && hasQuestItems(attacker, LEIRYNNS_1ST_ORDER)) {
 				npc.setScriptValue(1);
 				addAttackDesire(addSpawn(NEER_BODYGUARD, npc, true, 200000), attacker);
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -265,7 +264,6 @@ public final class Q00225_TestOfTheSearcher extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -328,7 +326,7 @@ public final class Q00225_TestOfTheSearcher extends Quest {
 								takeItems(player, COMBINED_MAP, 1);
 								takeItems(player, GOLD_BAR, -1);
 								giveItems(player, ALEXS_RECOMMEND, 1);
-								player.getRadar().removeMarker(10133, 157155, -2383);
+								deleteRadar(player, 10133, 157155, -2383, 2);
 								qs.setCond(19, true);
 								htmltext = "30291-11.html";
 							} else {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -80,9 +80,8 @@ public final class SubclassCertification extends AbstractNpcAI {
 	private static final int MIN_LVL = 65;
 	
 	public SubclassCertification() {
-		super(SubclassCertification.class.getSimpleName(), "ai/npc");
-		addStartNpc(NPCS);
-		addTalkId(NPCS);
+		bindStartNpc(NPCS);
+		bindTalk(NPCS);
 	}
 	
 	@Override
@@ -97,7 +96,7 @@ public final class SubclassCertification extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

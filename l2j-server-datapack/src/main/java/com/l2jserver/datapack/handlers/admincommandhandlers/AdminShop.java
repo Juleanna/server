@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.datapack.handlers.admincommandhandlers;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.xml.impl.BuyListData;
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
@@ -36,7 +37,7 @@ import com.l2jserver.gameserver.network.serverpackets.ExBuySellList;
  * </ul>
  */
 public class AdminShop implements IAdminCommandHandler {
-	private static final Logger _log = Logger.getLogger(AdminShop.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminShop.class);
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_buy",
@@ -67,7 +68,7 @@ public class AdminShop implements IAdminCommandHandler {
 		try {
 			val = Integer.parseInt(command);
 		} catch (Exception e) {
-			_log.warning("admin buylist failed:" + command);
+			LOG.warn("Admin buylist failed: {}", command);
 		}
 		
 		L2BuyList buyList = BuyListData.getInstance().getBuyList(val);
@@ -76,7 +77,7 @@ public class AdminShop implements IAdminCommandHandler {
 			activeChar.sendPacket(new BuyList(buyList, activeChar.getAdena(), 0));
 			activeChar.sendPacket(new ExBuySellList(activeChar, false));
 		} else {
-			_log.warning("no buylist with id:" + val);
+			LOG.warn("No buylist with id: {}", val);
 		}
 		activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 	}

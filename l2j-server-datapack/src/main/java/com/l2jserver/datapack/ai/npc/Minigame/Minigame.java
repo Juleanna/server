@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -29,7 +29,7 @@ import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventType;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureSkillUse;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureSkillUse;
 import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.network.NpcStringId;
@@ -60,15 +60,14 @@ public final class Minigame extends AbstractNpcAI {
 	private final List<MinigameRoom> _rooms = new ArrayList<>(2);
 	
 	public Minigame() {
-		super(Minigame.class.getSimpleName(), "ai/npc");
-		addStartNpc(SUMIEL);
-		addFirstTalkId(SUMIEL);
-		addTalkId(SUMIEL);
-		addSpawnId(SUMIEL, TREASURE_BOX);
+		bindStartNpc(SUMIEL);
+		bindFirstTalk(SUMIEL);
+		bindTalk(SUMIEL);
+		bindSpawn(SUMIEL, TREASURE_BOX);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final MinigameRoom room = getRoomByManager(npc);
 		switch (event) {
 			case "restart": {
@@ -136,7 +135,7 @@ public final class Minigame extends AbstractNpcAI {
 					broadcastNpcSay(room.getManager(), Say2.NPC_ALL, NpcStringId.NOW_LIGHT_THE_FURNACES_FIRE);
 					room.burnThemAll();
 					startQuestTimer("off", 2000, npc, null);
-					final ConsumerEventListener listener = new ConsumerEventListener(room.getParticipant(), EventType.ON_CREATURE_SKILL_USE, (OnCreatureSkillUse listenerEvent) -> onSkillUse(listenerEvent), room);
+					final ConsumerEventListener listener = new ConsumerEventListener(room.getParticipant(), EventType.CREATURE_SKILL_USE, (CreatureSkillUse listenerEvent) -> onSkillUse(listenerEvent), room);
 					room.setListener(listener);
 					room.setCurrentPot(0);
 				}
@@ -198,7 +197,7 @@ public final class Minigame extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		switch (npc.getId()) {
 			case SUMIEL: {
 				_rooms.add(initRoom(npc));
@@ -210,14 +209,13 @@ public final class Minigame extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onSpawn(npc);
 	}
 	
-	public void onSkillUse(OnCreatureSkillUse event) {
-		final MinigameRoom room = getRoomByParticipant((L2PcInstance) event.getCaster());
+	public void onSkillUse(CreatureSkillUse event) {
+		final MinigameRoom room = getRoomByParticipant((L2PcInstance) event.caster());
 		final boolean miniGameStarted = room.getStarted();
-		if (miniGameStarted && (event.getSkill().getId() == SKILL_TORCH_LIGHT)) {
-			for (L2Object obj : event.getTargets()) {
+		if (miniGameStarted && (event.skill().getId() == SKILL_TORCH_LIGHT)) {
+			for (L2Object obj : event.targets()) {
 				if ((obj != null) && obj.isNpc()) {
 					L2Npc npc = (L2Npc) obj;
 					if (npc.getId() == BURNER) {
@@ -242,7 +240,7 @@ public final class Minigame extends AbstractNpcAI {
 								broadcastNpcSay(room.getManager(), Say2.NPC_ALL, NpcStringId.AH_IVE_FAILED_GOING_FURTHER_WILL_BE_DIFFICULT);
 								room.burnThemAll();
 								startQuestTimer("off", 2000, room.getManager(), null);
-								room.getParticipant().removeListenerIf(EventType.ON_CREATURE_SKILL_USE, listener -> listener.getOwner() == room);
+								room.getParticipant().removeListenerIf(EventType.CREATURE_SKILL_USE, listener -> listener.getOwner() == room);
 								startQuestTimer("end", 4000, room.getManager(), null);
 							} else if (room.getAttemptNumber() < MAX_ATTEMPTS) {
 								broadcastNpcSay(room.getManager(), Say2.NPC_ALL, NpcStringId.AH_IS_THIS_FAILURE_BUT_IT_LOOKS_LIKE_I_CAN_KEEP_GOING);

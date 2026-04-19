@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,14 +50,13 @@ public final class DragonVortex extends AbstractNpcAI {
 	private static final Location SPOT_4 = new Location(109346, 111849, -3040);
 	
 	public DragonVortex() {
-		super(DragonVortex.class.getSimpleName(), "ai/npc");
-		addStartNpc(DRAGON_VORTEX);
-		addFirstTalkId(DRAGON_VORTEX);
-		addTalkId(DRAGON_VORTEX);
+		bindStartNpc(DRAGON_VORTEX);
+		bindFirstTalk(DRAGON_VORTEX);
+		bindTalk(DRAGON_VORTEX);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "RAIDBOSS": {
 				if (hasQuestItems(player, LARGE_DRAGON_BONE)) {
@@ -117,6 +116,6 @@ public final class DragonVortex extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

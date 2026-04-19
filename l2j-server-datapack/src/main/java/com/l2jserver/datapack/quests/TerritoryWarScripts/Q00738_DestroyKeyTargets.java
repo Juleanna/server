@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,7 +26,7 @@ import com.l2jserver.gameserver.network.NpcStringId;
  */
 public final class Q00738_DestroyKeyTargets extends TerritoryWarSuperClass {
 	public Q00738_DestroyKeyTargets() {
-		super(738, Q00738_DestroyKeyTargets.class.getSimpleName(), "Destroy Key Targets");
+		super(738);
 		CLASS_IDS = new int[] {
 			51,
 			115,

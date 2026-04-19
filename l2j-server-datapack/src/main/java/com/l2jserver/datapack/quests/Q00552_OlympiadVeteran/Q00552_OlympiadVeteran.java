@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,15 +41,15 @@ public class Q00552_OlympiadVeteran extends Quest {
 	private static final int OLY_CHEST = 17169;
 	
 	public Q00552_OlympiadVeteran() {
-		super(552, Q00552_OlympiadVeteran.class.getSimpleName(), "Olympiad Veteran");
-		addStartNpc(MANAGER);
-		addTalkId(MANAGER);
+		super(552);
+		bindStartNpc(MANAGER);
+		bindTalk(MANAGER);
 		registerQuestItems(TEAM_EVENT_CERTIFICATE, CLASS_FREE_BATTLE_CERTIFICATE, CLASS_BATTLE_CERTIFICATE);
-		addOlympiadMatchFinishId();
+		bindOlympiadMatchFinish();
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

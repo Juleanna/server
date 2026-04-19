@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -82,16 +82,16 @@ public final class Q00415_PathOfTheOrcMonk extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00415_PathOfTheOrcMonk() {
-		super(415, Q00415_PathOfTheOrcMonk.class.getSimpleName(), "Path Of The Orc Monk");
-		addStartNpc(GANTAKI_ZU_URUTU);
-		addTalkId(GANTAKI_ZU_URUTU, PREFECT_KASMAN, KHAVATARI_ROSHEEK, KHAVATARI_TORUKU, SEER_MOIRA, KHAVATARI_AREN);
-		addAttackId(FELIM_LIZARDMAN_WARRIOR, VUKU_ORC_FIGHTER, LANGK_LIZZARDMAN_WARRIOR, RATMAN_WARRIOR, SCARLET_SALAMANDER, KASHA_FANG_SPIDER, KASHA_BLADE_SPIDER, KASHA_BEAR, BAAR_DRE_VANUL);
-		addKillId(FELIM_LIZARDMAN_WARRIOR, VUKU_ORC_FIGHTER, LANGK_LIZZARDMAN_WARRIOR, RATMAN_WARRIOR, SCARLET_SALAMANDER, KASHA_FANG_SPIDER, KASHA_BLADE_SPIDER, KASHA_BEAR, BAAR_DRE_VANUL);
+		super(415);
+		bindStartNpc(GANTAKI_ZU_URUTU);
+		bindTalk(GANTAKI_ZU_URUTU, PREFECT_KASMAN, KHAVATARI_ROSHEEK, KHAVATARI_TORUKU, SEER_MOIRA, KHAVATARI_AREN);
+		bindAttack(FELIM_LIZARDMAN_WARRIOR, VUKU_ORC_FIGHTER, LANGK_LIZZARDMAN_WARRIOR, RATMAN_WARRIOR, SCARLET_SALAMANDER, KASHA_FANG_SPIDER, KASHA_BLADE_SPIDER, KASHA_BEAR, BAAR_DRE_VANUL);
+		bindKill(FELIM_LIZARDMAN_WARRIOR, VUKU_ORC_FIGHTER, LANGK_LIZZARDMAN_WARRIOR, RATMAN_WARRIOR, SCARLET_SALAMANDER, KASHA_FANG_SPIDER, KASHA_BLADE_SPIDER, KASHA_BEAR, BAAR_DRE_VANUL);
 		registerQuestItems(POMEGRANATE, LEATHER_POUCH_1ST, LEATHER_POUCH_2ND, LEATHER_POUCH_3RD, LEATHER_POUCH_1ST_FULL, LEATHER_POUCH_2ND_FULL, LEATHER_POUCH_3RD_FULL, KASHA_BEAR_CLAW, KASHA_BLADE_SPIDER_TALON, SCARLET_SALAMANDER_SCALE, FIERY_SPIRIT_SCROLL, ROSHEEKS_LETTER, GANTAKIS_LETTRT_OF_RECOMMENDATION, FIG, LEATHER_POUCH_4TF, LEATHER_POUCH_4TF_FULL, VUKU_ORK_TUSK, RATMAN_FANG, LANGK_LIZARDMAN_TOOTH, FELIM_LIZARDMAN_TOOTH, IRON_WILL_SCROLL, TORUKUS_LETTER, KASHA_SPIDERS_TOOTH, HORN_OF_BAAR_DRE_VANUL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		
 		if (qs == null) {
@@ -202,7 +202,7 @@ public final class Q00415_PathOfTheOrcMonk extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isStarted()) {
 			switch (npc.getScriptValue()) {
@@ -223,11 +223,10 @@ public final class Q00415_PathOfTheOrcMonk extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && npc.isScriptValue(1) && Util.checkIfInRange(1500, npc, killer, true)) {
 			final long ItemCount = getQuestItemsCount(killer, RATMAN_FANG, LANGK_LIZARDMAN_TOOTH, FELIM_LIZARDMAN_TOOTH, VUKU_ORK_TUSK);
@@ -375,7 +374,6 @@ public final class Q00415_PathOfTheOrcMonk extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

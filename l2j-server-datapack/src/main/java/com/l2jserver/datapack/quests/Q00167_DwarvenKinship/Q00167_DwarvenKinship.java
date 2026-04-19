@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,14 +40,14 @@ public class Q00167_DwarvenKinship extends Quest {
 	private static final int MIN_LVL = 15;
 	
 	public Q00167_DwarvenKinship() {
-		super(167, Q00167_DwarvenKinship.class.getSimpleName(), "Dwarven Kinship");
-		addStartNpc(CARLON);
-		addTalkId(CARLON, NORMAN, HAPROCK);
+		super(167);
+		bindStartNpc(CARLON);
+		bindTalk(CARLON, NORMAN, HAPROCK);
 		registerQuestItems(CARLONS_LETTER, NORMANS_LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {

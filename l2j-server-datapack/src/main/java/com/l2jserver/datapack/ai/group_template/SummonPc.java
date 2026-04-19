@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -22,8 +22,8 @@ import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
  * Summon Pc AI.<br>
@@ -41,16 +41,15 @@ public final class SummonPc extends AbstractNpcAI {
 	private static final int MIN_DISTANCE_MOST_HATED = 100;
 	
 	public SummonPc() {
-		super(SummonPc.class.getSimpleName(), "ai/group_template");
-		addAttackId(PORTA, PERUM);
-		addSpellFinishedId(PORTA, PERUM);
+		bindAttack(PORTA, PERUM);
+		bindSpellFinished(PORTA, PERUM);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final boolean attacked = npc.getVariables().getBoolean("attacked", false);
 		if (attacked) {
-			return super.onAttack(npc, attacker, damage, isSummon);
+			return;
 		}
 		
 		final int chance = getRandom(100);
@@ -67,19 +66,18 @@ public final class SummonPc extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		if ((skill.getId() == SUMMON_PC.getSkillId()) && !npc.isDead() && npc.getVariables().getBoolean("attacked", false)) {
-			player.teleToLocation(npc);
+	public void onSpellFinished(NpcSkillFinished event) {
+		final var npc = event.npc();
+		if ((event.skill().getId() == SUMMON_PC.getSkillId()) && !npc.isDead() && npc.getVariables().getBoolean("attacked", false)) {
+			event.player().teleToLocation(npc);
 			npc.getVariables().set("attacked", false);
 			
 			// TODO(Zoey76): Teleport removes the player from all known lists, affecting aggro lists.
-			addAttackDesire(npc, player);
+			addAttackDesire(npc, event.player());
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	private static void doSummonPc(L2Npc npc, L2PcInstance attacker) {

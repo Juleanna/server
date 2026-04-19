@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,10 +36,9 @@ public final class FreyasSteward extends AbstractNpcAI {
 	private static final int MIN_LEVEL = 82;
 	
 	public FreyasSteward() {
-		super(FreyasSteward.class.getSimpleName(), "ai/npc");
-		addStartNpc(FREYAS_STEWARD);
-		addFirstTalkId(FREYAS_STEWARD);
-		addTalkId(FREYAS_STEWARD);
+		bindStartNpc(FREYAS_STEWARD);
+		bindFirstTalk(FREYAS_STEWARD);
+		bindTalk(FREYAS_STEWARD);
 	}
 	
 	@Override

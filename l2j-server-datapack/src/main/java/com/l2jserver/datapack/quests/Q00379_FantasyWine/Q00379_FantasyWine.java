@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,15 +51,15 @@ public final class Q00379_FantasyWine extends Quest {
 	private static final int MIN_LEVEL = 20;
 	
 	public Q00379_FantasyWine() {
-		super(379, Q00379_FantasyWine.class.getSimpleName(), "Fantasy Wine");
-		addStartNpc(HARLAN);
-		addTalkId(HARLAN);
-		addKillId(ENKU_ORC_CHAMPION, ENKU_ORC_SHAMAN);
+		super(379);
+		bindStartNpc(HARLAN);
+		bindTalk(HARLAN);
+		bindKill(ENKU_ORC_CHAMPION, ENKU_ORC_SHAMAN);
 		registerQuestItems(LEAF_OF_EUCALYPTUS.getId(), STONE_OF_CHILL.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -105,18 +105,15 @@ public final class Q00379_FantasyWine extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
-		
 		if ((qs == null) || !Util.checkIfInRange(1500, npc, qs.getPlayer(), true)) {
-			return null;
+			return;
 		}
 		
 		if (giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true) && hasItemsAtLimit(killer, LEAF_OF_EUCALYPTUS, STONE_OF_CHILL)) {
 			qs.setCond(2);
 		}
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

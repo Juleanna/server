@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -67,22 +67,22 @@ public final class Q00171_ActsOfEvil extends Quest {
 	private static final int MIN_LEVEL = 27;
 	
 	public Q00171_ActsOfEvil() {
-		super(171, Q00171_ActsOfEvil.class.getSimpleName(), "Acts Of Evil");
-		addStartNpc(GUARD_ALVAH);
-		addTalkId(GUARD_ALVAH, TRADER_ARODIN, TYRA, NETI, TRADER_ROLENTO, TUREK_CHIEF_BURAI);
-		addKillId(TUMRAN_BUGBEAR, TUMRAN_BUGBEAR_WARRIOR, OL_MAHUM_CAPTAIN, OL_MAHUM_GENERAL, TUREK_ORC_ARCHER, TUREK_ORC_SKIRMISHER, TUREK_ORC_SUPPLIER, TUREK_ORC_FOOTMAN, OL_MAHUM_SUPPORT_TROOP);
-		addSpawnId(OL_MAHUM_SUPPORT_TROOP);
+		super(171);
+		bindStartNpc(GUARD_ALVAH);
+		bindTalk(GUARD_ALVAH, TRADER_ARODIN, TYRA, NETI, TRADER_ROLENTO, TUREK_CHIEF_BURAI);
+		bindKill(TUMRAN_BUGBEAR, TUMRAN_BUGBEAR_WARRIOR, OL_MAHUM_CAPTAIN, OL_MAHUM_GENERAL, TUREK_ORC_ARCHER, TUREK_ORC_SKIRMISHER, TUREK_ORC_SUPPLIER, TUREK_ORC_FOOTMAN, OL_MAHUM_SUPPORT_TROOP);
+		bindSpawn(OL_MAHUM_SUPPORT_TROOP);
 		registerQuestItems(BLADE_MOLD, TYRAS_BILL, RANGERS_REPORT1, RANGERS_REPORT2, RANGERS_REPORT3, RANGERS_REPORT4, WEAPONS_TRADE_CONTRACT, ATTACK_DIRECTIVES, CERTIFICATE_OF_THE_SILVER_GUILD, ROLENTOS_CARGOBOX, OL_MAHUM_CAPTAINS_HEAD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ("DESPAWN".equals(event)) {
 			if (npc != null) {
 				npc.broadcastPacket(new NpcSay(npc, Say2.NPC_ALL, NpcStringId.YOU_SHOULD_CONSIDER_GOING_BACK));
 				npc.deleteMe();
 			}
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState qs = getQuestState(player, false);
@@ -143,7 +143,7 @@ public final class Q00171_ActsOfEvil extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -286,7 +286,6 @@ public final class Q00171_ActsOfEvil extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -458,8 +457,7 @@ public final class Q00171_ActsOfEvil extends Quest {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("DESPAWN", 200000, npc, null);
-		return super.onSpawn(npc);
 	}
 }

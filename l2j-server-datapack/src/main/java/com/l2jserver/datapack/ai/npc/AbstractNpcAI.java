@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,14 +18,25 @@
  */
 package com.l2jserver.datapack.ai.npc;
 
+import static com.l2jserver.gameserver.config.Configuration.general;
+
+import com.l2jserver.gameserver.data.xml.impl.BuyListData;
+import com.l2jserver.gameserver.datatables.ItemTable;
+import com.l2jserver.gameserver.model.L2Party;
+import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.holders.MinionHolder;
+import com.l2jserver.gameserver.model.buylist.L2BuyList;
+import com.l2jserver.gameserver.model.buylist.Product;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.network.NpcStringId;
+import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
+import com.l2jserver.gameserver.network.serverpackets.BuyList;
+import com.l2jserver.gameserver.network.serverpackets.ExBuySellList;
 import com.l2jserver.gameserver.network.serverpackets.NpcSay;
+import com.l2jserver.gameserver.network.serverpackets.ShopPreviewList;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.gameserver.util.Broadcast;
 
@@ -34,10 +45,6 @@ import com.l2jserver.gameserver.util.Broadcast;
  * @author UnAfraid, Zoey76
  */
 public abstract class AbstractNpcAI extends Quest {
-	public AbstractNpcAI(String name, String descr) {
-		super(-1, name, descr);
-	}
-	
 	/**
 	 * Simple on first talk event handler.
 	 */
@@ -60,13 +67,13 @@ public abstract class AbstractNpcAI extends Quest {
 	 * @param mobs
 	 */
 	public void registerMobs(int... mobs) {
-		addAttackId(mobs);
-		addKillId(mobs);
-		addSpawnId(mobs);
-		addSpellFinishedId(mobs);
-		addSkillSeeId(mobs);
-		addAggroRangeEnterId(mobs);
-		addFactionCallId(mobs);
+		bindAttack(mobs);
+		bindKill(mobs);
+		bindSpawn(mobs);
+		bindSpellFinished(mobs);
+		bindSkillSee(mobs);
+		bindAggroRangeEnter(mobs);
+		bindFactionCall(mobs);
 	}
 	
 	/**
@@ -97,9 +104,9 @@ public abstract class AbstractNpcAI extends Quest {
 	 * @param parameters
 	 */
 	protected void broadcastNpcSay(L2Npc npc, int type, NpcStringId stringId, String... parameters) {
-		final NpcSay say = new NpcSay(npc.getObjectId(), type, npc.getTemplate().getDisplayId(), stringId);
+		final var say = new NpcSay(npc.getObjectId(), type, npc.getTemplate().getDisplayId(), stringId);
 		if (parameters != null) {
-			for (String parameter : parameters) {
+			for (var parameter : parameters) {
 				say.addStringParameter(parameter);
 			}
 		}
@@ -148,8 +155,120 @@ public abstract class AbstractNpcAI extends Quest {
 	}
 	
 	public void spawnMinions(final L2Npc npc, final String spawnName) {
-		for (MinionHolder is : npc.getTemplate().getParameters().getMinionList(spawnName)) {
+		for (var is : npc.getTemplate().getParameters().getMinionList(spawnName)) {
 			addMinion((L2MonsterInstance) npc, is.getId());
+		}
+	}
+	
+	/**
+	 * Teleports a party to x, y, z
+	 * @param npc
+	 * @param party
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param maxDist
+	 */
+	protected void teleportParty(L2Npc npc, L2Party party, int x, int y, int z, int maxDist) {
+		if (party != null) {
+			for (L2PcInstance pc : party.getMembers()) {
+				if (npc.calculateDistance(pc, true, false) <= maxDist) {
+					pc.teleToLocation(x, y, z);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Teleports a party to location
+	 * @param npc
+	 * @param party
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param maxDist
+	 */
+	protected void teleportParty(L2Npc npc, L2Party party, Location loc, int maxDist) {
+		if (party != null) {
+			for (L2PcInstance pc : party.getMembers()) {
+				if (npc.calculateDistance(pc, true, false) <= maxDist) {
+					pc.teleToLocation(loc);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Builds the sell list for the trader
+	 * @param sellList
+	 * @param npcId
+	 * @param index
+	 * @return
+	 */
+	protected L2BuyList buildBuySellList(BuySellList[] sellList, int npcId, int index) {
+		final var buyList = new L2BuyList(Integer.valueOf(npcId + "" + index));
+		
+		for (var list : sellList) {
+			double baseTax = (list.tax() / 100);
+			long delay = -1;
+			long count = -1;
+			
+			if (list.delay() > 0.000000) {
+				delay = (long) (60 / list.delay());
+			}
+			if (list.count() > 0) {
+				count = list.count();
+			}
+			
+			final var item = ItemTable.getInstance().getTemplate(list.itemId());
+			if (item != null) {
+				buyList.addProduct(new Product(buyList.getListId(), item, item.getReferencePrice(), baseTax, delay, count));
+			}
+		}
+		
+		buyList.addAllowedNpc(npcId);
+		
+		BuyListData.getInstance().addBuyList(buyList);
+		
+		return buyList;
+	}
+	
+	/**
+	 * Opens the sell list
+	 * @param talker
+	 * @param npc
+	 * @param buyList
+	 */
+	protected void showBuySell(L2PcInstance talker, L2Npc npc, L2BuyList buyList) {
+		final var taxRate = npc.getCastle().getTaxRate();
+		
+		talker.setInventoryBlockingStatus(true);
+		talker.sendPacket(new BuyList(buyList, talker.getAdena(), taxRate));
+		talker.sendPacket(new ExBuySellList(talker, false));
+		talker.sendPacket(ActionFailed.STATIC_PACKET);
+	}
+	
+	/**
+	 * Opens the preview list
+	 * @param talker
+	 * @param npc
+	 * @param buyList
+	 */
+	protected void sellPreview(L2PcInstance talker, L2Npc npc, L2BuyList buyList) {
+		if (!general().allowWear()) {
+			return;
+		}
+		
+		talker.setInventoryBlockingStatus(true);
+		talker.sendPacket(new ShopPreviewList(buyList, talker.getAdena(), talker.getExpertiseLevel()));
+	}
+	
+	/**
+	 * 
+	 */
+	public record BuySellList(int itemId, double tax, double delay, int count, int type) {
+		public BuySellList(int itemId, double tax, double delay, int count) {
+			this(itemId, tax, delay, count, 0);
 		}
 	}
 }

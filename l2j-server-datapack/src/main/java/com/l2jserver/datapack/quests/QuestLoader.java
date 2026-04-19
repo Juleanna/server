@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,6 +21,7 @@ package com.l2jserver.datapack.quests;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.l2jserver.datapack.quests.Dummy.Q00057_NewbieShots;
 import com.l2jserver.datapack.quests.Dummy.Q00201_HumanFighterTutorial;
 import com.l2jserver.datapack.quests.Dummy.Q00202_HumanMageTutorial;
 import com.l2jserver.datapack.quests.Dummy.Q00203_ElfTutorial;
@@ -585,6 +586,7 @@ public class QuestLoader {
 		Q00051_OFullesSpecialBait.class,
 		Q00052_WilliesSpecialBait.class,
 		Q00053_LinnaeusSpecialBait.class,
+		Q00057_NewbieShots.class,
 		Q00060_GoodWorksReward.class,
 		Q00061_LawEnforcement.class,
 		Q00062_PathOfTheTrooper.class,

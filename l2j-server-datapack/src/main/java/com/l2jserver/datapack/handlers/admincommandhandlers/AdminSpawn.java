@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -23,9 +23,11 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.SevenSigns;
 import com.l2jserver.gameserver.data.xml.impl.AdminData;
@@ -55,7 +57,7 @@ import com.l2jserver.gameserver.util.StringUtil;
  * @version $Revision: 1.2.2.5.2.5 $ $Date: 2005/04/11 10:06:06 $
  */
 public class AdminSpawn implements IAdminCommandHandler {
-	private static final Logger _log = Logger.getLogger(AdminSpawn.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminSpawn.class);
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_show_spawns",
@@ -288,13 +290,13 @@ public class AdminSpawn implements IAdminCommandHandler {
 		switch (type) {
 			default:
 			case 0:
-				_log.info("('',1," + i + "," + x + "," + y + "," + z + ",0,0," + h + ",60,0,0),");
+				LOG.info("('',1,{},{},{},{},0,0,{},60,0,0),", i, x, y, z, h);
 				break;
 			case 1:
-				_log.info("<spawn npcId=\"" + i + "\" x=\"" + x + "\" y=\"" + y + "\" z=\"" + z + "\" heading=\"" + h + "\" respawn=\"0\" />");
+				LOG.info("<spawn npcId=\"{}\" x=\"{}\" y=\"{}\" z=\"{}\" heading=\"{}\" respawn=\"0\" />", i, x, y, z, h);
 				break;
 			case 2:
-				_log.info("{ " + i + ", " + x + ", " + y + ", " + z + ", " + h + " },");
+				LOG.info("{ {}, {}, {}, {}, {} },", i, x, y, z, h);
 				break;
 		}
 	}

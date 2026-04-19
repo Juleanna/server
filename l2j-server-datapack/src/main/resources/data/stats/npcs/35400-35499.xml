@@ -1855,7 +1855,7 @@
 			<param name="item_grown_pet5" value="10611" /> <!-- Snow Fenrir Necklace -->
 			<param name="id_grown_pet5" value="22" />
 			<param name="class_id_baby_pet5" value="16041" /> <!-- Fenrir -->
-			<param name="min_lv_pet5" value="55" />
+			<param name="min_lv_pet5" value="70" />
 			<param name="check_min_lv_pet5" value="1" />
 		</parameters>
 		<race>HUMAN</race>
@@ -1966,7 +1966,7 @@
 			<param name="item_grown_pet5" value="10611" /> <!-- Snow Fenrir Necklace -->
 			<param name="id_grown_pet5" value="22" />
 			<param name="class_id_baby_pet5" value="16041" /> <!-- Fenrir -->
-			<param name="min_lv_pet5" value="55" />
+			<param name="min_lv_pet5" value="70" />
 			<param name="check_min_lv_pet5" value="1" />
 		</parameters>
 		<race>HUMAN</race>
@@ -2077,7 +2077,7 @@
 			<param name="item_grown_pet5" value="10611" /> <!-- Snow Fenrir Necklace -->
 			<param name="id_grown_pet5" value="22" />
 			<param name="class_id_baby_pet5" value="16041" /> <!-- Fenrir -->
-			<param name="min_lv_pet5" value="55" />
+			<param name="min_lv_pet5" value="70" />
 			<param name="check_min_lv_pet5" value="1" />
 		</parameters>
 		<race>HUMAN</race>
@@ -2188,7 +2188,7 @@
 			<param name="item_grown_pet5" value="10611" /> <!-- Snow Fenrir Necklace -->
 			<param name="id_grown_pet5" value="22" />
 			<param name="class_id_baby_pet5" value="16041" /> <!-- Fenrir -->
-			<param name="min_lv_pet5" value="55" />
+			<param name="min_lv_pet5" value="70" />
 			<param name="check_min_lv_pet5" value="1" />
 		</parameters>
 		<race>HUMAN</race>
@@ -2299,7 +2299,7 @@
 			<param name="item_grown_pet5" value="10611" /> <!-- Snow Fenrir Necklace -->
 			<param name="id_grown_pet5" value="22" />
 			<param name="class_id_baby_pet5" value="16041" /> <!-- Fenrir -->
-			<param name="min_lv_pet5" value="55" />
+			<param name="min_lv_pet5" value="70" />
 			<param name="check_min_lv_pet5" value="1" />
 		</parameters>
 		<race>HUMAN</race>
@@ -2410,7 +2410,7 @@
 			<param name="item_grown_pet5" value="10611" /> <!-- Snow Fenrir Necklace -->
 			<param name="id_grown_pet5" value="22" />
 			<param name="class_id_baby_pet5" value="16041" /> <!-- Fenrir -->
-			<param name="min_lv_pet5" value="55" />
+			<param name="min_lv_pet5" value="70" />
 			<param name="check_min_lv_pet5" value="1" />
 		</parameters>
 		<race>HUMAN</race>

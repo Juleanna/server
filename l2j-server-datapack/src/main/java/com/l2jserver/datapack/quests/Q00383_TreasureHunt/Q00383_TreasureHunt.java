@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -67,13 +67,13 @@ public final class Q00383_TreasureHunt extends Quest {
 	private static final ItemHolder DYE_W1M3_C = new ItemHolder(4492, 1); // Greater Dye of WIT <Wit+1 Men-3>
 	
 	public Q00383_TreasureHunt() {
-		super(383, Q00383_TreasureHunt.class.getSimpleName(), "Treasure Hunt");
-		addStartNpc(ESPEN);
-		addTalkId(ESPEN, PIRATES_CHEST);
+		super(383);
+		bindStartNpc(ESPEN);
+		bindTalk(ESPEN, PIRATES_CHEST);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

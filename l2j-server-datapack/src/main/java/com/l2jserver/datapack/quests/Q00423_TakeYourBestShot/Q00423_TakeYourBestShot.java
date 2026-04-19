@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,14 +41,14 @@ public final class Q00423_TakeYourBestShot extends Quest {
 	private static final int MIN_LEVEL = 82;
 	
 	public Q00423_TakeYourBestShot() {
-		super(423, Q00423_TakeYourBestShot.class.getSimpleName(), "Take Your Best Shot!");
-		addStartNpc(JOHNNY, BATRACOS);
-		addTalkId(JOHNNY, BATRACOS);
-		addKillId(TANTA_GUARD);
+		super(423);
+		bindStartNpc(JOHNNY, BATRACOS);
+		bindTalk(JOHNNY, BATRACOS);
+		bindKill(TANTA_GUARD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -80,7 +80,7 @@ public final class Q00423_TakeYourBestShot extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -93,7 +93,6 @@ public final class Q00423_TakeYourBestShot extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

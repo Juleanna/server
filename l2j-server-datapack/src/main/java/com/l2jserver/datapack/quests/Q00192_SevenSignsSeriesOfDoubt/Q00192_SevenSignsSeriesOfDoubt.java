@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,14 +43,14 @@ public final class Q00192_SevenSignsSeriesOfDoubt extends Quest {
 	private static final int MIN_LEVEL = 79;
 	
 	public Q00192_SevenSignsSeriesOfDoubt() {
-		super(192, Q00192_SevenSignsSeriesOfDoubt.class.getSimpleName(), "Seven Signs, Series of Doubt");
-		addStartNpc(CROOP, UNIDENTIFIED_BODY);
-		addTalkId(CROOP, STAN, UNIDENTIFIED_BODY, HECTOR, HOLLINT);
+		super(192);
+		bindStartNpc(CROOP, UNIDENTIFIED_BODY);
+		bindTalk(CROOP, STAN, UNIDENTIFIED_BODY, HECTOR, HOLLINT);
 		registerQuestItems(CROOPS_INTRODUCTION, JACOBS_NECKLACE, CROOPS_LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

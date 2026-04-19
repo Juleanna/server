@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -60,14 +60,14 @@ public final class Q00343_UnderTheShadowOfTheIvoryTower extends Quest {
 	private static final int MIN_LEVEL = 40;
 	
 	public Q00343_UnderTheShadowOfTheIvoryTower() {
-		super(343, Q00343_UnderTheShadowOfTheIvoryTower.class.getSimpleName(), "Under The Shadow Of The Ivory Tower");
-		addStartNpc(MAGIC_TRADER_CEMA);
-		addTalkId(MAGIC_TRADER_CEMA, LICH_KING_ICARUS, COLLECTOR_MARSHA, COLLECTOR_TRUMPIN);
-		addKillId(MANASHEN_GARGOYLE, ENCHANTED_MONSTEREYE, ENCHANTED_STONE_GOLEM, ENCHANTED_IRON_GOLEM);
+		super(343);
+		bindStartNpc(MAGIC_TRADER_CEMA);
+		bindTalk(MAGIC_TRADER_CEMA, LICH_KING_ICARUS, COLLECTOR_MARSHA, COLLECTOR_TRUMPIN);
+		bindKill(MANASHEN_GARGOYLE, ENCHANTED_MONSTEREYE, ENCHANTED_STONE_GOLEM, ENCHANTED_IRON_GOLEM);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -372,7 +372,7 @@ public final class Q00343_UnderTheShadowOfTheIvoryTower extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -418,7 +418,6 @@ public final class Q00343_UnderTheShadowOfTheIvoryTower extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

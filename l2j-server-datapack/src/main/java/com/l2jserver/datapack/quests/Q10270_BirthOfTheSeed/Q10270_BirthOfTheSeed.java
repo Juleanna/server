@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,10 +53,10 @@ public final class Q10270_BirthOfTheSeed extends Quest {
 	private static final Location INSTANCE_EXIT = new Location(-185057, 242821, 1576);
 	
 	public Q10270_BirthOfTheSeed() {
-		super(10270, Q10270_BirthOfTheSeed.class.getSimpleName(), "Birth of the Seed");
-		addStartNpc(PLENOS);
-		addTalkId(PLENOS, GINBY, LELRIKIA, ARTIUS);
-		addKillId(COHEMENES, YEHAN_KLODEKUS, YEHAN_KLANIKUS);
+		super(10270);
+		bindStartNpc(PLENOS);
+		bindTalk(PLENOS, GINBY, LELRIKIA, ARTIUS);
+		bindKill(COHEMENES, YEHAN_KLODEKUS, YEHAN_KLANIKUS);
 		registerQuestItems(YEHAN_KLODEKUS_BADGE, YEHAN_KLANIKUS_BADGE, LICH_CRYSTAL);
 	}
 	
@@ -91,7 +91,7 @@ public final class Q10270_BirthOfTheSeed extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -198,9 +198,8 @@ public final class Q10270_BirthOfTheSeed extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		executeForEachPlayer(killer, npc, isSummon, true, false);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

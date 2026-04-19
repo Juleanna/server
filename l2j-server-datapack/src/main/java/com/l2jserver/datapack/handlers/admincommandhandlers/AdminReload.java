@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,7 +28,6 @@ import org.aeonbits.owner.Reloadable;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.config.Configuration;
 import com.l2jserver.gameserver.data.sql.impl.CrestTable;
-import com.l2jserver.gameserver.data.sql.impl.TeleportLocationTable;
 import com.l2jserver.gameserver.data.xml.impl.AdminData;
 import com.l2jserver.gameserver.data.xml.impl.BuyListData;
 import com.l2jserver.gameserver.data.xml.impl.DoorData;
@@ -162,11 +161,6 @@ public class AdminReload implements IAdminCommandHandler {
 				case "buylist": {
 					BuyListData.getInstance().load();
 					AdminData.getInstance().broadcastMessageToGMs(activeChar.getName() + ": Reloaded Buylists.");
-					break;
-				}
-				case "teleport": {
-					TeleportLocationTable.getInstance().reloadAll();
-					AdminData.getInstance().broadcastMessageToGMs(activeChar.getName() + ": Reloaded Teleports.");
 					break;
 				}
 				case "skill": {

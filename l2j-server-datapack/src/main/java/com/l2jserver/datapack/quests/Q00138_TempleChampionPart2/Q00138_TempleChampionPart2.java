@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -49,15 +49,15 @@ public class Q00138_TempleChampionPart2 extends Quest {
 	private static final QuestItemChanceHolder RELICS_OF_THE_DARK_ELF_TRAINEE = new QuestItemChanceHolder(10342, 10L);
 	
 	public Q00138_TempleChampionPart2() {
-		super(138, Q00138_TempleChampionPart2.class.getSimpleName(), "Temple Champion - 2");
-		addStartNpc(SYLVAIN);
-		addTalkId(SYLVAIN, PUPINA, ANGUS, SLA);
-		addKillId(MOBS);
+		super(138);
+		bindStartNpc(SYLVAIN);
+		bindTalk(SYLVAIN, PUPINA, ANGUS, SLA);
+		bindKill(MOBS);
 		registerQuestItems(TEMPLE_MANIFESTO, RELICS_OF_THE_DARK_ELF_TRAINEE.getId(), ANGUS_RECOMMENDATION, PUPINAS_RECOMMENDATION);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -108,12 +108,11 @@ public class Q00138_TempleChampionPart2 extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && st.isStarted() && st.isCond(4)) {
 			giveItemRandomly(st.getPlayer(), npc, RELICS_OF_THE_DARK_ELF_TRAINEE, true);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

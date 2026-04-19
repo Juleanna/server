@@ -1137,7 +1137,7 @@
 			<height normal="28" />
 		</collision>
 	</npc>
-	<npc id="31729" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31729" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1178,7 +1178,7 @@
 			<height normal="21.5" />
 		</collision>
 	</npc>
-	<npc id="31730" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31730" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1219,7 +1219,7 @@
 			<height normal="21" />
 		</collision>
 	</npc>
-	<npc id="31731" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31731" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1260,7 +1260,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31732" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31732" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1300,7 +1300,7 @@
 			<height normal="26" />
 		</collision>
 	</npc>
-	<npc id="31733" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31733" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1340,7 +1340,7 @@
 			<height normal="17.5" />
 		</collision>
 	</npc>
-	<npc id="31734" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31734" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1381,7 +1381,7 @@
 			<height normal="22.4" />
 		</collision>
 	</npc>
-	<npc id="31735" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31735" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1422,7 +1422,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="31736" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31736" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1463,7 +1463,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="31737" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31737" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1504,7 +1504,7 @@
 			<height normal="24" />
 		</collision>
 	</npc>
-	<npc id="31738" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31738" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -2114,7 +2114,7 @@
 			<height normal="24" />
 		</collision>
 	</npc>
-	<npc id="31756" level="70" type="L2Merchant" name="Mr. Cat" title="L2 Dragon Server Helper">
+	<npc id="31756" level="70" type="L2Merchant" name="Mr. Cat" title="Test Server Helper">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -2894,7 +2894,7 @@
 			<height normal="15" />
 		</collision>
 	</npc>
-	<npc id="31775" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31775" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -2935,7 +2935,7 @@
 			<height normal="22.4" />
 		</collision>
 	</npc>
-	<npc id="31776" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31776" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -2976,7 +2976,7 @@
 			<height normal="21.5" />
 		</collision>
 	</npc>
-	<npc id="31777" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31777" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3017,7 +3017,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31778" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31778" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3058,7 +3058,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="31779" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31779" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3099,7 +3099,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="31780" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31780" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3140,7 +3140,7 @@
 			<height normal="21" />
 		</collision>
 	</npc>
-	<npc id="31781" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31781" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3181,7 +3181,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="31782" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31782" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3221,7 +3221,7 @@
 			<height normal="17.5" />
 		</collision>
 	</npc>
-	<npc id="31783" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31783" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3262,7 +3262,7 @@
 			<height normal="17" />
 		</collision>
 	</npc>
-	<npc id="31784" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31784" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3302,7 +3302,7 @@
 			<height normal="26" />
 		</collision>
 	</npc>
-	<npc id="31785" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31785" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3343,7 +3343,7 @@
 			<height normal="24" />
 		</collision>
 	</npc>
-	<npc id="31786" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31786" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3384,7 +3384,7 @@
 			<height normal="24" />
 		</collision>
 	</npc>
-	<npc id="31787" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31787" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3425,7 +3425,7 @@
 			<height normal="22.4" />
 		</collision>
 	</npc>
-	<npc id="31788" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31788" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3465,7 +3465,7 @@
 			<height normal="26" />
 		</collision>
 	</npc>
-	<npc id="31789" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31789" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3506,7 +3506,7 @@
 			<height normal="17" />
 		</collision>
 	</npc>
-	<npc id="31790" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31790" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3547,7 +3547,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="31791" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31791" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3588,7 +3588,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="31792" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31792" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3629,7 +3629,7 @@
 			<height normal="21" />
 		</collision>
 	</npc>
-	<npc id="31793" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31793" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3670,7 +3670,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31794" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31794" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3711,7 +3711,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="31795" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31795" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3751,7 +3751,7 @@
 			<height normal="26" />
 		</collision>
 	</npc>
-	<npc id="31796" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31796" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3791,7 +3791,7 @@
 			<height normal="17.5" />
 		</collision>
 	</npc>
-	<npc id="31797" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31797" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3832,7 +3832,7 @@
 			<height normal="17" />
 		</collision>
 	</npc>
-	<npc id="31798" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31798" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3873,7 +3873,7 @@
 			<height normal="22.4" />
 		</collision>
 	</npc>
-	<npc id="31799" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31799" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />

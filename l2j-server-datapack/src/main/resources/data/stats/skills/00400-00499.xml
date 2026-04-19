@@ -228,7 +228,6 @@
 				<param RAPIER="#traits" />
 				<param DUALDAGGER="#traits" />
 			</effect>
-			<effect name="GetAgro" />
 		</effects>
 		<enchant1Effects>
 			<effect name="PhysicalAttack">
@@ -249,7 +248,6 @@
 				<param RAPIER="-20" />
 				<param DUALDAGGER="-20" />
 			</effect>
-			<effect name="GetAgro" />
 		</enchant1Effects>
 		<enchant3Effects>
 			<effect name="PhysicalAttack">
@@ -271,7 +269,6 @@
 				<param RAPIER="-20" />
 				<param DUALDAGGER="-20" />
 			</effect>
-			<effect name="GetAgro" />
 		</enchant3Effects>
 	</skill>
 	<skill id="402" levels="10" name="Arrest" enchantGroup1="1" enchantGroup2="1">

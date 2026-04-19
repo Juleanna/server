@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2022 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -331,7 +331,7 @@ public final class BufferService extends CustomServiceScript {
 		Long lastPlayableHealTime = LAST_PLAYABLES_HEAL_TIME.get(target.getObjectId());
 		if (lastPlayableHealTime != null) {
 			long elapsedTime = System.currentTimeMillis() - lastPlayableHealTime;
-			Long healCooldown = Configuration.bufferService().getHealCooldown().longValue();
+			long healCooldown = Configuration.bufferService().getHealCooldown();
 			if (elapsedTime < healCooldown) {
 				long remainingTime = healCooldown - elapsedTime;
 				if (target == player) {
@@ -583,7 +583,7 @@ public final class BufferService extends CustomServiceScript {
 		} else if (Configuration.bufferService().getForbidInEvents() && ((player.getEventStatus() != null) || (player.getBlockCheckerArena() != -1) || player.isOnEvent() || player.isInOlympiadMode() || TvTEvent.isPlayerParticipant(player.getObjectId()))) {
 			abortSysMsg = SystemMessage.getSystemMessage(SystemMessageId.S1_CANNOT_BE_USED);
 			abortSysMsg.addString("Buffer");
-		} else if (Configuration.bufferService().getForbidInDuell() && player.isInDuel()) {
+		} else if (Configuration.bufferService().getForbidInDuel() && player.isInDuel()) {
 			abortSysMsg = SystemMessage.getSystemMessage(SystemMessageId.S1_CANNOT_BE_USED);
 			abortSysMsg.addString("Buffer");
 		} else if (Configuration.bufferService().getForbidInFight() && AttackStanceTaskManager.getInstance().hasAttackStanceTask(player)) {

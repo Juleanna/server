@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,15 +42,15 @@ public class Q00297_GatekeepersFavor extends Quest {
 	private static final int STARSTONE_COUT = 20;
 	
 	public Q00297_GatekeepersFavor() {
-		super(297, Q00297_GatekeepersFavor.class.getSimpleName(), "Gatekeeper's Favor");
-		addStartNpc(WIRPHY);
-		addTalkId(WIRPHY);
-		addKillId(WHINSTONE_GOLEM);
+		super(297);
+		bindStartNpc(WIRPHY);
+		bindTalk(WIRPHY);
+		bindKill(WHINSTONE_GOLEM);
 		registerQuestItems(STARSTONE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equalsIgnoreCase("30540-03.htm")) {
 			if (player.getLevel() < MIN_LEVEL) {
@@ -63,7 +63,7 @@ public class Q00297_GatekeepersFavor extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && st.isStarted() && (st.getQuestItemsCount(STARSTONE) < STARSTONE_COUT)) {
 			st.giveItems(STARSTONE, 1);
@@ -73,7 +73,6 @@ public class Q00297_GatekeepersFavor extends Quest {
 				st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,14 +39,14 @@ public class Q00124_MeetingTheElroki extends Quest {
 	private static final int MANTARASA_EGG = 8778;
 	
 	public Q00124_MeetingTheElroki() {
-		super(124, Q00124_MeetingTheElroki.class.getSimpleName(), "Meeting the Elroki");
-		addStartNpc(MARQUEZ);
-		addTalkId(MARQUEZ, MUSHIKA, ASAMAH, KARAKAWEI, MANTARASA);
+		super(124);
+		bindStartNpc(MARQUEZ);
+		bindTalk(MARQUEZ, MUSHIKA, ASAMAH, KARAKAWEI, MANTARASA);
 		registerQuestItems(MANTARASA_EGG);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

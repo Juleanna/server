@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -69,14 +69,14 @@ public class Q00690_JudesRequest extends Quest {
 	};
 	
 	public Q00690_JudesRequest() {
-		super(690, Q00690_JudesRequest.class.getSimpleName(), "Jude's Request");
-		addStartNpc(JUDE);
-		addTalkId(JUDE);
-		addKillId(LESSER_EVIL, GREATER_EVIL);
+		super(690);
+		bindStartNpc(JUDE);
+		bindTalk(JUDE);
+		bindKill(LESSER_EVIL, GREATER_EVIL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		QuestState st = getQuestState(player, false);
 		
@@ -112,12 +112,11 @@ public class Q00690_JudesRequest extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		QuestState st = getRandomPartyMemberState(player, 1, 1, npc);
 		if (st != null) {
 			giveItemRandomly(st.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return null;
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,15 +53,15 @@ public final class Q00603_DaimonTheWhiteEyedPart1 extends Quest {
 	private static final int MIN_LVL = 73;
 	
 	public Q00603_DaimonTheWhiteEyedPart1() {
-		super(603, Q00603_DaimonTheWhiteEyedPart1.class.getSimpleName(), "Daimon the White-Eyed - Part 1");
-		addStartNpc(EYE_OF_ARGOS);
-		addTalkId(EYE_OF_ARGOS, TABLET_1, TABLET_2, TABLET_3, TABLET_4, TABLET_5);
-		addKillId(DROPLIST.getNpcIds());
+		super(603);
+		bindStartNpc(EYE_OF_ARGOS);
+		bindTalk(EYE_OF_ARGOS, TABLET_1, TABLET_2, TABLET_3, TABLET_4, TABLET_5);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(SPIRIT_OF_DARKNESS.getId(), BROKEN_CRYSTAL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -170,13 +170,12 @@ public final class Q00603_DaimonTheWhiteEyedPart1 extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, 7, 3, npc);
 		if (qs != null) {
 			if (giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true)) {
 				qs.setCond(8);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

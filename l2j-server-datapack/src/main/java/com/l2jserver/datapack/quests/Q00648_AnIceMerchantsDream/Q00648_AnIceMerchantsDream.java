@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -80,15 +80,15 @@ public final class Q00648_AnIceMerchantsDream extends Quest {
 	private static final int MIN_LVL = 53;
 	
 	public Q00648_AnIceMerchantsDream() {
-		super(648, Q00648_AnIceMerchantsDream.class.getSimpleName(), "An Ice Merchants Dream");
-		addStartNpc(RAFFORTY);
-		addTalkId(RAFFORTY, ICE_SHELF);
-		addKillId(DROPLIST.getNpcIds());
+		super(648);
+		bindStartNpc(RAFFORTY);
+		bindTalk(RAFFORTY, ICE_SHELF);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(SILVER_HEMOCYTE, SILVER_ICE_CRYSTAL, BLACK_ICE_CRYSTAL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		final QuestState q115 = player.getQuestState(Q00115_TheOtherSideOfTruth.class.getSimpleName());
 		if (st == null) {
@@ -211,7 +211,7 @@ public final class Q00648_AnIceMerchantsDream extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getRandomPartyMemberState(killer, -1, 3, npc);
 		if (st != null) {
 			if (st.getCond() >= 1) {
@@ -224,7 +224,6 @@ public final class Q00648_AnIceMerchantsDream extends Quest {
 				giveItemRandomly(st.getPlayer(), npc, hemocyteDropInfo, true);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

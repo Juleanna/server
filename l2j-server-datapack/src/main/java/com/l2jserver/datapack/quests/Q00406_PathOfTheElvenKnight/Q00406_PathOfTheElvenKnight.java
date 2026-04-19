@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -63,15 +63,15 @@ public final class Q00406_PathOfTheElvenKnight extends Quest {
 	}
 	
 	public Q00406_PathOfTheElvenKnight() {
-		super(406, Q00406_PathOfTheElvenKnight.class.getSimpleName(), "Path Of The Elven Knight");
-		addStartNpc(MASTER_SORIUS);
-		addTalkId(MASTER_SORIUS, BLACKSMITH_KLUTO);
-		addKillId(MONSTER_DROPS.keySet());
+		super(406);
+		bindStartNpc(MASTER_SORIUS);
+		bindTalk(MASTER_SORIUS, BLACKSMITH_KLUTO);
+		bindKill(MONSTER_DROPS.keySet());
 		registerQuestItems(SORIUS_LETTER, KLUTO_BOX, TOPAZ_PIECE, EMERALD_PIECE, KLUTO_MEMO);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -114,7 +114,7 @@ public final class Q00406_PathOfTheElvenKnight extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		final ItemChanceHolder reward = MONSTER_DROPS.get(npc.getId());
 		int requiredItemId = KLUTO_BOX;
@@ -136,7 +136,6 @@ public final class Q00406_PathOfTheElvenKnight extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

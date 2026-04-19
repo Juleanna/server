@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -76,14 +76,13 @@ public final class GiftOfVitality extends LongTimeEvent {
 	private static final String REUSE = GiftOfVitality.class.getSimpleName() + "_reuse";
 	
 	private GiftOfVitality() {
-		super(GiftOfVitality.class.getSimpleName(), "events");
-		addStartNpc(STEVE_SHYAGEL);
-		addFirstTalkId(STEVE_SHYAGEL);
-		addTalkId(STEVE_SHYAGEL);
+		bindStartNpc(STEVE_SHYAGEL);
+		bindFirstTalk(STEVE_SHYAGEL);
+		bindTalk(STEVE_SHYAGEL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		switch (event) {
 			case "vitality": {

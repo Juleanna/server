@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -96,13 +96,12 @@ public final class CastleDungeon extends AbstractInstance {
 	};
 	
 	public CastleDungeon() {
-		super(CastleDungeon.class.getSimpleName());
-		addFirstTalkId(CASTLE_DUNGEON.keySet());
-		addStartNpc(CASTLE_DUNGEON.keySet());
-		addTalkId(CASTLE_DUNGEON.keySet());
-		addKillId(RAIDS1);
-		addKillId(RAIDS2);
-		addKillId(RAIDS3);
+		bindFirstTalk(CASTLE_DUNGEON.keySet());
+		bindStartNpc(CASTLE_DUNGEON.keySet());
+		bindTalk(CASTLE_DUNGEON.keySet());
+		bindKill(RAIDS1);
+		bindKill(RAIDS2);
+		bindKill(RAIDS3);
 	}
 	
 	@Override
@@ -131,7 +130,7 @@ public final class CastleDungeon extends AbstractInstance {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof CDWorld world) {
 			if (Util.contains(RAIDS3, npc.getId())) {
@@ -141,7 +140,6 @@ public final class CastleDungeon extends AbstractInstance {
 				spawnRaid(world);
 			}
 		}
-		return null;
 	}
 	
 	@Override

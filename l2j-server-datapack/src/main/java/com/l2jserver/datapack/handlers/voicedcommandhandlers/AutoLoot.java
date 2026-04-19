@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,76 +38,81 @@ public class AutoLoot implements IVoicedCommandHandler {
 	};
 	
 	@Override
-	public boolean useVoicedCommand(String command, L2PcInstance activeChar, String params) {
+	public boolean useVoicedCommand(String command, L2PcInstance player, String params) {
 		if (!customs().autoLootVoiceCommand()) {
 			return false;
 		}
-		if (command.equals("loot")) {
-			activeChar.sendMessage("Using Voices Methods:\n.autoloot: Loot all item(s).\n.itemloot: Loot all better item(s).\n.herbloot: Loot recovery(s) herb(s).");
-			if (activeChar.isAutoLoot()) {
-				activeChar.sendMessage("Auto Loot: enabled.");
-			}
-			if (activeChar.isAutoLootItem()) {
-				activeChar.sendMessage("Auto Loot Item: enabled.");
-			}
-			if (activeChar.isAutoLootHerb()) {
-				activeChar.sendMessage("Auto Loot Herbs: enabled.");
-			}
-		} else if (command.equals("autoloot")) {
-			if (!character().autoLoot()) {
-				if (activeChar.isAutoLoot()) {
-					activeChar.setAutoLoot(false);
-					activeChar.sendMessage("Auto Loot: disabled.");
-					if (customs().autoLootVoiceRestore()) {
-						activeChar.getVariables().remove("AutoLoot");
-					}
-				} else {
-					activeChar.setAutoLoot(true);
-					activeChar.sendMessage("Auto Loot: enabled.");
-					if (customs().autoLootVoiceRestore()) {
-						activeChar.getVariables().set("AutoLoot", true);
-					}
-				}
-			} else {
-				activeChar.sendMessage("Auto Loot already enable.");
-			}
-		} else if (command.equals("itemloot")) {
-			if (activeChar.isAutoLootItem()) {
-				activeChar.setAutoLootItem(false);
-				activeChar.sendMessage("Auto Loot Item: disabled.");
-				if (customs().autoLootVoiceRestore()) {
-					activeChar.getVariables().remove("AutoLootItems");
-				}
-			} else {
-				activeChar.setAutoLootItem(true);
-				activeChar.sendMessage("Auto Loot Item: enabled.");
-				if (customs().autoLootVoiceRestore()) {
-					activeChar.getVariables().set("AutoLootItems", true);
-				}
-				
-				if (activeChar.isAutoLoot()) {
-					activeChar.setAutoLoot(false);
-					activeChar.sendMessage("Auto Loot Item is now priority.");
-					if (customs().autoLootVoiceRestore()) {
-						activeChar.getVariables().remove("AutoLoot");
-					}
-				}
-			}
-		} else if (command.equals("herbloot")) {
-			if (activeChar.isAutoLootHerb()) {
-				activeChar.setAutoLootHerbs(false);
-				activeChar.sendMessage("Auto Loot Herbs: disabled.");
-				if (customs().autoLootVoiceRestore()) {
-					activeChar.getVariables().remove("AutoLootHerbs");
-				}
-			} else {
-				activeChar.setAutoLootHerbs(true);
-				activeChar.sendMessage("Auto Loot Herbs: enabled.");
-				if (customs().autoLootVoiceRestore()) {
-					activeChar.getVariables().set("AutoLootHerbs", true);
-				}
-			}
-		}
+        switch (command) {
+            case "loot" -> {
+                player.sendMessage("Using Voices Methods:\n.autoloot: Loot all item(s).\n.itemloot: Loot all better item(s).\n.herbloot: Loot recovery(s) herb(s).");
+                if (player.isAutoLoot()) {
+                    player.sendMessage("Auto Loot: enabled.");
+                }
+                if (player.isAutoLootItem()) {
+                    player.sendMessage("Auto Loot Item: enabled.");
+                }
+                if (player.isAutoLootHerb()) {
+                    player.sendMessage("Auto Loot Herbs: enabled.");
+                }
+            }
+            case "autoloot" -> {
+                if (!character().autoLoot()) {
+                    if (player.isAutoLoot()) {
+                        player.setAutoLoot(false);
+                        player.sendMessage("Auto Loot: disabled.");
+                        if (customs().autoLootVoiceRestore()) {
+                            player.getVariables().remove("AutoLoot");
+                        }
+                    } else {
+                        player.setAutoLoot(true);
+                        player.sendMessage("Auto Loot: enabled.");
+                        if (customs().autoLootVoiceRestore()) {
+                            player.getVariables().set("AutoLoot", true);
+                        }
+                    }
+                } else {
+                    player.sendMessage("Auto Loot already enable.");
+                }
+            }
+            case "itemloot" -> {
+                if (player.isAutoLootItem()) {
+                    player.setAutoLootItem(false);
+                    player.sendMessage("Auto Loot Item: disabled.");
+                    if (customs().autoLootVoiceRestore()) {
+                        player.getVariables().remove("AutoLootItems");
+                    }
+                } else {
+                    player.setAutoLootItem(true);
+                    player.sendMessage("Auto Loot Item: enabled.");
+                    if (customs().autoLootVoiceRestore()) {
+                        player.getVariables().set("AutoLootItems", true);
+                    }
+
+                    if (player.isAutoLoot()) {
+                        player.setAutoLoot(false);
+                        player.sendMessage("Auto Loot Item is now priority.");
+                        if (customs().autoLootVoiceRestore()) {
+                            player.getVariables().remove("AutoLoot");
+                        }
+                    }
+                }
+            }
+            case "herbloot" -> {
+                if (player.isAutoLootHerb()) {
+                    player.setAutoLootHerbs(false);
+                    player.sendMessage("Auto Loot Herbs: disabled.");
+                    if (customs().autoLootVoiceRestore()) {
+                        player.getVariables().remove("AutoLootHerbs");
+                    }
+                } else {
+                    player.setAutoLootHerbs(true);
+                    player.sendMessage("Auto Loot Herbs: enabled.");
+                    if (customs().autoLootVoiceRestore()) {
+                        player.getVariables().set("AutoLootHerbs", true);
+                    }
+                }
+            }
+        }
 		return true;
 	}
 	

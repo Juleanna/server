@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -47,10 +47,10 @@ public class Q00616_MagicalPowerOfFirePart2 extends Quest {
 	private static final int MIN_LEVEL = 75;
 	
 	public Q00616_MagicalPowerOfFirePart2() {
-		super(616, Q00616_MagicalPowerOfFirePart2.class.getSimpleName(), "Magical Power of Fire - Part 2");
-		addStartNpc(UDAN);
-		addTalkId(UDAN, KETRA_TOTEM);
-		addKillId(NASTRON);
+		super(616);
+		bindStartNpc(UDAN);
+		bindTalk(UDAN, KETRA_TOTEM);
+		bindKill(NASTRON);
 		registerQuestItems(RED_TOTEM, NASTRON_HEART);
 		
 		final String test = loadGlobalQuestVar("Q00616_respawn");
@@ -82,7 +82,7 @@ public class Q00616_MagicalPowerOfFirePart2 extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		if (player != null) {
 			final QuestState st = getQuestState(player, false);
@@ -121,7 +121,7 @@ public class Q00616_MagicalPowerOfFirePart2 extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final int respawnMinDelay = (int) (43200000 * npc().getRaidMinRespawnMultiplier());
 		final int respawnMaxDelay = (int) (129600000 * npc().getRaidMaxRespawnMultiplier());
 		final int respawnDelay = getRandom(respawnMinDelay, respawnMaxDelay);
@@ -129,7 +129,6 @@ public class Q00616_MagicalPowerOfFirePart2 extends Quest {
 		saveGlobalQuestVar("Q00616_respawn", String.valueOf(System.currentTimeMillis() + respawnDelay));
 		startQuestTimer("spawn_npc", respawnDelay, null, null);
 		executeForEachPlayer(killer, npc, isSummon, true, false);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

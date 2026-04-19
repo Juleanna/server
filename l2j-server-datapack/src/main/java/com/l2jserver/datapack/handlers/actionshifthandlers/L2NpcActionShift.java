@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -96,7 +96,7 @@ public class L2NpcActionShift implements IActionShiftHandler {
 			html.replace("%wit%", String.valueOf(((L2Character) target).getWIT()));
 			html.replace("%men%", String.valueOf(((L2Character) target).getMEN()));
 			html.replace("%loc%", String.valueOf(target.getX() + " " + target.getY() + " " + target.getZ()));
-			html.replace("%heading%", String.valueOf(((L2Character) target).getHeading()));
+			html.replace("%heading%", String.valueOf(target.getHeading()));
 			html.replace("%collision_radius%", String.valueOf(((L2Character) target).getTemplate().getfCollisionRadius()));
 			html.replace("%collision_height%", String.valueOf(((L2Character) target).getTemplate().getfCollisionHeight()));
 			html.replace("%dist%", String.valueOf((int) activeChar.calculateDistance(target, true, false)));

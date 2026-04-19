@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -54,15 +54,15 @@ public final class Q00264_KeenClaws extends Quest {
 	private static final int MIN_LVL = 3;
 	
 	public Q00264_KeenClaws() {
-		super(264, Q00264_KeenClaws.class.getSimpleName(), "Keen Claws");
-		addStartNpc(PAINT);
-		addTalkId(PAINT);
-		addKillId(DROPLIST.getNpcIds());
+		super(264);
+		bindStartNpc(PAINT);
+		bindTalk(PAINT);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(WOLF_CLAW.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equals("30136-03.htm")) {
 			st.startQuest();
@@ -72,14 +72,13 @@ public final class Q00264_KeenClaws extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && st.isCond(1)) {
 			if (giveItemRandomly(st.getPlayer(), npc, DROPLIST.get(npc), true)) {
 				st.setCond(2);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

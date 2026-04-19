@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,12 +26,13 @@ import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 
+@Deprecated
 public class Link implements IBypassHandler {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(Link.class);
 	
 	private static final String[] COMMANDS = {
-		"Link"
+		"link"
 	};
 	
 	@Override
@@ -47,10 +48,11 @@ public class Link implements IBypassHandler {
 			return false;
 		}
 		
-		String filename = "data/html/" + htmlPath;
-		final NpcHtmlMessage html = new NpcHtmlMessage(target != null ? target.getObjectId() : 0);
+		final var filename = "data/html/" + htmlPath;
+		final var objectId = target != null ? target.getObjectId() : 0;
+		final var html = new NpcHtmlMessage(objectId);
 		html.setFile(activeChar.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(target != null ? target.getObjectId() : 0));
+		html.replace("%objectId%", String.valueOf(objectId));
 		activeChar.sendPacket(html);
 		return true;
 	}

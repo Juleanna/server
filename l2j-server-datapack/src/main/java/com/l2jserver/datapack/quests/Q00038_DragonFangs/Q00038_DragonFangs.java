@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,15 +53,15 @@ public final class Q00038_DragonFangs extends Quest {
 	private static final int MIN_LVL = 19;
 	
 	public Q00038_DragonFangs() {
-		super(38, Q00038_DragonFangs.class.getSimpleName(), "Dragon Fangs");
-		addStartNpc(GUARD_LUIS);
-		addTalkId(GUARD_LUIS, IRIS, MAGISTER_ROHMER);
-		addKillId(LIZARDMAN_SENTINEL, LIZARDMAN_SHAMAN, LIZARDMAN_LEADER, LIZARDMAN_SUB_LEADER);
+		super(38);
+		bindStartNpc(GUARD_LUIS);
+		bindTalk(GUARD_LUIS, IRIS, MAGISTER_ROHMER);
+		bindKill(LIZARDMAN_SENTINEL, LIZARDMAN_SHAMAN, LIZARDMAN_LEADER, LIZARDMAN_SUB_LEADER);
 		registerQuestItems(FEATHER.getId(), TOTEM_TOOTH_1ST, TOTEM_TOOTH_2ND.getId(), LETTER_1ST, LETTER_2ND);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -228,7 +228,7 @@ public final class Q00038_DragonFangs extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		switch (npc.getId()) {
 			case LIZARDMAN_SUB_LEADER, LIZARDMAN_SENTINEL -> {
 				final QuestState qs = getRandomPartyMemberState(killer, 1, 3, npc);
@@ -243,6 +243,5 @@ public final class Q00038_DragonFangs extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -104,15 +104,15 @@ public final class Q00638_SeekersOfTheHolyGrail extends Quest {
 		.build();
 	
 	public Q00638_SeekersOfTheHolyGrail() {
-		super(638, Q00638_SeekersOfTheHolyGrail.class.getSimpleName(), "Seekers Of The Holy Grail");
-		addStartNpc(INNOCENTIN);
-		addTalkId(INNOCENTIN);
-		addKillId(DROPLIST.getNpcIds());
+		super(638);
+		bindStartNpc(INNOCENTIN);
+		bindTalk(INNOCENTIN);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(TOTEM);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -162,7 +162,7 @@ public final class Q00638_SeekersOfTheHolyGrail extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 3, npc);
 		if (qs != null) {
 			if (giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true)) {
@@ -173,7 +173,6 @@ public final class Q00638_SeekersOfTheHolyGrail extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -47,22 +47,20 @@ public final class Slaves extends AbstractNpcAI {
 	private static final int TRUST_REWARD = 10;
 	
 	public Slaves() {
-		super(Slaves.class.getSimpleName(), "hellbound/AI");
-		addSpawnId(MASTERS);
-		addKillId(MASTERS);
+		bindSpawn(MASTERS);
+		bindKill(MASTERS);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		((L2MonsterInstance) npc).setOnKillDelay(1000);
 		if (HellboundEngine.getInstance().getLevel() < 5) {
 			((L2MonsterInstance) npc).getMinionList().spawnMinions(npc.getTemplate().getParameters().getMinionList("Privates"));
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (((L2MonsterInstance) npc).getMinionList() != null) {
 			final List<L2MonsterInstance> slaves = ((L2MonsterInstance) npc).getMinionList().getSpawnedMinions();
 			if ((slaves != null) && !slaves.isEmpty()) {
@@ -83,6 +81,5 @@ public final class Slaves extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

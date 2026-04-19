@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -131,10 +131,10 @@ public final class Q00386_StolenDignity extends Quest {
 	};
 	
 	public Q00386_StolenDignity() {
-		super(386, Q00386_StolenDignity.class.getSimpleName(), "Stolen Dignity");
-		addStartNpc(WAREHOUSE_KEEPER_ROMP);
-		addTalkId(WAREHOUSE_KEEPER_ROMP);
-		addKillId(CRIMSON_DRAKE, KADIOS, HUNGRY_CORPSE, PAST_KNIGHT, BLADE_DEATH, DARK_GUARD, BLOODY_GHOST, BLOODY_LORD, PAST_CREATURE, GIANT_SHADOW, ANCIENTS_SOLDIER, ANCIENTS_WARRIOR, SPITE_SOUL_LEADER, SPITE_SOUL_WIZARD, WRECKED_ARCHER, FLOAT_OF_GRAVE, GRAVE_PREDATOR, FALLEN_ORC_SHAMAN, SHARP_TALON_TIGER, GLOW_WISP, MARSH_PREDATOR, HAMES_ORC_SNIPER, CURSED_GUARDIAN, HAMES_ORC_CHIEFTAIN, FALLEN_ORC_SHAMAN_TRANS, SHARP_TALON_TIGER_TRANS);
+		super(386);
+		bindStartNpc(WAREHOUSE_KEEPER_ROMP);
+		bindTalk(WAREHOUSE_KEEPER_ROMP);
+		bindKill(CRIMSON_DRAKE, KADIOS, HUNGRY_CORPSE, PAST_KNIGHT, BLADE_DEATH, DARK_GUARD, BLOODY_GHOST, BLOODY_LORD, PAST_CREATURE, GIANT_SHADOW, ANCIENTS_SOLDIER, ANCIENTS_WARRIOR, SPITE_SOUL_LEADER, SPITE_SOUL_WIZARD, WRECKED_ARCHER, FLOAT_OF_GRAVE, GRAVE_PREDATOR, FALLEN_ORC_SHAMAN, SHARP_TALON_TIGER, GLOW_WISP, MARSH_PREDATOR, HAMES_ORC_SNIPER, CURSED_GUARDIAN, HAMES_ORC_CHIEFTAIN, FALLEN_ORC_SHAMAN_TRANS, SHARP_TALON_TIGER_TRANS);
 	}
 	
 	@Override
@@ -157,7 +157,7 @@ public final class Q00386_StolenDignity extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if ((qs != null) && (npc.getId() == WAREHOUSE_KEEPER_ROMP)) {
 			if (event.equals("QUEST_ACCEPTED")) {
@@ -227,7 +227,7 @@ public final class Q00386_StolenDignity extends Quest {
 				}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	private String takeHtml(L2PcInstance player, QuestState qs, int num) {
@@ -385,11 +385,10 @@ public final class Q00386_StolenDignity extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 2, npc);
 		if (qs != null) {
 			giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

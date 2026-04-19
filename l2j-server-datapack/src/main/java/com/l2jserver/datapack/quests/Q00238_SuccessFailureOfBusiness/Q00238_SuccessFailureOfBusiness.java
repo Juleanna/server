@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -49,15 +49,15 @@ public class Q00238_SuccessFailureOfBusiness extends Quest {
 	private static final int MIN_LEVEL = 82;
 	
 	public Q00238_SuccessFailureOfBusiness() {
-		super(238, Q00238_SuccessFailureOfBusiness.class.getSimpleName(), "Success/Failure Of Business");
-		addStartNpc(HELVETICA);
-		addTalkId(HELVETICA);
-		addKillId(BRAZIER_OF_PURITY, EVIL_SPIRITS, GUARDIAN_SPIRITS);
+		super(238);
+		bindStartNpc(HELVETICA);
+		bindTalk(HELVETICA);
+		bindKill(BRAZIER_OF_PURITY, EVIL_SPIRITS, GUARDIAN_SPIRITS);
 		registerQuestItems(BROKEN_PIECE_OF_MAGIC_FORCE, GUARDIAN_SPIRIT_FRAGMENT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -83,7 +83,7 @@ public class Q00238_SuccessFailureOfBusiness extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.getId() == BRAZIER_OF_PURITY) {
 			final L2PcInstance partyMember = getRandomPartyMember(killer, 1);
 			if (partyMember != null) {
@@ -111,7 +111,6 @@ public class Q00238_SuccessFailureOfBusiness extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

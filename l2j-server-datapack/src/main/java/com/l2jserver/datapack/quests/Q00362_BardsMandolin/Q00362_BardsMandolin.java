@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,14 +42,14 @@ public final class Q00362_BardsMandolin extends Quest {
 	private static final int MIN_LEVEL = 15;
 	
 	public Q00362_BardsMandolin() {
-		super(362, Q00362_BardsMandolin.class.getSimpleName(), "Bard's Mandolin");
-		addStartNpc(SWAN);
-		addTalkId(SWAN, GALION, WOODROW, NANARIN);
+		super(362);
+		bindStartNpc(SWAN);
+		bindTalk(SWAN, GALION, WOODROW, NANARIN);
 		registerQuestItems(SWANS_FLUTE, SWANS_LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class Q00090_SagaOfTheStormScreamer extends AbstractSagaQuest {
 	public Q00090_SagaOfTheStormScreamer() {
-		super(90, Q00090_SagaOfTheStormScreamer.class.getSimpleName(), "Saga of the Storm Screamer");
+		super(90);
 		_npc = new int[] {
 			30175,
 			31627,

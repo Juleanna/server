@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -24,7 +24,7 @@ package com.l2jserver.datapack.quests.TerritoryWarScripts;
  */
 public final class Q00731_ProtectTheMilitaryAssociationLeader extends TerritoryWarSuperClass {
 	public Q00731_ProtectTheMilitaryAssociationLeader() {
-		super(731, Q00731_ProtectTheMilitaryAssociationLeader.class.getSimpleName(), "Protect the Military Association Leader");
+		super(731);
 		NPC_IDS = new int[] {
 			36508,
 			36514,
@@ -36,7 +36,7 @@ public final class Q00731_ProtectTheMilitaryAssociationLeader extends TerritoryW
 			36550,
 			36556
 		};
-		addAttackId(NPC_IDS);
+		bindAttack(NPC_IDS);
 	}
 	
 	@Override

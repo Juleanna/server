@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -22,9 +22,10 @@ import static com.l2jserver.gameserver.config.Configuration.character;
 import static com.l2jserver.gameserver.config.Configuration.rates;
 
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
 
 import org.aeonbits.owner.Mutable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.config.Configuration;
 import com.l2jserver.gameserver.data.xml.impl.AdminData;
@@ -41,7 +42,7 @@ import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
  * @version $Revision: 1.3.2.1.2.4 $ $Date: 2007/07/28 10:06:06 $
  */
 public class AdminAdmin implements IAdminCommandHandler {
-	private static final Logger _log = Logger.getLogger(AdminAdmin.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminAdmin.class);
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_admin",
@@ -99,7 +100,7 @@ public class AdminAdmin implements IAdminCommandHandler {
 			try {
 				Olympiad.getInstance().manualSelectHeroes();
 			} catch (Exception e) {
-				_log.warning("An error occured while ending olympiad: " + e);
+				LOG.warn("An error occurred while ending olympiad: {}", e.getMessage(), e);
 			}
 			activeChar.sendMessage("Heroes formed.");
 		} else if (command.startsWith("admin_sethero")) {

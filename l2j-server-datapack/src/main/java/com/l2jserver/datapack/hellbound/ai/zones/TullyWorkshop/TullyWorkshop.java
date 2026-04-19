@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,6 +43,8 @@ import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.base.ClassId;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.FactionCall;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.zone.L2ZoneType;
@@ -455,71 +457,70 @@ public final class TullyWorkshop extends AbstractNpcAI {
 	// @formatter:on
 	
 	public TullyWorkshop() {
-		super(TullyWorkshop.class.getSimpleName(), "hellbound/AI/Zones");
-		addStartNpc(DORIAN);
-		addTalkId(DORIAN);
+		bindStartNpc(DORIAN);
+		bindTalk(DORIAN);
 		
 		for (int npcId : TULLY_DOORLIST.keySet()) {
 			if (npcId != 99999) {
-				addFirstTalkId(npcId);
-				addStartNpc(npcId);
-				addTalkId(npcId);
+				bindFirstTalk(npcId);
+				bindStartNpc(npcId);
+				bindTalk(npcId);
 			}
 		}
 		
 		for (int npcId : TELE_COORDS.keySet()) {
-			addStartNpc(npcId);
-			addTalkId(npcId);
+			bindStartNpc(npcId);
+			bindTalk(npcId);
 		}
 		
 		for (int monsterId : TELEPORTING_MONSTERS) {
-			addAttackId(monsterId);
+			bindAttack(monsterId);
 		}
 		
 		for (int monsterId : SIN_WARDENS) {
-			addKillId(monsterId);
+			bindKill(monsterId);
 		}
 		
-		addStartNpc(AGENT);
-		addStartNpc(CUBE_68);
-		addStartNpc(INGENIOUS_CONTRAPTION);
-		addStartNpc(DWARVEN_GHOST);
-		addStartNpc(TOMBSTONE);
-		addTalkId(AGENT);
-		addTalkId(CUBE_68);
-		addTalkId(INGENIOUS_CONTRAPTION);
-		addTalkId(DWARVEN_GHOST);
-		addTalkId(DWARVEN_GHOST);
-		addTalkId(TOMBSTONE);
-		addFirstTalkId(AGENT);
-		addFirstTalkId(CUBE_68);
-		addFirstTalkId(INGENIOUS_CONTRAPTION);
-		addFirstTalkId(DWARVEN_GHOST);
-		addFirstTalkId(TOMBSTONE);
-		addKillId(TULLY);
-		addKillId(TIMETWISTER_GOLEM);
-		addKillId(TEMENIR);
-		addKillId(DRAXIUS);
-		addKillId(KIRETCENAH);
-		addKillId(DARION);
-		addKillId(PILLAR);
-		addFactionCallId(TEMENIR);
-		addFactionCallId(DRAXIUS);
-		addFactionCallId(KIRETCENAH);
+		bindStartNpc(AGENT);
+		bindStartNpc(CUBE_68);
+		bindStartNpc(INGENIOUS_CONTRAPTION);
+		bindStartNpc(DWARVEN_GHOST);
+		bindStartNpc(TOMBSTONE);
+		bindTalk(AGENT);
+		bindTalk(CUBE_68);
+		bindTalk(INGENIOUS_CONTRAPTION);
+		bindTalk(DWARVEN_GHOST);
+		bindTalk(DWARVEN_GHOST);
+		bindTalk(TOMBSTONE);
+		bindFirstTalk(AGENT);
+		bindFirstTalk(CUBE_68);
+		bindFirstTalk(INGENIOUS_CONTRAPTION);
+		bindFirstTalk(DWARVEN_GHOST);
+		bindFirstTalk(TOMBSTONE);
+		bindKill(TULLY);
+		bindKill(TIMETWISTER_GOLEM);
+		bindKill(TEMENIR);
+		bindKill(DRAXIUS);
+		bindKill(KIRETCENAH);
+		bindKill(DARION);
+		bindKill(PILLAR);
+		bindFactionCall(TEMENIR);
+		bindFactionCall(DRAXIUS);
+		bindFactionCall(KIRETCENAH);
 		
-		addSpawnId(CUBE_68);
-		addSpawnId(DARION);
-		addSpawnId(TULLY);
-		addSpawnId(PILLAR);
-		addSpellFinishedId(AGENT);
-		addSpellFinishedId(TEMENIR);
+		bindSpawn(CUBE_68);
+		bindSpawn(DARION);
+		bindSpawn(TULLY);
+		bindSpawn(PILLAR);
+		bindSpellFinished(AGENT);
+		bindSpellFinished(TEMENIR);
 		
 		for (int i = SERVANT_FIRST; i <= SERVANT_LAST; i++) {
-			addKillId(i);
+			bindKill(i);
 		}
 		
 		for (int i = SERVANT_FIRST; i <= SERVANT_LAST; i++) {
-			addSpellFinishedId(i);
+			bindSpellFinished(i);
 		}
 		
 		initDeathCounter(0);
@@ -642,7 +643,7 @@ public final class TullyWorkshop extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		
 		if (event.equalsIgnoreCase("disable_zone")) {
@@ -930,7 +931,7 @@ public final class TullyWorkshop extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		final int npcId = npc.getId();
 		if (Arrays.binarySearch(TELEPORTING_MONSTERS, npcId) >= 0) {
 			if (Math.abs(npc.getZ() - attacker.getZ()) > 150) {
@@ -972,16 +973,16 @@ public final class TullyWorkshop extends AbstractNpcAI {
 				victim.setCurrentHp(victim.getCurrentHp() + (victim.getMaxHp() * 0.03)); // FIXME: not retail, it should be done after spell is finished, but it cannot be tracked now
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onFactionCall(L2Npc npc, L2Npc caller, L2PcInstance attacker, boolean isSummon) {
-		int npcId = npc.getId();
+	public void onFactionCall(FactionCall event) {
+		int npcId = event.npc().getId();
 		if ((npcId == TEMENIR) || (npcId == DRAXIUS) || (npcId == KIRETCENAH)) {
-			if (!((L2MonsterInstance) npc).hasMinions()) {
-				MinionList.spawnMinion((L2MonsterInstance) npc, 25596);
-				MinionList.spawnMinion((L2MonsterInstance) npc, 25596);
+			final var monster = (L2MonsterInstance) event.npc();
+			if (!monster.hasMinions()) {
+				MinionList.spawnMinion(monster, 25596);
+				MinionList.spawnMinion(monster, 25596);
 			}
 			
 			if (!is7thFloorAttackBegan) {
@@ -995,11 +996,10 @@ public final class TullyWorkshop extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onFactionCall(npc, caller, attacker, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final int npcId = npc.getId();
 		
 		if ((npcId == TULLY) && npc.isInsideRadius(-12557, 273901, -9000, 1000, false, false)) {
@@ -1145,11 +1145,10 @@ public final class TullyWorkshop extends AbstractNpcAI {
 		} else if (npcId == PILLAR) {
 			addSpawn(DWARVEN_GHOST, npc.getX() + 30, npc.getY() - 30, npc.getZ(), 0, false, 900000, false);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if ((npc.getId() == TULLY) && npc.isInsideRadius(-12557, 273901, -9000, 1000, true, false)) {
 			for (L2Npc spawnedNpc : postMortemSpawn) {
 				if (spawnedNpc != null) {
@@ -1165,14 +1164,14 @@ public final class TullyWorkshop extends AbstractNpcAI {
 		} else if (npc.getId() == PILLAR) {
 			npc.setIsInvul(RaidBossSpawnManager.getInstance().getRaidBossStatusId(DARION) == StatusEnum.ALIVE);
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
+	public void onSpellFinished(NpcSkillFinished event) {
+		final var npc = event.npc();
 		final int npcId = npc.getId();
-		final int skillId = skill.getId();
-		
+		final int skillId = event.skill().getId();
+		final var player = event.player();
 		if ((npcId == AGENT) && (skillId == 5526)) {
 			player.teleToLocation(21935, 243923, 11088, true); // to the roof
 		} else if ((npcId == TEMENIR) && (skillId == 5331)) {
@@ -1185,7 +1184,6 @@ public final class TullyWorkshop extends AbstractNpcAI {
 			player.reduceCurrentHp(dmg, null, null);
 			npc.setCurrentHp((npc.getCurrentHp() + 10) - (npc.getId() - 22404));
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	private int[] getRoomData(L2Npc npc) {

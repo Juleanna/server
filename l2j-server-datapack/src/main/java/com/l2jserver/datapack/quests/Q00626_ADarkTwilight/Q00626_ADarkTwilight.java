@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -61,15 +61,15 @@ public class Q00626_ADarkTwilight extends Quest {
 	private static final int SP_COUNT = 12500;
 	
 	public Q00626_ADarkTwilight() {
-		super(626, Q00626_ADarkTwilight.class.getSimpleName(), "A Dark Twilight");
-		addStartNpc(HIERARCH);
-		addTalkId(HIERARCH);
-		addKillId(DROPLIST.getNpcIds());
+		super(626);
+		bindStartNpc(HIERARCH);
+		bindTalk(HIERARCH);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(BLOOD_OF_SAINT.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -105,12 +105,11 @@ public class Q00626_ADarkTwilight extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		QuestState st = getRandomPartyMemberState(killer, 1, 1, npc);
 		if ((st != null) && giveItemRandomly(st.getPlayer(), npc, DROPLIST.get(npc), true)) {
 			st.setCond(2);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

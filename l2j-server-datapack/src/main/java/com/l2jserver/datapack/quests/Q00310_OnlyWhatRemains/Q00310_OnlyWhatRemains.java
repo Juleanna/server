@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -65,15 +65,15 @@ public class Q00310_OnlyWhatRemains extends Quest {
 	}
 	
 	public Q00310_OnlyWhatRemains() {
-		super(310, Q00310_OnlyWhatRemains.class.getSimpleName(), "Only What Remains");
-		addStartNpc(KINTAIJIN);
-		addTalkId(KINTAIJIN);
-		addKillId(MOBS.keySet());
+		super(310);
+		bindStartNpc(KINTAIJIN);
+		bindTalk(KINTAIJIN);
+		bindKill(MOBS.keySet());
 		registerQuestItems(DIRTY_BEAD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		
 		if (st == null) {
@@ -102,11 +102,11 @@ public class Q00310_OnlyWhatRemains extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
 		
 		if (partyMember == null) {
-			return super.onKill(npc, player, isSummon);
+			return;
 		}
 		
 		final QuestState st = getQuestState(partyMember, false);
@@ -115,7 +115,6 @@ public class Q00310_OnlyWhatRemains extends Quest {
 			st.giveItems(DIRTY_BEAD, 1);
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2022 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,12 +18,12 @@
  */
 package com.l2jserver.datapack.handlers.effecthandlers.instant;
 
+import static com.l2jserver.gameserver.network.SystemMessageId.YOU_OBTAINED_S1_RECOMMENDATIONS;
+
 import com.l2jserver.gameserver.model.StatsSet;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.effects.AbstractEffect;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
-import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ExVoteSystemInfo;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.network.serverpackets.UserInfo;
@@ -35,6 +35,9 @@ import com.l2jserver.gameserver.network.serverpackets.UserInfo;
  * @since 2.6.3.0
  */
 public final class BonusCountUp extends AbstractEffect {
+	
+	private static final int MAX_RECOMMENDATIONS = 255;
+	
 	private final int _amount;
 	
 	public BonusCountUp(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params) {
@@ -49,19 +52,17 @@ public final class BonusCountUp extends AbstractEffect {
 	
 	@Override
 	public void onStart(BuffInfo info) {
-		super.onStart(info);
-		
-		final L2PcInstance player = info.getEffector().getActingPlayer();
+		final var player = info.getEffector().getActingPlayer();
 		if (player != null) {
 			int recomHaveIncrease = _amount;
-			if ((player.getRecSystem().getHave() + _amount) >= 255) {
-				recomHaveIncrease = 255 - player.getRecSystem().getHave();
+			if ((player.getRecSystem().getHave() + _amount) >= MAX_RECOMMENDATIONS) {
+				recomHaveIncrease = MAX_RECOMMENDATIONS - player.getRecSystem().getHave();
 			}
 			
 			if (recomHaveIncrease > 0) {
 				player.getRecSystem().setHave(player.getRecSystem().getHave() + recomHaveIncrease);
 				
-				SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.YOU_OBTAINED_S1_RECOMMENDATIONS);
+				final var sm = SystemMessage.getSystemMessage(YOU_OBTAINED_S1_RECOMMENDATIONS);
 				sm.addInt(recomHaveIncrease);
 				player.sendPacket(sm);
 				player.sendPacket(new UserInfo(player));

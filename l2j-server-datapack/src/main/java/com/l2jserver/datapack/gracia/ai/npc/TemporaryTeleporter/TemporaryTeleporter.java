@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,10 +39,9 @@ public class TemporaryTeleporter extends AbstractNpcAI {
 	private static final Location REMNANT_TP_POINT = new Location(-248567, 250117, 4336);
 	
 	public TemporaryTeleporter() {
-		super(TemporaryTeleporter.class.getSimpleName(), "gracia/AI/NPC");
-		addStartNpc(TEMPORARY_TELEPORTER);
-		addFirstTalkId(TEMPORARY_TELEPORTER);
-		addTalkId(TEMPORARY_TELEPORTER);
+		bindStartNpc(TEMPORARY_TELEPORTER);
+		bindFirstTalk(TEMPORARY_TELEPORTER);
+		bindTalk(TEMPORARY_TELEPORTER);
 	}
 	
 	@Override
@@ -58,7 +57,7 @@ public class TemporaryTeleporter extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "TP_CENTRAL_SQUARE": {
 				teleportPlayer(player, CENTRAL_SQUARE, 0, true);
@@ -81,6 +80,6 @@ public class TemporaryTeleporter extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

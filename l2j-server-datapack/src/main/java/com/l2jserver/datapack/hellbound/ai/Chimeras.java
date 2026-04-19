@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -57,27 +57,25 @@ public final class Chimeras extends AbstractNpcAI {
 	private static final int CONTAINED_LIFE_FORCE = 9682;
 	
 	public Chimeras() {
-		super(Chimeras.class.getSimpleName(), "hellbound/AI");
-		addSkillSeeId(NPCS);
-		addSpawnId(CELTUS);
-		addSkillSeeId(CELTUS);
+		bindSkillSee(NPCS);
+		bindSpawn(CELTUS);
+		bindSkillSee(CELTUS);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
-		if (HellboundEngine.getInstance().getLevel() == 7) // Have random spawn points only in 7 lvl
-		{
+	public void onSpawn(L2Npc npc) {
+		// Have random spawn points only in 7 lvl
+		if (HellboundEngine.getInstance().getLevel() == 7) {
 			final Location loc = LOCATIONS[getRandom(LOCATIONS.length)];
 			if (!npc.isInsideRadius(loc, 200, false, false)) {
 				npc.getSpawn().setLocation(loc);
 				ThreadPoolManager.getInstance().scheduleGeneral(new Teleport(npc, loc), 100);
 			}
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if ((skill.getId() == BOTTLE) && !npc.isDead()) {
 			if (!targets.isEmpty() && (targets.get(0) == npc)) {
 				if (npc.getCurrentHp() < (npc.getMaxHp() * 0.1)) {
@@ -99,7 +97,6 @@ public final class Chimeras extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	private static class Teleport implements Runnable {

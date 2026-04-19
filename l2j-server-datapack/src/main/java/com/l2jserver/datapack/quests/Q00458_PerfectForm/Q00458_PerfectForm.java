@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -69,17 +69,17 @@ public class Q00458_PerfectForm extends Quest {
 	// @formatter:on
 	
 	public Q00458_PerfectForm() {
-		super(458, Q00458_PerfectForm.class.getSimpleName(), "Perfect Form");
-		addStartNpc(KELLEYIA);
-		addTalkId(KELLEYIA);
-		addKillId(KOOKABURRAS);
-		addKillId(COUGARS);
-		addKillId(BUFFALOS);
-		addKillId(GRENDELS);
+		super(458);
+		bindStartNpc(KELLEYIA);
+		bindTalk(KELLEYIA);
+		bindKill(KOOKABURRAS);
+		bindKill(COUGARS);
+		bindKill(BUFFALOS);
+		bindKill(GRENDELS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String noQuest = getNoQuestMsg(player);
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
@@ -173,7 +173,7 @@ public class Q00458_PerfectForm extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && st.isCond(1)) {
 			int npcId = npc.getId();
@@ -224,7 +224,6 @@ public class Q00458_PerfectForm extends Quest {
 				player.sendPacket(log);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

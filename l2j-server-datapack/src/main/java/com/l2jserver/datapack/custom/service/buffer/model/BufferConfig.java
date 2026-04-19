@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -95,10 +95,10 @@ public final class BufferConfig {
 	public void registerNpcs(BufferService scriptInstance) {
 		for (var npc : npcs.values()) {
 			if (npc.getDirectFirstTalk()) {
-				scriptInstance.addFirstTalkId(npc.getId());
+				scriptInstance.bindFirstTalk(npc.getId());
 			}
-			scriptInstance.addStartNpc(npc.getId());
-			scriptInstance.addTalkId(npc.getId());
+			scriptInstance.bindStartNpc(npc.getId());
+			scriptInstance.bindTalk(npc.getId());
 		}
 	}
 	

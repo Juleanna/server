@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,8 +38,8 @@ public final class BufferServiceVoicedCommandHandler implements IVoicedCommandHa
 	}
 	
 	@Override
-	public boolean useVoicedCommand(String command, L2PcInstance activeChar, String params) {
-		BufferService.getInstance().executeCommand(activeChar, null, params);
+	public boolean useVoicedCommand(String command, L2PcInstance player, String params) {
+		BufferService.getInstance().executeCommand(player, null, params);
 		return true;
 	}
 	

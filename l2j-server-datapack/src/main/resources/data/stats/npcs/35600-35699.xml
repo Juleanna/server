@@ -1002,7 +1002,7 @@
 			<height normal="15.7" />
 		</collision>
 	</npc>
-	<npc id="35623" level="75" type="L2Npc" name="Inner Doorman">
+	<npc id="35623" level="75" type="L2CastleDoormen" name="Inner Doorman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="90" />
@@ -1045,7 +1045,7 @@
 			<height normal="32" grown="39" />
 		</collision>
 	</npc>
-	<npc id="35624" level="75" type="L2Npc" name="Inner Doorman">
+	<npc id="35624" level="75" type="L2CastleDoormen" name="Inner Doorman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="90" />
@@ -1088,7 +1088,7 @@
 			<height normal="32" grown="39" />
 		</collision>
 	</npc>
-	<npc id="35625" level="75" type="L2Npc" name="Outer Doorman">
+	<npc id="35625" level="75" type="L2CastleDoormen" name="Outer Doorman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="90" />
@@ -1131,7 +1131,7 @@
 			<height normal="32" grown="39" />
 		</collision>
 	</npc>
-	<npc id="35626" level="75" type="L2Npc" name="Outer Doorman">
+	<npc id="35626" level="75" type="L2CastleDoormen" name="Outer Doorman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="90" />
@@ -1220,7 +1220,7 @@
 			<height normal="32" grown="39" />
 		</collision>
 	</npc>
-	<npc id="35628" level="75" type="L2Npc" name="Quigby" title="Farm Manager">
+	<npc id="35628" level="75" type="L2ClanHallManager" name="Quigby" title="Farm Manager">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="90" />

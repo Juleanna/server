@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,14 +40,14 @@ public final class Q00636_TruthBeyond extends Quest {
 	private static final int MARK = 8067;
 	
 	public Q00636_TruthBeyond() {
-		super(636, Q00636_TruthBeyond.class.getSimpleName(), "The Truth Beyond the Gate");
-		addStartNpc(ELIYAH);
-		addTalkId(ELIYAH, FLAURON);
-		addEnterZoneId(ZONE);
+		super(636);
+		bindStartNpc(ELIYAH);
+		bindTalk(ELIYAH, FLAURON);
+		bindEnterZone(ZONE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -63,14 +63,13 @@ public final class Q00636_TruthBeyond extends Quest {
 	}
 	
 	@Override
-	public String onEnterZone(L2Character character, L2ZoneType zone) {
+	public void onEnterZone(L2Character character, L2ZoneType zone) {
 		// QuestState already null on enter because quest is finished
 		if (character.isPlayer()) {
 			if (character.getActingPlayer().destroyItemByItemId("Mark", VISITOR_MARK, 1, character, false)) {
 				character.getActingPlayer().addItem("Mark", FADED_MARK, 1, character, true);
 			}
 		}
-		return null;
 	}
 	
 	@Override

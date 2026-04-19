@@ -1334,7 +1334,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="32337" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="32337" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1376,7 +1376,7 @@
 			<height normal="21" />
 		</collision>
 	</npc>
-	<npc id="32338" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="32338" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1417,7 +1417,7 @@
 			<height normal="17.5" />
 		</collision>
 	</npc>
-	<npc id="32339" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="32339" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1459,7 +1459,7 @@
 			<height normal="22.4" />
 		</collision>
 	</npc>
-	<npc id="32340" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="32340" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -2161,7 +2161,7 @@
 			<height normal="24" />
 		</collision>
 	</npc>
-	<npc id="32359" level="70" type="L2Merchant" name="Lahm" title="Blacksmith of Power">
+	<npc id="32359" level="70" type="L2Npc" name="Lahm" title="Blacksmith of Power">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />

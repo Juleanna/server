@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 import com.l2jserver.gameserver.handler.IBypassHandler;
 import com.l2jserver.gameserver.model.ClanPrivilege;
 import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2ClanHallManagerInstance;
+import com.l2jserver.gameserver.model.actor.instance.L2FortManagerInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2WarehouseInstance;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -47,12 +47,14 @@ public class ClanWarehouse implements IBypassHandler {
 	private static final String[] COMMANDS = {
 		"withdrawc",
 		"withdrawsortedc",
-		"depositc"
+		"depositc",
+		"withdraw_pledge",
+		"deposit_pledge"
 	};
 	
 	@Override
 	public boolean useBypass(String command, L2PcInstance activeChar, L2Character target) {
-		if (!(target instanceof L2WarehouseInstance) && !(target instanceof L2ClanHallManagerInstance)) {
+		if (!(target instanceof L2WarehouseInstance) && !(target instanceof L2ClanHallManagerInstance) && !(target instanceof L2FortManagerInstance)) {
 			return false;
 		}
 		
@@ -71,17 +73,17 @@ public class ClanWarehouse implements IBypassHandler {
 		}
 		
 		try {
-			if (command.toLowerCase().startsWith(COMMANDS[0])) { // WithdrawC
+			if (command.toLowerCase().startsWith("withdrawc") || command.toLowerCase().startsWith("withdraw_pledge")) { // WithdrawC
 				if (customs().enableWarehouseSortingClan()) {
-					final NpcHtmlMessage msg = new NpcHtmlMessage(((L2Npc) target).getObjectId());
+					final NpcHtmlMessage msg = new NpcHtmlMessage(target.getObjectId());
 					msg.setFile(activeChar.getHtmlPrefix(), "data/html/mods/WhSortedC.htm");
-					msg.replace("%objectId%", String.valueOf(((L2Npc) target).getObjectId()));
+					msg.replace("%objectId%", String.valueOf(target.getObjectId()));
 					activeChar.sendPacket(msg);
 				} else {
 					showWithdrawWindow(activeChar, null, (byte) 0);
 				}
 				return true;
-			} else if (command.toLowerCase().startsWith(COMMANDS[1])) { // WithdrawSortedC
+			} else if (command.toLowerCase().startsWith("withdrawsortedc")) { // WithdrawSortedC
 				final String param[] = command.split(" ");
 				
 				if (param.length > 2) {
@@ -92,7 +94,7 @@ public class ClanWarehouse implements IBypassHandler {
 					showWithdrawWindow(activeChar, WarehouseListType.ALL, SortedWareHouseWithdrawalList.A2Z);
 				}
 				return true;
-			} else if (command.toLowerCase().startsWith(COMMANDS[2])) { // DepositC
+			} else if (command.toLowerCase().startsWith("depositc") || command.toLowerCase().startsWith("deposit_pledge")) { // DepositC
 				activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 				activeChar.setActiveWarehouse(activeChar.getClan().getWarehouse());
 				activeChar.setInventoryBlockingStatus(true);

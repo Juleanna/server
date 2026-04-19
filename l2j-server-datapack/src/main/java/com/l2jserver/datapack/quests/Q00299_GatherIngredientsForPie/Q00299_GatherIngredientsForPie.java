@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -58,15 +58,15 @@ public final class Q00299_GatherIngredientsForPie extends Quest {
 	private static final int MIN_LVL = 34;
 	
 	public Q00299_GatherIngredientsForPie() {
-		super(299, Q00299_GatherIngredientsForPie.class.getSimpleName(), "Gather Ingredients for Pie");
-		addStartNpc(EMILLY);
-		addTalkId(LARS, BRIGHT, EMILLY);
-		addKillId(DROPLIST.getNpcIds());
+		super(299);
+		bindStartNpc(EMILLY);
+		bindTalk(LARS, BRIGHT, EMILLY);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(FRUIT_BASKET, HONEY_POUCH.getId(), AVELLAN_SPICE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String html = null;
 		if (qs == null) {
@@ -138,12 +138,11 @@ public final class Q00299_GatherIngredientsForPie extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, 1, 3, npc);
 		if ((qs != null) && giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true)) {
 			qs.setCond(2);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

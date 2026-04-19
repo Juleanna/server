@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,6 +26,7 @@ import com.l2jserver.gameserver.data.xml.impl.DoorData;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.base.ClassId;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 
 /**
@@ -43,11 +44,10 @@ public final class BaseTower extends AbstractNpcAI {
 	private static final Map<Integer, L2PcInstance> BODY_DESTROYER_TARGET_LIST = new ConcurrentHashMap<>();
 	
 	public BaseTower() {
-		super(BaseTower.class.getSimpleName(), "hellbound/AI/Zones");
-		addKillId(GUZEN);
-		addKillId(BODY_DESTROYER);
-		addFirstTalkId(KENDAL);
-		addAggroRangeEnterId(BODY_DESTROYER);
+		bindKill(GUZEN);
+		bindKill(BODY_DESTROYER);
+		bindFirstTalk(KENDAL);
+		bindAggroRangeEnter(BODY_DESTROYER);
 	}
 	
 	@Override
@@ -60,25 +60,25 @@ public final class BaseTower extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("CLOSE")) {
 			DoorData.getInstance().getDoor(20260004).closeMe();
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		final var npc = event.npc();
 		if (!BODY_DESTROYER_TARGET_LIST.containsKey(npc.getObjectId())) {
-			BODY_DESTROYER_TARGET_LIST.put(npc.getObjectId(), player);
-			npc.setTarget(player);
+			BODY_DESTROYER_TARGET_LIST.put(npc.getObjectId(), event.player());
+			npc.setTarget(event.player());
 			npc.doSimultaneousCast(DEATH_WORD);
 		}
-		return super.onAggroRangeEnter(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		switch (npc.getId()) {
 			case GUZEN: {
 				// Should Kendal be despawned before Guzen's spawn? Or it will be crowd of Kendal's
@@ -99,6 +99,5 @@ public final class BaseTower extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,15 +40,15 @@ public final class Q00303_CollectArrowheads extends Quest {
 	private static final int TUNATH_ORC_MARKSMAN = 20361;
 	
 	public Q00303_CollectArrowheads() {
-		super(303, Q00303_CollectArrowheads.class.getSimpleName(), "Collect Arrowheads");
-		addStartNpc(MINIA);
-		addTalkId(MINIA);
-		addKillId(TUNATH_ORC_MARKSMAN);
+		super(303);
+		bindStartNpc(MINIA);
+		bindTalk(MINIA);
+		bindKill(TUNATH_ORC_MARKSMAN);
 		registerQuestItems(ORCISH_ARROWHEAD.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equals("30029-04.htm")) {
 			st.startQuest();
@@ -58,14 +58,13 @@ public final class Q00303_CollectArrowheads extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		QuestState st = getRandomPartyMemberState(killer, 1, 1, npc);
 		if (st != null) {
 			if (giveItemRandomly(st.getPlayer(), npc, ORCISH_ARROWHEAD, true)) {
 				st.setCond(2);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

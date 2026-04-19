@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.datapack.custom.listeners;
 
+import static com.l2jserver.gameserver.model.events.EventType.ATTACKABLE_ATTACK;
+import static com.l2jserver.gameserver.model.events.ListenerRegisterType.NPC;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +35,12 @@ import com.l2jserver.gameserver.model.events.annotations.Priority;
 import com.l2jserver.gameserver.model.events.annotations.Range;
 import com.l2jserver.gameserver.model.events.annotations.RegisterEvent;
 import com.l2jserver.gameserver.model.events.annotations.RegisterType;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureKill;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableAttack;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerDlgAnswer;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogin;
-import com.l2jserver.gameserver.model.events.impl.item.OnItemCreate;
-import com.l2jserver.gameserver.model.events.impl.sieges.castle.OnCastleSiegeStart;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureKill;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAttack;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerDlgAnswer;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLogin;
+import com.l2jserver.gameserver.model.events.impl.item.ItemCreate;
+import com.l2jserver.gameserver.model.events.impl.sieges.castle.CastleSiegeStart;
 import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
 import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
@@ -56,15 +59,13 @@ public class ListenerTest extends AbstractNpcAI {
 	};
 	
 	private ListenerTest() {
-		super(ListenerTest.class.getSimpleName(), "ai/npc");
-		
 		// Method preset listener registration
 		// An set function which is a Consumer it has one parameter and doesn't returns anything!
-		setAttackableAttackId(this::onAttackableAttack, ELPIES);
+		registerConsumer((AttackableAttack event) -> onAttackableAttack(event), ATTACKABLE_ATTACK, NPC, ELPIES);
 		
 		// Manual listener registration
-		Containers.Global().addListener(new ConsumerEventListener(Containers.Global(), EventType.ON_PLAYER_DLG_ANSWER, (OnPlayerDlgAnswer event) -> {
-			LOG.info("{} OnPlayerDlgAnswer: Answer: {} MessageId: {}", event.getActiveChar(), event.getAnswer(), event.getMessageId());
+		Containers.Global().addListener(new ConsumerEventListener(Containers.Global(), EventType.PLAYER_DLG_ANSWER, (PlayerDlgAnswer event) -> {
+			LOG.info("{} OnPlayerDlgAnswer: Answer: {} MessageId: {}", event.player(), event.answer(), event.messageId());
 		}, this));
 	}
 	
@@ -72,8 +73,8 @@ public class ListenerTest extends AbstractNpcAI {
 	 * This method will be invoked as soon as an L2Attackable (Rabbits 20432 and 22228) is being attacked from L2PcInstance (a player)
 	 * @param event
 	 */
-	public void onAttackableAttack(OnAttackableAttack event) {
-		LOG.info("{} invoked attacker: {} target: {} damage: {} skill: {}", event.getClass().getSimpleName(), event.getAttacker(), event.getTarget(), event.getDamage(), event.getSkill());
+	public void onAttackableAttack(AttackableAttack event) {
+		LOG.info("{} invoked attacker: {} target: {} damage: {} skill: {}", event.getClass().getSimpleName(), event.attacker(), event.target(), event.damage(), event.skill());
 	}
 	
 	/**
@@ -82,12 +83,12 @@ public class ListenerTest extends AbstractNpcAI {
 	 * @param event
 	 */
 	// Annotation listener registration
-	@RegisterEvent(EventType.ON_CREATURE_KILL)
+	@RegisterEvent(EventType.CREATURE_KILL)
 	@RegisterType(ListenerRegisterType.NPC)
 	@Id(20432)
 	@Id(22228)
-	public void onCreatureKill(OnCreatureKill event) {
-		LOG.info("{} invoked attacker: {} target: {}", event.getClass().getSimpleName(), event.getAttacker(), event.getTarget());
+	public void onCreatureKill(CreatureKill event) {
+		LOG.info("{} invoked attacker: {} target: {}", event.getClass().getSimpleName(), event.attacker(), event.target());
 	}
 	
 	/**
@@ -95,11 +96,11 @@ public class ListenerTest extends AbstractNpcAI {
 	 * This listener is registered into individual castle container.
 	 * @param event
 	 */
-	@RegisterEvent(EventType.ON_CASTLE_SIEGE_START)
+	@RegisterEvent(EventType.CASTLE_SIEGE_START)
 	@RegisterType(ListenerRegisterType.CASTLE)
 	@Range(from = 1, to = 9)
-	public void onSiegeStart(OnCastleSiegeStart event) {
-		LOG.info("The siege of {} ({}) has started!", event.getSiege().getCastle().getName(), event.getSiege().getCastle().getResidenceId());
+	public void onSiegeStart(CastleSiegeStart event) {
+		LOG.info("The siege of {} ({}) has started!", event.siege().getCastle().getName(), event.siege().getCastle().getResidenceId());
 	}
 	
 	/**
@@ -107,11 +108,11 @@ public class ListenerTest extends AbstractNpcAI {
 	 * This listener is registered into individual items container.
 	 * @param event
 	 */
-	@RegisterEvent(EventType.ON_ITEM_CREATE)
+	@RegisterEvent(EventType.ITEM_CREATE)
 	@RegisterType(ListenerRegisterType.ITEM)
 	@Id(5575)
-	public void onItemCreate(OnItemCreate event) {
-		LOG.info("Item [{}] has been created actor: {} process: {} reference: {}", event.getItem(), event.getActiveChar(), event.getProcess(), event.getReference());
+	public void onItemCreate(ItemCreate event) {
+		LOG.info("Item [{}] has been created actor: {} process: {} reference: {}", event.item(), event.player(), event.process(), event.reference());
 	}
 	
 	/**
@@ -120,20 +121,20 @@ public class ListenerTest extends AbstractNpcAI {
 	 * This listener is registered into individual npcs container.
 	 * @param event
 	 */
-	@RegisterEvent(EventType.ON_CREATURE_KILL)
+	@RegisterEvent(EventType.CREATURE_KILL)
 	@RegisterType(ListenerRegisterType.NPC)
 	@NpcLevelRange(from = 1, to = 10)
 	@Priority(100)
-	public void OnCreatureKill(OnCreatureKill event) {
+	public void OnCreatureKill(CreatureKill event) {
 		// 70% chance to drop
 		if (getRandom(100) >= 70) {
 			return;
 		}
 		
 		// Make sure a player killed this monster.
-		if ((event.getAttacker() != null) && event.getAttacker().isPlayable() && event.getTarget().isAttackable()) {
-			final L2Attackable monster = (L2Attackable) event.getTarget();
-			monster.dropItem(event.getAttacker().getActingPlayer(), new ItemHolder(57, getRandom(100, 1000)));
+		if ((event.attacker() != null) && event.attacker().isPlayable() && event.target().isAttackable()) {
+			final L2Attackable monster = (L2Attackable) event.target();
+			monster.dropItem(event.attacker().getActingPlayer(), new ItemHolder(57, getRandom(100, 1000)));
 		}
 	}
 	
@@ -142,10 +143,10 @@ public class ListenerTest extends AbstractNpcAI {
 	 * This listener is registered into global players container.
 	 * @param event
 	 */
-	@RegisterEvent(EventType.ON_PLAYER_LOGIN)
+	@RegisterEvent(EventType.PLAYER_LOGIN)
 	@RegisterType(ListenerRegisterType.GLOBAL_PLAYERS)
-	public void onPlayerLogin(OnPlayerLogin event) {
-		LOG.info("Player: {} has logged in!", event.getActiveChar());
+	public void onPlayerLogin(PlayerLogin event) {
+		LOG.info("Player: {} has logged in!", event.player());
 	}
 	
 	/**
@@ -156,12 +157,12 @@ public class ListenerTest extends AbstractNpcAI {
 	 * @param event
 	 * @return termination return preventing the base code execution if needed.
 	 */
-	@RegisterEvent(EventType.ON_CREATURE_KILL)
+	@RegisterEvent(EventType.CREATURE_KILL)
 	@RegisterType(ListenerRegisterType.GLOBAL_PLAYERS)
 	@Priority(Integer.MAX_VALUE)
-	public TerminateReturn onPlayerDeath(OnCreatureKill event) {
-		if (event.getTarget().isGM()) {
-			LOG.info("Player: {} was prevented from dying!", event.getTarget());
+	public TerminateReturn onPlayerDeath(CreatureKill event) {
+		if (event.target().isGM()) {
+			LOG.info("Player: {} was prevented from dying!", event.target());
 			return new TerminateReturn(true, true, true);
 		}
 		return null;

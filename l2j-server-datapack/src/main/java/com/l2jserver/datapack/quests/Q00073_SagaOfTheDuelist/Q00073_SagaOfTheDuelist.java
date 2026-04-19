@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,7 +36,7 @@ public class Q00073_SagaOfTheDuelist extends AbstractSagaQuest {
 	private final int TOPQUALITYMEAT = 7546;
 	
 	public Q00073_SagaOfTheDuelist() {
-		super(73, Q00073_SagaOfTheDuelist.class.getSimpleName(), "Saga of the Duelist");
+		super(73);
 		_npc = new int[] {
 			30849,
 			31624,
@@ -103,7 +103,7 @@ public class Q00073_SagaOfTheDuelist extends AbstractSagaQuest {
 		};
 		registerNPCs();
 		
-		addTalkId(TUNATUN);
+		bindTalk(TUNATUN);
 	}
 	
 	@Override

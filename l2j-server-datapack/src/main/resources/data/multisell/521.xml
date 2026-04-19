@@ -5,6 +5,18 @@
 	</npcs>
 	<item>
 		<!-- Golden Ram Coin -->
+		<ingredient count="6" id="7251" />
+		<!-- Booty - Yellow Pouch -->
+		<production count="1" id="7636" />
+	</item>
+	<item>
+		<!-- Golden Ram Coin -->
+		<ingredient count="28" id="7251" />
+		<!-- Booty - Brown Pouch -->
+		<production count="1" id="7637" />
+	</item>
+	<item>
+		<!-- Golden Ram Coin -->
 		<ingredient count="1" id="7251" />
 		<!-- Booty - Gray Pouch -->
 		<production count="1" id="7725" />

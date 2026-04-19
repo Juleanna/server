@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class Q00093_SagaOfTheSpectralMaster extends AbstractSagaQuest {
 	public Q00093_SagaOfTheSpectralMaster() {
-		super(93, Q00093_SagaOfTheSpectralMaster.class.getSimpleName(), "Saga of the Spectral Master");
+		super(93);
 		_npc = new int[] {
 			30175,
 			31287,

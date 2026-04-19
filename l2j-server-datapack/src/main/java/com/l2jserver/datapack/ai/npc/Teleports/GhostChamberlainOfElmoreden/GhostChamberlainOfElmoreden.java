@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,14 +40,13 @@ public class GhostChamberlainOfElmoreden extends AbstractNpcAI {
 	private static final Location IMPERIAL_TOMB_LOC = new Location(186699, -75915, -2826);
 	
 	public GhostChamberlainOfElmoreden() {
-		super(GhostChamberlainOfElmoreden.class.getSimpleName(), "ai/npc/Teleports");
-		addStartNpc(GHOST_CHAMBERLAIN_OF_ELMOREDEN_1, GHOST_CHAMBERLAIN_OF_ELMOREDEN_2);
-		addTalkId(GHOST_CHAMBERLAIN_OF_ELMOREDEN_1, GHOST_CHAMBERLAIN_OF_ELMOREDEN_2);
-		addFirstTalkId(GHOST_CHAMBERLAIN_OF_ELMOREDEN_1, GHOST_CHAMBERLAIN_OF_ELMOREDEN_2);
+		bindStartNpc(GHOST_CHAMBERLAIN_OF_ELMOREDEN_1, GHOST_CHAMBERLAIN_OF_ELMOREDEN_2);
+		bindTalk(GHOST_CHAMBERLAIN_OF_ELMOREDEN_1, GHOST_CHAMBERLAIN_OF_ELMOREDEN_2);
+		bindFirstTalk(GHOST_CHAMBERLAIN_OF_ELMOREDEN_1, GHOST_CHAMBERLAIN_OF_ELMOREDEN_2);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equals("FOUR_SEPULCHERS")) {
 			if (hasQuestItems(player, USED_GRAVE_PASS)) {
 				takeItems(player, USED_GRAVE_PASS, 1);
@@ -67,6 +66,6 @@ public class GhostChamberlainOfElmoreden extends AbstractNpcAI {
 				return npc.getId() + "-01.html";
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

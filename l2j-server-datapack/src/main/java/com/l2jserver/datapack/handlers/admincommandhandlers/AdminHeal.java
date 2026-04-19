@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,7 +21,9 @@ package com.l2jserver.datapack.handlers.admincommandhandlers;
 import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.Collection;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
 import com.l2jserver.gameserver.model.L2Object;
@@ -35,7 +37,8 @@ import com.l2jserver.gameserver.network.SystemMessageId;
  * @version $Revision: 1.2.4.5 $ $Date: 2005/04/11 10:06:06 $ Small typo fix by Zoey76 24/02/2011
  */
 public class AdminHeal implements IAdminCommandHandler {
-	private static Logger _log = Logger.getLogger(AdminRes.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminHeal.class);
+	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_heal"
 	};
@@ -50,7 +53,7 @@ public class AdminHeal implements IAdminCommandHandler {
 				handleHeal(activeChar, healTarget);
 			} catch (StringIndexOutOfBoundsException e) {
 				if (general().developer()) {
-					_log.warning("Heal error: " + e);
+					LOG.warn("Heal error: {}", e.getMessage(), e);
 				}
 				activeChar.sendMessage("Incorrect target/radius specified.");
 			}
@@ -103,7 +106,7 @@ public class AdminHeal implements IAdminCommandHandler {
 				target.setCurrentCp(target.getMaxCp());
 			}
 			if (general().debug()) {
-				_log.fine("GM: " + activeChar.getName() + "(" + activeChar.getObjectId() + ") healed character " + target.getName());
+				LOG.debug("GM: {}({}) healed character {}", activeChar.getName(), activeChar.getObjectId(), target.getName());
 			}
 		} else {
 			activeChar.sendPacket(SystemMessageId.INCORRECT_TARGET);

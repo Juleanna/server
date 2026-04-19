@@ -1,0 +1,12 @@
+<html><body><font color="LEVEL">[Castle Vault Management]</font><br>
+There is currently <font color="00ffff"><?tax_income?> Adena</font> in the castle vault.<br>
+The tax revenue collected so far is <font color="CCFF00"><?tax_income_reserved?> Adena</font>.  And, the revenue from the sale of seed in this manor during this period is <font color="CCFF00"><?seed_income?> Adena</font>.<br>
+<br>
+Please enter the amount you wish to withdraw or deposit.<br>
+<center><table height=27 width=280 bgColor="cccccc">  <tbody>  <tr>    <td align=middle width=60>Amount</td>    <td align=left width=170><edit width="180" var="data1" type="number"></td>    <td align=left width=60>Adena</td></tr></tbody></table><br>
+<br>
+<button width="80" fore="L2UI_CT1.Button_DF" back="L2UI_CT1.Button_DF_Down" height="27" value="Withdraw" action="bypass -h menu_select?ask=-240&reply= $data1"><button width="80" fore="L2UI_CT1.Button_DF" back="L2UI_CT1.Button_DF_Down" height="27" value="Deposit" action="bypass -h menu_select?ask=-241&reply= $data1"><br>
+<br>
+<br>
+<button width="80" fore="L2UI_CT1.Button_DF" back="L2UI_CT1.Button_DF_Down" height="27" value="Cancel" action="bypass -h menu_select?ask=0&reply=0"></center>
+</body></html>

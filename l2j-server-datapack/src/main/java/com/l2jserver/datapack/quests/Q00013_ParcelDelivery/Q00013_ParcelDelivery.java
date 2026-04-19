@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,14 +38,14 @@ public final class Q00013_ParcelDelivery extends Quest {
 	private static final int MIN_LEVEL = 74;
 	
 	public Q00013_ParcelDelivery() {
-		super(13, Q00013_ParcelDelivery.class.getSimpleName(), "Parcel Delivery");
-		addStartNpc(FUNDIN);
-		addTalkId(FUNDIN, VULCAN);
+		super(13);
+		bindStartNpc(FUNDIN);
+		bindTalk(FUNDIN, VULCAN);
 		registerQuestItems(PACKAGE_TO_VULCAN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

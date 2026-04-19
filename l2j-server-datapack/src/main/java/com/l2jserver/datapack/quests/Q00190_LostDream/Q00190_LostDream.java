@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,13 +39,13 @@ public final class Q00190_LostDream extends Quest {
 	private static final int MAX_LEVEL_FOR_EXP_SP = 48;
 	
 	public Q00190_LostDream() {
-		super(190, Q00190_LostDream.class.getSimpleName(), "Lost Dream");
-		addStartNpc(HEAD_BLACKSMITH_KUSTO);
-		addTalkId(HEAD_BLACKSMITH_KUSTO, RESEARCHER_LORAIN, MAESTRO_NIKOLA, JURIS);
+		super(190);
+		bindStartNpc(HEAD_BLACKSMITH_KUSTO);
+		bindTalk(HEAD_BLACKSMITH_KUSTO, RESEARCHER_LORAIN, MAESTRO_NIKOLA, JURIS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

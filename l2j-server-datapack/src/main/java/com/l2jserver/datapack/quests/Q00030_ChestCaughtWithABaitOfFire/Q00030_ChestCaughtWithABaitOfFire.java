@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,14 +40,14 @@ public class Q00030_ChestCaughtWithABaitOfFire extends Quest {
 	private static final int PROTECTION_NECKLACE = 916;
 	
 	public Q00030_ChestCaughtWithABaitOfFire() {
-		super(30, Q00030_ChestCaughtWithABaitOfFire.class.getSimpleName(), "Chest Caught With A Bait Of Fire");
-		addStartNpc(LINNAEUS);
-		addTalkId(LINNAEUS, RUKAL);
+		super(30);
+		bindStartNpc(LINNAEUS);
+		bindTalk(LINNAEUS, RUKAL);
 		registerQuestItems(RUKAL_MUSICAL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

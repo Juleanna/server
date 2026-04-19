@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,14 +44,14 @@ public final class Q00026_TiredOfWaiting extends Quest {
 	}
 	
 	public Q00026_TiredOfWaiting() {
-		super(26, Q00026_TiredOfWaiting.class.getSimpleName(), "Tired of Waiting");
-		addStartNpc(ISAEL_SILVERSHADOW);
-		addTalkId(ISAEL_SILVERSHADOW, KITZKA);
+		super(26);
+		bindStartNpc(ISAEL_SILVERSHADOW);
+		bindTalk(ISAEL_SILVERSHADOW, KITZKA);
 		registerQuestItems(DELIVERY_BOX);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

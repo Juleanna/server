@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -48,15 +48,15 @@ public final class Q00356_DigUpTheSeaOfSpores extends Quest {
 	private static final int MIN_LEVEL = 43;
 	
 	public Q00356_DigUpTheSeaOfSpores() {
-		super(356, Q00356_DigUpTheSeaOfSpores.class.getSimpleName(), "Dig Up the Sea of Spores!");
-		addStartNpc(GAUEN);
-		addTalkId(GAUEN);
-		addKillId(ROTTING_TREE, SPORE_ZOMBIE);
+		super(356);
+		bindStartNpc(GAUEN);
+		bindTalk(GAUEN);
+		bindKill(ROTTING_TREE, SPORE_ZOMBIE);
 		registerQuestItems(HERBIVOROUS_SPORE.getId(), CARNIVORE_SPORE.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -117,11 +117,10 @@ public final class Q00356_DigUpTheSeaOfSpores extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
-		
 		if ((qs == null) || !Util.checkIfInRange(1500, npc, killer, true)) {
-			return null;
+			return;
 		}
 		
 		if (giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true)) {
@@ -131,7 +130,6 @@ public final class Q00356_DigUpTheSeaOfSpores extends Quest {
 				qs.setCond(2);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -80,13 +80,12 @@ public final class EchoCrystals extends AbstractNpcAI {
 	}
 	
 	public EchoCrystals() {
-		super(EchoCrystals.class.getSimpleName(), "ai/npc");
-		addStartNpc(NPCs);
-		addTalkId(NPCs);
+		bindStartNpc(NPCs);
+		bindTalk(NPCs);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		final int score = Integer.parseInt(event);
 		if (SCORES.containsKey(score)) {

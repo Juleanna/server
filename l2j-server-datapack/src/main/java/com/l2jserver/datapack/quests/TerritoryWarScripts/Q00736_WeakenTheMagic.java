@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,7 +26,7 @@ import com.l2jserver.gameserver.network.NpcStringId;
  */
 public final class Q00736_WeakenTheMagic extends TerritoryWarSuperClass {
 	public Q00736_WeakenTheMagic() {
-		super(736, Q00736_WeakenTheMagic.class.getSimpleName(), "Weaken the magic");
+		super(736);
 		CLASS_IDS = new int[] {
 			40,
 			110,

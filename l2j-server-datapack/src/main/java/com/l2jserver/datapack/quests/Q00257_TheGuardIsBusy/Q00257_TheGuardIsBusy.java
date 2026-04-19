@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -23,14 +23,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.l2jserver.datapack.quests.Q00281_HeadForTheHills.Q00281_HeadForTheHills;
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.audio.Sound;
+import com.l2jserver.gameserver.enums.audio.Voice;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
+import com.l2jserver.gameserver.network.NpcStringId;
 
 /**
  * The Guard is Busy (257)
@@ -64,6 +67,11 @@ public final class Q00257_TheGuardIsBusy extends Quest {
 	private static final int ORC_NECKLACE = 1085;
 	private static final int WEREWOLF_FANG = 1086;
 	
+	private static final int GUIDE_MISSION = 41;
+	
+	private static final ItemHolder SPIRITSHOTS_NO_GRADE_FOR_ROOKIES = new ItemHolder(5790, 3000);
+	private static final ItemHolder SOULSHOTS_NO_GRADE_FOR_ROOKIES = new ItemHolder(5789, 6000);
+	
 	static {
 		MONSTERS.put(20006, Arrays.asList(new MobDrop(10, 2, ORC_AMULET, 2), new MobDrop(10, 10, ORC_AMULET, 1))); // Orc Archer
 		MONSTERS.put(20093, Arrays.asList(new MobDrop(100, 85, ORC_NECKLACE, 1))); // Orc Fighter
@@ -77,15 +85,15 @@ public final class Q00257_TheGuardIsBusy extends Quest {
 	}
 	
 	public Q00257_TheGuardIsBusy() {
-		super(257, Q00257_TheGuardIsBusy.class.getSimpleName(), "The Guard is Busy");
-		addStartNpc(GILBERT);
-		addTalkId(GILBERT);
-		addKillId(MONSTERS.keySet());
+		super(257);
+		bindStartNpc(GILBERT);
+		bindTalk(GILBERT);
+		bindKill(MONSTERS.keySet());
 		registerQuestItems(ORC_AMULET, GLUDIO_LORDS_MARK, ORC_NECKLACE, WEREWOLF_FANG);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -113,10 +121,10 @@ public final class Q00257_TheGuardIsBusy extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if (st == null) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		for (MobDrop drop : MONSTERS.get(npc.getId())) {
@@ -126,7 +134,6 @@ public final class Q00257_TheGuardIsBusy extends Quest {
 				break;
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -144,7 +151,27 @@ public final class Q00257_TheGuardIsBusy extends Quest {
 					final long common = getQuestItemsCount(player, ORC_NECKLACE, WEREWOLF_FANG);
 					st.giveAdena(((amulets * 10) + (common * 20) + (((amulets + common) >= 10) ? 1000 : 0)), true);
 					takeItems(player, -1, ORC_AMULET, ORC_NECKLACE, WEREWOLF_FANG);
-					Q00281_HeadForTheHills.giveNewbieReward(player);
+					giveNewbieReward(player);
+					
+					// Newbie Guide
+					final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+					if (newbieGuide != null) {
+						final var newbieGuideQs = newbieGuide.getQuestState(player, true);
+						if (!newbieGuideQs.haveNRMemo(player, GUIDE_MISSION)) {
+							newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+							newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, 1000);
+							
+							showOnScreenMsg(player, NpcStringId.ACQUISITION_OF_SOULSHOT_FOR_BEGINNERS_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+						} else {
+							if (((newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) % 10000) / 1000) != 1) {
+								newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+								newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) + 1000);
+								
+								showOnScreenMsg(player, NpcStringId.ACQUISITION_OF_SOULSHOT_FOR_BEGINNERS_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+							}
+						}
+					}
+					
 					htmltext = "30039-07.html";
 				} else {
 					htmltext = "30039-04.html";
@@ -153,5 +180,23 @@ public final class Q00257_TheGuardIsBusy extends Quest {
 			}
 		}
 		return htmltext;
+	}
+	
+	/**
+	 * Give basic newbie reward.
+	 * @param player the player to reward
+	 */
+	private void giveNewbieReward(L2PcInstance player) {
+		if ((player.getLevel() < 25) && (getOneTimeQuestFlag(player, 57) == 0)) {
+			if (player.isMageClass()) {
+				giveItems(player, SPIRITSHOTS_NO_GRADE_FOR_ROOKIES);
+				playSound(player, Voice.TUTORIAL_VOICE_027_1000);
+			} else {
+				giveItems(player, SOULSHOTS_NO_GRADE_FOR_ROOKIES);
+				playSound(player, Voice.TUTORIAL_VOICE_026_1000);
+			}
+			
+			setOneTimeQuestFlag(player, 57, 1);
+		}
 	}
 }

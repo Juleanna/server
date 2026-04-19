@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,15 +44,15 @@ public class Q00043_HelpTheSister extends Quest {
 	private static final int PET_TICKET = 7584;
 	
 	public Q00043_HelpTheSister() {
-		super(43, Q00043_HelpTheSister.class.getSimpleName(), "Help The Sister!");
-		addStartNpc(COOPER);
-		addTalkId(COOPER, GALLADUCCI);
-		addKillId(SORROW_MAIDEN, SPECTER);
+		super(43);
+		bindStartNpc(COOPER);
+		bindTalk(COOPER, GALLADUCCI);
+		bindKill(SORROW_MAIDEN, SPECTER);
 		registerQuestItems(MAP, MAP_PIECE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -97,9 +97,8 @@ public class Q00043_HelpTheSister extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		QuestState st = getQuestState(player, false);
-		
 		if ((st != null) && st.isCond(2)) {
 			st.giveItems(MAP_PIECE, 1);
 			if (st.getQuestItemsCount(MAP_PIECE) == 30) {
@@ -108,7 +107,6 @@ public class Q00043_HelpTheSister extends Quest {
 				st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

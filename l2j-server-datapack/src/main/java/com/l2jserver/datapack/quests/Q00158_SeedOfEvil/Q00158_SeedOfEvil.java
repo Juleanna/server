@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,16 +43,16 @@ public class Q00158_SeedOfEvil extends Quest {
 	private static final int MIN_LEVEL = 21;
 	
 	public Q00158_SeedOfEvil() {
-		super(158, Q00158_SeedOfEvil.class.getSimpleName(), "Seed of Evil");
-		addStartNpc(BIOTIN);
-		addTalkId(BIOTIN);
-		addAttackId(NERKAS);
-		addKillId(NERKAS);
+		super(158);
+		bindStartNpc(BIOTIN);
+		bindTalk(BIOTIN);
+		bindAttack(NERKAS);
+		bindKill(NERKAS);
 		registerQuestItems(CLAY_TABLET);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equalsIgnoreCase("30031-03.htm")) {
 			st.startQuest();
@@ -62,23 +62,21 @@ public class Q00158_SeedOfEvil extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.isScriptValue(0)) {
 			npc.broadcastPacket(new NpcSay(npc, Say2.NPC_ALL, NpcStringId._HOW_DARE_YOU_CHALLENGE_ME));
 			npc.setScriptValue(1);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && !st.hasQuestItems(CLAY_TABLET)) {
 			st.giveItems(CLAY_TABLET, 1);
 			st.setCond(2, true);
 		}
 		npc.broadcastPacket(new NpcSay(npc, Say2.NPC_ALL, NpcStringId.THE_POWER_OF_LORD_BELETH_RULES_THE_WHOLE_WORLD));
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

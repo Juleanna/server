@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,7 +26,7 @@ import com.l2jserver.gameserver.network.NpcStringId;
  */
 public final class Q00734_PierceThroughAShield extends TerritoryWarSuperClass {
 	public Q00734_PierceThroughAShield() {
-		super(734, Q00734_PierceThroughAShield.class.getSimpleName(), "Pierce through a Shield");
+		super(734);
 		CLASS_IDS = new int[] {
 			6,
 			91,

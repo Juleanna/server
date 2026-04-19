@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -1171,32 +1171,31 @@ public final class Kamaloka extends AbstractInstance {
 	}
 	
 	public Kamaloka() {
-		super(Kamaloka.class.getSimpleName());
-		addFirstTalkId(TELEPORTER);
-		addTalkId(TELEPORTER);
-		addStartNpc(CAPTAINS);
-		addTalkId(CAPTAINS);
+		bindFirstTalk(TELEPORTER);
+		bindTalk(TELEPORTER);
+		bindStartNpc(CAPTAINS);
+		bindTalk(CAPTAINS);
 		for (int[] mob : FIRST_ROOM) {
 			if (mob != null) {
 				if (STEALTH_SHAMAN) {
-					addKillId(mob[1]);
+					bindKill(mob[1]);
 				} else {
-					addKillId(mob[0]);
+					bindKill(mob[0]);
 				}
 			}
 		}
 		for (int[] mob : SECOND_ROOM) {
 			if (mob != null) {
-				addKillId(mob[0]);
+				bindKill(mob[0]);
 			}
 		}
 		for (int[] mob : MINIBOSS) {
 			if (mob != null) {
-				addKillId(mob[0]);
+				bindKill(mob[0]);
 			}
 		}
 		for (int[] mob : BOSS) {
-			addKillId(mob[0]);
+			bindKill(mob[0]);
 		}
 	}
 	
@@ -1468,7 +1467,7 @@ public final class Kamaloka extends AbstractInstance {
 	 * Handles only player's enter, single parameter - integer kamaloka index
 	 */
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (npc == null) {
 			return "";
 		}
@@ -1529,7 +1528,7 @@ public final class Kamaloka extends AbstractInstance {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final InstanceWorld tmpWorld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpWorld instanceof KamaWorld world) {
 			final int objectId = npc.getObjectId();
@@ -1558,8 +1557,7 @@ public final class Kamaloka extends AbstractInstance {
 							}
 						}
 					}
-					
-					return super.onKill(npc, player, isSummon);
+					return;
 				}
 			}
 			
@@ -1590,8 +1588,7 @@ public final class Kamaloka extends AbstractInstance {
 							}
 						}
 					}
-					
-					return super.onKill(npc, player, isSummon);
+					return;
 				}
 			}
 			
@@ -1609,8 +1606,7 @@ public final class Kamaloka extends AbstractInstance {
 						}
 					}
 				}
-				
-				return super.onKill(npc, player, isSummon);
+				return;
 			}
 			
 			// boss was killed, finish instance
@@ -1619,7 +1615,6 @@ public final class Kamaloka extends AbstractInstance {
 				finishInstance(world);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,13 +38,13 @@ public class Q00653_WildMaiden extends Quest {
 	private static final int MIN_LEVEL = 36;
 	
 	public Q00653_WildMaiden() {
-		super(653, Q00653_WildMaiden.class.getSimpleName(), "Wild Maiden");
-		addStartNpc(SUKI);
-		addTalkId(GALIBREDO, SUKI);
+		super(653);
+		bindStartNpc(SUKI);
+		bindTalk(GALIBREDO, SUKI);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

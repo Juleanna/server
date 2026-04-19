@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -62,15 +62,15 @@ public class Q00125_TheNameOfEvil1 extends Quest {
 	private static final int REPRESENTATION_ENTER_THE_SAILREN_NEST_QUEST_ID = 5089;
 	
 	public Q00125_TheNameOfEvil1() {
-		super(125, Q00125_TheNameOfEvil1.class.getSimpleName(), "The Name of Evil - 1");
-		addStartNpc(MUSHIKA);
-		addTalkId(MUSHIKA, KARAKAWEI, ULU_KAIMU, BALU_KAIMU, CHUTA_KAIMU);
-		addKillId(DROPLIST.getNpcIds());
+		super(125);
+		bindStartNpc(MUSHIKA);
+		bindTalk(MUSHIKA, KARAKAWEI, ULU_KAIMU, BALU_KAIMU, CHUTA_KAIMU);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(ORNITHOMIMUS_CLAW.getId(), DEINONYCHUS_BONE.getId(), EPITAPH_OF_WISDOM, GAZKH_FRAGMENT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -220,7 +220,7 @@ public class Q00125_TheNameOfEvil1 extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		QuestState st = getRandomPartyMemberState(player, 3, 1, npc);
 		if ((st != null) && giveItemRandomly(st.getPlayer(), npc, DROPLIST.get(npc), false)) {
 			if (hasItemsAtLimit(st.getPlayer(), ORNITHOMIMUS_CLAW, DEINONYCHUS_BONE)) {
@@ -229,7 +229,6 @@ public class Q00125_TheNameOfEvil1 extends Quest {
 				playSound(st.getPlayer(), Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

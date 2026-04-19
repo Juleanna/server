@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -47,15 +47,15 @@ public class Q00163_LegacyOfThePoet extends Quest {
 	private static final int MIN_LVL = 11;
 	
 	public Q00163_LegacyOfThePoet() {
-		super(163, Q00163_LegacyOfThePoet.class.getSimpleName(), "Legacy of the Poet");
-		addStartNpc(STARDEN);
-		addTalkId(STARDEN);
-		addKillId(MONSTERS);
+		super(163);
+		bindStartNpc(STARDEN);
+		bindTalk(STARDEN);
+		bindKill(MONSTERS);
 		registerQuestItems(RUMIELS_1ST_POEM, RUMIELS_2ND_POEM, RUMIELS_3RD_POEM, RUMIELS_4TH_POEM);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -76,7 +76,7 @@ public class Q00163_LegacyOfThePoet extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && st.isCond(1)) {
 			if ((getRandom(10) == 0) && !st.hasQuestItems(RUMIELS_1ST_POEM)) {
@@ -112,7 +112,6 @@ public class Q00163_LegacyOfThePoet extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

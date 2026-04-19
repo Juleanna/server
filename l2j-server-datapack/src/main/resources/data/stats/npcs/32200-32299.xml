@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
-	<npc id="32200" level="70" type="L2Trainer" name="Entien" title="Master">
+	<npc id="32200" level="70" type="L2Npc" name="Entien" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -41,7 +41,7 @@
 			<height normal="25" />
 		</collision>
 	</npc>
-	<npc id="32201" level="70" type="L2Trainer" name="Rindy" title="Master">
+	<npc id="32201" level="70" type="L2Npc" name="Rindy" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -126,7 +126,7 @@
 			<height normal="22.25" />
 		</collision>
 	</npc>
-	<npc id="32203" level="70" type="L2Trainer" name="Ramen" title="Master">
+	<npc id="32203" level="70" type="L2Npc" name="Ramen" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -167,7 +167,7 @@
 			<height normal="25" />
 		</collision>
 	</npc>
-	<npc id="32204" level="70" type="L2Trainer" name="Fiske" title="Master">
+	<npc id="32204" level="70" type="L2Npc" name="Fiske" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -294,7 +294,7 @@
 			<height normal="22.25" />
 		</collision>
 	</npc>
-	<npc id="32207" level="70" type="L2Trainer" name="Orkurus" title="Master">
+	<npc id="32207" level="70" type="L2Npc" name="Orkurus" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -335,7 +335,7 @@
 			<height normal="25" />
 		</collision>
 	</npc>
-	<npc id="32208" level="70" type="L2Trainer" name="Rasha" title="Master">
+	<npc id="32208" level="70" type="L2Npc" name="Rasha" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -462,7 +462,7 @@
 			<height normal="22.25" />
 		</collision>
 	</npc>
-	<npc id="32211" level="70" type="L2Trainer" name="Jueno" title="Master">
+	<npc id="32211" level="70" type="L2Npc" name="Jueno" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -503,7 +503,7 @@
 			<height normal="25" />
 		</collision>
 	</npc>
-	<npc id="32212" level="70" type="L2Trainer" name="Rishtar" title="Master">
+	<npc id="32212" level="70" type="L2Npc" name="Rishtar" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -630,7 +630,7 @@
 			<height normal="22.25" />
 		</collision>
 	</npc>
-	<npc id="32215" level="70" type="L2Trainer" name="Tenain" title="Master">
+	<npc id="32215" level="70" type="L2Npc" name="Tenain" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -671,7 +671,7 @@
 			<height normal="25" />
 		</collision>
 	</npc>
-	<npc id="32216" level="70" type="L2Trainer" name="Noir" title="Master">
+	<npc id="32216" level="70" type="L2Npc" name="Noir" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -798,7 +798,7 @@
 			<height normal="22.25" />
 		</collision>
 	</npc>
-	<npc id="32219" level="70" type="L2Trainer" name="Fabnor" title="Master">
+	<npc id="32219" level="70" type="L2Npc" name="Fabnor" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -839,7 +839,7 @@
 			<height normal="25" />
 		</collision>
 	</npc>
-	<npc id="32220" level="70" type="L2Trainer" name="Selsia" title="Master">
+	<npc id="32220" level="70" type="L2Npc" name="Selsia" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -966,7 +966,7 @@
 			<height normal="22.25" />
 		</collision>
 	</npc>
-	<npc id="32223" level="70" type="L2Trainer" name="Duroga" title="Master">
+	<npc id="32223" level="70" type="L2Npc" name="Duroga" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1007,7 +1007,7 @@
 			<height normal="25" />
 		</collision>
 	</npc>
-	<npc id="32224" level="70" type="L2Trainer" name="Auren" title="Master">
+	<npc id="32224" level="70" type="L2Npc" name="Auren" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1134,7 +1134,7 @@
 			<height normal="22.25" />
 		</collision>
 	</npc>
-	<npc id="32227" level="70" type="L2Trainer" name="Digler" title="Master">
+	<npc id="32227" level="70" type="L2Npc" name="Digler" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1175,7 +1175,7 @@
 			<height normal="25" />
 		</collision>
 	</npc>
-	<npc id="32228" level="70" type="L2Trainer" name="Medea" title="Master">
+	<npc id="32228" level="70" type="L2Npc" name="Medea" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1302,7 +1302,7 @@
 			<height normal="22.25" />
 		</collision>
 	</npc>
-	<npc id="32231" level="70" type="L2Trainer" name="Luben" title="Master">
+	<npc id="32231" level="70" type="L2Npc" name="Luben" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1343,7 +1343,7 @@
 			<height normal="25" />
 		</collision>
 	</npc>
-	<npc id="32232" level="70" type="L2Trainer" name="Minuet" title="Master">
+	<npc id="32232" level="70" type="L2Npc" name="Minuet" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />

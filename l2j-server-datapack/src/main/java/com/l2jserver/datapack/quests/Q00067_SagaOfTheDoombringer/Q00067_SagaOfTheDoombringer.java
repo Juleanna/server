@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public final class Q00067_SagaOfTheDoombringer extends AbstractSagaQuest {
 	public Q00067_SagaOfTheDoombringer() {
-		super(67, Q00067_SagaOfTheDoombringer.class.getSimpleName(), "Saga of the Doombringer");
+		super(67);
 		_npc = new int[] {
 			32138,
 			31627,

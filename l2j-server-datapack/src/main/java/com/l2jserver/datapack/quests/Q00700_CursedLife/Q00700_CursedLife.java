@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -62,16 +62,16 @@ public class Q00700_CursedLife extends Quest {
 	private static final int BONUS = 16670;
 	
 	public Q00700_CursedLife() {
-		super(700, Q00700_CursedLife.class.getSimpleName(), "Cursed Life");
-		addStartNpc(ORBYU);
-		addTalkId(ORBYU);
-		addKillId(ROK);
-		addKillId(MONSTERS.keySet());
+		super(700);
+		bindStartNpc(ORBYU);
+		bindTalk(ORBYU);
+		bindKill(ROK);
+		bindKill(MONSTERS.keySet());
 		registerQuestItems(SWALLOWED_BONES, SWALLOWED_STERNUM, SWALLOWED_SKULL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -129,7 +129,7 @@ public class Q00700_CursedLife extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if (st != null) {
 			if (npc.getId() == ROK) {
@@ -198,6 +198,5 @@ public class Q00700_CursedLife extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 }

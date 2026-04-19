@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -23,6 +23,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 
 /**
+ * Alliance.
  * @author UnAfraid
  */
 public final class Alliance extends Quest {
@@ -45,13 +46,12 @@ public final class Alliance extends Quest {
 	// @formatter:on
 	
 	public Alliance() {
-		super(-1, Alliance.class.getSimpleName(), "village_master");
-		addStartNpc(NPCS);
-		addTalkId(NPCS);
+		bindStartNpc(NPCS);
+		bindTalk(NPCS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (!"9001-01.htm".equals(event) && (player.getClan() == null)) {
 			return "9001-04.htm";
 		}

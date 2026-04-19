@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,20 +50,20 @@ public final class Q00196_SevenSignsSealOfTheEmperor extends Quest {
 	private boolean isBusy = false;
 	
 	public Q00196_SevenSignsSealOfTheEmperor() {
-		super(196, Q00196_SevenSignsSealOfTheEmperor.class.getSimpleName(), "Seven Signs, Seal of the Emperor");
-		addFirstTalkId(MERCHANT_OF_MAMMON);
-		addStartNpc(IASON_HEINE);
-		addTalkId(IASON_HEINE, MERCHANT_OF_MAMMON, SHUNAIMAN, WOOD, COURT_MAGICIAN);
+		super(196);
+		bindFirstTalk(MERCHANT_OF_MAMMON);
+		bindStartNpc(IASON_HEINE);
+		bindTalk(IASON_HEINE, MERCHANT_OF_MAMMON, SHUNAIMAN, WOOD, COURT_MAGICIAN);
 		registerQuestItems(ELMOREDEN_HOLY_WATER, COURT_MAGICIANS_MAGIC_STAFF, SEAL_OF_BINDING, SACRED_SWORD_OF_EINHASAD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((npc.getId() == MERCHANT_OF_MAMMON) && "DESPAWN".equals(event)) {
 			isBusy = false;
 			npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getId(), NpcStringId.THE_ANCIENT_PROMISE_TO_THE_EMPEROR_HAS_BEEN_FULFILLED));
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState st = getQuestState(player, false);

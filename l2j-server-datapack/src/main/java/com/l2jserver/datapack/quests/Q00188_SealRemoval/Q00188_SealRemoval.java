@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,14 +44,14 @@ public final class Q00188_SealRemoval extends Quest {
 	private static final int MAX_LEVEL_FOR_EXP_SP = 47;
 	
 	public Q00188_SealRemoval() {
-		super(188, Q00188_SealRemoval.class.getSimpleName(), "Seal Removal");
-		addStartNpc(RESEARCHER_LORAIN);
-		addTalkId(RESEARCHER_LORAIN, MAESTRO_NIKOLA, DOROTHY_LOCKSMITH);
+		super(188);
+		bindStartNpc(RESEARCHER_LORAIN);
+		bindTalk(RESEARCHER_LORAIN, MAESTRO_NIKOLA, DOROTHY_LOCKSMITH);
 		registerQuestItems(BROKEN_METAL_PIECES);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

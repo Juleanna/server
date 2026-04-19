@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,14 +18,18 @@
  */
 package com.l2jserver.datapack.quests.Q00106_ForgottenTruth;
 
-import com.l2jserver.datapack.quests.Q00281_HeadForTheHills.Q00281_HeadForTheHills;
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.Race;
+import com.l2jserver.gameserver.enums.audio.Voice;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.QuestItemChanceHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
+import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.gameserver.util.Util;
 
@@ -48,16 +52,32 @@ public final class Q00106_ForgottenTruth extends Quest {
 	// Misc
 	private static final int MIN_LVL = 10;
 	
+	private static final int GUIDE_MISSION = 41;
+	
+	private static final ItemHolder[] REWARDS = {
+		new ItemHolder(989, 1), // eldritch_dagger
+		new ItemHolder(1060, 100), // Lesser Healing Potion
+		new ItemHolder(4412, 10), // Echo Crystal - Theme of Battle
+		new ItemHolder(4413, 10), // Echo Crystal - Theme of Love
+		new ItemHolder(4414, 10), // Echo Crystal - Theme of Solitude
+		new ItemHolder(4415, 10), // Echo Crystal - Theme of Feast
+		new ItemHolder(4416, 10), // Echo Crystal - Theme of Celebration
+	};
+	
+	private static final ItemHolder SPIRITSHOTS_NO_GRADE_FOR_ROOKIES = new ItemHolder(5790, 3000);
+	private static final ItemHolder SOULSHOTS_NO_GRADE = new ItemHolder(1835, 1000);
+	private static final ItemHolder SPIRITSHOTS_NO_GRADE = new ItemHolder(2509, 500);
+	
 	public Q00106_ForgottenTruth() {
-		super(106, Q00106_ForgottenTruth.class.getSimpleName(), "Forgotten Truth");
-		addStartNpc(THIFIELL);
-		addTalkId(THIFIELL, KARTA);
-		addKillId(TUMRAN_ORC_BRIGAND);
+		super(106);
+		bindStartNpc(THIFIELL);
+		bindTalk(THIFIELL, KARTA);
+		bindKill(TUMRAN_ORC_BRIGAND);
 		registerQuestItems(KARTAS_TRANSLATION, ONYX_TALISMAN1, ONYX_TALISMAN2, ANCIENT_SCROLL.getId(), ANCIENT_CLAY_TABLET.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -81,7 +101,7 @@ public final class Q00106_ForgottenTruth extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && st.isCond(2) && Util.checkIfInRange(1500, npc, killer, true)) {
 			if (st.hasQuestItems(ONYX_TALISMAN2)) {
@@ -92,7 +112,6 @@ public final class Q00106_ForgottenTruth extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -114,11 +133,35 @@ public final class Q00106_ForgottenTruth extends Quest {
 						if (hasAtLeastOneQuestItem(talker, ONYX_TALISMAN1, ONYX_TALISMAN2) && !st.hasQuestItems(KARTAS_TRANSLATION)) {
 							htmltext = "30358-06.html";
 						} else if (st.isCond(4) && st.hasQuestItems(KARTAS_TRANSLATION)) {
-							Q00281_HeadForTheHills.giveNewbieReward(talker);
-							talker.sendPacket(new SocialAction(talker.getObjectId(), 3));
+							giveNewbieReward(talker);
+							
+							for (ItemHolder reward : REWARDS) {
+								st.giveItems(reward);
+							}
+							
+							// Newbie Guide
+							final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+							if (newbieGuide != null) {
+								final var newbieGuideQs = newbieGuide.getQuestState(talker, true);
+								if (!newbieGuideQs.haveNRMemo(talker, GUIDE_MISSION)) {
+									newbieGuideQs.setNRMemo(talker, GUIDE_MISSION);
+									newbieGuideQs.setNRMemoState(talker, GUIDE_MISSION, 100000);
+									
+									showOnScreenMsg(talker, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+								} else {
+									if (((newbieGuideQs.getNRMemoState(talker, GUIDE_MISSION) % 1000000) / 100000) != 1) {
+										newbieGuideQs.setNRMemo(talker, GUIDE_MISSION);
+										newbieGuideQs.setNRMemoState(talker, GUIDE_MISSION, newbieGuideQs.getNRMemoState(talker, GUIDE_MISSION) + 100000);
+										
+										showOnScreenMsg(talker, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+									}
+								}
+							}
+							
 							st.giveAdena(10266, true);
 							st.addExpAndSp(24195, 2074);
 							st.exitQuest(false, true);
+							talker.sendPacket(new SocialAction(talker.getObjectId(), 3));
 							htmltext = "30358-07.html";
 						}
 						break;
@@ -170,5 +213,23 @@ public final class Q00106_ForgottenTruth extends Quest {
 			}
 		}
 		return htmltext;
+	}
+	
+	/**
+	 * Give basic newbie reward.
+	 * @param player the player to reward
+	 */
+	private static void giveNewbieReward(L2PcInstance player) {
+		if (player.getLevel() < 25) {
+			if (player.isMageClass()) {
+				giveItems(player, SPIRITSHOTS_NO_GRADE_FOR_ROOKIES);
+				playSound(player, Voice.TUTORIAL_VOICE_027_1000);
+			}
+		}
+		if (!player.isMageClass()) {
+			giveItems(player, SOULSHOTS_NO_GRADE);
+		} else {
+			giveItems(player, SPIRITSHOTS_NO_GRADE);
+		}
 	}
 }

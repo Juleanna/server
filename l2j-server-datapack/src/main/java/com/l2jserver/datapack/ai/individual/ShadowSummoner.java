@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,13 +53,12 @@ public class ShadowSummoner extends AbstractNpcAI {
 	private static final double MIN_HP_PERCENTAGE = 0.25;
 	
 	public ShadowSummoner() {
-		super(ShadowSummoner.class.getSimpleName(), "ai/individual");
-		addAttackId(SHADOW_SUMMONER);
-		addSeeCreatureId(SHADOW_SUMMONER);
+		bindAttack(SHADOW_SUMMONER);
+		bindSeeCreature(SHADOW_SUMMONER);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (Util.calculateDistance(npc, npc.getSpawn(), false, false) > MAX_CHASE_DIST) {
 			npc.teleToLocation(npc.getSpawn().getX(), npc.getSpawn().getY(), npc.getSpawn().getZ());
 		}
@@ -70,24 +69,22 @@ public class ShadowSummoner extends AbstractNpcAI {
 			startQuestTimer(FEED_TIMER, 30000, npc, attacker);
 			startQuestTimer(LIMIT_TIMER, 600000, npc, attacker);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (!creature.isPlayer()) {
 			if (creature.getId() == DEMONS_BANQUET_2) {
 				((L2Attackable) npc).clearAggroList();
 				addAttackDesire(npc, creature, 9999999999999999L);
 			}
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (npc.isDead()) {
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		if (SUMMON_TIMER.equals(event)) {
@@ -107,6 +104,6 @@ public class ShadowSummoner extends AbstractNpcAI {
 			final L2Npc demonsBanquet = addSpawn(getRandom(2) < 1 ? DEMONS_BANQUET_1 : DEMONS_BANQUET_2, npc.getX() + 150, npc.getY() + 150, npc.getZ(), npc.getHeading(), false, 0);
 			addAttackDesire(demonsBanquet, player, 10000);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

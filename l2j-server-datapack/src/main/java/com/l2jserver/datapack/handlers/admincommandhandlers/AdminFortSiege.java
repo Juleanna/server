@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,7 +36,6 @@ import com.l2jserver.gameserver.util.StringUtil;
  * This class handles all siege commands: Todo: change the class name, and neaten it up
  */
 public class AdminFortSiege implements IAdminCommandHandler {
-	// private static Logger _log = Logger.getLogger(AdminFortSiege.class.getName());
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_fortsiege",

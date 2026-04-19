@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -106,14 +106,14 @@ public final class Q00634_InSearchOfFragmentsOfDimension extends Quest {
 	};
 	
 	public Q00634_InSearchOfFragmentsOfDimension() {
-		super(634, Q00634_InSearchOfFragmentsOfDimension.class.getSimpleName(), "In Search of Fragments of Dimension");
-		addStartNpc(DIMENSIONAL_GATE_KEEPER);
-		addTalkId(DIMENSIONAL_GATE_KEEPER);
-		addKillId(MOBS);
+		super(634);
+		bindStartNpc(DIMENSIONAL_GATE_KEEPER);
+		bindTalk(DIMENSIONAL_GATE_KEEPER);
+		bindKill(MOBS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -145,13 +145,12 @@ public final class Q00634_InSearchOfFragmentsOfDimension extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(player, -1, 3, npc);
 		if (qs != null) {
 			final long amount = (long) ((0.15 * npc.getLevel()) + 1.6);
 			giveItemRandomly(qs.getPlayer(), npc, singleDropItem(DIMENSIONAL_FRAGMENT, amount), 0L, true);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

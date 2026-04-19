@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -154,14 +154,14 @@ public class Q00289_NoMoreSoupForYou extends Quest {
 	};
 	
 	public Q00289_NoMoreSoupForYou() {
-		super(289, Q00289_NoMoreSoupForYou.class.getSimpleName(), "No More Soup For You");
-		addStartNpc(STAN);
-		addTalkId(STAN);
-		addKillId(MOBS);
+		super(289);
+		bindStartNpc(STAN);
+		bindTalk(STAN);
+		bindKill(MOBS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
@@ -197,17 +197,16 @@ public class Q00289_NoMoreSoupForYou extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		QuestState st = getQuestState(player, false);
 		int npcId = npc.getId();
 		if ((st == null) || (st.getState() != State.STARTED)) {
-			return null;
+			return;
 		}
 		if (Util.contains(MOBS, npcId)) {
 			st.giveItems(SOUP, 1 * RATE);
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

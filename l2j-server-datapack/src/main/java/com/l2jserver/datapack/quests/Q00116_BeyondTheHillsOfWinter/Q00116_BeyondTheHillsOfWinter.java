@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,14 +44,14 @@ public final class Q00116_BeyondTheHillsOfWinter extends Quest {
 	private static final int MIN_LEVEL = 30;
 	
 	public Q00116_BeyondTheHillsOfWinter() {
-		super(116, Q00116_BeyondTheHillsOfWinter.class.getSimpleName(), "Beyond the Hills of Winter");
-		addStartNpc(FILAUR);
-		addTalkId(FILAUR, OBI);
+		super(116);
+		bindStartNpc(FILAUR);
+		bindTalk(FILAUR, OBI);
 		registerQuestItems(SUPPLYING_GOODS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -29,9 +29,10 @@ import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
-import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.util.Util;
@@ -99,22 +100,23 @@ public final class PrimevalIsle extends AbstractNpcAI {
 	private static final SkillHolder INVIN_BUFF_ON = new SkillHolder(5225, 1); // Invincible
 	
 	public PrimevalIsle() {
-		super(PrimevalIsle.class.getSimpleName(), "ai/group_template");
-		addSpawnId(TREX);
-		addSpawnId(SPRIGNANT);
-		addSpawnId(MONSTERS);
-		addAggroRangeEnterId(TREX);
-		addSpellFinishedId(TREX);
-		addAttackId(EGG);
-		addAttackId(TREX);
-		addAttackId(MONSTERS);
-		addKillId(EGG, SAILREN, DEINO, ORNIT);
-		addSeeCreatureId(TREX);
-		addSeeCreatureId(MONSTERS);
+		bindSpawn(TREX);
+		bindSpawn(SPRIGNANT);
+		bindSpawn(MONSTERS);
+		bindAggroRangeEnter(TREX);
+		bindSpellFinished(TREX);
+		bindAttack(EGG);
+		bindAttack(TREX);
+		bindAttack(MONSTERS);
+		bindKill(EGG, SAILREN, DEINO, ORNIT);
+		bindSeeCreature(TREX);
+		bindSeeCreature(MONSTERS);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
+	public void onSpellFinished(NpcSkillFinished event) {
+		final var npc = event.npc();
+		final var skill = event.skill();
 		if (skill.getId() == CREW_SKILL.getSkillId()) {
 			startQuestTimer("START_INVUL", 4000, npc, null);
 			final L2Npc target = (L2Npc) npc.getTarget();
@@ -155,11 +157,10 @@ public final class PrimevalIsle extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "USE_SKILL": {
 				if ((npc != null) && !npc.isDead()) {
@@ -203,11 +204,11 @@ public final class PrimevalIsle extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (Util.contains(MONSTERS, npc.getId())) {
 			if (creature.isPlayer()) {
 				final L2Attackable mob = (L2Attackable) npc;
@@ -252,22 +253,21 @@ public final class PrimevalIsle extends AbstractNpcAI {
 			npc.setIsRunning(true);
 			npc.getAI().setIntention(CtrlIntention.AI_INTENTION_ATTACK, creature);
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		final var npc = event.npc();
 		if (npc.isScriptValue(0)) {
 			npc.setScriptValue(1);
 			broadcastNpcSay(npc, Say2.NPC_ALL, "?");
 			((L2Attackable) npc).clearAggroList();
-			startQuestTimer("TREX_ATTACK", 6000, npc, player);
+			startQuestTimer("TREX_ATTACK", 6000, npc, event.player());
 		}
-		return super.onAggroRangeEnter(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.getId() == EGG) {
 			if ((getRandom(100) <= 80) && npc.isScriptValue(0)) {
 				npc.setScriptValue(1);
@@ -363,13 +363,12 @@ public final class PrimevalIsle extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if ((npc.getId() == DEINO) || ((npc.getId() == ORNIT) && !npc.isScriptValue(1))) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		if ((npc.getId() == SAILREN) || (getRandom(100) < 3)) {
 			final L2PcInstance player = npc.getId() == SAILREN ? getRandomPartyMember(killer) : killer;
@@ -385,11 +384,10 @@ public final class PrimevalIsle extends AbstractNpcAI {
 				showOnScreenMsg(player, NpcStringId.WHEN_INVENTORY_WEIGHT_NUMBER_ARE_MORE_THAN_80_THE_LIFE_STONE_FROM_THE_BEGINNING_CANNOT_BE_ACQUIRED, 2, 6000);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (Util.contains(SPRIGNANT, npc.getId())) {
 			startQuestTimer("USE_SKILL", 15000, npc, null);
 		} else if (Util.contains(TREX, npc.getId())) {
@@ -403,6 +401,5 @@ public final class PrimevalIsle extends AbstractNpcAI {
 			npc.getVariables().set("SELFBUFF_USED", 0);
 			npc.getVariables().set("SKILL_MULTIPLER", 1);
 		}
-		return super.onSpawn(npc);
 	}
 }

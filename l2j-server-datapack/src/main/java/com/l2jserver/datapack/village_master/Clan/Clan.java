@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,6 +26,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 
 /**
+ * Clan.
  * @author UnAfraid
  */
 public final class Clan extends Quest {
@@ -62,13 +63,12 @@ public final class Clan extends Quest {
 	}
 	
 	public Clan() {
-		super(-1, Clan.class.getSimpleName(), "village_master");
-		addStartNpc(NPCS);
-		addTalkId(NPCS);
+		bindStartNpc(NPCS);
+		bindTalk(NPCS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (LEADER_REQUIRED.containsKey(event)) {
 			if (!player.isClanLeader()) {
 				return LEADER_REQUIRED.get(event);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -29,7 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.data.sql.impl.CharNameTable;
@@ -63,7 +65,7 @@ import com.l2jserver.gameserver.util.Util;
  * EditChar admin command implementation.
  */
 public class AdminEditChar implements IAdminCommandHandler {
-	private static Logger _log = Logger.getLogger(AdminEditChar.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminEditChar.class);
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_edit_character",
@@ -174,7 +176,7 @@ public class AdminEditChar implements IAdminCommandHandler {
 				setTargetKarma(activeChar, karma);
 			} catch (Exception e) {
 				if (general().developer()) {
-					_log.warning("Set karma error: " + e);
+					LOG.warn("Set karma error: {}", e.getMessage(), e);
 				}
 				activeChar.sendMessage("Usage: //setkarma <new_karma_value>");
 			}
@@ -195,7 +197,7 @@ public class AdminEditChar implements IAdminCommandHandler {
 				}
 			} catch (Exception ex) {
 				if (general().developer()) {
-					_log.warning("Set pk error: " + ex);
+					LOG.warn("Set pk error: {}", ex.getMessage(), ex);
 				}
 				activeChar.sendMessage("Usage: //setpk <pk_count>");
 			}
@@ -216,7 +218,7 @@ public class AdminEditChar implements IAdminCommandHandler {
 				}
 			} catch (Exception ex) {
 				if (general().developer()) {
-					_log.warning("Set pvp error: " + ex);
+					LOG.warn("Set pvp error: {}", ex.getMessage(), ex);
 				}
 				activeChar.sendMessage("Usage: //setpvp <pvp_count>");
 			}
@@ -237,7 +239,7 @@ public class AdminEditChar implements IAdminCommandHandler {
 				}
 			} catch (Exception ex) {
 				if (general().developer()) {
-					_log.warning("Set Fame error: " + ex);
+					LOG.warn("Set Fame error: {}", ex.getMessage(), ex);
 				}
 				activeChar.sendMessage("Usage: //setfame <new_fame_value>");
 			}
@@ -778,13 +780,13 @@ public class AdminEditChar implements IAdminCommandHandler {
 			// Admin information
 			activeChar.sendMessage("Successfully Changed karma for " + player.getName() + " from (" + oldKarma + ") to (" + newKarma + ").");
 			if (general().debug()) {
-				_log.fine("[SET KARMA] [GM]" + activeChar.getName() + " Changed karma for " + player.getName() + " from (" + oldKarma + ") to (" + newKarma + ").");
+				LOG.debug("[SET KARMA] [GM]{} Changed karma for {} from ({}) to ({}).", activeChar.getName(), player.getName(), oldKarma, newKarma);
 			}
 		} else {
 			// tell admin of mistake
 			activeChar.sendMessage("You must enter a value for karma greater than or equal to 0.");
 			if (general().debug()) {
-				_log.fine("[SET KARMA] ERROR: [GM]" + activeChar.getName() + " entered an incorrect value for new karma: " + newKarma + " for " + player.getName() + ".");
+				LOG.debug("[SET KARMA] ERROR: [GM]{} entered an incorrect value for new karma: {} for {}.", activeChar.getName(), newKarma, player.getName());
 			}
 		}
 	}

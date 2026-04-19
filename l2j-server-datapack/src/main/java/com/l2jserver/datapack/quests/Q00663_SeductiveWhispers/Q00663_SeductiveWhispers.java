@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -122,11 +122,11 @@ public class Q00663_SeductiveWhispers extends Quest {
 	}
 	
 	public Q00663_SeductiveWhispers() {
-		super(663, Q00663_SeductiveWhispers.class.getSimpleName(), "Seductive Whispers");
-		addStartNpc(WILBERT);
-		addTalkId(WILBERT);
-		addKillId(MONSTERS.keySet());
-		addKillId(SPITEFUL_SOUL_LEADER);
+		super(663);
+		bindStartNpc(WILBERT);
+		bindTalk(WILBERT);
+		bindKill(MONSTERS.keySet());
+		bindKill(SPITEFUL_SOUL_LEADER);
 	}
 	
 	@Override
@@ -187,7 +187,7 @@ public class Q00663_SeductiveWhispers extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -535,7 +535,7 @@ public class Q00663_SeductiveWhispers extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final List<L2PcInstance> players = new LinkedList<>();
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && (qs.getMemoState() >= 1) && (qs.getMemoState() <= 4)) {
@@ -569,7 +569,6 @@ public class Q00663_SeductiveWhispers extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private String getHtml(L2PcInstance player, String htmlName, int card1pic, int card2pic, int winCount, int card1) {

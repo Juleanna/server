@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,20 +42,18 @@ public final class Remnants extends AbstractNpcAI {
 	// private static final String MSG = "The holy water affects Remnants Ghost. You have freed his soul.";
 	// private static final String MSG_DEREK = "The holy water affects Derek. You have freed his soul.";
 	public Remnants() {
-		super(Remnants.class.getSimpleName(), "ai/group_template");
-		addSpawnId(NPCS);
-		addSkillSeeId(NPCS);
+		bindSpawn(NPCS);
+		bindSkillSee(NPCS);
 		// Do not override onKill for Derek here. Let's make global Hellbound manipulations in Engine where it is possible.
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.setIsMortal(false);
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if (skill.getId() == SKILL_HOLY_WATER) {
 			if (!npc.isDead()) {
 				if (!targets.isEmpty() && (targets.get(0) == npc)) {
@@ -76,6 +74,5 @@ public final class Remnants extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 }

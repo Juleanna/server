@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -84,17 +84,16 @@ public final class PailakaDevilsLegacy extends AbstractInstance {
 	private static final int ZONE = 20109;
 	
 	public PailakaDevilsLegacy() {
-		super(PailakaDevilsLegacy.class.getSimpleName());
-		addTalkId(SURVIVOR);
-		addAttackId(POWDER_KEG, TREASURE_BOX, LEMATAN);
-		addKillId(LEMATAN);
-		addSpawnId(FOLLOWERS);
-		addEnterZoneId(ZONE);
-		addMoveFinishedId(LEMATAN);
+		bindTalk(SURVIVOR);
+		bindAttack(POWDER_KEG, TREASURE_BOX, LEMATAN);
+		bindKill(LEMATAN);
+		bindSpawn(FOLLOWERS);
+		bindEnterZone(ZONE);
+		bindMoveFinished(LEMATAN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		String htmltext = null;
 		
@@ -148,7 +147,7 @@ public final class PailakaDevilsLegacy extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		
 		if ((tmpworld != null) && (tmpworld instanceof DIWorld)) {
@@ -214,13 +213,11 @@ public final class PailakaDevilsLegacy extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
-		
 		if ((tmpworld != null) && (tmpworld instanceof DIWorld world)) {
 			if (world._followerslist != null) {
 				for (L2Npc _follower : world._followerslist) {
@@ -230,18 +227,16 @@ public final class PailakaDevilsLegacy extends AbstractInstance {
 			}
 			addSpawn(ADVENTURER2, ADVENTURER_LOC, false, 0, false, npc.getInstanceId());
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onEnterZone(L2Character character, L2ZoneType zone) {
+	public void onEnterZone(L2Character character, L2ZoneType zone) {
 		if ((character.isPlayer()) && !character.isDead() && !character.isTeleporting() && ((L2PcInstance) character).isOnline()) {
 			final InstanceWorld world = InstanceManager.getInstance().getWorld(character.getInstanceId());
 			if ((world != null) && (world.getTemplateId() == TEMPLATE_ID)) {
 				startQuestTimer("TELEPORT", 1000, ((DIWorld) world)._lematanNpc, (L2PcInstance) character);
 			}
 		}
-		return super.onEnterZone(character, zone);
 	}
 	
 	@Override

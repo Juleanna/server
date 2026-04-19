@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -238,14 +238,14 @@ public final class RainbowSpringsChateau extends ClanHallSiegeEngine {
 	private static String _registrationEnds;
 	
 	public RainbowSpringsChateau() {
-		super(RainbowSpringsChateau.class.getSimpleName(), "conquerablehalls", RAINBOW_SPRINGS);
+		super(RAINBOW_SPRINGS);
 		
-		addFirstTalkId(MESSENGER);
-		addTalkId(MESSENGER);
-		addFirstTalkId(CARETAKER);
-		addTalkId(CARETAKER);
-		addFirstTalkId(YETIS);
-		addTalkId(YETIS);
+		bindFirstTalk(MESSENGER);
+		bindTalk(MESSENGER);
+		bindFirstTalk(CARETAKER);
+		bindTalk(CARETAKER);
+		bindFirstTalk(YETIS);
+		bindTalk(YETIS);
 		
 		loadAttackers();
 		
@@ -299,7 +299,7 @@ public final class RainbowSpringsChateau extends ClanHallSiegeEngine {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String html = event;
 		final L2Clan clan = player.getClan();
 		switch (npc.getId()) {
@@ -474,14 +474,14 @@ public final class RainbowSpringsChateau extends ClanHallSiegeEngine {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (!_rainbow.isInSiege()) {
-			return null;
+			return;
 		}
 		
 		final L2Clan clan = killer.getClan();
 		if ((clan == null) || !_acceptedClans.contains(clan)) {
-			return null;
+			return;
 		}
 		
 		final int npcId = npc.getId();
@@ -497,30 +497,27 @@ public final class RainbowSpringsChateau extends ClanHallSiegeEngine {
 				ThreadPoolManager.getInstance().executeGeneral(new SiegeEnd(clan));
 			}
 		}
-		
-		return null;
 	}
 	
 	@Override
-	public String onItemUse(L2Item item, L2PcInstance player) {
+	public void onItemUse(L2Item item, L2PcInstance player) {
 		if (!_rainbow.isInSiege()) {
-			return null;
+			return;
 		}
 		
 		L2Object target = player.getTarget();
-		
 		if ((target == null) || !(target instanceof L2Npc)) {
-			return null;
+			return;
 		}
 		
 		int yeti = target.getId();
 		if (!isYetiTarget(yeti)) {
-			return null;
+			return;
 		}
 		
 		final L2Clan clan = player.getClan();
 		if ((clan == null) || !_acceptedClans.contains(clan)) {
-			return null;
+			return;
 		}
 		
 		// Nectar must spawn the enraged yeti. Dunno if it makes any other thing
@@ -541,7 +538,6 @@ public final class RainbowSpringsChateau extends ClanHallSiegeEngine {
 		} else if (itemId == RAINBOW_SULFUR) {
 			castDebuffsOnEnemies(_acceptedClans.indexOf(clan));
 		}
-		return null;
 	}
 	
 	private void portToArena(L2PcInstance leader, int arena) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,15 +42,15 @@ public class Q00173_ToTheIsleOfSouls extends Quest {
 	private static final int SCROLL_OF_ESCAPE_KAMAEL_VILLAGE = 9716;
 	
 	public Q00173_ToTheIsleOfSouls() {
-		super(173, Q00173_ToTheIsleOfSouls.class.getSimpleName(), "To the Isle of Souls");
-		addStartNpc(GALLADUCCI);
-		addTalkId(GALLADUCCI, GENTLER);
+		super(173);
+		bindStartNpc(GALLADUCCI);
+		bindTalk(GALLADUCCI, GENTLER);
 		
 		registerQuestItems(GALLADUCCIS_ORDER, MAGIC_SWORD_HILT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -81,15 +81,15 @@ public class Q00615_MagicalPowerOfFirePart1 extends Quest {
 	private static final int MIN_LEVEL = 74;
 	
 	public Q00615_MagicalPowerOfFirePart1() {
-		super(615, Q00615_MagicalPowerOfFirePart1.class.getSimpleName(), "Magical Power of Fire - Part 1");
-		addStartNpc(NARAN);
-		addTalkId(UDAN, NARAN, ASEFA_BOX);
-		addAttackId(KETRA_MOBS);
+		super(615);
+		bindStartNpc(NARAN);
+		bindTalk(UDAN, NARAN, ASEFA_BOX);
+		bindAttack(KETRA_MOBS);
 		registerQuestItems(STOLEN_RED_TOTEM);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -124,7 +124,7 @@ public class Q00615_MagicalPowerOfFirePart1 extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final QuestState st = getQuestState(attacker, false);
 		if ((st != null) && st.isCond(2) && !st.isSet("spawned")) {
 			st.set("spawned", "1");
@@ -134,7 +134,6 @@ public class Q00615_MagicalPowerOfFirePart1 extends Quest {
 			eye.broadcastPacket(new NpcSay(eye, Say2.NPC_ALL, NpcStringId.YOU_CANT_AVOID_THE_EYES_OF_ASEFA));
 			startQuestTimer("eye_despawn", 10000, eye, attacker);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override

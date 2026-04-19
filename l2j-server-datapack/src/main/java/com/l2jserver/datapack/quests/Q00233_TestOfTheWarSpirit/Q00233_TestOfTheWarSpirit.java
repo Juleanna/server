@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -106,16 +106,16 @@ public final class Q00233_TestOfTheWarSpirit extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00233_TestOfTheWarSpirit() {
-		super(233, Q00233_TestOfTheWarSpirit.class.getSimpleName(), "Test Of The War Spirit");
-		addStartNpc(SEER_SOMAK);
-		addTalkId(SEER_SOMAK, PRIESTESS_VIVYAN, TRADER_SARIEN, SEER_RACOY, SEER_MANAKIA, SHADOW_ORIM, ANCESTOR_MARTANKUS, SEER_PEKIRON);
-		addKillId(NOBLE_ANT, NOBLE_ANT_LEADER, MEDUSA, PORTA, EXCURO, MORDERO, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OVERLORD, TAMLIN_ORC, TAMLIN_ORC_ARCHER, STENOA_GORGON_QUEEN);
+		super(233);
+		bindStartNpc(SEER_SOMAK);
+		bindTalk(SEER_SOMAK, PRIESTESS_VIVYAN, TRADER_SARIEN, SEER_RACOY, SEER_MANAKIA, SHADOW_ORIM, ANCESTOR_MARTANKUS, SEER_PEKIRON);
+		bindKill(NOBLE_ANT, NOBLE_ANT_LEADER, MEDUSA, PORTA, EXCURO, MORDERO, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OVERLORD, TAMLIN_ORC, TAMLIN_ORC_ARCHER, STENOA_GORGON_QUEEN);
 		registerQuestItems(VENDETTA_TOTEM, TAMLIN_ORC_HEAD.getId(), WARSPIRIT_TOTEM, ORIMS_CONTRACT, PORTAS_EYE.getId(), EXCUROS_SCALE.getId(), MORDEOS_TALON
 			.getId(), BRAKIS_REMAINS1, PEKIRONS_TOTEM, TONARS_SKULL, TONARS_RIB_BONE, TONARS_SPINE, TONARS_ARM_BONE, TONARS_THIGH_BONE, TONARS_REMAINS1, MANAKIAS_TOTEM, HERMODTS_SKULL, HERMODTS_RIB_BONE, HERMODTS_SPINE, HERMODTS_ARM_BONE, HERMODTS_THIGH_BONE, HERMODTS_REMAINS1, RACOYS_TOTEM, VIVIANTES_LETTER, INSECT_DIAGRAM_BOOK, KIRUNAS_SKULL, KIRUNAS_RIB_BONE, KIRUNAS_SPINE, KIRUNAS_ARM_BONE, KIRUNAS_THIGH_BONE, KIRUNAS_REMAINS1, BRAKIS_REMAINS2, TONARS_REMAINS2, HERMODTS_REMAINS2, KIRUNAS_REMAINS2);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -190,7 +190,7 @@ public final class Q00233_TestOfTheWarSpirit extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -276,7 +276,6 @@ public final class Q00233_TestOfTheWarSpirit extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

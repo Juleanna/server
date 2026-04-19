@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -19,8 +19,10 @@
 package com.l2jserver.datapack.ai.npc.AvantGarde;
 
 import static com.l2jserver.gameserver.config.Configuration.character;
-
-import java.util.List;
+import static com.l2jserver.gameserver.model.base.AcquireSkillType.SUBCLASS;
+import static com.l2jserver.gameserver.model.base.AcquireSkillType.TRANSFORM;
+import static com.l2jserver.gameserver.network.SystemMessageId.DO_NOT_HAVE_FURTHER_SKILLS_TO_LEARN_S1;
+import static com.l2jserver.gameserver.network.SystemMessageId.NO_MORE_SKILLS_TO_LEARN;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +33,11 @@ import com.l2jserver.gameserver.data.xml.impl.MultisellData;
 import com.l2jserver.gameserver.data.xml.impl.SkillTreesData;
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.instancemanager.QuestManager;
-import com.l2jserver.gameserver.model.L2SkillLearn;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.base.AcquireSkillType;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerSkillLearned;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.clientpackets.RequestAcquireSkill;
 import com.l2jserver.gameserver.network.serverpackets.AcquireSkillList;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
@@ -71,30 +71,28 @@ public class AvantGarde extends AbstractNpcAI {
 	};
 	
 	public AvantGarde() {
-		super(AvantGarde.class.getSimpleName(), "ai/npc");
-		addStartNpc(AVANT_GARDE);
-		addTalkId(AVANT_GARDE);
-		addFirstTalkId(AVANT_GARDE);
-		addAcquireSkillId(AVANT_GARDE);
+		bindStartNpc(AVANT_GARDE);
+		bindTalk(AVANT_GARDE);
+		bindFirstTalk(AVANT_GARDE);
+		bindSkillLearned(AVANT_GARDE);
 	}
 	
 	@Override
-	public String onAcquireSkill(L2Npc npc, L2PcInstance player, Skill skill, AcquireSkillType type) {
-		switch (type) {
+	public void onSkillLearned(PlayerSkillLearned event) {
+		switch (event.type()) {
 			case TRANSFORM: {
-				showTransformSkillList(player);
+				showTransformSkillList(event.player());
 				break;
 			}
 			case SUBCLASS: {
-				showSubClassSkillList(player);
+				showSubClassSkillList(event.player());
 				break;
 			}
 		}
-		return null;
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "32323-02.html":
@@ -245,52 +243,33 @@ public class AvantGarde extends AbstractNpcAI {
 	 * Display the Sub-Class Skill list to the player.
 	 * @param player the player
 	 */
-	public static void showSubClassSkillList(L2PcInstance player) {
-		final List<L2SkillLearn> subClassSkills = SkillTreesData.getInstance().getAvailableSubClassSkills(player);
-		final AcquireSkillList asl = new AcquireSkillList(AcquireSkillType.SUBCLASS);
-		int count = 0;
-		
-		for (L2SkillLearn s : subClassSkills) {
-			if (SkillData.getInstance().getSkill(s.getSkillId(), s.getSkillLevel()) != null) {
-				count++;
-				asl.addSkill(s.getSkillId(), s.getSkillLevel(), s.getSkillLevel(), 0, 0);
-			}
-		}
-		if (count > 0) {
-			player.sendPacket(asl);
+	private static void showSubClassSkillList(L2PcInstance player) {
+		final var skills = SkillTreesData.getInstance().getAvailableSubClassSkills(player);
+		if (skills.size() > 0) {
+			player.sendPacket(new AcquireSkillList(SUBCLASS, skills));
 		} else {
-			player.sendPacket(SystemMessageId.NO_MORE_SKILLS_TO_LEARN);
+			player.sendPacket(NO_MORE_SKILLS_TO_LEARN);
 		}
 	}
 	
 	/**
-	 * This displays Transformation Skill List to the player.
+	 * Displays Transformation Skill List to the player.
 	 * @param player the active character.
 	 */
-	public static void showTransformSkillList(L2PcInstance player) {
-		final List<L2SkillLearn> skills = SkillTreesData.getInstance().getAvailableTransformSkills(player);
-		final AcquireSkillList asl = new AcquireSkillList(AcquireSkillType.TRANSFORM);
-		int counts = 0;
-		
-		for (L2SkillLearn s : skills) {
-			if (SkillData.getInstance().getSkill(s.getSkillId(), s.getSkillLevel()) != null) {
-				counts++;
-				asl.addSkill(s.getSkillId(), s.getSkillLevel(), s.getSkillLevel(), s.getLevelUpSp(), 0);
-			}
-		}
-		
-		if (counts == 0) {
+	private static void showTransformSkillList(L2PcInstance player) {
+		final var skills = SkillTreesData.getInstance().getAvailableTransformSkills(player);
+		if (skills.size() == 0) {
 			final int minlevel = SkillTreesData.getInstance().getMinLevelForNewSkill(player, SkillTreesData.getInstance().getTransformSkillTree());
 			if (minlevel > 0) {
 				// No more skills to learn, come back when you level.
-				final SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.DO_NOT_HAVE_FURTHER_SKILLS_TO_LEARN_S1);
+				final var sm = SystemMessage.getSystemMessage(DO_NOT_HAVE_FURTHER_SKILLS_TO_LEARN_S1);
 				sm.addInt(minlevel);
 				player.sendPacket(sm);
 			} else {
-				player.sendPacket(SystemMessageId.NO_MORE_SKILLS_TO_LEARN);
+				player.sendPacket(NO_MORE_SKILLS_TO_LEARN);
 			}
 		} else {
-			player.sendPacket(asl);
+			player.sendPacket(new AcquireSkillList(TRANSFORM, skills));
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -104,18 +104,16 @@ public final class Q00229_TestOfWitchcraft extends Quest {
 	private static final Location DREVANUL_PRINCE_ZERUEL_SPAWN = new Location(13395, 169807, -3708);
 	
 	public Q00229_TestOfWitchcraft() {
-		super(229, Q00229_TestOfWitchcraft.class.getSimpleName(), "Test Of Witchcraft");
-		{
-			addStartNpc(SHADOW_ORIM);
-			addTalkId(SHADOW_ORIM, GROCER_LARA, TRADER_ALEXANDRIA, MAGISTER_IKER, PRIEST_VADIN, TRADER_NESTLE, SIR_KLAUS_VASPER, LEOPOLD, MAGISTER_KAIRA, WARDEN_RODERIK, WARDEN_ENDRIGO, FISHER_EVERT);
-			addKillId(DIRE_WYRM, ENCHANTED_STONE_GOLEM, LETO_LIZARDMAN, LETO_LIZARDMAN_ARCHER, LETO_LIZARDMAN_SOLDIER, LETO_LIZARDMAN_WARRIOR, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OVERLORD, TAMLIN_ORC, TAMLIN_ORC_ARCHER, NAMELESS_REVENANT, SKELETAL_MERCENARY, DREVANUL_PRINCE_ZERUEL);
-			addAttackId(NAMELESS_REVENANT, SKELETAL_MERCENARY, DREVANUL_PRINCE_ZERUEL);
-			registerQuestItems(SWORD_OF_BINDING, ORIMS_DIAGRAM, ALEXANDRIAS_BOOK, IKERS_LIST, DIRE_WYRM_FANG, LETO_LIZARDMAN_CHARM, ENCHANTED_STONE_GOLEM_HEARTSTONE, LARAS_MEMO, NESTLES_MEMO, LEOPOLDS_JOURNAL, AKLANTOTH_1ST_GEM, AKLANTOTH_2ND_GEM, AKLANTOTH_3RD_GEM, AKLANTOTH_4TH_GEM, AKLANTOTH_5TH_GEM, AKLANTOTH_6TH_GEM, BRIMSTONE_1ST, ORIMS_INSTRUCTIONS, ORIMS_1ST_LETTER, ORIMS_2ND_LETTER, SIR_VASPERS_LETTER, VADINS_CRUCIFIX, TAMLIN_ORC_AMULET, VADINS_SANCTIONS, IKERS_AMULET, SOULTRAP_CRYSTAL, PURGATORY_KEY, ZERUEL_BIND_CRYSTAL, BRIMSTONE_2ND);
-		}
+		super(229);
+		bindStartNpc(SHADOW_ORIM);
+		bindTalk(SHADOW_ORIM, GROCER_LARA, TRADER_ALEXANDRIA, MAGISTER_IKER, PRIEST_VADIN, TRADER_NESTLE, SIR_KLAUS_VASPER, LEOPOLD, MAGISTER_KAIRA, WARDEN_RODERIK, WARDEN_ENDRIGO, FISHER_EVERT);
+		bindKill(DIRE_WYRM, ENCHANTED_STONE_GOLEM, LETO_LIZARDMAN, LETO_LIZARDMAN_ARCHER, LETO_LIZARDMAN_SOLDIER, LETO_LIZARDMAN_WARRIOR, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OVERLORD, TAMLIN_ORC, TAMLIN_ORC_ARCHER, NAMELESS_REVENANT, SKELETAL_MERCENARY, DREVANUL_PRINCE_ZERUEL);
+		bindAttack(NAMELESS_REVENANT, SKELETAL_MERCENARY, DREVANUL_PRINCE_ZERUEL);
+		registerQuestItems(SWORD_OF_BINDING, ORIMS_DIAGRAM, ALEXANDRIAS_BOOK, IKERS_LIST, DIRE_WYRM_FANG, LETO_LIZARDMAN_CHARM, ENCHANTED_STONE_GOLEM_HEARTSTONE, LARAS_MEMO, NESTLES_MEMO, LEOPOLDS_JOURNAL, AKLANTOTH_1ST_GEM, AKLANTOTH_2ND_GEM, AKLANTOTH_3RD_GEM, AKLANTOTH_4TH_GEM, AKLANTOTH_5TH_GEM, AKLANTOTH_6TH_GEM, BRIMSTONE_1ST, ORIMS_INSTRUCTIONS, ORIMS_1ST_LETTER, ORIMS_2ND_LETTER, SIR_VASPERS_LETTER, VADINS_CRUCIFIX, TAMLIN_ORC_AMULET, VADINS_SANCTIONS, IKERS_AMULET, SOULTRAP_CRYSTAL, PURGATORY_KEY, ZERUEL_BIND_CRYSTAL, BRIMSTONE_2ND);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -265,7 +263,7 @@ public final class Q00229_TestOfWitchcraft extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isStarted()) {
 			switch (npc.getId()) {
@@ -298,11 +296,10 @@ public final class Q00229_TestOfWitchcraft extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -410,7 +407,6 @@ public final class Q00229_TestOfWitchcraft extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

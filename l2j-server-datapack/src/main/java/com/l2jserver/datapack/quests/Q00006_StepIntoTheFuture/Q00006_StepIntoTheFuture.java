@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,14 +42,14 @@ public class Q00006_StepIntoTheFuture extends Quest {
 	private static final int MIN_LEVEL = 3;
 	
 	public Q00006_StepIntoTheFuture() {
-		super(6, Q00006_StepIntoTheFuture.class.getSimpleName(), "Step Into the Future");
-		addStartNpc(ROXXY);
-		addTalkId(ROXXY, BAULRO, SIR_COLLIN);
+		super(6);
+		bindStartNpc(ROXXY);
+		bindTalk(ROXXY, BAULRO, SIR_COLLIN);
 		registerQuestItems(BAULRO_LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

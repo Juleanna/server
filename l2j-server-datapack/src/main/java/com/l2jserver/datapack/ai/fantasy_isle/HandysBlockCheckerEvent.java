@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -48,13 +48,12 @@ public class HandysBlockCheckerEvent extends Quest {
 	private static final int A_MANAGER_4 = 32524;
 	
 	public HandysBlockCheckerEvent() {
-		super(-1, HandysBlockCheckerEvent.class.getSimpleName(), "Handy's Block Checker Event");
 		if (!general().enableBlockCheckerEvent()) {
 			LOG.info("Handy's Block Checker event is disabled.");
 			return;
 		}
 		
-		addFirstTalkId(A_MANAGER_1, A_MANAGER_2, A_MANAGER_3, A_MANAGER_4);
+		bindFirstTalk(A_MANAGER_1, A_MANAGER_2, A_MANAGER_3, A_MANAGER_4);
 		HandysBlockCheckerManager.getInstance().startUpParticipantsQueue();
 		LOG.info("Loaded Handy's Block Checker event.");
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -32,6 +32,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2QuestGuardInstance;
 import com.l2jserver.gameserver.model.entity.Instance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.skills.Skill;
@@ -85,14 +86,13 @@ public final class UrbanArea extends AbstractInstance {
 	};
 	
 	public UrbanArea() {
-		super(UrbanArea.class.getSimpleName(), "hellbound/Instances");
-		addFirstTalkId(DOWNTOWN_NATIVE);
-		addStartNpc(KANAF, DOWNTOWN_NATIVE);
-		addTalkId(KANAF, DOWNTOWN_NATIVE);
-		addAttackId(TOWN_GUARD, KEYMASTER);
-		addAggroRangeEnterId(TOWN_GUARD);
-		addKillId(AMASKARI);
-		addSpawnId(DOWNTOWN_NATIVE, TOWN_GUARD, TOWN_PATROL, KEYMASTER);
+		bindFirstTalk(DOWNTOWN_NATIVE);
+		bindStartNpc(KANAF, DOWNTOWN_NATIVE);
+		bindTalk(KANAF, DOWNTOWN_NATIVE);
+		bindAttack(TOWN_GUARD, KEYMASTER);
+		bindAggroRangeEnter(TOWN_GUARD);
+		bindKill(AMASKARI);
+		bindSpawn(DOWNTOWN_NATIVE, TOWN_GUARD, TOWN_PATROL, KEYMASTER);
 	}
 	
 	@Override
@@ -154,7 +154,7 @@ public final class UrbanArea extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if ((tmpworld != null) && (tmpworld instanceof UrbanAreaWorld world)) {
 			if (npc.getId() == DOWNTOWN_NATIVE) {
@@ -186,11 +186,11 @@ public final class UrbanArea extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == DOWNTOWN_NATIVE) {
 			((L2QuestGuardInstance) npc).setPassive(true);
 			((L2QuestGuardInstance) npc).setAutoAttackable(false);
@@ -200,13 +200,13 @@ public final class UrbanArea extends AbstractInstance {
 			npc.setBusy(false);
 			npc.setBusyMessage("");
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
-		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
-		if ((tmpworld != null) && (tmpworld instanceof UrbanAreaWorld world)) {
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		final var npc = event.npc();
+		final var tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
+		if (tmpworld instanceof UrbanAreaWorld world) {
 			if (!npc.isBusy()) {
 				broadcastNpcSay(npc, Say2.NPC_ALL, NPCSTRING_ID[0]);
 				npc.setBusy(true);
@@ -219,11 +219,10 @@ public final class UrbanArea extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAggroRangeEnter(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if ((tmpworld != null) && (tmpworld instanceof UrbanAreaWorld world)) {
 			if (!world.isAmaskariDead && !(npc.getBusyMessage().equalsIgnoreCase("atk") || npc.isBusy())) {
@@ -256,16 +255,14 @@ public final class UrbanArea extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if ((tmpworld != null) && (tmpworld instanceof UrbanAreaWorld world)) {
 			world.isAmaskariDead = true;
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

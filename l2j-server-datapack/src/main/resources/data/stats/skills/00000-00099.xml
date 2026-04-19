@@ -2730,11 +2730,6 @@
 		<enchant2 name="magicLvl" val="#enchMagicLvl" />
 		<effects>
 			<effect name="Buff">
-				<mul stat="pAtk" val="#ench1pAtk">
-					<using kind="SWORD,BLUNT,POLE" />
-				</mul>
-			</effect>
-			<effect name="Buff">
 				<add stat="accCombat" val="4">
 					<and>
 						<using kind="SWORD,BLUNT" />
@@ -2774,6 +2769,11 @@
 			</effect>
 		</effects>
 		<enchant1Effects>
+			<effect name="Buff">
+				<mul stat="pAtk" val="#ench1pAtk">
+					<using kind="SWORD,BLUNT,POLE" />
+				</mul>
+			</effect>
 			<effect name="Buff">
 				<sub stat="rEvas" val="3" />
 			</effect>

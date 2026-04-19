@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -30,7 +30,7 @@ import com.l2jserver.gameserver.model.base.ClassId;
  */
 public final class DwarfBlacksmithChange1 extends AbstractNpcAI {
 	// NPCs
-	private static int[] NPCS = {
+	private static final int[] NPCS = {
 		30499, // Tapoy
 		30504, // Mendio
 		30595, // Opix
@@ -44,13 +44,12 @@ public final class DwarfBlacksmithChange1 extends AbstractNpcAI {
 	private static final int ARTISAN = 56;
 	
 	public DwarfBlacksmithChange1() {
-		super(DwarfBlacksmithChange1.class.getSimpleName(), "village_master");
-		addStartNpc(NPCS);
-		addTalkId(NPCS);
+		bindStartNpc(NPCS);
+		bindTalk(NPCS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "30499-01.htm": // head_blacksmith_tapoy003f

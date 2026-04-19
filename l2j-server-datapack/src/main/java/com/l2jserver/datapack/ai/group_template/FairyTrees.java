@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,13 +46,12 @@ public class FairyTrees extends AbstractNpcAI {
 	private static final int MIN_DISTANCE = 1500;
 	
 	public FairyTrees() {
-		super(FairyTrees.class.getSimpleName(), "ai/group_template");
-		addKillId(MOBS);
-		addSpawnId(MOBS);
+		bindKill(MOBS);
+		bindSpawn(MOBS);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.calculateDistance(killer, true, false) <= MIN_DISTANCE) {
 			for (int i = 0; i < 20; i++) {
 				final L2Npc guardian = addSpawn(SOUL_GUARDIAN, npc, false, 30000);
@@ -64,13 +63,11 @@ public class FairyTrees extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.setIsNoRndWalk(true);
 		npc.setIsImmobilized(true);
-		return super.onSpawn(npc);
 	}
 }

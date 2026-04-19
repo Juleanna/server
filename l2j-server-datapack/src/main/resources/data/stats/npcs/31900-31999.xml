@@ -2875,7 +2875,7 @@
 			<height normal="17.5" />
 		</collision>
 	</npc>
-	<npc id="31960" level="70" type="L2Trainer" name="Buryun" title="Blacksmith">
+	<npc id="31960" level="70" type="L2Npc" name="Buryun" title="Blacksmith">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3121,7 +3121,7 @@
 			<height normal="23.5" />
 		</collision>
 	</npc>
-	<npc id="31966" level="70" type="L2Trainer" name="Karamon" title="Master">
+	<npc id="31966" level="70" type="L2Npc" name="Karamon" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3162,7 +3162,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31967" level="70" type="L2Trainer" name="Euline" title="Master">
+	<npc id="31967" level="70" type="L2Npc" name="Euline" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3245,7 +3245,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="31969" level="70" type="L2Trainer" name="Evelyn" title="Priest">
+	<npc id="31969" level="70" type="L2Npc" name="Evelyn" title="Priest">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3287,7 +3287,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31970" level="70" type="L2Trainer" name="Sinis" title="Priest">
+	<npc id="31970" level="70" type="L2Npc" name="Sinis" title="Priest">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3329,7 +3329,7 @@
 			<height normal="22.2" />
 		</collision>
 	</npc>
-	<npc id="31971" level="70" type="L2Trainer" name="Otillo" title="Magister">
+	<npc id="31971" level="70" type="L2Npc" name="Otillo" title="Magister">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3369,7 +3369,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31972" level="70" type="L2Trainer" name="Atraxia" title="Magister">
+	<npc id="31972" level="70" type="L2Npc" name="Atraxia" title="Magister">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3491,7 +3491,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31975" level="70" type="L2Trainer" name="Aerina" title="Master">
+	<npc id="31975" level="70" type="L2Npc" name="Aerina" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3532,7 +3532,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31976" level="70" type="L2Trainer" name="Talia" title="Magister">
+	<npc id="31976" level="70" type="L2Npc" name="Talia" title="Magister">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3616,7 +3616,7 @@
 			<height normal="26" />
 		</collision>
 	</npc>
-	<npc id="31978" level="70" type="L2Trainer" name="Tazeer" title="Prefect">
+	<npc id="31978" level="70" type="L2Npc" name="Tazeer" title="Prefect">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -3657,7 +3657,7 @@
 			<height normal="28.5" />
 		</collision>
 	</npc>
-	<npc id="31979" level="70" type="L2Trainer" name="Moira" title="Seer">
+	<npc id="31979" level="70" type="L2Npc" name="Moira" title="Seer">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -4111,7 +4111,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31990" level="70" type="L2Trainer" name="Siger" title="Blacksmith">
+	<npc id="31990" level="70" type="L2Npc" name="Siger" title="Blacksmith">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -4150,7 +4150,7 @@
 			<height normal="16.5" />
 		</collision>
 	</npc>
-	<npc id="31991" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31991" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -4190,7 +4190,7 @@
 			<height normal="17.5" />
 		</collision>
 	</npc>
-	<npc id="31992" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31992" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -4231,7 +4231,7 @@
 			<height normal="22.4" />
 		</collision>
 	</npc>
-	<npc id="31993" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31993" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -4272,7 +4272,7 @@
 			<height normal="17" />
 		</collision>
 	</npc>
-	<npc id="31994" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31994" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -4312,7 +4312,7 @@
 			<height normal="26" />
 		</collision>
 	</npc>
-	<npc id="31995" level="70" type="L2Adventurer" name="Adventure Guildsman">
+	<npc id="31995" level="70" type="L2Npc" name="Adventure Guildsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />

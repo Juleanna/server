@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -55,15 +55,15 @@ public class Q00331_ArrowOfVengeance extends Quest {
 	private static final int BONUS_COUNT = 10;
 	
 	public Q00331_ArrowOfVengeance() {
-		super(331, Q00331_ArrowOfVengeance.class.getSimpleName(), "Arrow for Vengeance");
-		addStartNpc(BELTON);
-		addTalkId(BELTON);
-		addKillId(MONSTERS.keySet());
+		super(331);
+		bindStartNpc(BELTON);
+		bindTalk(BELTON);
+		bindKill(MONSTERS.keySet());
 		registerQuestItems(HARPY_FEATHER, MEDUSA_VENOM, WYRMS_TOOTH);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -114,7 +114,7 @@ public class Q00331_ArrowOfVengeance extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
 		final QuestState st = getQuestState(player, false);
 		if (st != null) {
 			if (getRandom(100) < MONSTERS.get(npc.getId())) {
@@ -135,6 +135,5 @@ public class Q00331_ArrowOfVengeance extends Quest {
 				st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, player, isPet);
 	}
 }

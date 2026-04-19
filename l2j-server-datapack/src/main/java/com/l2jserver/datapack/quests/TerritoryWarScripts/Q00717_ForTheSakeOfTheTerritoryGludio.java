@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,7 +26,7 @@ import com.l2jserver.gameserver.network.NpcStringId;
  */
 public final class Q00717_ForTheSakeOfTheTerritoryGludio extends TerritoryWarSuperClass {
 	public Q00717_ForTheSakeOfTheTerritoryGludio() {
-		super(717, Q00717_ForTheSakeOfTheTerritoryGludio.class.getSimpleName(), "For the Sake of the Territory - Gludio");
+		super(717);
 		CATAPULT_ID = 36499;
 		TERRITORY_ID = 81;
 		LEADER_IDS = new int[] {

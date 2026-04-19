@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -45,6 +45,7 @@ import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.data.xml.impl.DoorData;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.enums.audio.Sound;
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.GraciaSeedsManager;
 import com.l2jserver.gameserver.instancemanager.ZoneManager;
 import com.l2jserver.gameserver.model.L2Object;
@@ -55,7 +56,6 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.zone.L2ZoneType;
@@ -113,10 +113,9 @@ public class EnergySeeds extends AbstractNpcAI {
 	}
 	
 	public EnergySeeds() {
-		super(EnergySeeds.class.getSimpleName(), "gracia/AI");
 		registerMobs(SEED_IDS);
-		addFirstTalkId(SEED_IDS);
-		addEnterZoneId(SOD_ZONE);
+		bindFirstTalk(SEED_IDS);
+		bindEnterZone(SOD_ZONE);
 		loadSpawns();
 		startAI();
 	}
@@ -268,9 +267,9 @@ public class EnergySeeds extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if (!targets.contains(npc) || (skill.getId() != 5780)) {
-			return super.onSkillSee(npc, caster, skill, targets, isSummon);
+			return;
 		}
 		
 		npc.deleteMe();
@@ -280,30 +279,16 @@ public class EnergySeeds extends AbstractNpcAI {
 			spawn.scheduleRespawn(false);
 			_spawnedNpcs.remove(npc);
 			if (isSeedActive(spawn._seedId)) {
-				int itemId = 0;
+				final int itemId = switch (npc.getId()) {
+				    case 18678 -> 14016; // Water
+				    case 18679 -> 14015; // Fire
+				    case 18680 -> 14017; // Wind
+				    case 18681 -> 14018; // Earth
+				    case 18682 -> 14020; // Divinity
+				    case 18683 -> 14019; // Darkness
+					default -> throw new IllegalArgumentException("Unexpected value: " + npc.getId());
+				};
 				
-				switch (npc.getId()) {
-					case 18678: // Water
-						itemId = 14016;
-						break;
-					case 18679: // Fire
-						itemId = 14015;
-						break;
-					case 18680: // Wind
-						itemId = 14017;
-						break;
-					case 18681: // Earth
-						itemId = 14018;
-						break;
-					case 18682: // Divinity
-						itemId = 14020;
-						break;
-					case 18683: // Darkness
-						itemId = 14019;
-						break;
-					default:
-						return super.onSkillSee(npc, caster, skill, targets, isSummon);
-				}
 				if (getRandom(100) < 33) {
 					caster.sendPacket(SystemMessageId.THE_COLLECTION_HAS_SUCCEEDED);
 					caster.addItem("EnergySeed", itemId, getRandom(RATE + 1, 2 * RATE), null, true);
@@ -316,12 +301,10 @@ public class EnergySeeds extends AbstractNpcAI {
 				seedCollectEvent(caster, npc, spawn._seedId);
 			}
 		}
-		
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("StartSoDAi")) {
 			for (int doorId : SEED_OF_DESTRUCTION_DOORS) {
 				L2DoorInstance doorInstance = DoorData.getInstance().getDoor(doorId);
@@ -369,18 +352,17 @@ public class EnergySeeds extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		if (_spawnedNpcs.containsKey(npc) && SEED_SPAWNS.containsKey(_spawnedNpcs.get(npc))) {
 			SEED_SPAWNS.get(_spawnedNpcs.get(npc)).scheduleRespawn(false);
 			_spawnedNpcs.remove(npc);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onEnterZone(L2Character character, L2ZoneType zone) {
+	public void onEnterZone(L2Character character, L2ZoneType zone) {
 		if (character.getInstanceId() != 0) {
-			return super.onEnterZone(character, zone);
+			return;
 		}
 		
 		if (character instanceof L2PcInstance) {
@@ -392,7 +374,6 @@ public class EnergySeeds extends AbstractNpcAI {
 					break;
 			}
 		}
-		return super.onEnterZone(character, zone);
 	}
 	
 	public void startAI() {
@@ -495,8 +476,9 @@ public class EnergySeeds extends AbstractNpcAI {
 	}
 	
 	private L2MonsterInstance spawnSupriseMob(L2Npc energy, int npcId) {
-		L2NpcTemplate surpriseMobTemplate = NpcData.getInstance().getTemplate(npcId);
-		L2MonsterInstance monster = new L2MonsterInstance(surpriseMobTemplate);
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var template = NpcData.getInstance().getTemplate(npcId);
+		final var monster = new L2MonsterInstance(objectId, template);
 		monster.setCurrentHpMp(monster.getMaxHp(), monster.getMaxMp());
 		monster.setHeading(energy.getHeading());
 		monster.setInstanceId(energy.getInstanceId());

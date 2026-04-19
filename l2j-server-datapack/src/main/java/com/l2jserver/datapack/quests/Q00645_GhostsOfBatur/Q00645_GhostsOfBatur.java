@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -49,15 +49,15 @@ public class Q00645_GhostsOfBatur extends Quest {
 	};
 	
 	public Q00645_GhostsOfBatur() {
-		super(645, Q00645_GhostsOfBatur.class.getSimpleName(), "Ghosts of Batur");
-		addStartNpc(KARUDA);
-		addTalkId(KARUDA);
-		addKillId(CONTAMINATED_MOREK_WARRIOR, CONTAMINATED_BATUR_WARRIOR, CONTAMINATED_BATUR_COMMANDER);
+		super(645);
+		bindStartNpc(KARUDA);
+		bindTalk(KARUDA);
+		bindKill(CONTAMINATED_MOREK_WARRIOR, CONTAMINATED_BATUR_WARRIOR, CONTAMINATED_BATUR_COMMANDER);
 		registerQuestItems(CURSED_GRAVE_GOODS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -87,7 +87,7 @@ public class Q00645_GhostsOfBatur extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final L2PcInstance player = getRandomPartyMember(killer, 1);
 		if ((player != null) && Util.checkIfInRange(1500, npc, player, false)) {
 			if (getRandom(1000) < CHANCES[npc.getId() - CONTAMINATED_MOREK_WARRIOR]) {
@@ -100,7 +100,6 @@ public class Q00645_GhostsOfBatur extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

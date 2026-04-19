@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,13 +42,13 @@ public final class Q00178_IconicTrinity extends Quest {
 	private static final int TWENTY_LEVEL = 20;
 	
 	public Q00178_IconicTrinity() {
-		super(178, Q00178_IconicTrinity.class.getSimpleName(), "Iconic Trinity");
-		addStartNpc(HIERARCH_KEKROPUS);
-		addTalkId(HIERARCH_KEKROPUS, ICON_OF_THE_PAST, ICON_OF_THE_PRESENT, ICON_OF_THE_FUTURE);
+		super(178);
+		bindStartNpc(HIERARCH_KEKROPUS);
+		bindTalk(HIERARCH_KEKROPUS, ICON_OF_THE_PAST, ICON_OF_THE_PRESENT, ICON_OF_THE_FUTURE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

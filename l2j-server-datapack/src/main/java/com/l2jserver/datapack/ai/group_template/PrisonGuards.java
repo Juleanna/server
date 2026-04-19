@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -25,6 +25,7 @@ import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.NpcStringId;
@@ -46,16 +47,15 @@ public final class PrisonGuards extends AbstractNpcAI {
 	private static final SkillHolder SILENCE = new SkillHolder(4098, 9); // Silence
 	
 	public PrisonGuards() {
-		super(PrisonGuards.class.getSimpleName(), "ai/group_template");
-		addAttackId(GUARD_HEAD, GUARD);
-		addSpawnId(GUARD_HEAD, GUARD);
-		addNpcHateId(GUARD);
-		addSkillSeeId(GUARD);
-		addSpellFinishedId(GUARD_HEAD, GUARD);
+		bindAttack(GUARD_HEAD, GUARD);
+		bindSpawn(GUARD_HEAD, GUARD);
+		bindNpcHate(GUARD);
+		bindSkillSee(GUARD);
+		bindSpellFinished(GUARD_HEAD, GUARD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equals("CLEAR_STATUS")) {
 			npc.setScriptValue(0);
 		} else if (event.equals("CHECK_HOME")) {
@@ -64,11 +64,11 @@ public final class PrisonGuards extends AbstractNpcAI {
 			}
 			startQuestTimer("CHECK_HOME", 30000, npc, null);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
 		if (npc.getId() == GUARD_HEAD) {
 			if (player.isAffectedBySkill(TIMER)) {
 				if ((getRandom(100) < 10) && (npc.calculateDistance(player, true, false) < 100)) {
@@ -90,25 +90,22 @@ public final class PrisonGuards extends AbstractNpcAI {
 				broadcastNpcSay(npc, Say2.ALL, NpcStringId.YOURE_OUT_OF_YOUR_MIND_COMING_HERE);
 			}
 		}
-		return super.onAttack(npc, player, damage, isSummon);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if (!caster.isAffectedBySkill(TIMER)) {
 			npc.setTarget(caster);
 			npc.doCast(SILENCE);
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		if ((skill == SILENCE.getSkill()) || (skill == STONE.getSkill())) {
-			((L2Attackable) npc).clearAggroList();
-			npc.setTarget(npc);
+	public void onSpellFinished(NpcSkillFinished event) {
+		if ((event.skill() == SILENCE.getSkill()) || (event.skill() == STONE.getSkill())) {
+			((L2Attackable) event.npc()).clearAggroList();
+			event.npc().setTarget(event.npc());
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override
@@ -117,7 +114,7 @@ public final class PrisonGuards extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == GUARD_HEAD) {
 			npc.setIsImmobilized(true);
 			npc.setIsInvul(true);
@@ -126,6 +123,5 @@ public final class PrisonGuards extends AbstractNpcAI {
 			cancelQuestTimer("CHECK_HOME", npc, null);
 			startQuestTimer("CHECK_HOME", 30000, npc, null);
 		}
-		return super.onSpawn(npc);
 	}
 }

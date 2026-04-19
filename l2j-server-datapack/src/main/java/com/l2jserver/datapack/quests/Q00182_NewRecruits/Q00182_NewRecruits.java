@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,13 +42,13 @@ public class Q00182_NewRecruits extends Quest {
 	private static final int RING_OF_DEVOTION = 10124;
 	
 	public Q00182_NewRecruits() {
-		super(182, Q00182_NewRecruits.class.getSimpleName(), "New Recruits");
-		addStartNpc(KEKROPUS);
-		addTalkId(KEKROPUS, MENACING_MACHINE);
+		super(182);
+		bindStartNpc(KEKROPUS);
+		bindTalk(KEKROPUS, MENACING_MACHINE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

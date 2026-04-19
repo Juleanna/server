@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,15 +51,15 @@ public final class Q00062_PathOfTheTrooper extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00062_PathOfTheTrooper() {
-		super(62, Q00062_PathOfTheTrooper.class.getSimpleName(), "Path Of The Trooper");
-		addStartNpc(MASTER_GWAIN);
-		addTalkId(MASTER_GWAIN, MASTER_SHUBAIN);
-		addKillId(FELIM_LIZARDMAN_WARRIOR, VENOMOUS_SPIDER, TUMRAN_BUGBEAR);
+		super(62);
+		bindStartNpc(MASTER_GWAIN);
+		bindTalk(MASTER_GWAIN, MASTER_SHUBAIN);
+		bindKill(FELIM_LIZARDMAN_WARRIOR, VENOMOUS_SPIDER, TUMRAN_BUGBEAR);
 		registerQuestItems(FELIM_LIZARDMAN_HEAD, VENOMOUS_SPIDERS_LEG, TUMRAN_BUGBEAR_HEART, SHUBAINS_RECOMMENDATION);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -88,7 +88,7 @@ public final class Q00062_PathOfTheTrooper extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -123,7 +123,6 @@ public final class Q00062_PathOfTheTrooper extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,14 +53,13 @@ public final class PaganTeleporters extends AbstractNpcAI {
 	private static final int PAGANS_MARK = 8067;
 	
 	public PaganTeleporters() {
-		super(PaganTeleporters.class.getSimpleName(), "ai/npc/Teleports");
-		addStartNpc(NPCS);
-		addTalkId(NPCS);
-		addFirstTalkId(TRIOLS_MIRROR_1, TRIOLS_MIRROR_2);
+		bindStartNpc(NPCS);
+		bindTalk(NPCS);
+		bindFirstTalk(NPCS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "Close_Door1": {
 				closeDoor(19160001, 0);
@@ -80,7 +79,14 @@ public final class PaganTeleporters extends AbstractNpcAI {
 		if (TRIOLS_LOCS.containsKey(npc.getId())) {
 			player.teleToLocation(TRIOLS_LOCS.get(npc.getId()));
 		}
-		return "";
+		
+		switch (npc.getId()) {
+			case 32034, 32035, 32036, 32037 -> {
+				showPage(player, npc.getId() + ".htm");
+			}
+		}
+		
+		return super.onFirstTalk(npc, player);
 	}
 	
 	@Override

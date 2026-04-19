@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,15 +51,15 @@ public final class Q00195_SevenSignsSecretRitualOfThePriests extends Quest {
 	private static final SkillHolder TRANSFORMATION = new SkillHolder(6204);
 	
 	public Q00195_SevenSignsSecretRitualOfThePriests() {
-		super(195, Q00195_SevenSignsSecretRitualOfThePriests.class.getSimpleName(), "Seven Signs, Secret Ritual of the Priests");
-		addFirstTalkId(IDENTITY_CONFIRM_DEVICE, PASSWORD_ENTRY_DEVICE, DARKNESS_OF_DAWN, SHELF);
-		addStartNpc(CLAUDIA_ATHEBALDT);
-		addTalkId(CLAUDIA_ATHEBALDT, JOHN, RAYMOND, IASON_HEINE, LIGHT_OF_DAWN, DARKNESS_OF_DAWN, IDENTITY_CONFIRM_DEVICE, PASSWORD_ENTRY_DEVICE, SHELF);
+		super(195);
+		bindFirstTalk(IDENTITY_CONFIRM_DEVICE, PASSWORD_ENTRY_DEVICE, DARKNESS_OF_DAWN, SHELF);
+		bindStartNpc(CLAUDIA_ATHEBALDT);
+		bindTalk(CLAUDIA_ATHEBALDT, JOHN, RAYMOND, IASON_HEINE, LIGHT_OF_DAWN, DARKNESS_OF_DAWN, IDENTITY_CONFIRM_DEVICE, PASSWORD_ENTRY_DEVICE, SHELF);
 		registerQuestItems(IDENTITY_CARD, SHUNAIMANS_CONTRACT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

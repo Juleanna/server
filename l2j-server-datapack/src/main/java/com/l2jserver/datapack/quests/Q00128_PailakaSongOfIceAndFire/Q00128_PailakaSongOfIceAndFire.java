@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -73,15 +73,15 @@ public final class Q00128_PailakaSongOfIceAndFire extends Quest {
 	private static final int EXIT_TIME = 5;
 	
 	public Q00128_PailakaSongOfIceAndFire() {
-		super(128, Q00128_PailakaSongOfIceAndFire.class.getSimpleName(), "Pailaka - Song of Ice and Fire");
-		addStartNpc(ADLER1);
-		addTalkId(ADLER1, ADLER2, SINAI, INSPECTOR);
-		addKillId(HILLAS, PAPION, KINSUS, GARGOS, ADIANTUM);
+		super(128);
+		bindStartNpc(ADLER1);
+		bindTalk(ADLER1, ADLER2, SINAI, INSPECTOR);
+		bindKill(HILLAS, PAPION, KINSUS, GARGOS, ADIANTUM);
 		registerQuestItems(SWORD, ENH_SWORD1, ENH_SWORD2, BOOK1, BOOK2, BOOK3, BOOK4, BOOK5, BOOK6, BOOK7, WATER_ESSENCE, FIRE_ESSENCE, SHIELD_POTION, HEAL_POTION, FIRE_ENHANCER, WATER_ENHANCER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
@@ -248,7 +248,7 @@ public final class Q00128_PailakaSongOfIceAndFire extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && st.isStarted()) {
 			switch (npc.getId()) {
@@ -305,6 +305,5 @@ public final class Q00128_PailakaSongOfIceAndFire extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 }

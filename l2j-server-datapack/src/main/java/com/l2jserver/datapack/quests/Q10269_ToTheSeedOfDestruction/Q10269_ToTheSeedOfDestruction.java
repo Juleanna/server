@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,14 +37,14 @@ public class Q10269_ToTheSeedOfDestruction extends Quest {
 	private static final int INTRODUCTION = 13812;
 	
 	public Q10269_ToTheSeedOfDestruction() {
-		super(10269, Q10269_ToTheSeedOfDestruction.class.getSimpleName(), "To the Seed of Destruction");
-		addStartNpc(KEUCEREUS);
-		addTalkId(KEUCEREUS, ALLENOS);
+		super(10269);
+		bindStartNpc(KEUCEREUS);
+		bindTalk(KEUCEREUS, ALLENOS);
 		registerQuestItems(INTRODUCTION);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

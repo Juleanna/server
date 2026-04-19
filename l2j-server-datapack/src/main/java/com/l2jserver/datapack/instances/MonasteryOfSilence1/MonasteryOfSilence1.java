@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -173,12 +173,11 @@ public final class MonasteryOfSilence1 extends AbstractInstance {
 	};
 	
 	public MonasteryOfSilence1() {
-		super(MonasteryOfSilence1.class.getSimpleName());
-		addFirstTalkId(TELEPORT_CONTROL_DEVICE1, TELEPORT_CONTROL_DEVICE2, TELEPORT_CONTROL_DEVICE3, TELEPORT_CONTROL_DEVICE4);
-		addKillId(SOLINAS_GUARDIAN_1, SOLINAS_GUARDIAN_2, SOLINAS_GUARDIAN_3, SOLINAS_GUARDIAN_4, GUARDIAN_OF_THE_TOMB_1, GUARDIAN_OF_THE_TOMB_2, GUARDIAN_OF_THE_TOMB_3, GUARDIAN_OF_THE_TOMB_4, ETIS_VAN_ETINA);
-		addSpawnId(ERIS_EVIL_THOUGHTS, TOMB_OF_THE_SAINTESS);
-		addStartNpc(ODD_GLOBE, TELEPORT_CONTROL_DEVICE1, TELEPORT_CONTROL_DEVICE2, TELEPORT_CONTROL_DEVICE3, TELEPORT_CONTROL_DEVICE4, ERIS_EVIL_THOUGHTS);
-		addTalkId(ODD_GLOBE, ERIS_EVIL_THOUGHTS, RELIC_GUARDIAN, RELIC_WATCHER1, RELIC_WATCHER2, RELIC_WATCHER3, RELIC_WATCHER4, TELEPORT_CONTROL_DEVICE1, TELEPORT_CONTROL_DEVICE2, TELEPORT_CONTROL_DEVICE3, TELEPORT_CONTROL_DEVICE4, ERIS_EVIL_THOUGHTS);
+		bindFirstTalk(TELEPORT_CONTROL_DEVICE1, TELEPORT_CONTROL_DEVICE2, TELEPORT_CONTROL_DEVICE3, TELEPORT_CONTROL_DEVICE4);
+		bindKill(SOLINAS_GUARDIAN_1, SOLINAS_GUARDIAN_2, SOLINAS_GUARDIAN_3, SOLINAS_GUARDIAN_4, GUARDIAN_OF_THE_TOMB_1, GUARDIAN_OF_THE_TOMB_2, GUARDIAN_OF_THE_TOMB_3, GUARDIAN_OF_THE_TOMB_4, ETIS_VAN_ETINA);
+		bindSpawn(ERIS_EVIL_THOUGHTS, TOMB_OF_THE_SAINTESS);
+		bindStartNpc(ODD_GLOBE, TELEPORT_CONTROL_DEVICE1, TELEPORT_CONTROL_DEVICE2, TELEPORT_CONTROL_DEVICE3, TELEPORT_CONTROL_DEVICE4, ERIS_EVIL_THOUGHTS);
+		bindTalk(ODD_GLOBE, ERIS_EVIL_THOUGHTS, RELIC_GUARDIAN, RELIC_WATCHER1, RELIC_WATCHER2, RELIC_WATCHER3, RELIC_WATCHER4, TELEPORT_CONTROL_DEVICE1, TELEPORT_CONTROL_DEVICE2, TELEPORT_CONTROL_DEVICE3, TELEPORT_CONTROL_DEVICE4, ERIS_EVIL_THOUGHTS);
 	}
 	
 	@Override
@@ -191,7 +190,7 @@ public final class MonasteryOfSilence1 extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof MoSWorld world) {
 			switch (event) {
@@ -398,11 +397,11 @@ public final class MonasteryOfSilence1 extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof MoSWorld world) {
 			switch (npc.getId()) {
@@ -447,11 +446,10 @@ public final class MonasteryOfSilence1 extends AbstractInstance {
 			}
 			
 		}
-		return null;
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		switch (npc.getId()) {
 			case ERIS_EVIL_THOUGHTS: {
 				startQuestTimer("OPEN_DOORS", 1000, npc, null);
@@ -462,7 +460,6 @@ public final class MonasteryOfSilence1 extends AbstractInstance {
 				break;
 			}
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override

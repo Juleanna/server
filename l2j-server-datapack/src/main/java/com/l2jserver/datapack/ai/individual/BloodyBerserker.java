@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,15 +43,14 @@ public class BloodyBerserker extends AbstractNpcAI {
 	};
 	
 	public BloodyBerserker() {
-		super(BloodyBerserker.class.getSimpleName(), "ai/individual");
-		addKillId(BLOODY_BERSERKER);
-		addAttackId(BLOODY_BERSERKER);
-		addTeleportId(BLOODY_BERSERKER);
-		addMoveFinishedId(BLOODY_BERSERKER);
+		bindKill(BLOODY_BERSERKER);
+		bindAttack(BLOODY_BERSERKER);
+		bindTeleport(BLOODY_BERSERKER);
+		bindMoveFinished(BLOODY_BERSERKER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "CORE_AI": {
 				if (npc != null) {
@@ -68,11 +67,11 @@ public class BloodyBerserker extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		switch (npc.getId()) {
 			case BLOODY_BERSERKER: {
 				final double DistSpawn = npc.calculateDistance(npc.getSpawn().getLocation(), false, false);
@@ -100,11 +99,10 @@ public class BloodyBerserker extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		switch (npc.getId()) {
 			case BLOODY_BERSERKER: {
 				if (getRandom(100) < 5) {
@@ -118,7 +116,6 @@ public class BloodyBerserker extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

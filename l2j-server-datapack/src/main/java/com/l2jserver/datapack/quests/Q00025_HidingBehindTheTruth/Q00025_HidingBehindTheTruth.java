@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -68,18 +68,18 @@ public class Q00025_HidingBehindTheTruth extends Quest {
 	private static final IPositionable COFFIN_LOC = new Location(60104, -35820, -681);
 	
 	public Q00025_HidingBehindTheTruth() {
-		super(25, Q00025_HidingBehindTheTruth.class.getSimpleName(), "Hiding Behind the Truth");
-		addStartNpc(PRIEST_BENEDICT);
-		addTalkId(HIGH_PRIEST_AGRIPEL, PRIEST_BENEDICT, MYSTERIOUS_WIZARD, TOMBSTONE, MAID_OF_LIDIA, BROKEN_BOOKSHELF2, BROKEN_BOOKSHELF3, BROKEN_BOOKSHELF4, COFFIN);
+		super(25);
+		bindStartNpc(PRIEST_BENEDICT);
+		bindTalk(HIGH_PRIEST_AGRIPEL, PRIEST_BENEDICT, MYSTERIOUS_WIZARD, TOMBSTONE, MAID_OF_LIDIA, BROKEN_BOOKSHELF2, BROKEN_BOOKSHELF3, BROKEN_BOOKSHELF4, COFFIN);
 		registerQuestItems(GEMSTONE_KEY, CONTRACT, TOTEM_DOLL3, TOTEM_DOLL2, LIDAS_DRESS);
-		addAttackId(TRIOL_PAWN);
+		bindAttack(TRIOL_PAWN);
 		TRIOL_PAWN_LOC.put(BROKEN_BOOKSHELF2, new Location(47142, -35941, -1623));
 		TRIOL_PAWN_LOC.put(BROKEN_BOOKSHELF3, new Location(50055, -47020, -3396));
 		TRIOL_PAWN_LOC.put(BROKEN_BOOKSHELF4, new Location(59712, -47568, -2720));
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = getNoQuestMsg(player);
@@ -357,7 +357,7 @@ public class Q00025_HidingBehindTheTruth extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.getCurrentHp() <= (0.30 * npc.getMaxHp())) {
 			final QuestState qs = getQuestState(attacker, false);
 			if (qs.isMemoState(8) && !hasQuestItems(attacker, TOTEM_DOLL3) && (attacker.getObjectId() == npc.getScriptValue())) {
@@ -372,7 +372,6 @@ public class Q00025_HidingBehindTheTruth extends Quest {
 				npc.deleteMe();
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override

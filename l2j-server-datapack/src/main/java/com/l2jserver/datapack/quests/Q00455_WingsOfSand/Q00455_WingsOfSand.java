@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -62,10 +62,10 @@ public class Q00455_WingsOfSand extends Quest {
 	private static final int CHANCE = 350;
 	
 	public Q00455_WingsOfSand() {
-		super(455, Q00455_WingsOfSand.class.getSimpleName(), "Wings of Sand");
-		addStartNpc(SEPARATED_SOULS);
-		addTalkId(SEPARATED_SOULS);
-		addKillId(EMERALD_HORN, DUST_RIDER, BLEEDING_FLY, BLACK_DAGGER_WING, SHADOW_SUMMONER, SPIKE_SLASHER, MUSCLE_BOMBER);
+		super(455);
+		bindStartNpc(SEPARATED_SOULS);
+		bindTalk(SEPARATED_SOULS);
+		bindKill(EMERALD_HORN, DUST_RIDER, BLEEDING_FLY, BLACK_DAGGER_WING, SHADOW_SUMMONER, SPIKE_SLASHER, MUSCLE_BOMBER);
 		registerQuestItems(LARGE_BABY_DRAGON);
 	}
 	
@@ -84,7 +84,7 @@ public class Q00455_WingsOfSand extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -110,9 +110,8 @@ public class Q00455_WingsOfSand extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		executeForEachPlayer(killer, npc, isSummon, true, false);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

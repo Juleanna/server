@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -68,17 +68,17 @@ public final class Q00022_TragedyInVonHellmannForest extends Quest {
 	private static L2Npc _soulWellNpc = null;
 	
 	public Q00022_TragedyInVonHellmannForest() {
-		super(22, Q00022_TragedyInVonHellmannForest.class.getSimpleName(), "Tragedy in Von Hellmann Forest");
-		addKillId(MOBS);
-		addKillId(SOUL_OF_WELL);
-		addAttackId(SOUL_OF_WELL);
-		addStartNpc(TIFAREN);
-		addTalkId(INNOCENTIN, TIFAREN, WELL, GHOST_OF_PRIEST, GHOST_OF_ADVENTURER);
+		super(22);
+		bindKill(MOBS);
+		bindKill(SOUL_OF_WELL);
+		bindAttack(SOUL_OF_WELL);
+		bindStartNpc(TIFAREN);
+		bindTalk(INNOCENTIN, TIFAREN, WELL, GHOST_OF_PRIEST, GHOST_OF_ADVENTURER);
 		registerQuestItems(LOST_SKULL_OF_ELF, CROSS_OF_EINHASAD, REPORT_BOX, JEWEL_OF_ADVENTURER_1, JEWEL_OF_ADVENTURER_2, SEALED_REPORT_BOX);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -277,9 +277,8 @@ public final class Q00022_TragedyInVonHellmannForest extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
-		final QuestState qs = getQuestState(attacker, false);
-		
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+		final var qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isCond(10) && hasQuestItems(attacker, JEWEL_OF_ADVENTURER_1)) {
 			if (qs.isMemoState(10)) {
 				qs.setMemoState(11);
@@ -289,11 +288,10 @@ public final class Q00022_TragedyInVonHellmannForest extends Quest {
 				qs.setCond(11, true);
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (Util.checkIfInRange(1500, killer, npc, true)) {
 			if (npc.getId() == SOUL_OF_WELL) {
 				_soulWellNpc = null;
@@ -305,8 +303,6 @@ public final class Q00022_TragedyInVonHellmannForest extends Quest {
 				}
 			}
 		}
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

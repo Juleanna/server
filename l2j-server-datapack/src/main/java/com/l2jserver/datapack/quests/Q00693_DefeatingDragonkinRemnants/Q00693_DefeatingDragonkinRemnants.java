@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -31,19 +31,19 @@ import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.network.SystemMessageId;
 
 /**
- * Quest 693 - Defeating Dragonkin Remnants
+ * Defeating Dragonkin Remnants (693)
  * @author Lomka
  */
 public class Q00693_DefeatingDragonkinRemnants extends Quest {
 	private static final int EDRIC = 32527;
 	private static final int MIN_LEVEL = 75;
-	private static Location ENTER_TELEPORT_LOC = new Location(-242754, 219982, -10011);
+	private static final Location ENTER_TELEPORT_LOC = new Location(-242754, 219982, -10011);
 	
 	public Q00693_DefeatingDragonkinRemnants() {
-		super(693, Q00693_DefeatingDragonkinRemnants.class.getSimpleName(), "Defeating Dragonkin Remnants");
-		addStartNpc(EDRIC);
-		addFirstTalkId(EDRIC);
-		addTalkId(EDRIC);
+		super(693);
+		bindStartNpc(EDRIC);
+		bindFirstTalk(EDRIC);
+		bindTalk(EDRIC);
 	}
 	
 	@Override
@@ -99,7 +99,7 @@ public class Q00693_DefeatingDragonkinRemnants extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = event;
 		if (st == null) {
@@ -141,21 +141,17 @@ public class Q00693_DefeatingDragonkinRemnants extends Quest {
 		return htmltext;
 	}
 	
-	private boolean checkInstances(L2PcInstance talker) {
-		if ((System.currentTimeMillis() < InstanceManager.getInstance().getInstanceTime(talker.getObjectId(), 123) //
-		)
-			|| (System.currentTimeMillis() < InstanceManager.getInstance().getInstanceTime(talker.getObjectId(), 124) //
-			)
-			|| (System.currentTimeMillis() < InstanceManager.getInstance().getInstanceTime(talker.getObjectId(), 125) //
-			)
-			|| (System.currentTimeMillis() < InstanceManager.getInstance().getInstanceTime(talker.getObjectId(), 126) //
-			)) {
+	private static boolean checkInstances(L2PcInstance talker) {
+		if ((System.currentTimeMillis() < InstanceManager.getInstance().getInstanceTime(talker.getObjectId(), 123))
+			|| (System.currentTimeMillis() < InstanceManager.getInstance().getInstanceTime(talker.getObjectId(), 124))
+			|| (System.currentTimeMillis() < InstanceManager.getInstance().getInstanceTime(talker.getObjectId(), 125))
+			|| (System.currentTimeMillis() < InstanceManager.getInstance().getInstanceTime(talker.getObjectId(), 126))) {
 			return false;
 		}
 		return true;
 	}
 	
-	private boolean rewardPlayer(QuestState st, int difficulty, int memberCount) {
+	private static boolean rewardPlayer(QuestState st, int difficulty, int memberCount) {
 		if (getRandom(1000) < ((10000 / (memberCount * 10)) * (1 + (difficulty * 2)))) {
 			if (difficulty == 4) {
 				st.giveItems(14638, 1L); // Best Quality Battle Reward Chest
@@ -170,5 +166,4 @@ public class Q00693_DefeatingDragonkinRemnants extends Quest {
 		}
 		return false;
 	}
-	
 }

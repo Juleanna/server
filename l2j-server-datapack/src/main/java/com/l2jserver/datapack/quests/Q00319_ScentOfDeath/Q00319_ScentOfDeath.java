@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,15 +46,15 @@ public class Q00319_ScentOfDeath extends Quest {
 	private static final int REQUIRED_ITEM_COUNT = 5;
 	
 	public Q00319_ScentOfDeath() {
-		super(319, Q00319_ScentOfDeath.class.getSimpleName(), "Scent of Death");
-		addStartNpc(MINALESS);
-		addTalkId(MINALESS);
-		addKillId(MARSH_ZOMBIE, MARSH_ZOMBIE_LORD);
+		super(319);
+		bindStartNpc(MINALESS);
+		bindTalk(MINALESS);
+		bindKill(MARSH_ZOMBIE, MARSH_ZOMBIE_LORD);
 		registerQuestItems(ZOMBIES_SKIN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -74,7 +74,7 @@ public class Q00319_ScentOfDeath extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && Util.checkIfInRange(1500, npc, killer, false) && (st.getQuestItemsCount(ZOMBIES_SKIN) < REQUIRED_ITEM_COUNT)) {
 			if (getRandom(10) > MIN_CHANCE) {
@@ -86,7 +86,6 @@ public class Q00319_ScentOfDeath extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -57,18 +57,18 @@ public final class Q00120_PavelsLastResearch extends Quest {
 	private static final int SEALED_PHOENIX_EARRING = 6324;
 	
 	public Q00120_PavelsLastResearch() {
-		super(120, Q00120_PavelsLastResearch.class.getSimpleName(), "Pavel's Last Research");
-		addStartNpc(SUSPICIOUS_LOOKING_PILE_OF_STONES);
-		addTalkId(SUSPICIOUS_LOOKING_PILE_OF_STONES, WENDY, YUMI, WEATHERMASTER_1, WEATHERMASTER_2, WEATHERMASTER_3, DOCTOR_CHAOS_SECRET_BOOKSHELF);
-		addSkillSeeId(WEATHERMASTER_1, WEATHERMASTER_2, WEATHERMASTER_3);
+		super(120);
+		bindStartNpc(SUSPICIOUS_LOOKING_PILE_OF_STONES);
+		bindTalk(SUSPICIOUS_LOOKING_PILE_OF_STONES, WENDY, YUMI, WEATHERMASTER_1, WEATHERMASTER_2, WEATHERMASTER_3, DOCTOR_CHAOS_SECRET_BOOKSHELF);
+		bindSkillSee(WEATHERMASTER_1, WEATHERMASTER_2, WEATHERMASTER_3);
 		registerQuestItems(FLOWER_OF_PAVEL, HEART_OF_ATLANTA, WENDYS_NECKLACE, LOCKUP_RESEARCH_REPORT, RESEARCH_REPORT, KEY_OF_ENIGMA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		String html = null;
@@ -920,14 +920,13 @@ public final class Q00120_PavelsLastResearch extends Quest {
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
 		final QuestState qs = getQuestState(player, false);
 		if ((qs != null) && qs.isStarted()) {
 			final Skill npcDefault = NPC_DEFAULT.getSkill();
 			castSkill(npc, player, npcDefault);
 			castSkill(npc, player, npcDefault);
 		}
-		return null;
 	}
 	
 	@Override

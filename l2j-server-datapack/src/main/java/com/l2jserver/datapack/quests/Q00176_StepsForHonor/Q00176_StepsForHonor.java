@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,13 +38,13 @@ public class Q00176_StepsForHonor extends Quest {
 	private static final int MIN_LEVEL = 80;
 	
 	public Q00176_StepsForHonor() {
-		super(176, Q00176_StepsForHonor.class.getSimpleName(), "Steps for Honor");
-		addStartNpc(RAPIDUS);
-		addTalkId(RAPIDUS);
+		super(176);
+		bindStartNpc(RAPIDUS);
+		bindTalk(RAPIDUS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equalsIgnoreCase("36479-04.html")) {
 			st.startQuest();

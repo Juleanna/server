@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -54,15 +54,14 @@ public final class Warpgate extends AbstractNpcAI {
 	private static final int ZONE = 40101;
 	
 	public Warpgate() {
-		super(Warpgate.class.getSimpleName(), "hellbound/AI/NPC");
-		addStartNpc(WARPGATES);
-		addFirstTalkId(WARPGATES);
-		addTalkId(WARPGATES);
-		addEnterZoneId(ZONE);
+		bindStartNpc(WARPGATES);
+		bindFirstTalk(WARPGATES);
+		bindTalk(WARPGATES);
+		bindEnterZone(ZONE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equals("enter")) {
 			if (canEnter(player)) {
 				player.teleToLocation(ENTER_LOC, true);
@@ -72,7 +71,7 @@ public final class Warpgate extends AbstractNpcAI {
 		} else if (event.equals("TELEPORT")) {
 			player.teleToLocation(REMOVE_LOC, true);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
@@ -81,7 +80,7 @@ public final class Warpgate extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onEnterZone(L2Character character, L2ZoneType zone) {
+	public void onEnterZone(L2Character character, L2ZoneType zone) {
 		if (character.isPlayer()) {
 			final L2PcInstance player = character.getActingPlayer();
 			
@@ -91,7 +90,6 @@ public final class Warpgate extends AbstractNpcAI {
 				player.setMinimapAllowed(true);
 			}
 		}
-		return super.onEnterZone(character, zone);
 	}
 	
 	private static boolean canEnter(L2PcInstance player) {

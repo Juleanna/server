@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -33,8 +33,8 @@ public class Lang implements IVoicedCommandHandler {
 	};
 	
 	@Override
-	public boolean useVoicedCommand(String command, L2PcInstance activeChar, String params) {
-		if (!customs().multiLangEnable() || !customs().multiLangVoiceCommand()) {
+	public boolean useVoicedCommand(String command, L2PcInstance player, String params) {
+		if (!customs().multiLangEnable() || !customs().multiLangHandler()) {
 			return false;
 		}
 		
@@ -45,22 +45,22 @@ public class Lang implements IVoicedCommandHandler {
 				StringUtil.append(html, "<button value=\"", lang.toUpperCase(), "\" action=\"bypass -h voice .lang ", lang, "\" width=60 height=21 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\"><br>");
 			}
 			
-			msg.setFile(activeChar.getHtmlPrefix(), "data/html/mods/Lang/LanguageSelect.htm");
+			msg.setFile(player.getHtmlPrefix(), "data/html/mods/Lang/LanguageSelect.htm");
 			msg.replace("%list%", html.toString());
-			activeChar.sendPacket(msg);
+			player.sendPacket(msg);
 			return true;
 		}
 		
 		final StringTokenizer st = new StringTokenizer(params);
 		if (st.hasMoreTokens()) {
 			final String lang = st.nextToken().trim();
-			if (activeChar.setLang(lang)) {
-				msg.setFile(activeChar.getHtmlPrefix(), "data/html/mods/Lang/Ok.htm");
-				activeChar.sendPacket(msg);
+			if (player.setLang(lang)) {
+				msg.setFile(player.getHtmlPrefix(), "data/html/mods/Lang/Ok.htm");
+				player.sendPacket(msg);
 				return true;
 			}
-			msg.setFile(activeChar.getHtmlPrefix(), "data/html/mods/Lang/Error.htm");
-			activeChar.sendPacket(msg);
+			msg.setFile(player.getHtmlPrefix(), "data/html/mods/Lang/Error.htm");
+			player.sendPacket(msg);
 			return true;
 		}
 		return false;

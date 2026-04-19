@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -74,15 +74,15 @@ public final class Q00226_TestOfTheHealer extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00226_TestOfTheHealer() {
-		super(226, Q00226_TestOfTheHealer.class.getSimpleName(), "Test Of The Healer");
-		addStartNpc(PRIEST_BANDELLOS);
-		addTalkId(PRIEST_BANDELLOS, MASTER_SORIUS, ALLANA, PERRIN, FATHER_GUPU, ORPHAN_GIRL, WINDY_SHAORING, MYSTERIOUS_DARK_ELF, PIPER_LONGBOW, SLEIN_SHINING_BLADE, CAIN_FLYING_KNIFE, SAINT_KRISTINA, DAURIN_HAMMERCRUSH);
-		addKillId(LERO_LIZARDMAN_AGENT, LERO_LIZARDMAN_LEADER, LERO_LIZARDMAN_ASSASSIN, LERO_LIZARDMAN_SNIPER, LERO_LIZARDMAN_WIZARD, LERO_LIZARDMAN_LORD, TATOMA);
+		super(226);
+		bindStartNpc(PRIEST_BANDELLOS);
+		bindTalk(PRIEST_BANDELLOS, MASTER_SORIUS, ALLANA, PERRIN, FATHER_GUPU, ORPHAN_GIRL, WINDY_SHAORING, MYSTERIOUS_DARK_ELF, PIPER_LONGBOW, SLEIN_SHINING_BLADE, CAIN_FLYING_KNIFE, SAINT_KRISTINA, DAURIN_HAMMERCRUSH);
+		bindKill(LERO_LIZARDMAN_AGENT, LERO_LIZARDMAN_LEADER, LERO_LIZARDMAN_ASSASSIN, LERO_LIZARDMAN_SNIPER, LERO_LIZARDMAN_WIZARD, LERO_LIZARDMAN_LORD, TATOMA);
 		registerQuestItems(REPORT_OF_PERRIN, CRISTINAS_LETTER, PICTURE_OF_WINDY, GOLDEN_STATUE, WINDYS_PEBBLES, ORDER_OF_SORIUS, SECRET_LETTER1, SECRET_LETTER2, SECRET_LETTER3, SECRET_LETTER4);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -211,7 +211,7 @@ public final class Q00226_TestOfTheHealer extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -253,7 +253,6 @@ public final class Q00226_TestOfTheHealer extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

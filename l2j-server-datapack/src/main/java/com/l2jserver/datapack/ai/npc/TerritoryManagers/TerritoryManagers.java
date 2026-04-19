@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -65,12 +65,10 @@ public final class TerritoryManagers extends AbstractNpcAI {
 	};
 	
 	public TerritoryManagers() {
-		super(TerritoryManagers.class.getSimpleName(), "ai/npc");
-		
 		for (int i = 0; i < 9; i++) {
-			addFirstTalkId(36490 + i);
-			addTalkId(36490 + i);
-			addStartNpc(36490 + i);
+			bindFirstTalk(36490 + i);
+			bindTalk(36490 + i);
+			bindStartNpc(36490 + i);
 		}
 	}
 	
@@ -84,7 +82,7 @@ public final class TerritoryManagers extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		final int npcId = npc.getId();
 		final int itemId = 13757 + (npcId - 36490);

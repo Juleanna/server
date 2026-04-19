@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -30,13 +30,14 @@ import com.l2jserver.datapack.instances.AbstractInstance;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2Party;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.Instance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcEventReceived;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.QuestState;
@@ -157,9 +158,7 @@ public abstract class Chamber extends AbstractInstance {
 	// Misc
 	private static final String RETURN = Chamber.class.getSimpleName() + "_return";
 	
-	protected Chamber(String name, String descr, int instanceId, String instanceTemplateName, int entranceGKId, int roomGKFirstId, int roomGKLastId, int aenkinelId, int boxId) {
-		super(name, descr);
-		
+	protected Chamber(int instanceId, String instanceTemplateName, int entranceGKId, int roomGKFirstId, int roomGKLastId, int aenkinelId, int boxId) {
 		INSTANCEID = instanceId;
 		INSTANCE_TEMPLATE = instanceTemplateName;
 		ENTRANCE_GATEKEEPER = entranceGKId;
@@ -168,16 +167,16 @@ public abstract class Chamber extends AbstractInstance {
 		AENKINEL = aenkinelId;
 		BOX = boxId;
 		
-		addStartNpc(ENTRANCE_GATEKEEPER);
-		addTalkId(ENTRANCE_GATEKEEPER);
+		bindStartNpc(ENTRANCE_GATEKEEPER);
+		bindTalk(ENTRANCE_GATEKEEPER);
 		for (int i = ROOM_GATEKEEPER_FIRST; i <= ROOM_GATEKEEPER_LAST; i++) {
-			addStartNpc(i);
-			addTalkId(i);
+			bindStartNpc(i);
+			bindTalk(i);
 		}
-		addKillId(AENKINEL);
-		addAttackId(BOX);
-		addSpellFinishedId(BOX);
-		addEventReceivedId(BOX);
+		bindKill(AENKINEL);
+		bindAttack(BOX);
+		bindSpellFinished(BOX);
+		bindEventReceived(BOX);
 	}
 	
 	private boolean isBigChamber() {
@@ -386,7 +385,7 @@ public abstract class Chamber extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = "";
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		
@@ -438,7 +437,7 @@ public abstract class Chamber extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAttack(final L2Npc npc, final L2PcInstance attacker, final int damage, final boolean isPet, final Skill skill) {
+	public void onAttack(final L2Npc npc, final L2PcInstance attacker, final int damage, final boolean isPet, final Skill skill) {
 		if (!npc.isBusy() && (npc.getCurrentHp() < (npc.getMaxHp() / 10))) {
 			npc.setBusy(true);
 			if (getRandom(100) < (25 * rates().getQuestDropChanceMultiplier())) // 25% chance to reward
@@ -456,34 +455,30 @@ public abstract class Chamber extends AbstractInstance {
 					npc.dropItem(attacker, LEONARD, (int) (2 * rates().getQuestDropAmountMultiplier()));
 				}
 				
-				npc.broadcastEvent("SCE_LUCKY", 2000, null);
+				npc.broadcastScriptEvent("SCE_LUCKY", 2000);
 				npc.doCast(SUCCESS_SKILL);
 			} else {
-				npc.broadcastEvent("SCE_DREAM_FIRE_IN_THE_HOLE", 2000, null);
+				npc.broadcastScriptEvent("SCE_DREAM_FIRE_IN_THE_HOLE", 2000);
 			}
 		}
-		
-		return super.onAttack(npc, attacker, damage, isPet, skill);
 	}
 	
 	@Override
-	public String onEventReceived(String eventName, L2Npc sender, L2Npc receiver, L2Object reference) {
-		switch (eventName) {
+	public void onEventReceived(NpcEventReceived event) {
+		switch (event.eventName()) {
 			case "SCE_LUCKY":
-				receiver.setBusy(true);
-				receiver.doCast(SUCCESS_SKILL);
+				event.receiver().setBusy(true);
+				event.receiver().doCast(SUCCESS_SKILL);
 				break;
 			case "SCE_DREAM_FIRE_IN_THE_HOLE":
-				receiver.setBusy(true);
-				receiver.doCast(FAIL_SKILL);
+				event.receiver().setBusy(true);
+				event.receiver().doCast(FAIL_SKILL);
 				break;
 		}
-		
-		return null;
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getPlayerWorld(player);
 		if ((tmpworld != null) && (tmpworld instanceof CDWorld world)) {
 			final Instance inst = InstanceManager.getInstance().getInstance(world.getInstanceId());
@@ -500,16 +495,13 @@ public abstract class Chamber extends AbstractInstance {
 			
 			inst.spawnGroup("boxes");
 		}
-		
-		return super.onKill(npc, player, isPet);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		if ((npc.getId() == BOX) && ((skill.getId() == 5376) || (skill.getId() == 5758)) && !npc.isDead()) {
-			npc.doDie(player);
+	public void onSpellFinished(NpcSkillFinished event) {
+		if ((event.npc().getId() == BOX) && ((event.skill().getId() == 5376) || (event.skill().getId() == 5758)) && !event.npc().isDead()) {
+			event.npc().doDie(event.player());
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -56,10 +56,8 @@ public final class KetraOrcSupport extends AbstractNpcAI {
 	private static final int KADUN = 31370; // Hierarch
 	private static final int WAHKAN = 31371; // Messenger
 	private static final int ASEFA = 31372; // Soul Guide
-	private static final int ATAN = 31373; // Grocer
 	private static final int JAFF = 31374; // Warehouse Keeper
-	private static final int JUMARA = 31375; // Trader
-	private static final int KURFA = 31376; // Gate Keeper
+	
 	// Items
 	private static final int HORN = 7186;
 	private static final int[] KETRA_MARKS = {
@@ -83,10 +81,9 @@ public final class KetraOrcSupport extends AbstractNpcAI {
 	}
 	
 	public KetraOrcSupport() {
-		super(KetraOrcSupport.class.getSimpleName(), "ai/npc");
-		addFirstTalkId(KADUN, WAHKAN, ASEFA, ATAN, JAFF, JUMARA, KURFA);
-		addTalkId(ASEFA, KURFA, JAFF);
-		addStartNpc(KURFA, JAFF);
+		bindFirstTalk(KADUN, WAHKAN, ASEFA, JAFF);
+		bindTalk(ASEFA, JAFF);
+		bindStartNpc(JAFF);
 	}
 	
 	private int getAllianceLevel(L2PcInstance player) {
@@ -99,7 +96,7 @@ public final class KetraOrcSupport extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		if (Util.isDigit(event) && BUFF.containsKey(Integer.parseInt(event))) {
 			final BuffsData buff = BUFF.get(Integer.parseInt(event));
@@ -110,13 +107,6 @@ public final class KetraOrcSupport extends AbstractNpcAI {
 				npc.setCurrentHpMp(npc.getMaxHp(), npc.getMaxMp());
 			} else {
 				htmltext = "31372-02.html";
-			}
-		} else if (event.equals("Teleport")) {
-			final int AllianceLevel = getAllianceLevel(player);
-			if (AllianceLevel == 4) {
-				htmltext = "31376-04.html";
-			} else if (AllianceLevel == 5) {
-				htmltext = "31376-05.html";
 			}
 		}
 		return htmltext;
@@ -136,27 +126,8 @@ public final class KetraOrcSupport extends AbstractNpcAI {
 			case ASEFA:
 				htmltext = (AllianceLevel > 0) ? (AllianceLevel < 3) ? "31372-01.html" : "31372-04.html" : "31372-03.html";
 				break;
-			case ATAN:
-				htmltext = (AllianceLevel > 0) ? "31373-friend.html" : "31373-no.html";
-				break;
 			case JAFF:
 				htmltext = (AllianceLevel > 0) ? (AllianceLevel == 1) ? "31374-01.html" : "31374-02.html" : "31374-no.html";
-				break;
-			case JUMARA:
-				htmltext = switch (AllianceLevel) {
-					case 1, 2 -> "31375-01.html";
-					case 3, 4 -> "31375-02.html";
-					case 5 -> "31375-03.html";
-					default -> "31375-no.html";
-				};
-				break;
-			case KURFA:
-				htmltext = switch (AllianceLevel) {
-					case 1, 2, 3 -> "31376-01.html";
-					case 4 -> "31376-02.html";
-					case 5 -> "31376-03.html";
-					default -> "31376-no.html";
-				};
 				break;
 		}
 		return htmltext;

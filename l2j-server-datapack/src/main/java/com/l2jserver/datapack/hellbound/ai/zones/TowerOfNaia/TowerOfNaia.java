@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -328,28 +328,27 @@ public final class TowerOfNaia extends AbstractNpcAI {
 	}
 	
 	public TowerOfNaia() {
-		super(TowerOfNaia.class.getSimpleName(), "hellbound/AI/Zones");
-		addFirstTalkId(CONTROLLER);
-		addStartNpc(CONTROLLER, DWARVEN_GHOST);
-		addTalkId(CONTROLLER, DWARVEN_GHOST);
-		addAttackId(LOCK);
-		addKillId(LOCK, MUTATED_ELPY, SPORE_BASIC);
-		addSpawnId(MUTATED_ELPY, SPORE_BASIC);
+		bindFirstTalk(CONTROLLER);
+		bindStartNpc(CONTROLLER, DWARVEN_GHOST);
+		bindTalk(CONTROLLER, DWARVEN_GHOST);
+		bindAttack(LOCK);
+		bindKill(LOCK, MUTATED_ELPY, SPORE_BASIC);
+		bindSpawn(MUTATED_ELPY, SPORE_BASIC);
 		
 		for (int npcId = SPORE_FIRE; npcId <= SPORE_EARTH; npcId++) {
-			addKillId(npcId);
-			addSpawnId(npcId);
+			bindKill(npcId);
+			bindSpawn(npcId);
 		}
 		
 		for (int npcId = ROOM_MANAGER_FIRST; npcId <= ROOM_MANAGER_LAST; npcId++) {
-			addFirstTalkId(npcId);
-			addTalkId(npcId);
-			addStartNpc(npcId);
+			bindFirstTalk(npcId);
+			bindTalk(npcId);
+			bindStartNpc(npcId);
 			initRoom(npcId);
 		}
 		
 		for (int npcId : TOWER_MONSTERS) {
-			addKillId(npcId);
+			bindKill(npcId);
 		}
 		
 		_lock = (L2MonsterInstance) addSpawn(LOCK, 16409, 244438, 11620, -1048, false, 0, false);
@@ -380,7 +379,7 @@ public final class TowerOfNaia extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		
 		// Timer. Spawns Naia Lock
@@ -503,7 +502,7 @@ public final class TowerOfNaia extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		if ((_lock != null) && (npc.getObjectId() == _lock.getObjectId())) {
 			int remaindedHpPercent = (int) ((npc.getCurrentHp() * 100) / npc.getMaxHp());
 			
@@ -520,13 +519,11 @@ public final class TowerOfNaia extends AbstractNpcAI {
 				_counter -= 10;
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		int npcId = npc.getId();
-		
 		if (npcId == LOCK) {
 			_lock = null;
 			cancelQuestTimers("spawn_lock");
@@ -622,13 +619,11 @@ public final class TowerOfNaia extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		final int npcId = npc.getId();
-		
 		if (npcId == MUTATED_ELPY) {
 			DoorData.getInstance().getDoor(18250025).openMe();
 			ZoneManager.getInstance().getZoneById(200100).setEnabled(false);
@@ -644,7 +639,6 @@ public final class TowerOfNaia extends AbstractNpcAI {
 			npc.getAI().setIntention(CtrlIntention.AI_INTENTION_MOVE_TO, new Location(coord[0], coord[1], coord[2], 0));
 			startQuestTimer("despawn_spore", 60000, npc, null);
 		}
-		return super.onSpawn(npc);
 	}
 	
 	private int getSporeGroup(int sporeId) {

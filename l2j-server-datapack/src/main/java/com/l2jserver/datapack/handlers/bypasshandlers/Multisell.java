@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,15 +43,12 @@ public class Multisell implements IBypassHandler {
 		}
 		
 		try {
-			int listId;
-			if (command.toLowerCase().startsWith(COMMANDS[0])) // multisell
-			{
-				listId = Integer.parseInt(command.substring(9).trim());
+			if (command.toLowerCase().startsWith(COMMANDS[0])) {
+				final var listId = Integer.parseInt(command.substring(9).trim());
 				MultisellData.getInstance().separateAndSend(listId, activeChar, (L2Npc) target, false);
 				return true;
-			} else if (command.toLowerCase().startsWith(COMMANDS[1])) // exc_multisell
-			{
-				listId = Integer.parseInt(command.substring(13).trim());
+			} else if (command.toLowerCase().startsWith(COMMANDS[1])) {
+				final var listId = Integer.parseInt(command.substring(13).trim());
 				MultisellData.getInstance().separateAndSend(listId, activeChar, (L2Npc) target, true);
 				return true;
 			}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -49,14 +49,14 @@ public final class Q10286_ReunionWithSirra extends Quest {
 	private static final Location EXIT_LOC = new Location(113793, -109342, -845, 0);
 	
 	public Q10286_ReunionWithSirra() {
-		super(10286, Q10286_ReunionWithSirra.class.getSimpleName(), "Reunion with Sirra");
-		addStartNpc(RAFFORTY);
-		addTalkId(RAFFORTY, JINIA, SIRRA, JINIA2);
+		super(10286);
+		bindStartNpc(RAFFORTY);
+		bindTalk(RAFFORTY, JINIA, SIRRA, JINIA2);
 		registerQuestItems(BLACK_FROZEN_CORE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

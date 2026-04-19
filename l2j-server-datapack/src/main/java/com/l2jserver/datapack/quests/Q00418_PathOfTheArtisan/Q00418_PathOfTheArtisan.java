@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -60,15 +60,15 @@ public final class Q00418_PathOfTheArtisan extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00418_PathOfTheArtisan() {
-		super(418, Q00418_PathOfTheArtisan.class.getSimpleName(), "Path Of The Artisan");
-		addStartNpc(BLACKSMITH_SILVERA);
-		addTalkId(BLACKSMITH_SILVERA, BLACKSMITH_PINTER, BLACKSMITH_KLUTO, IRON_GATES_LOCKIRIN, WAREHOUSE_KEEPER_RYDEL, MINERAL_TRADER_HITCHI, RAILROAD_WORKER_OBI);
-		addKillId(VUKU_ORC_FIGHTER, BOOGLE_RATMAN, BOOGLE_RATMAN_LEADER);
+		super(418);
+		bindStartNpc(BLACKSMITH_SILVERA);
+		bindTalk(BLACKSMITH_SILVERA, BLACKSMITH_PINTER, BLACKSMITH_KLUTO, IRON_GATES_LOCKIRIN, WAREHOUSE_KEEPER_RYDEL, MINERAL_TRADER_HITCHI, RAILROAD_WORKER_OBI);
+		bindKill(VUKU_ORC_FIGHTER, BOOGLE_RATMAN, BOOGLE_RATMAN_LEADER);
 		registerQuestItems(SILVERYS_RING, PASS_1ST_CERTIFICATE, PASS_2ND_CERTIFICATE, BOOGLE_RATMAN_TOOTH, BOOGLE_RATMAN_LEADERS_TOOTH, KLUTOS_LETTER, FOOTPRINT_OF_THIEF, STOLEN_SECRET_BOX, SECRET_BOX);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -337,7 +337,7 @@ public final class Q00418_PathOfTheArtisan extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -386,7 +386,6 @@ public final class Q00418_PathOfTheArtisan extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

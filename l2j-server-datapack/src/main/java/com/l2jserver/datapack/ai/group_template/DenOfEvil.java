@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -99,9 +99,8 @@ public final class DenOfEvil extends AbstractNpcAI {
 	};
 	
 	public DenOfEvil() {
-		super(DenOfEvil.class.getSimpleName(), "ai/group_template");
-		addKillId(EYE_IDS);
-		addSpawnId(EYE_IDS);
+		bindKill(EYE_IDS);
+		bindSpawn(EYE_IDS);
 		for (Location loc : EYE_SPAWNS) {
 			addSpawn(EYE_IDS[getRandom(EYE_IDS.length)], loc, false, 0);
 		}
@@ -114,13 +113,13 @@ public final class DenOfEvil extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.disableCoreAI(true);
 		npc.setIsImmobilized(true);
 		L2EffectZone zone = ZoneManager.getInstance().getZone(npc, L2EffectZone.class);
 		if (zone == null) {
 			LOG.warn("NPC {} spawned outside of L2EffectZone, check your zone coords! {}", npc, npc.getLocation());
-			return null;
+			return;
 		}
 		int skillId = getSkillIdByNpcId(npc.getId());
 		int skillLevel = zone.getSkillLevel(skillId);
@@ -132,23 +131,21 @@ public final class DenOfEvil extends AbstractNpcAI {
 		} else if (skillLevel == 2) {
 			zone.broadcastPacket(SystemMessage.getSystemMessage(SystemMessageId.I_CAN_FEEL_ENERGY_KASHA_EYE_GETTING_STRONGER_RAPIDLY));
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		ThreadPoolManager.getInstance().scheduleAi(() -> {
 			addSpawn(EYE_IDS[getRandom(EYE_IDS.length)], npc.getLocation(), false, 0);
 		}, 15000);
 		L2EffectZone zone = ZoneManager.getInstance().getZone(npc, L2EffectZone.class);
 		if (zone == null) {
 			LOG.warn("NPC {} killed outside of L2EffectZone, check your zone coords! {}", npc, npc.getLocation());
-			return null;
+			return;
 		}
 		int skillId = getSkillIdByNpcId(npc.getId());
 		int skillLevel = zone.getSkillLevel(skillId);
 		zone.addSkill(skillId, skillLevel - 1);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private static class KashaDestruction implements Runnable {

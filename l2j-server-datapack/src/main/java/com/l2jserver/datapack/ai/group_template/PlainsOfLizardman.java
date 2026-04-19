@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -87,13 +87,12 @@ public final class PlainsOfLizardman extends AbstractNpcAI {
 	// @formatter:on
 	
 	public PlainsOfLizardman() {
-		super(PlainsOfLizardman.class.getSimpleName(), "ai/group_template");
-		addAttackId(FANTASY_MUSHROOM, RAINBOW_FROG, STICKY_MUSHROOM, ENERGY_PLANT, TANTA_SUMMONER);
-		addKillId(TANTA_LIZARDMEN);
+		bindAttack(FANTASY_MUSHROOM, RAINBOW_FROG, STICKY_MUSHROOM, ENERGY_PLANT, TANTA_SUMMONER);
+		bindKill(TANTA_LIZARDMEN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equals("fantasy_mushroom") && (npc != null) && (player != null)) {
 			npc.doCast(FANTASY_MUSHROOM_SKILL);
 			for (L2Character target : npc.getKnownList().getKnownCharactersInRadius(200)) {
@@ -110,7 +109,7 @@ public final class PlainsOfLizardman extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		switch (npc.getId()) {
 			case TANTA_SUMMONER:
 				if ((npc.getCurrentHp() < (npc.getMaxHp() * HP_PERCENTAGE)) && npc.isScriptValue(0)) {
@@ -146,11 +145,10 @@ public final class PlainsOfLizardman extends AbstractNpcAI {
 				}
 				break;
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		// Tanta Guard
 		if (getRandom(1000) == 0) {
 			addAttackDesire(addSpawn(TANTA_GUARD, npc), killer);
@@ -187,7 +185,6 @@ public final class PlainsOfLizardman extends AbstractNpcAI {
 				buffer.doCast(BUFFS[5]);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private void castRandomBuff(L2Npc npc, int chance1, int chance2, SkillHolder... buffs) {

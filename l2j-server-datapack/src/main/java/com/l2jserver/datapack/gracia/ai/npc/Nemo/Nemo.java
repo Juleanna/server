@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,14 +41,13 @@ public final class Nemo extends AbstractNpcAI {
 	private static final int MAXIMUM_MAGUEN = 18; // Maximum maguens in one time
 	
 	public Nemo() {
-		super(Nemo.class.getSimpleName(), "gracia/AI/NPC");
-		addStartNpc(NEMO);
-		addFirstTalkId(NEMO);
-		addTalkId(NEMO);
+		bindStartNpc(NEMO);
+		bindFirstTalk(NEMO);
+		bindTalk(NEMO);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "32735-01.html": {

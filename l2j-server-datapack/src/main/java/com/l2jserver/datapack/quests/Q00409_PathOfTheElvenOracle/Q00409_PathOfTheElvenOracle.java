@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -56,16 +56,16 @@ public final class Q00409_PathOfTheElvenOracle extends Quest {
 	private static final int TAMIL = 27035;
 	
 	public Q00409_PathOfTheElvenOracle() {
-		super(409, Q00409_PathOfTheElvenOracle.class.getSimpleName(), "Path of the Elven Oracle");
-		addStartNpc(PRIEST_MANUEL);
-		addTalkId(PRIEST_MANUEL, ALLANA, PERRIN);
-		addKillId(TAMIL, lIZARDMAN_WARRIOR, LIZARDMAN_SCOUT, LIZARDMAN_SOLDIER);
-		addAttackId(TAMIL, lIZARDMAN_WARRIOR, LIZARDMAN_SCOUT, LIZARDMAN_SOLDIER);
+		super(409);
+		bindStartNpc(PRIEST_MANUEL);
+		bindTalk(PRIEST_MANUEL, ALLANA, PERRIN);
+		bindKill(TAMIL, lIZARDMAN_WARRIOR, LIZARDMAN_SCOUT, LIZARDMAN_SOLDIER);
+		bindAttack(TAMIL, lIZARDMAN_WARRIOR, LIZARDMAN_SCOUT, LIZARDMAN_SOLDIER);
 		registerQuestItems(CRYSTAL_MEDALLION, SWINDLERS_MONEY, ALLANA_OF_DAIRY, LIZARD_CAPTAIN_ORDER, HALF_OF_DAIRY, TAMIL_NECKLACE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -131,7 +131,7 @@ public final class Q00409_PathOfTheElvenOracle extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (getQuestState(attacker, false) != null) {
 			switch (npc.getScriptValue()) {
 				case 0: {
@@ -166,11 +166,10 @@ public final class Q00409_PathOfTheElvenOracle extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && npc.isScriptValue(1) && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -199,7 +198,6 @@ public final class Q00409_PathOfTheElvenOracle extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

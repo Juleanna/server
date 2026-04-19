@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -35,12 +35,11 @@ public final class FrozenLabyrinth extends AbstractNpcAI {
 	private static final int FROST_BUFFALO = 22094;
 	
 	public FrozenLabyrinth() {
-		super(FrozenLabyrinth.class.getSimpleName(), "ai/group_template");
-		addAttackId(PRONGHORN, FROST_BUFFALO);
+		bindAttack(PRONGHORN, FROST_BUFFALO);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		if (npc.isScriptValue(0) && (skill != null) && !skill.isMagic()) {
 			final int spawnId = (npc.getId() == PRONGHORN) ? PRONGHORN_SPIRIT : LOST_BUFFALO;
 			int diff = 0;
@@ -55,6 +54,5 @@ public final class FrozenLabyrinth extends AbstractNpcAI {
 			npc.setScriptValue(1);
 			npc.deleteMe();
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 }

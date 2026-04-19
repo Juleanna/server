@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,14 +41,14 @@ public final class Q00187_NikolasHeart extends Quest {
 	private static final int MAX_LEVEL_FOR_EXP_SP = 47;
 	
 	public Q00187_NikolasHeart() {
-		super(187, Q00187_NikolasHeart.class.getSimpleName(), "Nikola's Heart");
-		addStartNpc(RESEARCHER_LORAIN);
-		addTalkId(HEAD_BLACKSMITH_KUSTO, RESEARCHER_LORAIN, MAESTRO_NIKOLA);
+		super(187);
+		bindStartNpc(RESEARCHER_LORAIN);
+		bindTalk(HEAD_BLACKSMITH_KUSTO, RESEARCHER_LORAIN, MAESTRO_NIKOLA);
 		registerQuestItems(METALLOGRAPH);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

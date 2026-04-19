@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -52,15 +52,15 @@ public class Q10275_ContainingTheAttributePower extends Quest {
 	private static final SkillHolder BLESSING_OF_EARTH = new SkillHolder(2636, 1);
 	
 	public Q10275_ContainingTheAttributePower() {
-		super(10275, Q10275_ContainingTheAttributePower.class.getSimpleName(), "Containing the Attribute Power");
-		addStartNpc(HOLLY, WEBER);
-		addTalkId(HOLLY, WEBER, YIN, YANG);
-		addKillId(AIR, WATER);
+		super(10275);
+		bindStartNpc(HOLLY, WEBER);
+		bindTalk(HOLLY, WEBER, YIN, YANG);
+		bindKill(AIR, WATER);
 		registerQuestItems(YINSWORD, YANGSWORD, SOULPIECEWATER, SOULPIECEAIR);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
@@ -123,10 +123,10 @@ public class Q10275_ContainingTheAttributePower extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
-			return null;
+			return;
 		}
 		
 		switch (npc.getId()) {
@@ -151,8 +151,6 @@ public class Q10275_ContainingTheAttributePower extends Quest {
 				}
 				break;
 		}
-		return null;
-		
 	}
 	
 	@Override

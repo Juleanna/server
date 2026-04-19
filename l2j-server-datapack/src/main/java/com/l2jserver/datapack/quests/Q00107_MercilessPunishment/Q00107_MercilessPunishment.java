@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,15 +18,18 @@
  */
 package com.l2jserver.datapack.quests.Q00107_MercilessPunishment;
 
-import com.l2jserver.datapack.quests.Q00281_HeadForTheHills.Q00281_HeadForTheHills;
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.audio.Sound;
+import com.l2jserver.gameserver.enums.audio.Voice;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
+import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.gameserver.util.Util;
 
@@ -60,16 +63,20 @@ public final class Q00107_MercilessPunishment extends Quest {
 	// Misc
 	private static final int MIN_LVL = 10;
 	
+	private static final int GUIDE_MISSION = 41;
+	
+	private static final ItemHolder SOULSHOTS_NO_GRADE_FOR_ROOKIES = new ItemHolder(5789, 7000);
+	
 	public Q00107_MercilessPunishment() {
-		super(107, Q00107_MercilessPunishment.class.getSimpleName(), "Merciless Punishment");
-		addStartNpc(URUTU_CHIEF_HATOS);
-		addTalkId(URUTU_CHIEF_HATOS, CENTURION_PARUGON);
-		addKillId(BARANKA_MESSENGER);
+		super(107);
+		bindStartNpc(URUTU_CHIEF_HATOS);
+		bindTalk(URUTU_CHIEF_HATOS, CENTURION_PARUGON);
+		bindKill(BARANKA_MESSENGER);
 		registerQuestItems(HATOSS_ORDER_1, HATOSS_ORDER_2, HATOSS_ORDER_3, LETTER_TO_DARK_ELF, LETTER_TO_HUMAN, LETTER_TO_ELF);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -165,7 +172,27 @@ public final class Q00107_MercilessPunishment extends Quest {
 							}
 							case 7: {
 								if (hasQuestItems(talker, HATOSS_ORDER_3, LETTER_TO_HUMAN, LETTER_TO_DARK_ELF, LETTER_TO_ELF)) {
-									Q00281_HeadForTheHills.giveNewbieReward(talker);
+									giveNewbieReward(talker);
+									
+									// Newbie Guide
+									final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+									if (newbieGuide != null) {
+										final var newbieGuideQs = newbieGuide.getQuestState(talker, true);
+										if (!newbieGuideQs.haveNRMemo(talker, GUIDE_MISSION)) {
+											newbieGuideQs.setNRMemo(talker, GUIDE_MISSION);
+											newbieGuideQs.setNRMemoState(talker, GUIDE_MISSION, 100000);
+											
+											showOnScreenMsg(talker, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+										} else {
+											if (((newbieGuideQs.getNRMemoState(talker, GUIDE_MISSION) % 1000000) / 100000) != 1) {
+												newbieGuideQs.setNRMemo(talker, GUIDE_MISSION);
+												newbieGuideQs.setNRMemoState(talker, GUIDE_MISSION, newbieGuideQs.getNRMemoState(talker, GUIDE_MISSION) + 100000);
+												
+												showOnScreenMsg(talker, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+											}
+										}
+									}
+									
 									addExpAndSp(talker, 34565, 2962);
 									giveAdena(talker, 14666, true);
 									for (ItemHolder reward : REWARDS) {
@@ -202,7 +229,7 @@ public final class Q00107_MercilessPunishment extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (qs.getCond()) {
@@ -229,6 +256,16 @@ public final class Q00107_MercilessPunishment extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
+	}
+	
+	/**
+	 * Give basic newbie reward.
+	 * @param player the player to reward
+	 */
+	private static void giveNewbieReward(L2PcInstance player) {
+		if (player.getLevel() < 25) {
+			giveItems(player, SOULSHOTS_NO_GRADE_FOR_ROOKIES);
+			playSound(player, Voice.TUTORIAL_VOICE_026_1000);
+		}
 	}
 }

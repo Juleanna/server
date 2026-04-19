@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -193,19 +193,18 @@ public final class NornilsGarden extends AbstractInstance {
 	}
 	
 	public NornilsGarden() {
-		super(NornilsGarden.class.getSimpleName());
-		addStartNpc(_garden_guard);
-		addFirstTalkId(_garden_guard);
-		addTalkId(_garden_guard);
+		bindStartNpc(_garden_guard);
+		bindFirstTalk(_garden_guard);
+		bindTalk(_garden_guard);
 		for (int i[] : _gatekeepers) {
-			addKillId(i[0]);
+			bindKill(i[0]);
 		}
 		for (int i[] : _auto_gates) {
-			addEnterZoneId(i[0]);
+			bindEnterZone(i[0]);
 		}
-		addTalkId(_final_gates);
-		addAttackId(_herb_jar);
-		addAttackId(18362); // first garden guard
+		bindTalk(_final_gates);
+		bindAttack(_herb_jar);
+		bindAttack(18362); // first garden guard
 	}
 	
 	@Override
@@ -409,7 +408,7 @@ public final class NornilsGarden extends AbstractInstance {
 	}
 	
 	@Override
-	public String onEnterZone(L2Character character, L2ZoneType zone) {
+	public void onEnterZone(L2Character character, L2ZoneType zone) {
 		if ((character instanceof L2PcInstance) && !character.isDead() && !character.isTeleporting() && ((L2PcInstance) character).isOnline()) {
 			InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(character.getInstanceId());
 			if (tmpworld instanceof NornilsWorld) {
@@ -426,11 +425,10 @@ public final class NornilsGarden extends AbstractInstance {
 				}
 			}
 		}
-		return super.onEnterZone(character, zone);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
@@ -491,7 +489,7 @@ public final class NornilsGarden extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if ((npc.getId() == _herb_jar) && !npc.isDead()) {
 			dropHerb(npc, attacker, HP_HERBS_DROPLIST);
 			dropHerb(npc, attacker, MP_HERBS_DROPLIST);
@@ -499,14 +497,13 @@ public final class NornilsGarden extends AbstractInstance {
 		} else if ((npc.getId() == 18362) && (npc.getInstanceId() > 0)) {
 			spawn1(npc);
 		}
-		return null;
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
-			return null;
+			return;
 		}
 		
 		for (int _gk[] : _gatekeepers) {
@@ -526,7 +523,6 @@ public final class NornilsGarden extends AbstractInstance {
 				spawn2(npc);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

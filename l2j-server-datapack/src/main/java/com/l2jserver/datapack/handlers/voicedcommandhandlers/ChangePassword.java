@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,7 +42,7 @@ public class ChangePassword implements IVoicedCommandHandler {
 	};
 	
 	@Override
-	public boolean useVoicedCommand(String command, L2PcInstance activeChar, String target) {
+	public boolean useVoicedCommand(String command, L2PcInstance player, String target) {
 		if (target != null) {
 			final StringTokenizer st = new StringTokenizer(target);
 			try {
@@ -59,33 +59,33 @@ public class ChangePassword implements IVoicedCommandHandler {
 				
 				if (!((curpass == null) || (newpass == null) || (repeatnewpass == null))) {
 					if (!newpass.equals(repeatnewpass)) {
-						activeChar.sendMessage("The new password doesn't match with the repeated one!");
+						player.sendMessage("The new password doesn't match with the repeated one!");
 						return false;
 					}
 					if (newpass.length() < 3) {
-						activeChar.sendMessage("The new password is shorter than 3 chars! Please try with a longer one.");
+						player.sendMessage("The new password is shorter than 3 chars! Please try with a longer one.");
 						return false;
 					}
 					if (newpass.length() > 30) {
-						activeChar.sendMessage("The new password is longer than 30 chars! Please try with a shorter one.");
+						player.sendMessage("The new password is longer than 30 chars! Please try with a shorter one.");
 						return false;
 					}
 					
-					LoginServerThread.getInstance().sendChangePassword(activeChar.getAccountName(), activeChar.getName(), curpass, newpass);
+					LoginServerThread.getInstance().sendChangePassword(player.getAccountName(), player.getName(), curpass, newpass);
 				} else {
-					activeChar.sendMessage("Invalid password data! You have to fill all boxes.");
+					player.sendMessage("Invalid password data! You have to fill all boxes.");
 					return false;
 				}
 			} catch (Exception ex) {
-				activeChar.sendMessage("A problem occured while changing password!");
+				player.sendMessage("A problem occured while changing password!");
 				LOG.warn("Unable to change password!", ex);
 			}
 		} else {
-			String html = HtmCache.getInstance().getHtm(activeChar.getHtmlPrefix(), "data/html/mods/ChangePassword.htm");
+			String html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(), "data/html/mods/ChangePassword.htm");
 			if (html == null) {
 				html = "<html><body><br><br><center><font color=LEVEL>404:</font> File Not Found</center></body></html>";
 			}
-			activeChar.sendPacket(new NpcHtmlMessage(html));
+			player.sendPacket(new NpcHtmlMessage(html));
 			return true;
 		}
 		return true;

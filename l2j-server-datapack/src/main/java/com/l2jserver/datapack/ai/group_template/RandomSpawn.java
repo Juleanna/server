@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -73,19 +73,17 @@ public final class RandomSpawn extends AbstractNpcAI {
 	}
 	
 	public RandomSpawn() {
-		super(RandomSpawn.class.getSimpleName(), "ai/group_template");
-		addSpawnId(SPAWN_POINTS.keySet());
+		bindSpawn(SPAWN_POINTS.keySet());
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		final Location[] spawnlist = SPAWN_POINTS.get(npc.getId());
 		final Location loc = spawnlist[getRandom(spawnlist.length)];
 		if (!npc.isInsideRadius(loc, 200, false, false)) {
 			npc.getSpawn().setLocation(loc);
 			ThreadPoolManager.getInstance().scheduleGeneral(new Teleport(npc, loc), 100);
 		}
-		return super.onSpawn(npc);
 	}
 	
 	private static class Teleport implements Runnable {

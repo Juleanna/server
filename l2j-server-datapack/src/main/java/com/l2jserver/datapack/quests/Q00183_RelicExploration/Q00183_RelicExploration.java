@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,13 +40,13 @@ public final class Q00183_RelicExploration extends Quest {
 	private static final int MAX_LEVEL_FOR_EXP_SP = 46;
 	
 	public Q00183_RelicExploration() {
-		super(183, Q00183_RelicExploration.class.getSimpleName(), "Relic Exploration");
-		addStartNpc(HEAD_BLACKSMITH_KUSTO);
-		addTalkId(HEAD_BLACKSMITH_KUSTO, RESEARCHER_LORAIN, MAESTRO_NIKOLA);
+		super(183);
+		bindStartNpc(HEAD_BLACKSMITH_KUSTO);
+		bindTalk(HEAD_BLACKSMITH_KUSTO, RESEARCHER_LORAIN, MAESTRO_NIKOLA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

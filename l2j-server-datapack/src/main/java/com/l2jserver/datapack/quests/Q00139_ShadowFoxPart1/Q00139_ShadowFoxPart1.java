@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -49,15 +49,15 @@ public class Q00139_ShadowFoxPart1 extends Quest {
 	private static final int MAX_REWARD_LEVEL = 42;
 	
 	public Q00139_ShadowFoxPart1() {
-		super(139, Q00139_ShadowFoxPart1.class.getSimpleName(), "Shadow Fox - 1");
-		addStartNpc(MIA);
-		addTalkId(MIA);
-		addKillId(MOBS);
+		super(139);
+		bindStartNpc(MIA);
+		bindTalk(MIA);
+		bindKill(MOBS);
 		registerQuestItems(FRAGMENT, CHEST);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -113,13 +113,12 @@ public class Q00139_ShadowFoxPart1 extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		QuestState st = getRandomPartyMemberState(player, 2, 1, npc);
 		if ((st != null) && !st.isSet("talk")) {
 			int itemId = (getRandom(11) == 0) ? CHEST : FRAGMENT;
 			giveItemRandomly(st.getPlayer(), npc, singleDropItem(itemId, 68.0), 0, true);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

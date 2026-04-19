@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -27,7 +27,6 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.variables.PlayerVariables;
-import com.l2jserver.gameserver.network.serverpackets.RadarControl;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.gameserver.util.Util;
 
@@ -69,15 +68,15 @@ public final class Q00211_TrialOfTheChallenger extends Quest {
 	private static final int MIN_LVL = 35;
 	
 	public Q00211_TrialOfTheChallenger() {
-		super(211, Q00211_TrialOfTheChallenger.class.getSimpleName(), "Trial of the Challenger");
-		addStartNpc(KASH);
-		addTalkId(FILAUR, KASH, MARTIAN, RALDO, CHEST_OF_SHYSLASSYS, MARKETEER_OF_MAMMON);
-		addKillId(SHYSLASSYS, GORR, BARAHAM, QUEEN_OF_SUCCUBUS);
+		super(211);
+		bindStartNpc(KASH);
+		bindTalk(FILAUR, KASH, MARTIAN, RALDO, CHEST_OF_SHYSLASSYS, MARKETEER_OF_MAMMON);
+		bindKill(SHYSLASSYS, GORR, BARAHAM, QUEEN_OF_SUCCUBUS);
 		registerQuestItems(LETTER_OF_KASH, WATCHERS_EYE1, WATCHERS_EYE2, SCROLL_OF_SHYSLASSYS, BROKEN_KEY);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -291,7 +290,7 @@ public final class Q00211_TrialOfTheChallenger extends Quest {
 						break;
 					}
 					case 9: {
-						talker.sendPacket(new RadarControl(0, 2, 151589, -174823, -1776));
+						showRadar(talker, 151589, -174823, -1776, 2);
 						htmltext = "30535-02.html";
 						break;
 					}
@@ -307,10 +306,10 @@ public final class Q00211_TrialOfTheChallenger extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs == null) || !Util.checkIfInRange(1500, npc, killer, true)) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		switch (npc.getId()) {
@@ -352,6 +351,5 @@ public final class Q00211_TrialOfTheChallenger extends Quest {
 				break;
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -34,12 +34,11 @@ public final class PavelArchaic extends AbstractNpcAI {
 	private static final int JACKHAMMER_GOLEM = 22804; // Horrifying Jackhammer Golem
 	
 	public PavelArchaic() {
-		super(PavelArchaic.class.getSimpleName(), "ai/group_template");
-		addKillId(SAFETY_DEVICE, PINCER_GOLEM, JACKHAMMER_GOLEM);
+		bindKill(SAFETY_DEVICE, PINCER_GOLEM, JACKHAMMER_GOLEM);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (getRandom(100) < 70) {
 			final L2Npc golem1 = addSpawn(PINCER_GOLEM2, npc.getX(), npc.getY(), npc.getZ() + 10, npc.getHeading(), false, 0, false);
 			addAttackDesire(golem1, killer);
@@ -47,6 +46,5 @@ public final class PavelArchaic extends AbstractNpcAI {
 			final L2Npc golem2 = addSpawn(PINCER_GOLEM3, npc.getX(), npc.getY(), npc.getZ() + 10, npc.getHeading(), false, 0, false);
 			addAttackDesire(golem2, killer);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

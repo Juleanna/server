@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -61,16 +61,16 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest {
 	private static final int CHANCE_FOR_DROP_FRAGMENTS = 60;
 	
 	public Q00246_PossessorOfAPreciousSoul3() {
-		super(246, Q00246_PossessorOfAPreciousSoul3.class.getSimpleName(), "Possessor Of A Precious Soul 3");
-		addStartNpc(CARADINE);
-		addTalkId(LADD, CARADINE, OSSIAN);
-		addKillId(PILGRIM_OF_SPLENDOR, JUDGE_OF_SPLENDOR, BARAKIEL);
-		addKillId(MOBS);
+		super(246);
+		bindStartNpc(CARADINE);
+		bindTalk(LADD, CARADINE, OSSIAN);
+		bindKill(PILGRIM_OF_SPLENDOR, JUDGE_OF_SPLENDOR, BARAKIEL);
+		bindKill(MOBS);
 		registerQuestItems(WATERBINDER, EVERGREEN, FRAGMENTS, RAIN_SONG, RELIC_BOX);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -123,7 +123,7 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance partyMember;
 		final QuestState st;
 		switch (npc.getId()) {
@@ -189,7 +189,7 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest {
 			default:
 				st = getQuestState(player, false);
 				if ((st == null)) {
-					return super.onKill(npc, player, isSummon);
+					return;
 				}
 				
 				if (Util.contains(MOBS, npc.getId()) && (st.getQuestItemsCount(FRAGMENTS) < 100) && (st.isCond(4))) {
@@ -204,7 +204,6 @@ public class Q00246_PossessorOfAPreciousSoul3 extends Quest {
 				}
 				break;
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,15 +44,15 @@ public final class Q00132_MatrasCuriosity extends Quest {
 	private static final int BLUEPRINT_PRINCE = 9801;
 	
 	public Q00132_MatrasCuriosity() {
-		super(132, Q00132_MatrasCuriosity.class.getSimpleName(), "Matras' Curiosity");
-		addStartNpc(MATRAS);
-		addTalkId(MATRAS);
-		addKillId(RANKU, DEMON_PRINCE);
+		super(132);
+		bindStartNpc(MATRAS);
+		bindTalk(MATRAS);
+		bindKill(RANKU, DEMON_PRINCE);
 		registerQuestItems(BLUEPRINT_RANKU, BLUEPRINT_PRINCE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -83,7 +83,7 @@ public final class Q00132_MatrasCuriosity extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		L2PcInstance pl = null;
 		switch (npc.getId()) {
 			case DEMON_PRINCE:
@@ -115,7 +115,6 @@ public final class Q00132_MatrasCuriosity extends Quest {
 				}
 				break;
 		}
-		return null;
 	}
 	
 	@Override

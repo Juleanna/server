@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -115,10 +115,10 @@ public final class Q00384_WarehouseKeepersPastime extends Quest {
 	private static final int CRAFTED_LEATHER = 1894;
 	
 	public Q00384_WarehouseKeepersPastime() {
-		super(384, Q00384_WarehouseKeepersPastime.class.getSimpleName(), "Warehouse Keeper's Pastime");
-		addStartNpc(CLIFF);
-		addTalkId(CLIFF, WAREHOUSE_CHIEF_BAXT);
-		addKillId(WAREHOUSE_CHIEF_BAXT, DUST_WIND, INNERSEN, CLIFF, CONGERER, CARINKAIN, CONNABI, HUNTER_GARGOYLE, NIGHTMARE_GUIDE, DRAGON_BEARER_WARRIOR, DRAGON_BEARER_CHIEF, DUST_WIND_HOLD, WEIRD_DRAKE, THUNDER_WYRM_HOLD, CADEINE, CONGERER_LORD, DRAGON_BEARER_ARCHER, NIGHTMARE_LORD, SANHIDRO, GIANT_MONSTEREYE, BARTAL, HUNTER_GARGOYLE_HOLD, ROT_GOLEM, GRAVE_GUARD, TULBEN, NIGHTMARE_KEEPER, LUMINUN, THUNDER_WYRM);
+		super(384);
+		bindStartNpc(CLIFF);
+		bindTalk(CLIFF, WAREHOUSE_CHIEF_BAXT);
+		bindKill(WAREHOUSE_CHIEF_BAXT, DUST_WIND, INNERSEN, CLIFF, CONGERER, CARINKAIN, CONNABI, HUNTER_GARGOYLE, NIGHTMARE_GUIDE, DRAGON_BEARER_WARRIOR, DRAGON_BEARER_CHIEF, DUST_WIND_HOLD, WEIRD_DRAKE, THUNDER_WYRM_HOLD, CADEINE, CONGERER_LORD, DRAGON_BEARER_ARCHER, NIGHTMARE_LORD, SANHIDRO, GIANT_MONSTEREYE, BARTAL, HUNTER_GARGOYLE_HOLD, ROT_GOLEM, GRAVE_GUARD, TULBEN, NIGHTMARE_KEEPER, LUMINUN, THUNDER_WYRM);
 		registerQuestItems(Q_IRONGATE_MEDAL);
 	}
 	
@@ -150,7 +150,7 @@ public final class Q00384_WarehouseKeepersPastime extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if ((qs != null)) {
 			if (event.contains(".htm")) {
@@ -303,7 +303,7 @@ public final class Q00384_WarehouseKeepersPastime extends Quest {
 					}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	private String takeHtml(L2PcInstance player, QuestState qs, int num, int npcId) {
@@ -517,11 +517,10 @@ public final class Q00384_WarehouseKeepersPastime extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 2, npc);
 		if (qs != null) {
 			giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,18 +28,18 @@ public class Debug implements IVoicedCommandHandler {
 	};
 	
 	@Override
-	public boolean useVoicedCommand(String command, L2PcInstance activeChar, String params) {
-		if (!AdminData.getInstance().hasAccess(command, activeChar.getAccessLevel())) {
+	public boolean useVoicedCommand(String command, L2PcInstance player, String params) {
+		if (!AdminData.getInstance().hasAccess(command, player.getAccessLevel())) {
 			return false;
 		}
 		
 		if (VOICED_COMMANDS[0].equalsIgnoreCase(command)) {
-			if (activeChar.isDebug()) {
-				activeChar.setDebug(null);
-				activeChar.sendMessage("Debugging disabled.");
+			if (player.isDebug()) {
+				player.setDebug(null);
+				player.sendMessage("Debugging disabled.");
 			} else {
-				activeChar.setDebug(activeChar);
-				activeChar.sendMessage("Debugging enabled.");
+				player.setDebug(player);
+				player.sendMessage("Debugging enabled.");
 			}
 		}
 		return true;

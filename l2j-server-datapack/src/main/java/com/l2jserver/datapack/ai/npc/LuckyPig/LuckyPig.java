@@ -146,7 +146,7 @@ public final class LuckyPig extends AbstractNpcAI
 	//@formatter:on
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player)
+	public String onEvent(String event, L2Npc npc, L2PcInstance player)
 	{
 		switch (event)
 		{
@@ -267,7 +267,7 @@ public final class LuckyPig extends AbstractNpcAI
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	public void transformLuckyPig(L2Npc luckyPig)
@@ -281,7 +281,7 @@ public final class LuckyPig extends AbstractNpcAI
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon)
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon)
 	{
 		if (npc.getId() == LUCKY_PIG_WINGLESS)
 		{
@@ -298,7 +298,7 @@ public final class LuckyPig extends AbstractNpcAI
 			{
 				final int minAdena;
 				final int luckyPigId;
-				
+
 				if (Util.contains(TRIGGER_MOBS_LOW, npc.getId()))
 				{
 					minAdena = LuckyPig().LuckyPigLowAdena();
@@ -316,14 +316,15 @@ public final class LuckyPig extends AbstractNpcAI
 				}
 
 				final int targetAdena = getRandom(minAdena, (minAdena * 10)); /* Config.RATE_DROP_AMOUNT_MULTIPLIER.get(Inventory.ADENA_ID)*/
- 				final L2Npc luckyPig = addSpawn(luckyPigId, npc, true, 0, true);
+				final L2Npc luckyPig = addSpawn(luckyPigId, npc, true, 0, true);
 				startQuestTimer("DESPAWN_TIME", 600000, luckyPig, null);
 				startQuestTimer("TEXT_SPAM", 5000, luckyPig, null);
 				startQuestTimer("CHECK_FOOD", 2000, luckyPig, null, true);
 				luckyPig.getVariables().set("LUCKY_PIG_TARGET_ADENA", targetAdena);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
+		// super.onKill теперь void — просто делегируем.
+		super.onKill(npc, killer, isSummon);
 	}
 	
 	private void manageDrop(L2Npc luckyPig, L2PcInstance player, boolean isGold)
@@ -361,13 +362,14 @@ public final class LuckyPig extends AbstractNpcAI
 	
 	private LuckyPig()
 	{
-		super(LuckyPig.class.getSimpleName(), "ai/npc");
-		addStartNpc(LUCKY_PIG_LOW, LUCKY_PIG_MEDIUM, LUCKY_PIG_TOP);
-		addTalkId(LUCKY_PIG_LOW, LUCKY_PIG_MEDIUM, LUCKY_PIG_TOP);
-		addKillId(LUCKY_PIG_WINGLESS, LUCKY_PIG_WINGLESS_GOLD);
-		addKillId(TRIGGER_MOBS_LOW);
-		addKillId(TRIGGER_MOBS_MEDIUM);
-		addKillId(TRIGGER_MOBS_TOP);
+		// upstream Quest: конструктор без аргументов, регистрация через bindStartNpc/bindTalk/bindKill.
+		super();
+		bindStartNpc(LUCKY_PIG_LOW, LUCKY_PIG_MEDIUM, LUCKY_PIG_TOP);
+		bindTalk(LUCKY_PIG_LOW, LUCKY_PIG_MEDIUM, LUCKY_PIG_TOP);
+		bindKill(LUCKY_PIG_WINGLESS, LUCKY_PIG_WINGLESS_GOLD);
+		bindKill(TRIGGER_MOBS_LOW);
+		bindKill(TRIGGER_MOBS_MEDIUM);
+		bindKill(TRIGGER_MOBS_TOP);
 	}
 	
 	public static void main(String[] args)

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,13 +42,13 @@ public class Q00172_NewHorizons extends Quest {
 	private static final int MIN_LEVEL = 3;
 	
 	public Q00172_NewHorizons() {
-		super(172, Q00172_NewHorizons.class.getSimpleName(), "New Horizons");
-		addStartNpc(ZENYA);
-		addTalkId(ZENYA, RAGARA);
+		super(172);
+		bindStartNpc(ZENYA);
+		bindTalk(ZENYA, RAGARA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

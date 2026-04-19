@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../xsd/NpcStringLocalisation.xsd">
+	<ns id="1010221" text="Una luna negra... ¿Ahora entiendes que ha abierto los ojos?" />
+	<ns id="1010222" text="Nubes de sangre se están congregando. Pronto empezará a llover. La lluvia de sangre carmesí..." />
+	<ns id="1010222" text="Mientras la luz insensata permanece dormida, la oscuridad será la primera en despertar. Hmmm..." />
+</list>

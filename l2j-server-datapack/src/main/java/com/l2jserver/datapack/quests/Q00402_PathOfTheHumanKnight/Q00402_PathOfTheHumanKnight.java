@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -81,15 +81,15 @@ public final class Q00402_PathOfTheHumanKnight extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00402_PathOfTheHumanKnight() {
-		super(402, Q00402_PathOfTheHumanKnight.class.getSimpleName(), "Path Of The Human Knight");
-		addStartNpc(SIR_KLAUS_VASPER);
-		addTalkId(SIR_KLAUS_VASPER, HIGH_PRIEST_BIOTIN, LEVIAN, HIGH_PRIEST_RAYMOND, CAPTAIN_GILBERT, CAPTAIN_BATHIS, CAPTAIN_BEZIQUE, SIR_ARON_TANFORD);
-		addKillId(LANGK_LIZARDMAN_WARRIOR, LANGK_LIZARDMAN_SCOUT, LANGK_LIZARDMAN, VENOMOUS_SPIDER, ARACHNID_TRACKER, ARACHNID_PREDATOR, GIANT_SPIDER, TALON_SPIDER, BLADE_SPIDER, SILENT_HORROR, BUGBEAR_RAIDER, UNDEAD_PRIEST);
+		super(402);
+		bindStartNpc(SIR_KLAUS_VASPER);
+		bindTalk(SIR_KLAUS_VASPER, HIGH_PRIEST_BIOTIN, LEVIAN, HIGH_PRIEST_RAYMOND, CAPTAIN_GILBERT, CAPTAIN_BATHIS, CAPTAIN_BEZIQUE, SIR_ARON_TANFORD);
+		bindKill(LANGK_LIZARDMAN_WARRIOR, LANGK_LIZARDMAN_SCOUT, LANGK_LIZARDMAN, VENOMOUS_SPIDER, ARACHNID_TRACKER, ARACHNID_PREDATOR, GIANT_SPIDER, TALON_SPIDER, BLADE_SPIDER, SILENT_HORROR, BUGBEAR_RAIDER, UNDEAD_PRIEST);
 		registerQuestItems(SQUIRES_MARK, COIN_OF_LORDS1, COIN_OF_LORDS2, COIN_OF_LORDS3, COIN_OF_LORDS4, COIN_OF_LORDS5, COIN_OF_LORDS6, GLUDIO_GUARDS_1ST_BADGE, BUGBEAR_NECKLACE, EINHASADS_1ST_TEMPLE_BADGE, EINHASAD_CRUCIFIX, GLUDIO_GUARDS_2ND_BADGE, VENOMOUS_SPIDERS_LEG, EINHASADS_2ND_TEMPLE_BADGE, LIZARDMANS_TOTEM, GLUDIO_GUARDS_3RD_BADGE, GIANT_SPIDERS_HUSK, EINHASADS_3RD_TEMPLE_BADGE, SKULL_OF_SILENT_HORROR);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		
 		if (qs == null) {
@@ -205,7 +205,7 @@ public final class Q00402_PathOfTheHumanKnight extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -283,7 +283,6 @@ public final class Q00402_PathOfTheHumanKnight extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

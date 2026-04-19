@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,6 +27,7 @@ import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.datapack.quests.Q00020_BringUpWithLove.Q00020_BringUpWithLove;
 import com.l2jserver.datapack.quests.Q00655_AGrandPlanForTamingWildBeasts.Q00655_AGrandPlanForTamingWildBeasts;
 import com.l2jserver.gameserver.ai.CtrlIntention;
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -168,12 +169,8 @@ public final class FeedableBeasts extends AbstractNpcAI {
 	}
 	
 	public FeedableBeasts() {
-		super(FeedableBeasts.class.getSimpleName(), "ai/group_template");
-		addKillId(FEEDABLE_BEASTS);
-		addSkillSeeId(FEEDABLE_BEASTS);
-		
-		// TODO: no grendels?
-		GrowthCapableMob temp;
+		bindKill(FEEDABLE_BEASTS);
+		bindSkillSee(FEEDABLE_BEASTS);
 		
 		//@formatter:off
 		final int[][] Kookabura_0_Gold = {{ 21452, 21453, 21454, 21455 }};
@@ -205,7 +202,7 @@ public final class FeedableBeasts extends AbstractNpcAI {
 		//@formatter:on
 		
 		// Alpen Kookabura
-		temp = new GrowthCapableMob(0, 100);
+		var temp = new GrowthCapableMob(0, 100);
 		temp.addMobs(GOLDEN_SPICE, Kookabura_0_Gold);
 		temp.addMobs(CRYSTAL_SPICE, Kookabura_0_Crystal);
 		GROWTH_CAPABLE_MONSTERS.put(21451, temp);
@@ -394,11 +391,12 @@ public final class FeedableBeasts extends AbstractNpcAI {
 		// if this is finally a trained mob, then despawn any other trained mobs that the
 		// player might have and initialize the Tamed Beast.
 		if (Util.contains(TAMED_BEASTS, nextNpcId)) {
-			for (L2TamedBeastInstance oldTrained : player.getTamedBeasts()) {
+			for (var oldTrained : player.getTamedBeasts()) {
 				oldTrained.deleteMe();
 			}
 			
-			final L2TamedBeastInstance nextNpc = new L2TamedBeastInstance(nextNpcId, player, food - FOODSKILLDIFF, npc.getX(), npc.getY(), npc.getZ());
+			final var objectId = IdFactory.getInstance().getNextId();
+			final var nextNpc = new L2TamedBeastInstance(objectId, nextNpcId, player, food - FOODSKILLDIFF, npc.getX(), npc.getY(), npc.getZ());
 			nextNpc.setRunning();
 			Q00020_BringUpWithLove.checkJewelOfInnocence(player);
 			
@@ -447,7 +445,7 @@ public final class FeedableBeasts extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("polymorph Mad Cow") && (npc != null) && (player != null)) {
 			if (MAD_COW_POLYMORPH.containsKey(npc.getId())) {
 				// remove the feed info from the previous mob
@@ -466,22 +464,22 @@ public final class FeedableBeasts extends AbstractNpcAI {
 				nextNpc.getAI().setIntention(CtrlIntention.AI_INTENTION_ATTACK, player);
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		// this behavior is only run when the target of skill is the passed npc (chest)
 		// i.e. when the player is attempting to open the chest using a skill
 		if (!targets.contains(npc)) {
-			return super.onSkillSee(npc, caster, skill, targets, isSummon);
+			return;
 		}
 		// gather some values on local variables
 		int npcId = npc.getId();
 		int skillId = skill.getId();
 		// check if the npc and skills used are valid for this script. Exit if invalid.
 		if ((skillId != SKILL_GOLDEN_SPICE) && (skillId != SKILL_CRYSTAL_SPICE)) {
-			return super.onSkillSee(npc, caster, skill, targets, isSummon);
+			return;
 		}
 		
 		// first gather some values on local variables
@@ -494,7 +492,7 @@ public final class FeedableBeasts extends AbstractNpcAI {
 		// prevent exploit which allows 2 players to simultaneously raise the same 0-growth beast
 		// If the mob is at 0th level (when it still listens to all feeders) lock it to the first feeder!
 		if ((growthLevel == 0) && FEED_INFO.containsKey(objectId)) {
-			return super.onSkillSee(npc, caster, skill, targets, isSummon);
+			return;
 		}
 		
 		FEED_INFO.put(objectId, caster.getObjectId());
@@ -513,7 +511,7 @@ public final class FeedableBeasts extends AbstractNpcAI {
 		if (GROWTH_CAPABLE_MONSTERS.containsKey(npcId)) {
 			// do nothing if this mob doesn't eat the specified food (food gets consumed but has no effect).
 			if (GROWTH_CAPABLE_MONSTERS.get(npcId).getMob(food, 0, 0) == null) {
-				return super.onSkillSee(npc, caster, skill, targets, isSummon);
+				return;
 			}
 			
 			// rare random talk...
@@ -530,7 +528,7 @@ public final class FeedableBeasts extends AbstractNpcAI {
 			if ((growthLevel > 0) && (FEED_INFO.get(objectId) != caster.getObjectId())) {
 				// check if this is the same player as the one who raised it from growth 0.
 				// if no, then do not allow a chance to raise the pet (food gets consumed but has no effect).
-				return super.onSkillSee(npc, caster, skill, targets, isSummon);
+				return;
 			}
 			
 			// Polymorph the mob, with a certain chance, given its current growth level
@@ -548,15 +546,13 @@ public final class FeedableBeasts extends AbstractNpcAI {
 				beast.broadcastPacket(packet);
 			}
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		// remove the feedinfo of the mob that got killed, if any
 		if (FEED_INFO.containsKey(npc.getObjectId())) {
 			FEED_INFO.remove(npc.getObjectId());
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

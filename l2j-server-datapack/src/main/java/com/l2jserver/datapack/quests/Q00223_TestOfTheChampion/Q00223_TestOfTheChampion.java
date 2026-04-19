@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -76,16 +76,16 @@ public final class Q00223_TestOfTheChampion extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00223_TestOfTheChampion() {
-		super(223, Q00223_TestOfTheChampion.class.getSimpleName(), "Test Of The Champion");
-		addStartNpc(VETERAN_ASCALON);
-		addTalkId(VETERAN_ASCALON, TRADER_GROOT, CAPTAIN_MOUEN, MASON);
-		addKillId(HARPY, MEDUSA, WINDSUS, ROAD_SCAVENGER, LETO_LIZARDMAN, LETO_LIZARDMAN_ARCHER, LETO_LIZARDMAN_SOLDIER, LETO_LIZARDMAN_WARRIOR, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OCERLORD, BLOODY_AXE_ELITE, HARPY_MATRIARCH, ROAD_COLLECTOR);
-		addAttackId(HARPY, ROAD_SCAVENGER, BLOODY_AXE_ELITE);
+		super(223);
+		bindStartNpc(VETERAN_ASCALON);
+		bindTalk(VETERAN_ASCALON, TRADER_GROOT, CAPTAIN_MOUEN, MASON);
+		bindKill(HARPY, MEDUSA, WINDSUS, ROAD_SCAVENGER, LETO_LIZARDMAN, LETO_LIZARDMAN_ARCHER, LETO_LIZARDMAN_SOLDIER, LETO_LIZARDMAN_WARRIOR, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OCERLORD, BLOODY_AXE_ELITE, HARPY_MATRIARCH, ROAD_COLLECTOR);
+		bindAttack(HARPY, ROAD_SCAVENGER, BLOODY_AXE_ELITE);
 		registerQuestItems(ASCALONS_1ST_LETTER, MASONS_LETTER, IRON_ROSE_RING, ASCALONS_2ND_LETTER, WHITE_ROSE_INSIGNIA, GROOTS_LETTER, ASCALONS_3RD_LETTER, MOUENS_1ST_ORDER, MOUENS_2ND_ORDER, MOUENS_LETTER, HARPYS_EGG, MEDUSA_VENOM, WINDSUS_BILE, BLOODY_AXE_HEAD, ROAD_RATMAN_HEAD, LETO_LIZARDMAN_FANG);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -178,7 +178,7 @@ public final class Q00223_TestOfTheChampion extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isStarted()) {
 			switch (npc.getId()) {
@@ -251,11 +251,10 @@ public final class Q00223_TestOfTheChampion extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -349,7 +348,6 @@ public final class Q00223_TestOfTheChampion extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

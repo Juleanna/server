@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,17 +21,17 @@ package com.l2jserver.datapack.quests.Q00281_HeadForTheHills;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.audio.Sound;
 import com.l2jserver.gameserver.enums.audio.Voice;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
-import com.l2jserver.gameserver.model.variables.PlayerVariables;
 import com.l2jserver.gameserver.network.NpcStringId;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 
 /**
  * Head for the Hills! (281)
@@ -42,8 +42,6 @@ public final class Q00281_HeadForTheHills extends Quest {
 	private static final int CLAWS = 9796;
 	// NPC
 	private static final int MERCELA = 32173;
-	// Message
-	private static final ExShowScreenMessage MESSAGE = new ExShowScreenMessage(NpcStringId.ACQUISITION_OF_SOULSHOT_FOR_BEGINNERS_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
 	// Misc
 	private static final int MIN_LVL = 6;
 	// Monsters
@@ -73,16 +71,18 @@ public final class Q00281_HeadForTheHills extends Quest {
 		MONSTERS.put(22239, 990); // Muertos Guard
 	}
 	
+	private static final int GUIDE_MISSION = 41;
+	
 	public Q00281_HeadForTheHills() {
-		super(281, Q00281_HeadForTheHills.class.getSimpleName(), "Head for the Hills!");
-		addStartNpc(MERCELA);
-		addTalkId(MERCELA);
-		addKillId(MONSTERS.keySet());
+		super(281);
+		bindStartNpc(MERCELA);
+		bindTalk(MERCELA);
+		bindKill(MONSTERS.keySet());
 		registerQuestItems(CLAWS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -101,6 +101,26 @@ public final class Q00281_HeadForTheHills extends Quest {
 					st.giveAdena(((claws * 23) + (claws >= 10 ? 400 : 0)), true);
 					st.takeItems(CLAWS, -1);
 					giveNewbieReward(player);
+					
+					// Newbie Guide
+					final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+					if (newbieGuide != null) {
+						final var newbieGuideQs = newbieGuide.getQuestState(player, true);
+						if (!newbieGuideQs.haveNRMemo(player, GUIDE_MISSION)) {
+							newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+							newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, 1000);
+							
+							showOnScreenMsg(player, NpcStringId.ACQUISITION_OF_SOULSHOT_FOR_BEGINNERS_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+						} else {
+							if (((newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) % 10000) / 1000) != 1) {
+								newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+								newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) + 1000);
+								
+								showOnScreenMsg(player, NpcStringId.ACQUISITION_OF_SOULSHOT_FOR_BEGINNERS_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+							}
+						}
+					}
+					
 					htmltext = event;
 				} else {
 					htmltext = "32173-07.html";
@@ -136,13 +156,12 @@ public final class Q00281_HeadForTheHills extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && (getRandom(1000) <= MONSTERS.get(npc.getId()))) {
 			st.giveItems(CLAWS, 1);
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -166,9 +185,8 @@ public final class Q00281_HeadForTheHills extends Quest {
 	 * Give basic newbie reward.
 	 * @param player the player to reward
 	 */
-	public static void giveNewbieReward(L2PcInstance player) {
-		final PlayerVariables vars = player.getVariables();
-		if ((player.getLevel() < 25) && !vars.getBoolean("NEWBIE_SHOTS", false)) {
+	public void giveNewbieReward(L2PcInstance player) {
+		if ((player.getLevel() < 25) && (getOneTimeQuestFlag(player, 57) == 0)) {
 			if (player.isMageClass()) {
 				giveItems(player, SPIRITSHOTS_NO_GRADE_FOR_ROOKIES);
 				playSound(player, Voice.TUTORIAL_VOICE_027_1000);
@@ -176,14 +194,8 @@ public final class Q00281_HeadForTheHills extends Quest {
 				giveItems(player, SOULSHOTS_NO_GRADE_FOR_ROOKIES);
 				playSound(player, Voice.TUTORIAL_VOICE_026_1000);
 			}
-			vars.set("NEWBIE_SHOTS", true);
-		}
-		if (vars.getString("GUIDE_MISSION", null) == null) {
-			vars.set("GUIDE_MISSION", 1000);
-			player.sendPacket(MESSAGE);
-		} else if (((vars.getInt("GUIDE_MISSION") % 10000) / 1000) != 1) {
-			vars.set("GUIDE_MISSION", vars.getInt("GUIDE_MISSION") + 1000);
-			player.sendPacket(MESSAGE);
+			
+			setOneTimeQuestFlag(player, 57, 1);
 		}
 	}
 }

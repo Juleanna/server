@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,14 +37,13 @@ public final class Tunatun extends AbstractNpcAI {
 	private static final int MIN_LEVEL = 82;
 	
 	public Tunatun() {
-		super(Tunatun.class.getSimpleName(), "ai/npc");
-		addStartNpc(TUNATUN);
-		addFirstTalkId(TUNATUN);
-		addTalkId(TUNATUN);
+		bindStartNpc(TUNATUN);
+		bindFirstTalk(TUNATUN);
+		bindTalk(TUNATUN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ("Whip".equals(event)) {
 			if (hasQuestItems(player, BEAST_HANDLERS_WHIP)) {
 				return "31537-01.html";

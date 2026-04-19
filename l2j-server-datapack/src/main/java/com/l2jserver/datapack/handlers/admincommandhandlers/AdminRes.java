@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -20,7 +20,8 @@ package com.l2jserver.datapack.handlers.admincommandhandlers;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
 import com.l2jserver.gameserver.model.L2Object;
@@ -36,7 +37,8 @@ import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
  * @version $Revision: 1.2.4.5 $ $Date: 2005/04/11 10:06:06 $
  */
 public class AdminRes implements IAdminCommandHandler {
-	private static Logger _log = Logger.getLogger(AdminRes.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminRes.class);
+	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_res",
 		"admin_res_monster"
@@ -105,7 +107,7 @@ public class AdminRes implements IAdminCommandHandler {
 		doResurrect((L2Character) obj);
 		
 		if (general().debug()) {
-			_log.fine("GM: " + activeChar.getName() + "(" + activeChar.getObjectId() + ") resurrected character " + obj.getObjectId());
+			LOG.debug("GM: {}({}) resurrected character {}", activeChar.getName(), activeChar.getObjectId(), obj.getObjectId());
 		}
 	}
 	

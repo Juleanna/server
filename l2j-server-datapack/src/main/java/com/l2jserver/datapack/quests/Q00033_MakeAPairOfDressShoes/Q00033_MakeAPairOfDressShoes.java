@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -47,13 +47,13 @@ public class Q00033_MakeAPairOfDressShoes extends Quest {
 	private static final int ADENA_COUNT3 = 300000;
 	
 	public Q00033_MakeAPairOfDressShoes() {
-		super(33, Q00033_MakeAPairOfDressShoes.class.getSimpleName(), "Make a Pair of Dress Shoes");
-		addStartNpc(WOODLEY);
-		addTalkId(WOODLEY, IAN, LEIKAR);
+		super(33);
+		bindStartNpc(WOODLEY);
+		bindTalk(WOODLEY, IAN, LEIKAR);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

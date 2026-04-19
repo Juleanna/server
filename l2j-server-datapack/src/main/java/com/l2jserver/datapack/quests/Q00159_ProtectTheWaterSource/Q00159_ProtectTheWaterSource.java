@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,15 +43,15 @@ public class Q00159_ProtectTheWaterSource extends Quest {
 	private static final int MIN_LVL = 12;
 	
 	public Q00159_ProtectTheWaterSource() {
-		super(159, Q00159_ProtectTheWaterSource.class.getSimpleName(), "Protect the Water Source");
-		addStartNpc(ASTERIOS);
-		addTalkId(ASTERIOS);
-		addKillId(PLAGUE_ZOMBIE);
+		super(159);
+		bindStartNpc(ASTERIOS);
+		bindTalk(ASTERIOS);
+		bindKill(PLAGUE_ZOMBIE);
 		registerQuestItems(PLAGUE_DUST, HYACINTH_CHARM, HYACINTH_CHARM2);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equals("30154-04.htm")) {
 			st.startQuest();
@@ -62,7 +62,7 @@ public class Q00159_ProtectTheWaterSource extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null)) {
 			switch (st.getCond()) {
@@ -87,7 +87,6 @@ public class Q00159_ProtectTheWaterSource extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

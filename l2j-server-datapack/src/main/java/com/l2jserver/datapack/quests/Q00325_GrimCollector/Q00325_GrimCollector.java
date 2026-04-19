@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -111,15 +111,15 @@ public final class Q00325_GrimCollector extends Quest {
 	private static final int MIN_LEVEL = 15;
 	
 	public Q00325_GrimCollector() {
-		super(325, Q00325_GrimCollector.class.getSimpleName(), "Grim Collector");
-		addStartNpc(GUARD_CURTIZ);
-		addTalkId(GUARD_CURTIZ, VARSAK, SAMED);
-		addKillId(DROPLIST.getNpcIds());
+		super(325);
+		bindStartNpc(GUARD_CURTIZ);
+		bindTalk(GUARD_CURTIZ, VARSAK, SAMED);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(ANATOMY_DIAGRAM, ZOMBIE_HEAD, ZOMBIE_HEART, ZOMBIE_LIVER, SKULL, RIB_BONE, SPINE, ARM_BONE, THIGH_BONE, COMPLETE_SKELETON);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -205,20 +205,17 @@ public final class Q00325_GrimCollector extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
-		
 		if ((qs == null) || !qs.isStarted()) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		if (!Util.checkIfInRange(1500, killer, npc, true) || !qs.hasQuestItems(ANATOMY_DIAGRAM)) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

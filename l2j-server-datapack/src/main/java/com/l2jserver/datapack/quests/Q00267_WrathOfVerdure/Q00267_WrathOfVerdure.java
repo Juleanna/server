@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,15 +43,15 @@ public final class Q00267_WrathOfVerdure extends Quest {
 	private static final int MIN_LVL = 4;
 	
 	public Q00267_WrathOfVerdure() {
-		super(267, Q00267_WrathOfVerdure.class.getSimpleName(), "Wrath of Verdure");
-		addStartNpc(TREANT_BREMEC);
-		addTalkId(TREANT_BREMEC);
-		addKillId(GOBLIN_RAIDER);
+		super(267);
+		bindStartNpc(TREANT_BREMEC);
+		bindTalk(TREANT_BREMEC);
+		bindKill(GOBLIN_RAIDER);
 		registerQuestItems(GOBLIN_CLUB);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -76,13 +76,12 @@ public final class Q00267_WrathOfVerdure extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && (getRandom(10) < 5)) {
 			st.giveItems(GOBLIN_CLUB, 1);
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

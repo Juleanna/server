@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -35,7 +35,6 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @version $Revision: 1.1.6.4 $ $Date: 2007/07/31 10:06:00 $
  */
 public class AdminMonsterRace implements IAdminCommandHandler {
-	// private static Logger _log = Logger.getLogger(AdminMonsterRace.class.getName());
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_mons"
@@ -124,7 +123,7 @@ public class AdminMonsterRace implements IAdminCommandHandler {
 			// MonsterRace.getInstance().newSpeeds();
 			// int[][] speeds2 = MonsterRace.getInstance().getSpeeds();
 			/*
-			 * int[] speed = new int[8]; for (int i=0; i<8; i++) { for (int j=0; j<20; j++) { //_log.info("Adding "+speeds1[i][j] +" and "+ speeds2[i][j]); speed[i] += (speeds1[i][j]*1);// + (speeds2[i][j]*1); } _log.info("Total speed for "+(i+1)+" = "+speed[i]); }
+			 * int[] speed = new int[8]; for (int i=0; i<8; i++) { for (int j=0; j<20; j++) { //LOG.info("Adding "+speeds1[i][j] +" and "+ speeds2[i][j]); speed[i] += (speeds1[i][j]*1);// + (speeds2[i][j]*1); } LOG.info("Total speed for "+(i+1)+" = "+speed[i]); }
 			 */
 			
 			MonRaceInfo spk = new MonRaceInfo(codes[2][0], codes[2][1], MonsterRace.getInstance().getMonsters(), MonsterRace.getInstance().getSpeeds());

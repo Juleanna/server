@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,16 +44,16 @@ public class Q00252_ItSmellsDelicious extends Quest {
 	private static final int CHEF = 18908;
 	
 	public Q00252_ItSmellsDelicious() {
-		super(252, Q00252_ItSmellsDelicious.class.getSimpleName(), "It Smells Delicious!");
-		addStartNpc(STAN);
-		addTalkId(STAN);
-		addKillId(CHEF);
-		addKillId(MOBS);
+		super(252);
+		bindStartNpc(STAN);
+		bindTalk(STAN);
+		bindKill(CHEF);
+		bindKill(MOBS);
 		registerQuestItems(DIARY.getId(), COOKBOOK_PAGE.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -83,7 +83,7 @@ public class Q00252_ItSmellsDelicious extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs;
 		if (npc.getId() == CHEF) { // only the killer gets quest items from the chef
 			qs = getQuestState(killer, false);
@@ -98,7 +98,6 @@ public class Q00252_ItSmellsDelicious extends Quest {
 				qs.setCond(2);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

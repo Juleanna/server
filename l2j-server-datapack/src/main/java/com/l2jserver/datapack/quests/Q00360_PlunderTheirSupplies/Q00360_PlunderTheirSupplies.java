@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,15 +51,15 @@ public final class Q00360_PlunderTheirSupplies extends Quest {
 	}
 	
 	public Q00360_PlunderTheirSupplies() {
-		super(360, Q00360_PlunderTheirSupplies.class.getSimpleName(), "Plunder Their Supplies");
-		addStartNpc(COLEMAN);
-		addTalkId(COLEMAN);
-		addKillId(MONSTER_DROP_CHANCES.keySet());
+		super(360);
+		bindStartNpc(COLEMAN);
+		bindTalk(COLEMAN);
+		bindKill(MONSTER_DROP_CHANCES.keySet());
 		registerQuestItems(SUPPLY_ITEMS, SUSPICIOUS_DOCUMENT_PIECE, RECIPE_OF_SUPPLY);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -87,10 +87,10 @@ public final class Q00360_PlunderTheirSupplies extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isPet) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isPet) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st == null) || !Util.checkIfInRange(1500, npc, killer, false)) {
-			return super.onKill(npc, killer, isPet);
+			return;
 		}
 		
 		if (getRandom(100) < MONSTER_DROP_CHANCES.get(npc.getId())) {
@@ -107,7 +107,6 @@ public final class Q00360_PlunderTheirSupplies extends Quest {
 			}
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
-		return super.onKill(npc, killer, isPet);
 	}
 	
 	@Override

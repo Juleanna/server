@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -49,14 +49,14 @@ public class Q00153_DeliverGoods extends Quest {
 	private static final int XP_REWARD_AMOUNT = 600;
 	
 	public Q00153_DeliverGoods() {
-		super(153, Q00153_DeliverGoods.class.getSimpleName(), "Deliver Goods");
-		addStartNpc(ARNOLD_ID);
-		addTalkId(JACKSON_ID, SILVIA_ID, ARNOLD_ID, RANT_ID);
+		super(153);
+		bindStartNpc(ARNOLD_ID);
+		bindTalk(JACKSON_ID, SILVIA_ID, ARNOLD_ID, RANT_ID);
 		registerQuestItems(DELIVERY_LIST_ID, HEAVY_WOOD_BOX_ID, CLOTH_BUNDLE_ID, CLAY_POT_ID, JACKSONS_RECEIPT_ID, SILVIAS_RECEIPT_ID, RANTS_RECEIPT_ID);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && (npc.getId() == ARNOLD_ID)) {
 			if (event.equalsIgnoreCase("30041-02.html")) {

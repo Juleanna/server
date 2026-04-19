@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,13 +43,12 @@ public final class Ranku extends AbstractNpcAI {
 	private static final Set<Integer> MY_TRACKING_SET = ConcurrentHashMap.newKeySet();
 	
 	public Ranku() {
-		super(Ranku.class.getSimpleName(), "hellbound/AI");
-		addAttackId(RANKU);
-		addKillId(RANKU, MINION);
+		bindAttack(RANKU);
+		bindKill(RANKU, MINION);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("checkup") && (npc.getId() == RANKU) && !npc.isDead()) {
 			for (L2MonsterInstance minion : ((L2MonsterInstance) npc).getMinionList().getSpawnedMinions()) {
 				if ((minion != null) && !minion.isDead() && MY_TRACKING_SET.contains(minion.getObjectId())) {
@@ -60,11 +59,11 @@ public final class Ranku extends AbstractNpcAI {
 			}
 			startQuestTimer("checkup", 1000, npc, null);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		if (npc.getId() == RANKU) {
 			for (L2MonsterInstance minion : ((L2MonsterInstance) npc).getMinionList().getSpawnedMinions()) {
 				if ((minion != null) && !minion.isDead() && !MY_TRACKING_SET.contains(minion.getObjectId())) {
@@ -74,11 +73,10 @@ public final class Ranku extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.getId() == MINION) {
 			if (MY_TRACKING_SET.contains(npc.getObjectId())) {
 				MY_TRACKING_SET.remove(npc.getObjectId());
@@ -96,6 +94,5 @@ public final class Ranku extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

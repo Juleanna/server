@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -30,6 +30,7 @@ import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.QuestState;
@@ -81,14 +82,13 @@ public final class SanctumOftheLordsOfDawn extends AbstractInstance {
 	};
 	
 	public SanctumOftheLordsOfDawn() {
-		super(SanctumOftheLordsOfDawn.class.getSimpleName());
-		addStartNpc(LIGHT_OF_DAWN);
-		addTalkId(LIGHT_OF_DAWN, IDENTITY_CONFIRM_DEVICE, PASSWORD_ENTRY_DEVICE, DARKNESS_OF_DAWN, SHELF);
-		addAggroRangeEnterId(GUARDS_OF_THE_DAWN, GUARDS_OF_THE_DAWN_2, GUARDS_OF_THE_DAWN_3);
+		bindStartNpc(LIGHT_OF_DAWN);
+		bindTalk(LIGHT_OF_DAWN, IDENTITY_CONFIRM_DEVICE, PASSWORD_ENTRY_DEVICE, DARKNESS_OF_DAWN, SHELF);
+		bindAggroRangeEnter(GUARDS_OF_THE_DAWN, GUARDS_OF_THE_DAWN_2, GUARDS_OF_THE_DAWN_3);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "spawn": {
 				final InstanceWorld tmpworld = InstanceManager.getInstance().getPlayerWorld(player);
@@ -125,7 +125,7 @@ public final class SanctumOftheLordsOfDawn extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
@@ -203,13 +203,12 @@ public final class SanctumOftheLordsOfDawn extends AbstractInstance {
 				return "32580-01.html";
 			}
 		}
-		return "";
+		return null;
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
-		npc.broadcastPacket(new MagicSkillUse(npc, player, GUARD_SKILL.getSkillId(), 1, 2000, 1));
-		startQuestTimer("teleportPlayer", 2000, npc, player);
-		return super.onAggroRangeEnter(npc, player, isSummon);
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		event.npc().broadcastPacket(new MagicSkillUse(event.npc(), event.player(), GUARD_SKILL.getSkillId(), 1, 2000, 1));
+		startQuestTimer("teleportPlayer", 2000, event.npc(), event.player());
 	}
 }

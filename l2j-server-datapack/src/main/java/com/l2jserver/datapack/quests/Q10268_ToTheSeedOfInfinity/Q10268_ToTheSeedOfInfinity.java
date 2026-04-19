@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,14 +37,14 @@ public class Q10268_ToTheSeedOfInfinity extends Quest {
 	private static final int INTRODUCTION = 13811;
 	
 	public Q10268_ToTheSeedOfInfinity() {
-		super(10268, Q10268_ToTheSeedOfInfinity.class.getSimpleName(), "To the Seed of Infinity");
-		addStartNpc(KEUCEREUS);
-		addTalkId(KEUCEREUS, TEPIOS);
+		super(10268);
+		bindStartNpc(KEUCEREUS);
+		bindTalk(KEUCEREUS, TEPIOS);
 		registerQuestItems(INTRODUCTION);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -32,7 +32,6 @@ import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.PledgeShowInfoUpdate;
-import com.l2jserver.gameserver.network.serverpackets.RadarControl;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 /**
@@ -60,14 +59,14 @@ public class Q00509_AClansFame extends Quest {
 	};
 	
 	public Q00509_AClansFame() {
-		super(509, Q00509_AClansFame.class.getSimpleName(), "A Clan's Fame");
-		addStartNpc(VALDIS);
-		addTalkId(VALDIS);
-		addKillId(RAID_BOSS);
+		super(509);
+		bindStartNpc(VALDIS);
+		bindTalk(VALDIS);
+		bindKill(RAID_BOSS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -79,19 +78,19 @@ public class Q00509_AClansFame extends Quest {
 				break;
 			case "31331-1.html":
 				st.set("raid", "1");
-				player.sendPacket(new RadarControl(0, 2, 186304, -43744, -3193));
+				showRadar(player, 186304, -43744, -3193, 2);
 				break;
 			case "31331-2.html":
 				st.set("raid", "2");
-				player.sendPacket(new RadarControl(0, 2, 134672, -115600, -1216));
+				showRadar(player, 134672, -115600, -1216, 2);
 				break;
 			case "31331-3.html":
 				st.set("raid", "3");
-				player.sendPacket(new RadarControl(0, 2, 170000, -60000, -3500));
+				showRadar(player, 170000, -60000, -3500, 2);
 				break;
 			case "31331-4.html":
 				st.set("raid", "4");
-				player.sendPacket(new RadarControl(0, 2, 93296, -75104, -1824));
+				showRadar(player, 93296, -75104, -1824, 2);
 				break;
 			case "31331-5.html":
 				st.exitQuest(true, true);
@@ -101,9 +100,9 @@ public class Q00509_AClansFame extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		if (player.getClan() == null) {
-			return null;
+			return;
 		}
 		
 		QuestState st = null;
@@ -125,7 +124,6 @@ public class Q00509_AClansFame extends Quest {
 				}
 			}
 		}
-		return null;
 	}
 	
 	@Override

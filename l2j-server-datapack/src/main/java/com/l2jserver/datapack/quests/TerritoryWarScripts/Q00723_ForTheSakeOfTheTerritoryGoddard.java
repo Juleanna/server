@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,7 +26,7 @@ import com.l2jserver.gameserver.network.NpcStringId;
  */
 public final class Q00723_ForTheSakeOfTheTerritoryGoddard extends TerritoryWarSuperClass {
 	public Q00723_ForTheSakeOfTheTerritoryGoddard() {
-		super(723, Q00723_ForTheSakeOfTheTerritoryGoddard.class.getSimpleName(), "For the Sake of the Territory - Goddard");
+		super(723);
 		CATAPULT_ID = 36505;
 		TERRITORY_ID = 87;
 		LEADER_IDS = new int[] {

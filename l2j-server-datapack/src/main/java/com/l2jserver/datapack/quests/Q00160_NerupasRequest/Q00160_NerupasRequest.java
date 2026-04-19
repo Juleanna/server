@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,14 +46,14 @@ public final class Q00160_NerupasRequest extends Quest {
 	private static final int MIN_LEVEL = 3;
 	
 	public Q00160_NerupasRequest() {
-		super(160, Q00160_NerupasRequest.class.getSimpleName(), "Nerupa's Request");
-		addStartNpc(NERUPA);
-		addTalkId(NERUPA, UNOREN, CREAMEES, JULIA);
+		super(160);
+		bindStartNpc(NERUPA);
+		bindTalk(NERUPA, UNOREN, CREAMEES, JULIA);
 		registerQuestItems(SILVERY_SPIDERSILK, UNOS_RECEIPT, CELS_TICKET, NIGHTSHADE_LEAF);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if ((qs != null) && event.equals("30370-04.htm")) {
 			qs.startQuest();

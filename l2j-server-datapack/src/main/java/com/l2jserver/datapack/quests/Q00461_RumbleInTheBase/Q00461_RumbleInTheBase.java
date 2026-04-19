@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -54,15 +54,15 @@ public class Q00461_RumbleInTheBase extends Quest {
 	}
 	
 	public Q00461_RumbleInTheBase() {
-		super(461, Q00461_RumbleInTheBase.class.getSimpleName(), "Rumble in the Base");
-		addStartNpc(STAN);
-		addTalkId(STAN);
-		addKillId(MONSTERS.keySet());
+		super(461);
+		bindStartNpc(STAN);
+		bindTalk(STAN);
+		bindKill(MONSTERS.keySet());
 		registerQuestItems(SHINY_SALMON, SHOES_STRING_OF_SEL_MAHUM);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
@@ -79,10 +79,10 @@ public class Q00461_RumbleInTheBase extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		QuestState st = null;
 		if (getRandom(1000) >= MONSTERS.get(npc.getId())) {
-			return super.onKill(npc, player, isSummon);
+			return;
 		}
 		
 		if (npc.getId() == 18908) {
@@ -97,7 +97,7 @@ public class Q00461_RumbleInTheBase extends Quest {
 		} else {
 			final L2PcInstance member = getRandomPartyMember(player, 1);
 			if (member == null) {
-				return super.onKill(npc, player, isSummon);
+				return;
 			}
 			
 			st = getQuestState(member, false);
@@ -109,7 +109,6 @@ public class Q00461_RumbleInTheBase extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

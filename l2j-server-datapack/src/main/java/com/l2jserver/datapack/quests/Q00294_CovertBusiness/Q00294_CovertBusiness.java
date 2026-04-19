@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -54,15 +54,15 @@ public final class Q00294_CovertBusiness extends Quest {
 	private static final int MIN_LVL = 10;
 	
 	public Q00294_CovertBusiness() {
-		super(294, Q00294_CovertBusiness.class.getSimpleName(), "Covert Business");
-		addStartNpc(KEEF);
-		addTalkId(KEEF);
-		addKillId(DROPLIST.getNpcIds());
+		super(294);
+		bindStartNpc(KEEF);
+		bindTalk(KEEF);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(BAT_FANG.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if ((qs != null) && qs.isCreated() && event.equals("30534-03.htm")) {
 			qs.startQuest();
@@ -72,14 +72,13 @@ public final class Q00294_CovertBusiness extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isCond(1) && Util.checkIfInRange(1500, npc, qs.getPlayer(), true)) {
 			if (giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true)) {
 				qs.setCond(2);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

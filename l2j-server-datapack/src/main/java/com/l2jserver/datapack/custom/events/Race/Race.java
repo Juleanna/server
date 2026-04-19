@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -107,13 +107,12 @@ public final class Race extends Event {
 	// @formatter:on
 	
 	private Race() {
-		super(Race.class.getSimpleName(), "custom/events");
-		addStartNpc(START_NPC);
-		addFirstTalkId(START_NPC);
-		addTalkId(START_NPC);
-		addStartNpc(STOP_NPC);
-		addFirstTalkId(STOP_NPC);
-		addTalkId(STOP_NPC);
+		bindStartNpc(START_NPC);
+		bindFirstTalk(START_NPC);
+		bindTalk(START_NPC);
+		bindStartNpc(STOP_NPC);
+		bindFirstTalk(STOP_NPC);
+		bindTalk(STOP_NPC);
 	}
 	
 	@Override
@@ -168,7 +167,7 @@ public final class Race extends Event {
 				if (player.isInsideRadius(_npc, 500, false, false)) {
 					sendMessage(player, "Race started! Go find Finish NPC as fast as you can... He is located near " + LOCATIONS[location]);
 					transformPlayer(player);
-					player.getRadar().addMarker(_randspawn[0], _randspawn[1], _randspawn[2]);
+					showRadar(player, _randspawn[0], _randspawn[1], _randspawn[2], 1);
 				} else {
 					sendMessage(player, "I told you stay near me right? Distance was too high, you are excluded from race");
 					_players.remove(player);
@@ -244,7 +243,7 @@ public final class Race extends Event {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
@@ -258,7 +257,7 @@ public final class Race extends Event {
 			player.untransform();
 			return null;
 		} else if (event.equalsIgnoreCase("showfinish")) {
-			player.getRadar().addMarker(_randspawn[0], _randspawn[1], _randspawn[2]);
+			showRadar(player, _randspawn[0], _randspawn[1], _randspawn[2], 1);
 			return null;
 		} else if (event.equalsIgnoreCase("signup")) {
 			if (_players.contains(player)) {

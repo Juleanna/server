@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,14 +41,14 @@ public class Q00017_LightAndDarkness extends Quest {
 	private static final int BLOOD_OF_SAINT = 7168;
 	
 	public Q00017_LightAndDarkness() {
-		super(17, Q00017_LightAndDarkness.class.getSimpleName(), "Light and Darkness");
-		addStartNpc(HIERARCH);
-		addTalkId(HIERARCH, SAINT_ALTAR_1, SAINT_ALTAR_2, SAINT_ALTAR_3, SAINT_ALTAR_4);
+		super(17);
+		bindStartNpc(HIERARCH);
+		bindTalk(HIERARCH, SAINT_ALTAR_1, SAINT_ALTAR_2, SAINT_ALTAR_3, SAINT_ALTAR_4);
 		registerQuestItems(BLOOD_OF_SAINT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

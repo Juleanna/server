@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -19,14 +19,14 @@
 package com.l2jserver.datapack.handlers.effecthandlers.pump;
 
 import static com.l2jserver.gameserver.enums.TriggerTargetType.SELF;
-import static com.l2jserver.gameserver.model.events.EventType.ON_CREATURE_SKILL_USE;
+import static com.l2jserver.gameserver.model.events.EventType.CREATURE_SKILL_USE;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.enums.TriggerTargetType;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.effects.AbstractEffect;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureSkillUse;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureSkillUse;
 import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
@@ -51,12 +51,12 @@ public final class TriggerSkillBySkill extends AbstractEffect {
 		_targetType = params.getEnum("targetType", TriggerTargetType.class, SELF);
 	}
 	
-	public void onSkillUseEvent(OnCreatureSkillUse event) {
+	public void onSkillUseEvent(CreatureSkillUse event) {
 		if ((_chance == 0) || ((_skill.getSkillId() == 0) || (_skill.getSkillLvl() == 0) || (_castSkillId == 0))) {
 			return;
 		}
 		
-		if (_castSkillId != event.getSkill().getId()) {
+		if (_castSkillId != event.skill().getId()) {
 			return;
 		}
 		
@@ -65,21 +65,21 @@ public final class TriggerSkillBySkill extends AbstractEffect {
 		}
 		
 		final var triggerSkill = _skill.getSkill();
-		final var targets = _targetType.getTargets(event.getCaster(), event.getTarget());
+		final var targets = _targetType.getTargets(event.caster(), event.target());
 		for (var target : targets) {
 			if (!target.isInvul()) {
-				event.getCaster().makeTriggerCast(triggerSkill, target);
+				event.caster().makeTriggerCast(triggerSkill, target);
 			}
 		}
 	}
 	
 	@Override
 	public void onExit(BuffInfo info) {
-		info.getEffected().removeListenerIf(ON_CREATURE_SKILL_USE, listener -> listener.getOwner() == this);
+		info.getEffected().removeListenerIf(CREATURE_SKILL_USE, listener -> listener.getOwner() == this);
 	}
 	
 	@Override
 	public void onStart(BuffInfo info) {
-		info.getEffected().addListener(new ConsumerEventListener(info.getEffected(), ON_CREATURE_SKILL_USE, (OnCreatureSkillUse event) -> onSkillUseEvent(event), this));
+		info.getEffected().addListener(new ConsumerEventListener(info.getEffected(), CREATURE_SKILL_USE, (CreatureSkillUse event) -> onSkillUseEvent(event), this));
 	}
 }

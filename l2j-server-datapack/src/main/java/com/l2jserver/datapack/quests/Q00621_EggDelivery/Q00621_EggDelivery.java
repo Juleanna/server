@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -54,15 +54,15 @@ public final class Q00621_EggDelivery extends Quest {
 	private static final List<Integer> TALKERS = Arrays.asList(NAFF, CROCUS, KUBER, BOELIN);
 	
 	public Q00621_EggDelivery() {
-		super(621, Q00621_EggDelivery.class.getSimpleName(), "Egg Delivery");
-		addStartNpc(JEREMY);
-		addTalkId(JEREMY, PULIN, VALENTINE);
-		addTalkId(TALKERS);
+		super(621);
+		bindStartNpc(JEREMY);
+		bindTalk(JEREMY, PULIN, VALENTINE);
+		bindTalk(TALKERS);
 		registerQuestItems(BOILED_EGG, EGG_PRICE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {

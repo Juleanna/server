@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -20,8 +20,9 @@ package com.l2jserver.datapack.handlers.admincommandhandlers;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.data.sql.impl.CharNameTable;
@@ -33,7 +34,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * @version $Revision: 1.1.2.6.2.3 $ $Date: 2005/04/11 10:05:59 $
  */
 public class AdminRepairChar implements IAdminCommandHandler {
-	private static Logger _log = Logger.getLogger(AdminRepairChar.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminRepairChar.class);
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_restore",
@@ -79,7 +80,7 @@ public class AdminRepairChar implements IAdminCommandHandler {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not repair char:", e);
+			LOG.warn("Could not repair char:", e);
 		}
 	}
 }

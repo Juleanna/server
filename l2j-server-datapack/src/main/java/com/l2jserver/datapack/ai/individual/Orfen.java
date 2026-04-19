@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -74,13 +74,12 @@ public final class Orfen extends AbstractNpcAI {
 	private static final int DEAD = 1;
 	
 	public Orfen() {
-		super(Orfen.class.getSimpleName(), "ai/individual");
-		addKillId(ORFEN);
-		addSpawnId(ORFEN, RIBA_IREN);
-		addExitZoneId(ZONE);
-		addSkillSeeId(ORFEN);
-		addTeleportId(ORFEN);
-		addAttackId(ORFEN, RAIKEL_LEOS, RAIKEL, RIBA_IREN);
+		bindKill(ORFEN);
+		bindSpawn(ORFEN, RIBA_IREN);
+		bindExitZone(ZONE);
+		bindSkillSee(ORFEN);
+		bindTeleport(ORFEN);
+		bindAttack(ORFEN, RAIKEL_LEOS, RAIKEL, RIBA_IREN);
 		_zone = GrandBossManager.getInstance().getZone(43728, 17220, -4342);
 		StatsSet info = GrandBossManager.getInstance().getStatsSet(ORFEN);
 		if (GrandBossManager.getInstance().getBossStatus(ORFEN) == DEAD) {
@@ -96,7 +95,7 @@ public final class Orfen extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "CORE_AI": {
 				if (npc != null) {
@@ -162,11 +161,11 @@ public final class Orfen extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if ((npc != null) && (!npc.isCastingNow()) && (!npc.isCoreAIDisabled())) {
 			switch (npc.getId()) {
 				case ORFEN: {
@@ -217,11 +216,10 @@ public final class Orfen extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if (npc.getId() == ORFEN) {
 			final L2Character originalCaster = isSummon ? caster.getSummon() : caster;
 			if ((skill.getEffectPoint() > 0) && (getRandom(100) < 20) && (npc.calculateDistance(originalCaster, false, false) < 1000)) {
@@ -239,11 +237,10 @@ public final class Orfen extends AbstractNpcAI {
 				addSkillCastDesire(npc, caster, ORFEN_DISPEL, 1000000L);
 			}
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		switch (npc.getId()) {
 			case ORFEN: {
 				notifyEvent("CHECK_ZONE", npc, null);
@@ -254,33 +251,29 @@ public final class Orfen extends AbstractNpcAI {
 				break;
 			}
 		}
-		
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.getId() == ORFEN) {
 			cancelQuestTimers("CHECK_ZONE");
 			npc.broadcastPacket(Music.BS02_D_7000.getPacket());
 			GrandBossManager.getInstance().setBossStatus(ORFEN, DEAD);
-			final long respawnTime = (grandBoss().getIntervalOfOrfenSpawn() + getRandom(-grandBoss().getRandomOfOrfenSpawn(), grandBoss().getRandomOfOrfenSpawn())) * 3600000;
+			final long respawnTime = grandBoss().getIntervalOfOrfenSpawn() + getRandom(-(int) grandBoss().getRandomOfOrfenSpawn(), (int) grandBoss().getRandomOfOrfenSpawn());
 			GrandBossManager.getInstance().getStatsSet(ORFEN).set("respawn_time", (System.currentTimeMillis() + respawnTime));
 			startQuestTimer("ORFEN_UNLOCK", respawnTime, null, null);
 			_orfen = null;
 			_riba = null;
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onExitZone(L2Character character, L2ZoneType zone) {
+	public void onExitZone(L2Character character, L2ZoneType zone) {
 		if ((character.isAttackable()) && (character.isRaid()) && (!_zone.isInsideZone(_orfen)) && (_orfen != null)) {
 			_orfen.disableCoreAI(true);
 			_orfen.teleToLocation(_orfen.getSpawn().getLocation());
 			startQuestTimer("CORE_AI", 100, _orfen, null);
 		}
-		return super.onExitZone(character, zone);
 	}
 	
 	@Override

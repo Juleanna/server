@@ -1752,13 +1752,13 @@ INSERT INTO `spawnlist` VALUES
 ("Kamael Island", 1, 32335, -122074, 56592, -1976, 0, 0, 6659, 60, 0, 0, 0),
 ("Kamael Island", 1, 32335, -117290, 50962, -744, 0, 0, 6996, 60, 0, 0, 0),
 -- Adventure Guildsman
-("unset", 1, 32337, -119808, 47760, 384, 0, 0, 0, 60, 0, 0, 0),
+("unset", 1, 32337, -119808, 47760, 403, 0, 0, 0, 60, 0, 0, 0),
 -- Adventure Guildsman
-("unset", 1, 32338, -120048, 45296, 392, 0, 0, 0, 60, 0, 0, 0),
+("unset", 1, 32338, -120048, 45296, 405, 0, 0, 0, 60, 0, 0, 0),
 -- Adventure Guildsman
-("unset", 1, 32339, -115680, 44144, 496, 0, 0, 17712, 60, 0, 0, 0),
+("unset", 1, 32339, -115680, 44144, 515, 0, 0, 17712, 60, 0, 0, 0),
 -- Adventure Guildsman
-("unset", 1, 32340, -115088, 46784, 496, 0, 0, 32964, 60, 0, 0, 0),
+("unset", 1, 32340, -115088, 46784, 515, 0, 0, -32572, 60, 0, 0, 0),
 -- Burang
 ("unset", 1, 32348, -116944, 48144, 456, 0, 0, 49152, 60, 0, 0, 0),
 -- Eindburgh
@@ -4085,9 +4085,9 @@ INSERT INTO `spawnlist` VALUES
 -- Monument of Heroes 
 ("Talking_Island_Npc", 1, 31690, -85096, 241516, -3728, 0, 0, 25000, 60, 0, 0, 0),
 -- Adventure Guildsman
-("Talking_Island_Npc", 1, 31775, -83472, 242896, -3728, 0, 0, 39000, 60, 0, 0, 0),
+("Talking_Island_Npc", 1, 31775, -83472, 242896, -3730, 0, 0, 39000, 60, 0, 0, 0),
 -- Adventure Guildsman
-("Talking_Island_Npc", 1, 31776, -86080, 241488, -3728, 0, 0, 57000, 60, 0, 0, 0),
+("Talking_Island_Npc", 1, 31776, -86080, 241488, -3730, 0, 0, 57000, 60, 0, 0, 0),
 -- Dimensional Merchant
 ("Talking_Island_Npc", 1, 32478, -81920, 243360, -3728, 0, 0, 40000, 60, 0, 0, 0),
 -- Manor Manager
@@ -4642,7 +4642,7 @@ INSERT INTO `spawnlist` VALUES
 -- Monument of Heroes
 ("Orc_Village_Npc", 1, 31771, -45360, -114688, -240, 0, 0, 0, 60, 0, 0, 0),
 -- Adventure Guildsman
-("Orc_Village_Npc", 1, 31784, -44976, -113696, -192, 0, 0, 33000, 60, 0, 0, 0),
+("Orc_Village_Npc", 1, 31784, -44976, -113696, -199, 0, 0, 33000, 60, 0, 0, 0),
 -- Adventure Guildsman
 ("Orc_Village_Npc", 1, 31785, -45840, -116688, -240, 0, 0, 33000, 60, 0, 0, 0),
 -- Adventure Guildsman
@@ -14192,9 +14192,9 @@ INSERT INTO `spawnlist` VALUES
 -- Adventure Guildsman
 ("Dark_Elf_Village_Npc", 1, 31777, 12100, 16635, -4584, 0, 0, 63000, 60, 0, 0, 0),
 -- Adventure Guildsman
-("Dark_Elf_Village_Npc", 1, 31778, 16864, 15024, -4136, 0, 0, 30000, 60, 0, 0, 0),
+("Dark_Elf_Village_Npc", 1, 31778, 16864, 15024, -4128, 0, 0, 30000, 60, 0, 0, 0),
 -- Adventure Guildsman
-("Dark_Elf_Village_Npc", 1, 31779, 6256, 18768, -4024, 0, 0, 57000, 60, 0, 0, 0),
+("Dark_Elf_Village_Npc", 1, 31779, 6256, 18768, -4029, 0, 0, 57000, 60, 0, 0, 0),
 -- Bloody Pixy
 ("Dark_Elf_Village_Npc", 1, 31845, 23171, 13053, -3608, 0, 0, 53541, 60, 0, 0, 0),
 ("Dark_Elf_Village_Npc", 1, 31845, 26099, 6528, -3688, 0, 0, 45147, 60, 0, 0, 0),
@@ -19357,9 +19357,9 @@ INSERT INTO `spawnlist` VALUES
 -- Monument of Heroes
 ("Elven_Village_Npc", 1, 31769, 44602, 50979, -3056, 0, 0, 49000, 60, 0, 0, 0),
 -- Adventure Guildsman
-("Elven_Village_Npc", 1, 31780, 45443, 48357, -3056, 0, 0, 50000, 60, 0, 0, 0),
+("Elven_Village_Npc", 1, 31780, 45443, 48357, -3058, 0, 0, 50000, 60, 0, 0, 0),
 -- Adventure Guildsman
-("Elven_Village_Npc", 1, 31781, 43136, 51376, -2992, 0, 0, 59000, 60, 0, 0, 0),
+("Elven_Village_Npc", 1, 31781, 43136, 51376, -2994, 0, 0, 59000, 60, 0, 0, 0),
 -- Pixy
 ("Elven_Village_Npc", 1, 31848, 44336, 45127, -3704, 0, 0, 4676, 60, 0, 0, 0),
 ("Elven_Village_Npc", 1, 31848, 48468, 37228, -3568, 0, 0, 0, 60, 0, 0, 0),
@@ -21901,16 +21901,6 @@ INSERT INTO `spawnlist` VALUES
 ("Town of Schuttgart", 1, 31688, 87597, -143439, -1293, 0, 0, 16384, 60, 0, 0, 0),
 -- Monument of Heroes 
 ("Town of Schuttgart", 1, 31690, 87669, -143451, -1293, 0, 0, 16211, 60, 0, 0, 0),
--- Adventure Guildsman
-("Town of Schuttgart", 1, 31729, 90340, -141373, -1542, 0, 0, 39084, 60, 0, 0, 0),
--- Adventure Guildsman
-("Town of Schuttgart", 1, 31732, 86514, -142340, -1343, 0, 0, 32768, 60, 0, 0, 0),
--- Adventure Guildsman
-("Town of Schuttgart", 1, 31733, 87130, -140754, -1542, 0, 0, 15201, 60, 0, 0, 0),
--- Adventure Guildsman
-("Town of Schuttgart", 1, 31734, 88223, -142349, -1343, 0, 0, 60027, 60, 0, 0, 0),
--- Adventure Guildsman
-("Town of Schuttgart", 1, 31738, 84521, -141191, -1542, 0, 0, 57344, 60, 0, 0, 0),
 -- Auzendorff
 ("Town of Schuttgart", 1, 31945, 86459, -139631, -1527, 0, 0, 52453, 60, 0, 0, 0),
 -- Hombre
@@ -22029,6 +22019,16 @@ INSERT INTO `spawnlist` VALUES
 ("Town of Schuttgart", 1, 32097, 89964, -143221, -1527, 0, 0, 61567, 60, 0, 0, 0),
 -- Celes
 ("Town of Schuttgart", 1, 32098, 88571, -145073, -1293, 0, 0, 46596, 60, 0, 0, 0),
+-- Adventure Guildsman
+("Town of Schuttgart", 1, 31991, 87088, -140784, -1542, 0, 0, 16500, 60, 0, 0, 0),
+-- Adventure Guildsman
+("Town of Schuttgart", 1, 31992, 88208, -142336, -1343, 0, 0, 60000, 60, 0, 0, 0),
+-- Adventure Guildsman
+("Town of Schuttgart", 1, 31994, 86516, -142336, -1343, 0, 0, 38000, 60, 0, 0, 0),
+-- Adventure Guildsman
+("Town of Schuttgart", 1, 31993, 84512, -141188, -1542, 0, 0, 57000, 60, 0, 0, 0),
+-- Adventure Guildsman
+("Town of Schuttgart", 1, 31995, 90348, -141336, -1542, 0, 0, 32000, 60, 0, 0, 0),
 -- Khadava
 ("unset", 1, 32202, 90449, -144316, -1520, 0, 0, 29964, 60, 0, 0, 0),
 -- Ramen
@@ -28740,7 +28740,7 @@ INSERT INTO `spawnlist` VALUES
 -- Adventure Guildsman
 ("Dwarf_Village_Npc", 1, 31782, 115627, -177970, -896, 0, 0, 40000, 60, 0, 0, 0),
 -- Adventure Guildsman
-("Dwarf_Village_Npc", 1, 31783, 116640, -183952, -1560, 0, 0, 39000, 60, 0, 0, 0),
+("Dwarf_Village_Npc", 1, 31783, 116640, -183952, -1568, 0, 0, 39000, 60, 0, 0, 0),
 -- Dimensional Merchant
 ("Dwarf_Village_Npc", 1, 32478, 115020, -179728, -880, 0, 0, 0, 60, 0, 0, 0),
 -- Inventor Maru
@@ -32237,7 +32237,7 @@ INSERT INTO `spawnlist` VALUES
 -- Mordred
 ("dragon_valley", 1, 31582, 104840, 113260, -3184, 0, 0, 0, 60, 0, 0, 0),
 -- Adventure Guildsman
-("giran02_npc2321_15", 1, 31810, 105850, 109807, -3200, 0, 0, 46000, 60, 0, 0, 0),
+("giran02_npc2321_15", 1, 31810, 105850, 109807, -3184, 0, 0, 46000, 60, 0, 0, 0),
 -- 
 ("dragon_valley", 1, 32723, 101578, 110546, -3664, 0, 0, 16368, 60, 0, 0, 0),
 ("dragon_valley", 1, 32723, 107958, 117417, -3032, 0, 0, 7408, 60, 0, 0, 0),

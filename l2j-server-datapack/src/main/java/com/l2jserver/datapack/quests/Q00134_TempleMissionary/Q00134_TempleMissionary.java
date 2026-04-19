@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -60,16 +60,16 @@ public class Q00134_TempleMissionary extends Quest {
 	private static final int REPORT_COUNT = 3;
 	
 	public Q00134_TempleMissionary() {
-		super(134, Q00134_TempleMissionary.class.getSimpleName(), "Temple Missionary");
-		addStartNpc(GLYVKA);
-		addTalkId(GLYVKA, ROUKE);
-		addKillId(CRUMA_MARSHLANDS_TRAITOR);
-		addKillId(DROPLIST.getNpcIds());
+		super(134);
+		bindStartNpc(GLYVKA);
+		bindTalk(GLYVKA, ROUKE);
+		bindKill(CRUMA_MARSHLANDS_TRAITOR);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(GIANTS_EXPERIMENTAL_TOOL_FRAGMENT, GIANTS_EXPERIMENTAL_TOOL, GIANTS_TECHNOLOGY_REPORT, ROUKES_REPOT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -111,10 +111,10 @@ public class Q00134_TempleMissionary extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance member = getRandomPartyMember(player, 3);
 		if (member == null) {
-			return super.onKill(npc, player, isSummon);
+			return;
 		}
 		final QuestState st = getQuestState(member, false);
 		if (npc.getId() == CRUMA_MARSHLANDS_TRAITOR) {
@@ -134,7 +134,6 @@ public class Q00134_TempleMissionary extends Quest {
 				giveItemRandomly(st.getPlayer(), npc, DROPLIST.get(npc), true);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

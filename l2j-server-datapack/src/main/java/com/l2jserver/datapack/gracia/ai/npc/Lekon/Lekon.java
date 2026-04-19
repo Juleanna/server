@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,14 +40,13 @@ public final class Lekon extends AbstractNpcAI {
 	private static final int STONE_COUNT = 10;
 	
 	public Lekon() {
-		super(Lekon.class.getSimpleName(), "gracia/AI/NPC");
-		addFirstTalkId(LEKON);
-		addTalkId(LEKON);
-		addStartNpc(LEKON);
+		bindFirstTalk(LEKON);
+		bindTalk(LEKON);
+		bindStartNpc(LEKON);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "32557-01.html": {

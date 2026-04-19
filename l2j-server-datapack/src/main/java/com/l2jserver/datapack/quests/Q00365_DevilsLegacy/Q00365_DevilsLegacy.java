@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -61,15 +61,15 @@ public final class Q00365_DevilsLegacy extends Quest {
 	private static final SkillHolder POISON = new SkillHolder(4035, 2);
 	
 	public Q00365_DevilsLegacy() {
-		super(365, Q00365_DevilsLegacy.class.getSimpleName(), "Devil's Legacy");
-		addStartNpc(RANDOLF);
-		addTalkId(RANDOLF, COLLOB);
-		addKillId(DROPLIST.getNpcIds());
+		super(365);
+		bindStartNpc(RANDOLF);
+		bindTalk(RANDOLF, COLLOB);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(PIRATES_TREASURE_CHEST);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -152,12 +152,11 @@ public final class Q00365_DevilsLegacy extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 3, npc);
 		if (qs != null) {
 			giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

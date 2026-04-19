@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class Q00080_SagaOfTheWindRider extends AbstractSagaQuest {
 	public Q00080_SagaOfTheWindRider() {
-		super(80, Q00080_SagaOfTheWindRider.class.getSimpleName(), "Saga of the Wind Rider");
+		super(80);
 		_npc = new int[] {
 			31603,
 			31624,

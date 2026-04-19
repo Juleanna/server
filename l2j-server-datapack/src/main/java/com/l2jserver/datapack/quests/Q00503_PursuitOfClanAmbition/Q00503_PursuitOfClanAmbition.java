@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -77,20 +77,20 @@ public final class Q00503_PursuitOfClanAmbition extends Quest {
 	private static final int SEAL_OF_ASPIRATION = 3870;
 	
 	public Q00503_PursuitOfClanAmbition() {
-		super(503, Q00503_PursuitOfClanAmbition.class.getSimpleName(), "Pursuit Of Clan Ambition");
-		addStartNpc(SIR_GUSTAV_ATHEBALDT);
-		addTalkId(SIR_GUSTAV_ATHEBALDT, HEAD_BLACKSMITH_KUSTO, MARTIEN, WITCH_ATHREA, WITCH_KALIS, CORPSE_OF_FRITZ, CORPSE_OF_LUTZ, CORPSE_OF_KURTZ, BALTHAZAR, IMPERIAL_COFFER, WITCH_CLEO, SIR_ERIC_RODEMAI);
-		addKillId(DRAKE, DRAKE2, THUNDER_WYRM, THUNDER_WYRM2, GRAVE_GUARD, SPITEFUL_SOUL_LEADER, GRAVE_KEYMASTER, BLITZ_WYRM, IMPERIAL_GRAVEKEEPER);
-		addSpawnId(WITCH_ATHREA, WITCH_KALIS, IMPERIAL_COFFER, BLITZ_WYRM);
+		super(503);
+		bindStartNpc(SIR_GUSTAV_ATHEBALDT);
+		bindTalk(SIR_GUSTAV_ATHEBALDT, HEAD_BLACKSMITH_KUSTO, MARTIEN, WITCH_ATHREA, WITCH_KALIS, CORPSE_OF_FRITZ, CORPSE_OF_LUTZ, CORPSE_OF_KURTZ, BALTHAZAR, IMPERIAL_COFFER, WITCH_CLEO, SIR_ERIC_RODEMAI);
+		bindKill(DRAKE, DRAKE2, THUNDER_WYRM, THUNDER_WYRM2, GRAVE_GUARD, SPITEFUL_SOUL_LEADER, GRAVE_KEYMASTER, BLITZ_WYRM, IMPERIAL_GRAVEKEEPER);
+		bindSpawn(WITCH_ATHREA, WITCH_KALIS, IMPERIAL_COFFER, BLITZ_WYRM);
 		registerQuestItems(MIST_DRAKES_EGG.getId(), BLITZ_WYRM_EGG.getId(), DRAKES_EGG.getId(), THUNDER_WYRM_EGG.getId(), BROOCH_OF_THE_MAGPIE, IMPERIAL_KEY.getId(), GUSTAVS_1ST_LETTER, GUSTAVS_2ND_LETTER, GUSTAVS_3RD_LETTER, SCEPTER_OF_JUDGMENT, BLACK_ANVIL_COIN, RECIPE_SPITEFUL_SOUL_ENERGY, SPITEFUL_SOUL_ENERGY
 			.getId(), SPITEFUL_SOUL_VENGEANCE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.startsWith("DESPAWN")) {
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState qs = getQuestState(player, false);
@@ -284,25 +284,25 @@ public final class Q00503_PursuitOfClanAmbition extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs == null) || !qs.isStarted() || !Util.checkIfInRange(1500, npc, killer, true)) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		final L2Clan clan = killer.getClan();
 		if (clan == null) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		final L2PcInstance leader = clan.getLeader().getPlayerInstance();
 		if (!Util.checkIfInRange(1500, npc, leader, true)) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		final QuestState leaderQS = getQuestState(leader, false);
 		if (leaderQS == null) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		switch (npc.getId()) {
@@ -356,7 +356,6 @@ public final class Q00503_PursuitOfClanAmbition extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -590,7 +589,7 @@ public final class Q00503_PursuitOfClanAmbition extends Quest {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		switch (npc.getId()) {
 			case WITCH_ATHREA: {
 				if (npc.isScriptValue(50301)) {
@@ -616,7 +615,6 @@ public final class Q00503_PursuitOfClanAmbition extends Quest {
 				break;
 			}
 		}
-		return super.onSpawn(npc);
 	}
 	
 	private static QuestState getLeaderQuestState(L2PcInstance player, String quest) {

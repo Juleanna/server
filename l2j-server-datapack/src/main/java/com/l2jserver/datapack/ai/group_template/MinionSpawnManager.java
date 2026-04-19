@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -405,25 +405,22 @@ public final class MinionSpawnManager extends AbstractNpcAI {
 	};
 	
 	public MinionSpawnManager() {
-		super(MinionSpawnManager.class.getSimpleName(), "ai/group_template");
-		
-		addSpawnId(NPC);
-		addAttackId(ON_ATTACK_NPC);
+		bindSpawn(NPC);
+		bindAttack(ON_ATTACK_NPC);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getTemplate().getParameters().getSet().get("SummonPrivateRate") == null) {
 			((L2MonsterInstance) npc).getMinionList().spawnMinions(npc.getTemplate().getParameters().getMinionList("Privates"));
 			npc.setScriptValue(1);
 		} else {
 			npc.setScriptValue(0);
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.isMonster()) {
 			final L2MonsterInstance monster = (L2MonsterInstance) npc;
 			if (!monster.isTeleporting()) {
@@ -436,6 +433,5 @@ public final class MinionSpawnManager extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 }

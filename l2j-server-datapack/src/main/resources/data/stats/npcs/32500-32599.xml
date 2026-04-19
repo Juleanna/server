@@ -1764,7 +1764,7 @@
 			<height normal="40" />
 		</collision>
 	</npc>
-	<npc id="32546" level="70" type="L2Merchant" name="Asyatei" title="Soul Trader">
+	<npc id="32546" level="70" type="L2Npc" name="Asyatei" title="Soul Trader">
 		<!-- Confirmed CT2.5 -->
 		<race>UNDEAD</race>
 		<sex>FEMALE</sex>

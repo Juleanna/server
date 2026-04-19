@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -100,166 +100,166 @@ public class Q00372LegacyOfInsolenceTest {
 	}
 	
 	@Test
-	void testOnAdvEventWithNoQuestStateShouldReturnNull() {
+	void testOnEventWithNoQuestStateShouldReturnNull() {
 		when(player.getQuestState(QUEST_NAME)).thenReturn(null);
 		
-		String result = QUEST.onAdvEvent("30844-04.htm", npc, player);
+		String result = QUEST.onEvent("30844-04.htm", npc, player);
 		
 		assertThat(result).isNull();
 	}
 	
 	@Test
-	void testOnAdvEventWithUnsupportedEventShouldReturnNull() {
+	void testOnEventWithUnsupportedEventShouldReturnNull() {
 		String event = "00001-01.htm";
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isNull();
 	}
 	
 	@Test
-	void testOnAdvEventWalderalStartQuest() {
+	void testOnEventWalderalStartQuest() {
 		String event = "30844-04.htm";
 		when(qs.isCreated()).thenReturn(true);
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		verify(qs).startQuest();
 		assertThat(result).isEqualTo(event);
 	}
 	
 	@Test
-	void testOnAdvEventWalderalQuestAlreadyStarted() {
+	void testOnEventWalderalQuestAlreadyStarted() {
 		String event = "30844-04.htm";
 		when(qs.isCreated()).thenReturn(false);
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		verify(qs, never()).startQuest();
 		assertThat(result).isNull();
 	}
 	
 	@Test
-	void testOnAdvEventWalderalOtherBooks() {
+	void testOnEventWalderalOtherBooks() {
 		String event = "30844-05b.html";
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		verify(qs).setCond(2);
 		assertThat(result).isEqualTo(event);
 	}
 	
 	@Test
-	void testOnAdvEventWalderalNotAllBlueprints() {
+	void testOnEventWalderalNotAllBlueprints() {
 		String event = "30844-07.html";
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isEqualTo("30844-06.html");
 	}
 	
 	@Test
-	void testOnAdvEventWalderalAllBlueprints() {
+	void testOnEventWalderalAllBlueprints() {
 		String event = "30844-07.html";
 		L2ItemInstance item = mock(L2ItemInstance.class);
 		BLUEPRINTS.forEach(itemId -> when(inventory.getItemByItemId(itemId)).thenReturn(item));
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isEqualTo(event);
 	}
 	
 	@Test
-	void testOnAdvEventWalderalDarkCrystalAllBlueprints() {
+	void testOnEventWalderalDarkCrystalAllBlueprints() {
 		String event = "30844-07a.html";
 		BLUEPRINTS.forEach(this::stubInventoryItem);
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isEqualTo(event);
 	}
 	
 	@Test
-	void testOnAdvEventWalderalDarkCrystalNotAllBlueprints() {
+	void testOnEventWalderalDarkCrystalNotAllBlueprints() {
 		String event = "30844-07a.html";
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isEqualTo("30844-07e.html");
 	}
 	
 	@Test
-	void testOnAdvEventWalderalTallumAllBlueprints() {
+	void testOnEventWalderalTallumAllBlueprints() {
 		String event = "30844-07b.html";
 		BLUEPRINTS.forEach(this::stubInventoryItem);
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isEqualTo(event);
 	}
 	
 	@Test
-	void testOnAdvEventWalderalTallumNotAllBlueprints() {
+	void testOnEventWalderalTallumNotAllBlueprints() {
 		String event = "30844-07b.html";
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isEqualTo("30844-07e.html");
 	}
 	
 	@Test
-	void testOnAdvEventWalderalNightmareAllBlueprints() {
+	void testOnEventWalderalNightmareAllBlueprints() {
 		String event = "30844-07c.html";
 		BLUEPRINTS.forEach(this::stubInventoryItem);
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isEqualTo(event);
 	}
 	
 	@Test
-	void testOnAdvEventWalderalNightmareNotAllBlueprints() {
+	void testOnEventWalderalNightmareNotAllBlueprints() {
 		String event = "30844-07c.html";
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isEqualTo("30844-07e.html");
 	}
 	
 	@Test
-	void testOnAdvEventWalderalMajesticAllBlueprints() {
+	void testOnEventWalderalMajesticAllBlueprints() {
 		String event = "30844-07c.html";
 		BLUEPRINTS.forEach(this::stubInventoryItem);
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isEqualTo(event);
 	}
 	
 	@Test
-	void testOnAdvEventWalderalMajesticNotAllBlueprints() {
+	void testOnEventWalderalMajesticNotAllBlueprints() {
 		String event = "30844-07c.html";
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		assertThat(result).isEqualTo("30844-07e.html");
 	}
 	
 	@Test
-	void testOnAdvEventWalderalAbortQuest() {
+	void testOnEventWalderalAbortQuest() {
 		String event = "30844-09.html";
 		
-		String result = QUEST.onAdvEvent(event, npc, player);
+		String result = QUEST.onEvent(event, npc, player);
 		
 		verify(qs).exitQuest(true, true);
 		assertThat(result).isEqualTo(event);
 	}
 	
 	@Test
-	void testOnAdvEventOtherSupportedEvents() {
+	void testOnEventOtherSupportedEvents() {
 		List.of("30844-03.htm", "30844-05.html", "30844-05a.html", "30844-08.html", "30844-10.html", "30844-11.html")
 			.forEach(event -> {
-				String result = QUEST.onAdvEvent(event, npc, player);
+				String result = QUEST.onEvent(event, npc, player);
 				
 				assertThat(result).isEqualTo(event);
 			});

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -94,12 +94,12 @@ public class Q00453_NotStrongEnoughAlone extends Quest {
 	};
 	
 	public Q00453_NotStrongEnoughAlone() {
-		super(453, Q00453_NotStrongEnoughAlone.class.getSimpleName(), "Not Strong Enought Alone");
-		addStartNpc(KLEMIS);
-		addTalkId(KLEMIS);
-		addKillId(MONSTER1);
-		addKillId(MONSTER2);
-		addKillId(MONSTER3);
+		super(453);
+		bindStartNpc(KLEMIS);
+		bindTalk(KLEMIS);
+		bindKill(MONSTER1);
+		bindKill(MONSTER2);
+		bindKill(MONSTER3);
 	}
 	
 	private void increaseKill(L2PcInstance player, L2Npc npc) {
@@ -183,7 +183,7 @@ public class Q00453_NotStrongEnoughAlone extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		QuestState st = getQuestState(player, false);
 		
@@ -204,7 +204,7 @@ public class Q00453_NotStrongEnoughAlone extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		if (player.getParty() != null) {
 			for (L2PcInstance member : player.getParty().getMembers()) {
 				increaseKill(member, npc);
@@ -212,7 +212,6 @@ public class Q00453_NotStrongEnoughAlone extends Quest {
 		} else {
 			increaseKill(player, npc);
 		}
-		return null;
 	}
 	
 	@Override

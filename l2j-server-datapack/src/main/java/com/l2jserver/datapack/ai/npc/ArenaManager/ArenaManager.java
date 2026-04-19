@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,14 +53,13 @@ public class ArenaManager extends AbstractNpcAI {
 	private static final int BUFF_COST = 2000;
 	
 	public ArenaManager() {
-		super(ArenaManager.class.getSimpleName(), "ai/npc");
-		addStartNpc(ARENA_MANAGER);
-		addTalkId(ARENA_MANAGER);
-		addFirstTalkId(ARENA_MANAGER);
+		bindStartNpc(ARENA_MANAGER);
+		bindTalk(ARENA_MANAGER);
+		bindFirstTalk(ARENA_MANAGER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "CPrecovery": {
 				if (player.getAdena() >= CP_COST) {

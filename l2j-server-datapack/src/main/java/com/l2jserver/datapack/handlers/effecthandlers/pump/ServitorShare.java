@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,13 +18,15 @@
  */
 package com.l2jserver.datapack.handlers.effecthandlers.pump;
 
+import static com.l2jserver.gameserver.model.effects.EffectFlag.SERVITOR_SHARE;
+import static com.l2jserver.gameserver.model.effects.L2EffectType.BUFF;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.effects.AbstractEffect;
-import com.l2jserver.gameserver.model.effects.EffectFlag;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
 import com.l2jserver.gameserver.model.stats.Stats;
@@ -45,35 +47,37 @@ public final class ServitorShare extends AbstractEffect {
 	
 	@Override
 	public void onStart(BuffInfo info) {
-		super.onStart(info);
-		info.getEffected().getActingPlayer().setServitorShare(stats);
-		if (info.getEffected().getActingPlayer().getSummon() != null) {
-			info.getEffected().getActingPlayer().getSummon().broadcastInfo();
-			info.getEffected().getActingPlayer().getSummon().getStatus().startHpMpRegeneration();
+		final var player = info.getEffected().getActingPlayer();
+		player.setServitorShare(stats);
+		if (player.getSummon() != null) {
+			player.getSummon().broadcastInfo();
+			player.getSummon().getStatus().startHpMpRegeneration();
 		}
 	}
 	
 	@Override
 	public int getEffectFlags() {
-		return EffectFlag.SERVITOR_SHARE.getMask();
+		return SERVITOR_SHARE.getMask();
 	}
 	
 	@Override
 	public L2EffectType getEffectType() {
-		return L2EffectType.BUFF;
+		return BUFF;
 	}
 	
 	@Override
 	public void onExit(BuffInfo info) {
-		info.getEffected().getActingPlayer().setServitorShare(null);
-		if (info.getEffected().getSummon() != null) {
-			if (info.getEffected().getSummon().getCurrentHp() > info.getEffected().getSummon().getMaxHp()) {
-				info.getEffected().getSummon().setCurrentHp(info.getEffected().getSummon().getMaxHp());
+		final var player = info.getEffected().getActingPlayer();
+		player.setServitorShare(null);
+		final var summon = player.getSummon();
+		if (summon != null) {
+			if (summon.getCurrentHp() > summon.getMaxHp()) {
+				summon.setCurrentHp(summon.getMaxHp());
 			}
-			if (info.getEffected().getSummon().getCurrentMp() > info.getEffected().getSummon().getMaxMp()) {
-				info.getEffected().getSummon().setCurrentMp(info.getEffected().getSummon().getMaxMp());
+			if (summon.getCurrentMp() > summon.getMaxMp()) {
+				summon.setCurrentMp(summon.getMaxMp());
 			}
-			info.getEffected().getSummon().broadcastInfo();
+			summon.broadcastInfo();
 		}
 	}
 }

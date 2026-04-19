@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,15 +53,15 @@ public final class Q00345_MethodToRaiseTheDead extends Quest {
 	private static final int CROKIAN_WARRIOR = 20791;
 	
 	public Q00345_MethodToRaiseTheDead() {
-		super(345, Q00345_MethodToRaiseTheDead.class.getSimpleName(), "Method to Raise the Dead");
-		addStartNpc(DOROTHY);
-		addTalkId(DOROTHY, ORPHEUS, MEDIUM_JAR, XENOVIA);
-		addKillId(CROKIAN, CROKIAN_WARRIOR);
+		super(345);
+		bindStartNpc(DOROTHY);
+		bindTalk(DOROTHY, ORPHEUS, MEDIUM_JAR, XENOVIA);
+		bindKill(CROKIAN, CROKIAN_WARRIOR);
 		registerQuestItems(VICTIMS_ARM_BONE, VICTIMS_THIGH_BONE, VICTIMS_SKULL, VICTIMS_RIB_BONE, VICTIMS_SPINE, USELESS_BONE_PIECES, POWDER_TO_SUMMON_DEAD_SOULS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -163,11 +163,11 @@ public final class Q00345_MethodToRaiseTheDead extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, 1, 3, npc);
 		
 		if ((qs == null) || !Util.checkIfInRange(1500, npc, killer, true)) {
-			return null;
+			return;
 		}
 		
 		final int random = getRandom(100);
@@ -214,7 +214,6 @@ public final class Q00345_MethodToRaiseTheDead extends Quest {
 		} else if (random <= 60) {
 			giveItems(qs.getPlayer(), USELESS_BONE_PIECES, 1);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -68,15 +68,15 @@ public class Q00135_TempleExecutor extends Quest {
 	private static final int MAX_REWARD_LEVEL = 41;
 	
 	public Q00135_TempleExecutor() {
-		super(135, Q00135_TempleExecutor.class.getSimpleName(), "Temple Executor");
-		addStartNpc(SHEGFIELD);
-		addTalkId(SHEGFIELD, ALEX, SONIN, PANO);
-		addKillId(DROPLIST.getNpcIds());
+		super(135);
+		bindStartNpc(SHEGFIELD);
+		bindTalk(SHEGFIELD, ALEX, SONIN, PANO);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(STOLEN_CARGO.getId(), HATE_CRYSTAL.getId(), OLD_TREASURE_MAP.getId(), SONINS_CREDENTIALS, PANOS_CREDENTIALS, ALEXS_CREDENTIALS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -118,10 +118,10 @@ public class Q00135_TempleExecutor extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance member = getRandomPartyMember(player, 3);
 		if (member == null) {
-			return super.onKill(npc, player, isSummon);
+			return;
 		}
 		final QuestState st = getQuestState(member, false);
 		if (!hasItemsAtLimit(st.getPlayer(), STOLEN_CARGO)) {
@@ -137,7 +137,6 @@ public class Q00135_TempleExecutor extends Quest {
 		} else {
 			playSound(st.getPlayer(), Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

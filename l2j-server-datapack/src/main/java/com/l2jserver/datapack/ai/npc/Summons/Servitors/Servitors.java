@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -34,7 +34,7 @@ import com.l2jserver.gameserver.model.events.ListenerRegisterType;
 import com.l2jserver.gameserver.model.events.annotations.Id;
 import com.l2jserver.gameserver.model.events.annotations.RegisterEvent;
 import com.l2jserver.gameserver.model.events.annotations.RegisterType;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureKill;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureKill;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.util.Util;
 
@@ -80,11 +80,7 @@ public final class Servitors extends AbstractNpcAI {
 		MONSTERS.put(SILHOUETTE_TILFO, Arrays.asList(CRYSTAL_OF_STARTING_6TH, CRYSTAL_OF_INPROGRESS_6TH, CRYSTAL_OF_DEFEAT_6TH));
 	}
 	
-	public Servitors() {
-		super(Servitors.class.getSimpleName(), "ai/npc/Summons");
-	}
-	
-	@RegisterEvent(EventType.ON_CREATURE_KILL)
+	@RegisterEvent(EventType.CREATURE_KILL)
 	@RegisterType(ListenerRegisterType.NPC)
 	// @formatter:off
 	@Id({
@@ -102,15 +98,15 @@ public final class Servitors extends AbstractNpcAI {
 		14527, 14528, 14529, 14530
 	})
 	// @formatter:on
-	public void onCreatureKill(OnCreatureKill event) {
-		if (event.getAttacker().isNpc() && event.getTarget().isServitor() //
-			&& Util.checkIfInRange(1500, event.getAttacker(), event.getTarget(), true)) {
-			final L2ServitorInstance target = (L2ServitorInstance) event.getTarget();
+	public void onCreatureKill(CreatureKill event) {
+		if (event.attacker().isNpc() && event.target().isServitor() //
+			&& Util.checkIfInRange(1500, event.attacker(), event.target(), true)) {
+			final L2ServitorInstance target = (L2ServitorInstance) event.target();
 			final L2PcInstance master = target.getOwner();
 			final QuestState qs = master.getQuestState(Q00230_TestOfTheSummoner.class.getSimpleName());
 			
 			if ((qs != null) && hasQuestItems(master, CRYSTAL_OF_INPROGRESS_3RD)) {
-				final L2Npc killer = (L2Npc) event.getAttacker();
+				final L2Npc killer = (L2Npc) event.attacker();
 				final List<Integer> items = MONSTERS.get(killer.getId());
 				giveItems(master, items.get(2), 1); // Crystal of Defeat
 				playSound(master, Sound.ITEMSOUND_QUEST_ITEMGET);

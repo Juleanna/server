@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,14 +39,14 @@ public class Q00130_PathToHellbound extends Quest {
 	private static final int MIN_LEVEL = 78;
 	
 	public Q00130_PathToHellbound() {
-		super(130, Q00130_PathToHellbound.class.getSimpleName(), "Path To Hellbound");
-		addStartNpc(CASIAN);
-		addTalkId(CASIAN, GALATE);
+		super(130);
+		bindStartNpc(CASIAN);
+		bindTalk(CASIAN, GALATE);
 		registerQuestItems(CASIANS_BLUE_CRYSTAL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -57,15 +57,15 @@ public final class Q00413_PathOfTheShillienOracle extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00413_PathOfTheShillienOracle() {
-		super(413, Q00413_PathOfTheShillienOracle.class.getSimpleName(), "Path of the Shillien Oracle");
-		addStartNpc(MAGISTER_SIDRA);
-		addTalkId(MAGISTER_SIDRA, PRIEST_ADONIUS, MAGISTER_TALBOT);
-		addKillId(ZOMBIE_SOLDIER, ZOMBIE_WARRIOR, SHIELD_SKELETON, SKELETON_INFANTRYMAN, DARK_SUCCUBUS);
+		super(413);
+		bindStartNpc(MAGISTER_SIDRA);
+		bindTalk(MAGISTER_SIDRA, PRIEST_ADONIUS, MAGISTER_TALBOT);
+		bindKill(ZOMBIE_SOLDIER, ZOMBIE_WARRIOR, SHIELD_SKELETON, SKELETON_INFANTRYMAN, DARK_SUCCUBUS);
 		registerQuestItems(SIDRAS_LETTER, BLANK_SHEET, BLOODY_RUNE, GARMIELS_BOOK, PRAYER_OF_ADONIUS, PENITENTS_MARK, ASHEN_BONES, ANDARIEL_BOOK);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -128,7 +128,7 @@ public final class Q00413_PathOfTheShillienOracle extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -160,7 +160,6 @@ public final class Q00413_PathOfTheShillienOracle extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

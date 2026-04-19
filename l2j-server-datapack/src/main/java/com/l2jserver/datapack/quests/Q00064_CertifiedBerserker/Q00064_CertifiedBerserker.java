@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -67,15 +67,15 @@ public final class Q00064_CertifiedBerserker extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00064_CertifiedBerserker() {
-		super(64, Q00064_CertifiedBerserker.class.getSimpleName(), "Certified Berserker");
-		addStartNpc(MASTER_ORKURUS);
-		addTalkId(MASTER_ORKURUS, MASTER_ENTIENS, MASTER_TENAIN, CARAVANER_GORT, HARKILGAMED);
-		addKillId(DEAD_SEEKER, MARSH_STAKATO_DRONE, BREKA_ORC, BREKA_ORC_ARCHER, BREKA_ORC_SHAMAN, BREKA_ORC_OVERLORD, BREKA_ORC_WARRIOR, ROAD_SCAVENGER, DIVINE_EMISSARY);
+		super(64);
+		bindStartNpc(MASTER_ORKURUS);
+		bindTalk(MASTER_ORKURUS, MASTER_ENTIENS, MASTER_TENAIN, CARAVANER_GORT, HARKILGAMED);
+		bindKill(DEAD_SEEKER, MARSH_STAKATO_DRONE, BREKA_ORC, BREKA_ORC_ARCHER, BREKA_ORC_SHAMAN, BREKA_ORC_OVERLORD, BREKA_ORC_WARRIOR, ROAD_SCAVENGER, DIVINE_EMISSARY);
 		registerQuestItems(BREKA_ORC_HEAD, MESSAGE_PLATE, REPORT_EAST, REPORT_NORTH, HARKILGAMEDS_LETTER, TENAINS_RECOMMENDATION);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -171,7 +171,7 @@ public final class Q00064_CertifiedBerserker extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -238,7 +238,6 @@ public final class Q00064_CertifiedBerserker extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -278,8 +277,8 @@ public final class Q00064_CertifiedBerserker extends Quest {
 					if (memoState == 6) {
 						qs.setMemoState(7);
 						qs.setCond(9, true);
-						player.getRadar().addMarker(27956, 106003, -3831);
-						player.getRadar().addMarker(50568, 152408, -2656);
+						showRadar(player, 27956, 106003, -3831, 1);
+						showRadar(player, 50568, 152408, -2656, 1);
 						htmltext = "32200-01.html";
 					} else if (memoState == 7) {
 						if (!hasQuestItems(player, REPORT_EAST, REPORT_NORTH)) {

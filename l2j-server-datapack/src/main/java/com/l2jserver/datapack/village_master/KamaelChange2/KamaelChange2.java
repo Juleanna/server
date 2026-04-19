@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,7 +37,7 @@ import com.l2jserver.gameserver.util.Util;
  */
 public final class KamaelChange2 extends AbstractNpcAI {
 	// NPCs
-	private static int[] NPCS_MALE = {
+	private static final int[] NPCS_MALE = {
 		32146, // Valpor
 		32205, // Aetonic
 		32209, // Ferdinand
@@ -48,7 +48,7 @@ public final class KamaelChange2 extends AbstractNpcAI {
 		32229, // Hagel
 		32233, // Zoldart
 	};
-	private static int[] NPCS_FEMALE = {
+	private static final int[] NPCS_FEMALE = {
 		32145, // Maynard
 		32206, // Pieche
 		32210, // Eddy
@@ -67,15 +67,14 @@ public final class KamaelChange2 extends AbstractNpcAI {
 	private static final int SOUL_BREAKER_CERTIFICATE = 9806;
 	
 	public KamaelChange2() {
-		super(KamaelChange2.class.getSimpleName(), "village_master");
-		addStartNpc(NPCS_MALE);
-		addStartNpc(NPCS_FEMALE);
-		addTalkId(NPCS_MALE);
-		addTalkId(NPCS_FEMALE);
+		bindStartNpc(NPCS_MALE);
+		bindStartNpc(NPCS_FEMALE);
+		bindTalk(NPCS_MALE);
+		bindTalk(NPCS_FEMALE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "32145-05.htm": // master_all_kamael003t

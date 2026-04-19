@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
  * Mercenary Medic Selina AI.
@@ -59,20 +59,19 @@ public final class Selina extends AbstractNpcAI {
 	}
 	
 	public Selina() {
-		super(Selina.class.getSimpleName(), "ai/npc");
-		addStartNpc(SELINA);
-		addTalkId(SELINA);
-		addFirstTalkId(SELINA);
-		addSpellFinishedId(SELINA);
+		bindStartNpc(SELINA);
+		bindTalk(SELINA);
+		bindFirstTalk(SELINA);
+		bindSpellFinished(SELINA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
-		final BuffHolder buff = BUFFS.get(event);
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
+		final var buff = BUFFS.get(event);
 		if (buff != null) {
 			if ((getQuestItemsCount(player, GOLDEN_RAM_COIN) >= buff.getCost())) {
 				castSkill(npc, player, buff);
-				return super.onAdvEvent(event, npc, player);
+				return super.onEvent(event, npc, player);
 			}
 		} else {
 			LOG.warn("Player {} sent invalid bypass: {}!", player, event);
@@ -94,12 +93,11 @@ public final class Selina extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		final BuffHolder buff = BUFFS.get(Integer.toString(skill.getId()));
+	public void onSpellFinished(NpcSkillFinished event) {
+		final var buff = BUFFS.get(Integer.toString(event.skill().getId()));
 		if (buff != null) {
-			takeItems(player, GOLDEN_RAM_COIN, buff.getCost());
+			takeItems(event.player(), GOLDEN_RAM_COIN, buff.getCost());
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	private static class BuffHolder extends SkillHolder {

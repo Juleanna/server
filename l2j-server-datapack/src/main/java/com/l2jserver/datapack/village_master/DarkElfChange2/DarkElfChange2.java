@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -71,13 +71,12 @@ public final class DarkElfChange2 extends AbstractNpcAI {
 	private static final int MIN_LEVEL = 40;
 	
 	public DarkElfChange2() {
-		super(DarkElfChange2.class.getSimpleName(), "village_master");
-		addStartNpc(NPCS);
-		addTalkId(NPCS);
+		bindStartNpc(NPCS);
+		bindTalk(NPCS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "30195-02.htm":

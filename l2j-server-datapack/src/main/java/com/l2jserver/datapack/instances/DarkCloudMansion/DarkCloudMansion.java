@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -196,14 +196,13 @@ public final class DarkCloudMansion extends AbstractInstance {
 	// @formatter:on
 	
 	public DarkCloudMansion() {
-		super(DarkCloudMansion.class.getSimpleName());
-		addFirstTalkId(BSM, SOTruth);
-		addStartNpc(YIYEN);
-		addTalkId(YIYEN, SOTruth);
-		addAttackId(SC);
-		addAttackId(BS);
-		addAttackId(CCG);
-		addKillId(TOKILL);
+		bindFirstTalk(BSM, SOTruth);
+		bindStartNpc(YIYEN);
+		bindTalk(YIYEN, SOTruth);
+		bindAttack(SC);
+		bindAttack(BS);
+		bindAttack(CCG);
+		bindKill(TOKILL);
 	}
 	
 	protected static class DMCNpc {
@@ -772,7 +771,7 @@ public final class DarkCloudMansion extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (npc == null) {
 			return "";
 		}
@@ -819,7 +818,7 @@ public final class DarkCloudMansion extends AbstractInstance {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		final DMCWorld world;
 		if (tmpworld instanceof DMCWorld) {
@@ -874,11 +873,10 @@ public final class DarkCloudMansion extends AbstractInstance {
 				killedBelethSample(world, npc);
 			}
 		}
-		return "";
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		final DMCWorld world;
 		if (tmpworld instanceof DMCWorld) {
@@ -901,8 +899,6 @@ public final class DarkCloudMansion extends AbstractInstance {
 				checkBelethSample(world, npc, attacker);
 			}
 		}
-		
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override

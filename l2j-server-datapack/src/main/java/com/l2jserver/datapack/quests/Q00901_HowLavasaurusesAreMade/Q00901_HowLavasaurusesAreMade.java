@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,15 +50,15 @@ public class Q00901_HowLavasaurusesAreMade extends Quest {
 	private static final int TOTEM_OF_FORTITUDE = 21902;
 	
 	public Q00901_HowLavasaurusesAreMade() {
-		super(901, Q00901_HowLavasaurusesAreMade.class.getSimpleName(), "How Lavasauruses Are Made");
-		addStartNpc(ROONEY);
-		addTalkId(ROONEY);
-		addKillId(LAVASAURUS_NEWBORN, LAVASAURUS_FLEDGIING, LAVASAURUS_ADULT, LAVASAURUS_ELDERLY);
+		super(901);
+		bindStartNpc(ROONEY);
+		bindTalk(ROONEY);
+		bindKill(LAVASAURUS_NEWBORN, LAVASAURUS_FLEDGIING, LAVASAURUS_ADULT, LAVASAURUS_ELDERLY);
 		registerQuestItems(FRAGMENT_STONE, FRAGMENT_HORN, FRAGMENT_HEAD, FRAGMENT_BODY);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -99,7 +99,7 @@ public class Q00901_HowLavasaurusesAreMade extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && st.isCond(1)) {
 			switch (npc.getId()) {
@@ -117,7 +117,6 @@ public class Q00901_HowLavasaurusesAreMade extends Quest {
 					break;
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

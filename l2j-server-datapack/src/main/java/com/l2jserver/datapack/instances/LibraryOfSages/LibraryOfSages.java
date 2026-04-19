@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -61,14 +61,13 @@ public final class LibraryOfSages extends AbstractInstance {
 	private static final int TEMPLATE_ID = 156;
 	
 	public LibraryOfSages() {
-		super(LibraryOfSages.class.getSimpleName());
-		addFirstTalkId(SOPHIA2, ELCADIA_INSTANCE, PILE_OF_BOOKS1, PILE_OF_BOOKS2, PILE_OF_BOOKS3, PILE_OF_BOOKS4, PILE_OF_BOOKS5);
-		addStartNpc(SOPHIA1, SOPHIA2, SOPHIA3);
-		addTalkId(SOPHIA1, SOPHIA2, SOPHIA3);
+		bindFirstTalk(SOPHIA2, ELCADIA_INSTANCE, PILE_OF_BOOKS1, PILE_OF_BOOKS2, PILE_OF_BOOKS3, PILE_OF_BOOKS4, PILE_OF_BOOKS5);
+		bindStartNpc(SOPHIA1, SOPHIA2, SOPHIA3);
+		bindTalk(SOPHIA1, SOPHIA2, SOPHIA3);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getPlayerWorld(player);
 		if (tmpworld instanceof LoSWorld world) {
 			switch (event) {
@@ -98,7 +97,7 @@ public final class LibraryOfSages extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override

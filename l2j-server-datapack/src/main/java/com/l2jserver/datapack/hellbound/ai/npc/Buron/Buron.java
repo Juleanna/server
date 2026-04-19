@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -35,14 +35,13 @@ public final class Buron extends AbstractNpcAI {
 	private static final int DARION_BADGE = 9674;
 	
 	public Buron() {
-		super(Buron.class.getSimpleName(), "hellbound/AI/NPC");
-		addFirstTalkId(BURON);
-		addStartNpc(BURON);
-		addTalkId(BURON);
+		bindFirstTalk(BURON);
+		bindStartNpc(BURON);
+		bindTalk(BURON);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		if ("Rumor".equalsIgnoreCase(event)) {
 			htmltext = "32345-" + HellboundEngine.getInstance().getLevel() + "r.htm";

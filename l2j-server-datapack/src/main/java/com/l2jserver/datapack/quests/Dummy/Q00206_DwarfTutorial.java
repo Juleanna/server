@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,11 +21,12 @@ package com.l2jserver.datapack.quests.Dummy;
 import com.l2jserver.gameserver.model.quest.Quest;
 
 /**
+ * Dwarf Tutorial (206)
  * @author Zealar
  * @since 2.6.0.0
  */
 public class Q00206_DwarfTutorial extends Quest {
 	public Q00206_DwarfTutorial() {
-		super(206, Q00206_DwarfTutorial.class.getSimpleName(), "Dwarf Tutorial");
+		super(206);
 	}
 }

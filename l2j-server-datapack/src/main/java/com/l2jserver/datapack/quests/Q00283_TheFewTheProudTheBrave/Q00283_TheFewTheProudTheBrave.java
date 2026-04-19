@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,13 +18,15 @@
  */
 package com.l2jserver.datapack.quests.Q00283_TheFewTheProudTheBrave;
 
-import com.l2jserver.datapack.quests.Q00261_CollectorsDream.Q00261_CollectorsDream;
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.QuestItemChanceHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
+import com.l2jserver.gameserver.network.NpcStringId;
 
 /**
  * The Few, The Proud, The Brave (283)
@@ -42,16 +44,18 @@ public final class Q00283_TheFewTheProudTheBrave extends Quest {
 	private static final int BONUS = 2187;
 	private static final int MIN_LVL = 15;
 	
+	private static final int GUIDE_MISSION = 41;
+	
 	public Q00283_TheFewTheProudTheBrave() {
-		super(283, Q00283_TheFewTheProudTheBrave.class.getSimpleName(), "The Few, The Proud, The Brave");
-		addKillId(CRIMSON_SPIDER);
-		addStartNpc(PERWAN);
-		addTalkId(PERWAN);
+		super(283);
+		bindKill(CRIMSON_SPIDER);
+		bindStartNpc(PERWAN);
+		bindTalk(PERWAN);
 		registerQuestItems(CRIMSON_SPIDER_CLAW.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -73,7 +77,26 @@ public final class Q00283_TheFewTheProudTheBrave extends Quest {
 					final long claws = st.getQuestItemsCount(CRIMSON_SPIDER_CLAW.getId());
 					st.giveAdena((claws * CLAW_PRICE) + ((claws >= 10) ? BONUS : 0), true);
 					st.takeItems(CRIMSON_SPIDER_CLAW.getId(), -1);
-					Q00261_CollectorsDream.giveNewbieReward(player);
+					
+					// Newbie Guide
+					final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+					if (newbieGuide != null) {
+						final var newbieGuideQs = newbieGuide.getQuestState(player, true);
+						if (!newbieGuideQs.haveNRMemo(player, GUIDE_MISSION)) {
+							newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+							newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, 100000);
+							
+							showOnScreenMsg(player, NpcStringId.LAST_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+						} else {
+							if (((newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) % 100000000) / 10000000) != 1) {
+								newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+								newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) + 10000000);
+								
+								showOnScreenMsg(player, NpcStringId.LAST_DUTY_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+							}
+						}
+					}
+					
 					htmltext = event;
 				} else {
 					htmltext = "32133-07.html";
@@ -90,12 +113,11 @@ public final class Q00283_TheFewTheProudTheBrave extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getRandomPartyMemberState(killer, -1, 3, npc);
 		if (st != null) {
 			giveItemRandomly(st.getPlayer(), npc, CRIMSON_SPIDER_CLAW, true);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

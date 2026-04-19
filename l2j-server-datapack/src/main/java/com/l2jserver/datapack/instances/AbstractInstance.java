@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -49,14 +49,6 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 public abstract class AbstractInstance extends AbstractNpcAI {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractInstance.class);
-	
-	public AbstractInstance(String name, String desc) {
-		super(name, desc);
-	}
-	
-	public AbstractInstance(String name) {
-		super(name, "instances");
-	}
 	
 	protected void enterInstance(L2PcInstance player, InstanceWorld instance, String template, int templateId) {
 		final InstanceWorld world = InstanceManager.getInstance().getPlayerWorld(player);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -61,18 +61,17 @@ public final class Amaskari extends AbstractNpcAI {
 	};
 	
 	public Amaskari() {
-		super(Amaskari.class.getSimpleName(), "hellbound/AI");
-		addKillId(AMASKARI, AMASKARI_PRISONER);
-		addAttackId(AMASKARI);
-		addSpawnId(AMASKARI_PRISONER);
+		bindKill(AMASKARI, AMASKARI_PRISONER);
+		bindAttack(AMASKARI);
+		bindSpawn(AMASKARI_PRISONER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("stop_toggle")) {
 			broadcastNpcSay(npc, Say2.NPC_ALL, AMASKARI_NPCSTRING_ID[2]);
 			((L2MonsterInstance) npc).clearAggroList();
-			((L2MonsterInstance) npc).getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
+			npc.getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
 			npc.setIsInvul(false);
 			// npc.doCast(INVINCIBILITY)
 		} else if (event.equalsIgnoreCase("onspawn_msg") && (npc != null) && !npc.isDead()) {
@@ -87,7 +86,7 @@ public final class Amaskari extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		if ((npc.getId() == AMASKARI) && (getRandom(1000) < 25)) {
 			broadcastNpcSay(npc, Say2.NPC_ALL, AMASKARI_NPCSTRING_ID[0]);
 			for (L2MonsterInstance minion : ((L2MonsterInstance) npc).getMinionList().getSpawnedMinions()) {
@@ -97,11 +96,10 @@ public final class Amaskari extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.getId() == AMASKARI_PRISONER) {
 			final L2MonsterInstance master = ((L2MonsterInstance) npc).getLeader();
 			if ((master != null) && !master.isDead()) {
@@ -135,12 +133,10 @@ public final class Amaskari extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("onspawn_msg", (getRandom(3) + 1) * 30000, npc, null);
-		return super.onSpawn(npc);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,14 +38,13 @@ public final class ZealotOfShilen extends AbstractNpcAI {
 	};
 	
 	public ZealotOfShilen() {
-		super(ZealotOfShilen.class.getSimpleName(), "gracia/AI/NPC");
-		addSpawnId(ZEALOT);
-		addSpawnId(GUARDS);
-		addFirstTalkId(GUARDS);
+		bindSpawn(ZEALOT);
+		bindSpawn(GUARDS);
+		bindFirstTalk(GUARDS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (npc == null) {
 			return null;
 		}
@@ -69,7 +68,7 @@ public final class ZealotOfShilen extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == ZEALOT) {
 			npc.setIsNoRndWalk(true);
 		} else {
@@ -77,6 +76,5 @@ public final class ZealotOfShilen extends AbstractNpcAI {
 			((L2Attackable) npc).setCanReturnToSpawnPoint(false);
 			startQuestTimer("WATCHING", 10000, npc, null, true);
 		}
-		return super.onSpawn(npc);
 	}
 }

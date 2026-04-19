@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,14 +41,13 @@ public class BlackJudge extends AbstractNpcAI {
 	// @formatter:on
 	
 	public BlackJudge() {
-		super(BlackJudge.class.getSimpleName(), "ai/npc");
-		addStartNpc(BLACK_JUDGE);
-		addTalkId(BLACK_JUDGE);
-		addFirstTalkId(BLACK_JUDGE);
+		bindStartNpc(BLACK_JUDGE);
+		bindTalk(BLACK_JUDGE);
+		bindFirstTalk(BLACK_JUDGE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		final int level = ((player.getExpertiseLevel() < 5) ? player.getExpertiseLevel() : 5);
 		switch (event) {

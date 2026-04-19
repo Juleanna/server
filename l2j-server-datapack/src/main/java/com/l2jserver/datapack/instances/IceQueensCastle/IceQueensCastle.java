@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,10 +27,10 @@ import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.QuestState;
-import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -63,16 +63,15 @@ public final class IceQueensCastle extends AbstractInstance {
 	private static final int MIN_LV = 82;
 	
 	public IceQueensCastle() {
-		super(IceQueensCastle.class.getSimpleName());
-		addStartNpc(JINIA);
-		addTalkId(JINIA);
-		addSeeCreatureId(BATTALION_LEADER, LEGIONNAIRE, MERCENARY_ARCHER);
-		addSpawnId(FREYA);
-		addSpellFinishedId(FREYA);
+		bindStartNpc(JINIA);
+		bindTalk(JINIA);
+		bindSeeCreature(BATTALION_LEADER, LEGIONNAIRE, MERCENARY_ARCHER);
+		bindSpawn(FREYA);
+		bindSpellFinished(FREYA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "ATTACK_KNIGHT": {
 				for (L2Character character : npc.getKnownList().getKnownCharacters()) {
@@ -119,11 +118,11 @@ public final class IceQueensCastle extends AbstractInstance {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (creature.isPlayer() && npc.isScriptValue(0)) {
 			for (L2Character character : npc.getKnownList().getKnownCharacters()) {
 				if ((character.getId() == ARCHERY_KNIGHT) && !character.isDead() && !((L2Attackable) character).isDecayed()) {
@@ -136,26 +135,22 @@ public final class IceQueensCastle extends AbstractInstance {
 			}
 			broadcastNpcSay(npc, Say2.NPC_ALL, NpcStringId.S1_MAY_THE_PROTECTION_OF_THE_GODS_BE_UPON_YOU, creature.getName());
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("TIMER_MOVING", 60000, npc, null);
 		startQuestTimer("TIMER_BLIZZARD", 180000, npc, null);
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
-		
+	public void onSpellFinished(NpcSkillFinished event) {
+		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(event.npc().getInstanceId());
 		if ((tmpworld != null) && (tmpworld instanceof IQCWorld world)) {
-			if ((skill == ETHERNAL_BLIZZARD.getSkill()) && (world.player != null)) {
-				startQuestTimer("TIMER_SCENE_21", 1000, npc, world.player);
+			if ((event.skill() == ETHERNAL_BLIZZARD.getSkill()) && (world.player != null)) {
+				startQuestTimer("TIMER_SCENE_21", 1000, event.npc(), world.player);
 			}
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -67,13 +67,12 @@ public class GiganticGolem extends AbstractNpcAI {
 	private static final Location DR_CHAOS_LOC = new Location(96320, -110912, -3328, 8191);
 	
 	public GiganticGolem() {
-		super(GiganticGolem.class.getSimpleName(), "ai/individual");
-		addFirstTalkId(DR_CHAOS);
-		addKillId(GIGANTIC_GOLEM);
-		addTeleportId(GIGANTIC_GOLEM);
-		addMoveFinishedId(GIGANTIC_BOOM_GOLEM);
-		addSpawnId(GIGANTIC_GOLEM, GIGANTIC_BOOM_GOLEM);
-		addAttackId(GIGANTIC_GOLEM, GIGANTIC_BOOM_GOLEM);
+		bindFirstTalk(DR_CHAOS);
+		bindKill(GIGANTIC_GOLEM);
+		bindTeleport(GIGANTIC_GOLEM);
+		bindMoveFinished(GIGANTIC_BOOM_GOLEM);
+		bindSpawn(GIGANTIC_GOLEM, GIGANTIC_BOOM_GOLEM);
+		bindAttack(GIGANTIC_GOLEM, GIGANTIC_BOOM_GOLEM);
 		
 		final long remain = GlobalVariablesManager.getInstance().getLong("GolemRespawn", 0) - System.currentTimeMillis();
 		if (remain > 0) {
@@ -84,7 +83,7 @@ public class GiganticGolem extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "ATTACK_MACHINE": {
 				for (L2Spawn spawn : SpawnTable.getInstance().getSpawns(STRANGE_MACHINE)) {
@@ -186,7 +185,7 @@ public class GiganticGolem extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
@@ -200,7 +199,7 @@ public class GiganticGolem extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.getId() == GIGANTIC_BOOM_GOLEM) {
 			npc.doCast(GOLEM_BOOM);
 		} else {
@@ -238,16 +237,14 @@ public class GiganticGolem extends AbstractNpcAI {
 				npc.teleToLocation(npc.getSpawn().getLocation());
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final long respawnTime = RESPAWN * 3600000;
 		GlobalVariablesManager.getInstance().set("GolemRespawn", System.currentTimeMillis() + respawnTime);
 		startQuestTimer("CLEAR_STATUS", respawnTime, null, null);
 		cancelQuestTimer("CHECK_ATTACK", npc, null);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -262,7 +259,7 @@ public class GiganticGolem extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == GIGANTIC_BOOM_GOLEM) {
 			npc.setIsRunning(true);
 			npc.scheduleDespawn(360000);
@@ -275,6 +272,5 @@ public class GiganticGolem extends AbstractNpcAI {
 			startQuestTimer("CHECK_ATTACK", 300000, npc, null);
 			broadcastNpcSay(npc, Say2.NPC_SHOUT, NpcStringId.BWAH_HA_HA_YOUR_DOOM_IS_AT_HAND_BEHOLD_THE_ULTRA_SECRET_SUPER_WEAPON);
 		}
-		return super.onSpawn(npc);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,14 +41,14 @@ public final class Q00189_ContractCompletion extends Quest {
 	private static final int MAX_LEVEL_FOR_EXP_SP = 48;
 	
 	public Q00189_ContractCompletion() {
-		super(189, Q00189_ContractCompletion.class.getSimpleName(), "Contract Completion");
-		addStartNpc(BLUEPRINT_SELLER_LUKA);
-		addTalkId(BLUEPRINT_SELLER_LUKA, HEAD_BLACKSMITH_KUSTO, RESEARCHER_LORAIN, SHEGFIELD);
+		super(189);
+		bindStartNpc(BLUEPRINT_SELLER_LUKA);
+		bindTalk(BLUEPRINT_SELLER_LUKA, HEAD_BLACKSMITH_KUSTO, RESEARCHER_LORAIN, SHEGFIELD);
 		registerQuestItems(SCROLL_OF_DECODING);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

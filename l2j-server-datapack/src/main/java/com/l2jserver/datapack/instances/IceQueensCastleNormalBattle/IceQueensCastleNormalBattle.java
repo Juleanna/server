@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,7 +18,7 @@
  */
 package com.l2jserver.datapack.instances.IceQueensCastleNormalBattle;
 
-import static com.l2jserver.gameserver.model.events.EventType.ON_PLAYER_LOGOUT;
+import static com.l2jserver.gameserver.model.events.EventType.PLAYER_LOGOUT;
 import static com.l2jserver.gameserver.model.events.ListenerRegisterType.GLOBAL;
 
 import java.util.ArrayList;
@@ -46,7 +46,8 @@ import com.l2jserver.gameserver.model.actor.instance.L2QuestGuardInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2RaidBossInstance;
 import com.l2jserver.gameserver.model.events.annotations.RegisterEvent;
 import com.l2jserver.gameserver.model.events.annotations.RegisterType;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogout;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLogout;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.QuestState;
@@ -171,18 +172,17 @@ public final class IceQueensCastleNormalBattle extends AbstractInstance {
 	private static final int DOOR_ID = 23140101;
 	
 	public IceQueensCastleNormalBattle() {
-		super(IceQueensCastleNormalBattle.class.getSimpleName());
-		addStartNpc(SIRRA, SUPP_KEGOR, SUPP_JINIA);
-		addFirstTalkId(SUPP_KEGOR, SUPP_JINIA);
-		addTalkId(SIRRA, JINIA, SUPP_KEGOR);
-		addAttackId(FREYA_THRONE, FREYA_STAND, FREYA_STAND_ULTIMATE, GLAKIAS, GLAKIAS_ULTIMATE, GLACIER, BREATH, KNIGHT, KNIGHT_ULTIMATE);
-		addKillId(GLAKIAS, GLAKIAS_ULTIMATE, FREYA_STAND, FREYA_STAND_ULTIMATE, KNIGHT, KNIGHT_ULTIMATE, GLACIER, BREATH);
-		addSpawnId(GLAKIAS, GLAKIAS_ULTIMATE, FREYA_STAND, FREYA_STAND_ULTIMATE, KNIGHT, KNIGHT_ULTIMATE, GLACIER, BREATH);
-		addSpellFinishedId(GLACIER, BREATH);
+		bindStartNpc(SIRRA, SUPP_KEGOR, SUPP_JINIA);
+		bindFirstTalk(SUPP_KEGOR, SUPP_JINIA);
+		bindTalk(SIRRA, JINIA, SUPP_KEGOR);
+		bindAttack(FREYA_THRONE, FREYA_STAND, FREYA_STAND_ULTIMATE, GLAKIAS, GLAKIAS_ULTIMATE, GLACIER, BREATH, KNIGHT, KNIGHT_ULTIMATE);
+		bindKill(GLAKIAS, GLAKIAS_ULTIMATE, FREYA_STAND, FREYA_STAND_ULTIMATE, KNIGHT, KNIGHT_ULTIMATE, GLACIER, BREATH);
+		bindSpawn(GLAKIAS, GLAKIAS_ULTIMATE, FREYA_STAND, FREYA_STAND_ULTIMATE, KNIGHT, KNIGHT_ULTIMATE, GLACIER, BREATH);
+		bindSpellFinished(GLACIER, BREATH);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equals("enter")) {
 			enterInstance(player, new IQCNBWorld(), "IceQueensCastleNormalBattle.xml", TEMPLATE_ID);
 		} else if (event.equals("enterUltimate")) {
@@ -625,13 +625,12 @@ public final class IceQueensCastleNormalBattle extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		((L2Attackable) npc).setOnKillDelay(0);
-		return super.onSpawn(npc);
 	}
 	
 	@Override
@@ -657,7 +656,7 @@ public final class IceQueensCastleNormalBattle extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		
 		if (tmpworld instanceof IQCNBWorld world) {
@@ -870,23 +869,23 @@ public final class IceQueensCastleNormalBattle extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
-		
+	public void onSpellFinished(NpcSkillFinished event) {
+		final var npc = event.npc();
+		final var skill = event.skill();
+		final var tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof IQCNBWorld world) {
 			switch (npc.getId()) {
 				case GLACIER: {
 					if (skill == COLD_MANAS_FRAGMENT.getSkill()) {
 						if (getRandom(100) < 75) {
 							final L2Attackable breath = (L2Attackable) addSpawn(BREATH, npc.getLocation(), false, 0, false, world.getInstanceId());
-							if (player != null) {
+							if (event.player() != null) {
 								breath.setIsRunning(true);
-								breath.addDamageHate(player, 0, 999);
-								breath.getAI().setIntention(CtrlIntention.AI_INTENTION_ATTACK, player);
+								breath.addDamageHate(event.player(), 0, 999);
+								breath.getAI().setIntention(CtrlIntention.AI_INTENTION_ATTACK, event.player());
 							} else {
 								manageRandomAttack(world, breath);
 							}
@@ -905,11 +904,10 @@ public final class IceQueensCastleNormalBattle extends AbstractInstance {
 				}
 			}
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		
 		if (tmpworld instanceof IQCNBWorld world) {
@@ -979,7 +977,6 @@ public final class IceQueensCastleNormalBattle extends AbstractInstance {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -1006,11 +1003,11 @@ public final class IceQueensCastleNormalBattle extends AbstractInstance {
 	}
 	
 	@RegisterType(GLOBAL)
-	@RegisterEvent(ON_PLAYER_LOGOUT)
-	public void onPlayerLogout(OnPlayerLogout event) {
-		final var instanceWorld = InstanceManager.getInstance().getWorld(event.getActiveChar().getInstanceId());
+	@RegisterEvent(PLAYER_LOGOUT)
+	public void onPlayerLogout(PlayerLogout event) {
+		final var instanceWorld = InstanceManager.getInstance().getWorld(event.player().getInstanceId());
 		if (instanceWorld instanceof IQCNBWorld world) {
-			world.playersInside.remove(event.getActiveChar());
+			world.playersInside.remove(event.player());
 		}
 	}
 	

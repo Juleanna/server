@@ -1,0 +1,23 @@
+[
+  { "npcId": 1539, "id": 539, "itemId": 20818, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1540, "id": 540, "itemId": 20820, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1541, "id": 541, "itemId": 20822, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1542, "id": 542, "itemId": 20824, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1543, "id": 543, "itemId": 20826, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1544, "id": 544, "itemId": 20828, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1545, "id": 545, "itemId": 20830, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1546, "id": 546, "itemId": 20832, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1547, "id": 547, "itemId": 20834, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1548, "id": 548, "itemId": 20836, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1549, "id": 549, "itemId": 20838, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1550, "id": 550, "itemId": 20840, "energy": 100000, "maxEnergy": 100000 },
+  { "npcId": 1576, "id": 576, "itemId": 20983, "energy": 1000, "maxEnergy": 1000 },
+  { "npcId": 1577, "id": 577, "itemId": 20984, "energy": 1000, "maxEnergy": 1000 },
+  { "npcId": 1578, "id": 578, "itemId": 20985, "energy": 1000, "maxEnergy": 1000 },
+  { "npcId": 1579, "id": 579, "itemId": 20986, "energy": 1000, "maxEnergy": 1000 },
+  { "npcId": 1580, "id": 580, "itemId": 20987, "energy": 1000, "maxEnergy": 1000 },
+  { "npcId": 1581, "id": 581, "itemId": 20988, "energy": 1000, "maxEnergy": 1000 },
+  { "npcId": 1582, "id": 582, "itemId": 20989, "energy": 1000, "maxEnergy": 1000 },
+  { "npcId": 1583, "id": 583, "itemId": 20990, "energy": 1000, "maxEnergy": 1000 },
+  { "npcId": 1584, "id": 584, "itemId": 20991, "energy": 1000, "maxEnergy": 1000 }
+]

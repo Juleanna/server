@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -115,7 +115,6 @@ import com.l2jserver.datapack.handlers.admincommandhandlers.AdminUnblockIp;
 import com.l2jserver.datapack.handlers.admincommandhandlers.AdminVitality;
 import com.l2jserver.datapack.handlers.admincommandhandlers.AdminZone;
 import com.l2jserver.datapack.handlers.bypasshandlers.Augment;
-import com.l2jserver.datapack.handlers.bypasshandlers.Buy;
 import com.l2jserver.datapack.handlers.bypasshandlers.BuyShadowItem;
 import com.l2jserver.datapack.handlers.bypasshandlers.ChatLink;
 import com.l2jserver.datapack.handlers.bypasshandlers.ClanWarehouse;
@@ -123,8 +122,11 @@ import com.l2jserver.datapack.handlers.bypasshandlers.EventEngine;
 import com.l2jserver.datapack.handlers.bypasshandlers.Festival;
 import com.l2jserver.datapack.handlers.bypasshandlers.Freight;
 import com.l2jserver.datapack.handlers.bypasshandlers.ItemAuctionLink;
+import com.l2jserver.datapack.handlers.bypasshandlers.LearnSkill;
 import com.l2jserver.datapack.handlers.bypasshandlers.Link;
 import com.l2jserver.datapack.handlers.bypasshandlers.Loto;
+import com.l2jserver.datapack.handlers.bypasshandlers.ManorMenuSelect;
+import com.l2jserver.datapack.handlers.bypasshandlers.MenuSelect;
 import com.l2jserver.datapack.handlers.bypasshandlers.Multisell;
 import com.l2jserver.datapack.handlers.bypasshandlers.NpcViewMod;
 import com.l2jserver.datapack.handlers.bypasshandlers.Observation;
@@ -132,14 +134,15 @@ import com.l2jserver.datapack.handlers.bypasshandlers.OlympiadManagerLink;
 import com.l2jserver.datapack.handlers.bypasshandlers.OlympiadObservation;
 import com.l2jserver.datapack.handlers.bypasshandlers.PlayerHelp;
 import com.l2jserver.datapack.handlers.bypasshandlers.PrivateWarehouse;
+import com.l2jserver.datapack.handlers.bypasshandlers.QuestAccept;
 import com.l2jserver.datapack.handlers.bypasshandlers.QuestLink;
-import com.l2jserver.datapack.handlers.bypasshandlers.QuestList;
 import com.l2jserver.datapack.handlers.bypasshandlers.ReceivePremium;
 import com.l2jserver.datapack.handlers.bypasshandlers.ReleaseAttribute;
 import com.l2jserver.datapack.handlers.bypasshandlers.RentPet;
-import com.l2jserver.datapack.handlers.bypasshandlers.SkillList;
 import com.l2jserver.datapack.handlers.bypasshandlers.SupportBlessing;
 import com.l2jserver.datapack.handlers.bypasshandlers.SupportMagic;
+import com.l2jserver.datapack.handlers.bypasshandlers.Teleport;
+import com.l2jserver.datapack.handlers.bypasshandlers.TeleportRequest;
 import com.l2jserver.datapack.handlers.bypasshandlers.TerritoryStatus;
 import com.l2jserver.datapack.handlers.bypasshandlers.TutorialClose;
 import com.l2jserver.datapack.handlers.bypasshandlers.VoiceCommand;
@@ -223,14 +226,16 @@ import com.l2jserver.datapack.handlers.usercommandhandlers.SiegeStatus;
 import com.l2jserver.datapack.handlers.usercommandhandlers.Time;
 import com.l2jserver.datapack.handlers.usercommandhandlers.Unstuck;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.AutoLoot;
-import com.l2jserver.datapack.handlers.voicedcommandhandlers.AutoPotion;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Banking;
+import com.l2jserver.datapack.handlers.voicedcommandhandlers.CastleHandler;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.ChangePassword;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.ChatAdmin;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Debug;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Lang;
-import com.l2jserver.datapack.handlers.voicedcommandhandlers.StatsVCmd;
+import com.l2jserver.datapack.handlers.voicedcommandhandlers.ClanHandler;
+import com.l2jserver.datapack.handlers.voicedcommandhandlers.StatsHandler;
 import com.l2jserver.datapack.handlers.voicedcommandhandlers.Wedding;
+import com.l2jserver.datapack.handlers.voicedcommandhandlers.XpHandler;
 import com.l2jserver.gameserver.handler.ActionHandler;
 import com.l2jserver.gameserver.handler.ActionShiftHandler;
 import com.l2jserver.gameserver.handler.AdminCommandHandler;
@@ -352,7 +357,6 @@ public class MasterHandler {
 	
 	private static final Class<?>[] BYPASS_HANDLERS = {
 		Augment.class,
-		Buy.class,
 		BuyShadowItem.class,
 		ChatLink.class,
 		ClanWarehouse.class,
@@ -360,24 +364,27 @@ public class MasterHandler {
 		Festival.class,
 		Freight.class,
 		ItemAuctionLink.class,
+		LearnSkill.class,
 		Link.class,
 		Loto.class,
+		ManorMenuSelect.class,
+		MenuSelect.class,
 		Multisell.class,
 		NpcViewMod.class,
 		Observation.class,
 		OlympiadObservation.class,
 		OlympiadManagerLink.class,
-		QuestLink.class,
 		PlayerHelp.class,
 		PrivateWarehouse.class,
-		QuestList.class,
+		QuestAccept.class,
+		QuestLink.class,
 		ReceivePremium.class,
 		ReleaseAttribute.class,
 		RentPet.class,
-		
-		SkillList.class,
 		SupportBlessing.class,
 		SupportMagic.class,
+		Teleport.class,
+		TeleportRequest.class,
 		TerritoryStatus.class,
 		TutorialClose.class,
 		VoiceCommand.class,
@@ -481,25 +488,21 @@ public class MasterHandler {
 	};
 	
 	private static final Class<?>[] VOICED_COMMAND_HANDLERS = {
-		AutoLoot.class,
-		StatsVCmd.class,
-		
-		// TODO: Add configuration options for this voiced commands:
-		// CastleVCmd.class,
-		// SetVCmd.class,
+		(customs().autoLootVoiceCommand() ? AutoLoot.class : null),
+		(customs().allowStatHandler() ? StatsHandler.class : null),
 		(customs().allowWedding() ? Wedding.class : null),
 		(customs().bankingEnabled() ? Banking.class : null),
 		(customs().chatAdmin() ? ChatAdmin.class : null),
-		(customs().multiLangEnable() && customs().multiLangVoiceCommand() ? Lang.class : null),
-		(customs().debugVoiceCommand() ? Debug.class : null),
+		(customs().multiLangEnable() && customs().multiLangHandler() ? Lang.class : null),
+		(customs().debugHandler() ? Debug.class : null),
 		(customs().allowChangePassword() ? ChangePassword.class : null),
-		(customs().AutoPotionsEnabled() ? AutoPotion.class : null),
-
+		(customs().allowCastleHandler() ? CastleHandler.class : null),
+		(customs().allowClanHandler() ? ClanHandler.class : null),
+		(customs().allowXpHandler() ? XpHandler.class : null),
 	};
 	
 	// TODO(Zoey76): Add this handler.
-	// private static final Class<?>[] CUSTOM_HANDLERS =
-	// {
+	// private static final Class<?>[] CUSTOM_HANDLERS = {
 	// CustomAnnouncePkPvP.class
 	// };
 	
@@ -523,7 +526,7 @@ public class MasterHandler {
 	}
 	
 	private static void loadHandlers(IHandler<?, ?> handler, Class<?>[] classes) {
-		for (Class<?> c : classes) {
+		for (var c : classes) {
 			if (c == null) {
 				continue;
 			}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -60,15 +60,15 @@ public final class Q00045_ToTalkingIsland extends Quest {
 	}
 	
 	public Q00045_ToTalkingIsland() {
-		super(45, Q00045_ToTalkingIsland.class.getSimpleName(), "To Talking Island");
-		addStartNpc(GALLADUCCI);
-		addTalkId(GALLADUCCI);
-		addTalkId(NPC_ITEMS.keySet());
+		super(45);
+		bindStartNpc(GALLADUCCI);
+		bindTalk(GALLADUCCI);
+		bindTalk(NPC_ITEMS.keySet());
 		registerQuestItems(GALLADUCCIS_ORDER_1, GALLADUCCIS_ORDER_2, GALLADUCCIS_ORDER_3, PURIFIED_MAGIC_NECKLACE, GEMSTONE_POWDER, MAGIC_SWORD_HILT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {

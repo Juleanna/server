@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -57,16 +57,14 @@ public final class IsleOfPrayer extends AbstractNpcAI {
 	}
 	
 	public IsleOfPrayer() {
-		super(IsleOfPrayer.class.getSimpleName(), "ai/group_template");
-		addKillId(MONSTERS.keySet());
+		bindKill(MONSTERS.keySet());
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final ItemChanceHolder holder = MONSTERS.get(npc.getId());
 		if (getRandom(10000) <= holder.getChance()) {
 			npc.dropItem(killer, holder);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

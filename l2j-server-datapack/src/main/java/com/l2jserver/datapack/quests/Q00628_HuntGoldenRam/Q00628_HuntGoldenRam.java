@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -58,16 +58,16 @@ public final class Q00628_HuntGoldenRam extends Quest {
 		.build();
 	
 	public Q00628_HuntGoldenRam() {
-		super(628, Q00628_HuntGoldenRam.class.getSimpleName(), "Hunt of the Golden Ram Mercenary Force");
-		addStartNpc(KAHMAN);
-		addTalkId(KAHMAN);
-		addKillId(SPLINTER_DROPLIST.getNpcIds());
-		addKillId(NEEDLE_DROPLIST.getNpcIds());
+		super(628);
+		bindStartNpc(KAHMAN);
+		bindTalk(KAHMAN);
+		bindKill(SPLINTER_DROPLIST.getNpcIds());
+		bindKill(NEEDLE_DROPLIST.getNpcIds());
 		registerQuestItems(SPLINTER_STAKATO_CHITIN.getId(), NEEDLE_STAKATO_CHITIN.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -118,7 +118,7 @@ public final class Q00628_HuntGoldenRam extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 1, npc);
 		if ((qs != null) && !qs.isCond(3)) {
 			if (qs.getCond() >= 1) {
@@ -128,7 +128,6 @@ public final class Q00628_HuntGoldenRam extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

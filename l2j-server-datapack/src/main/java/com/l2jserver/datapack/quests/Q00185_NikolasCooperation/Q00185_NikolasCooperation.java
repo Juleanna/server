@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,14 +46,14 @@ public final class Q00185_NikolasCooperation extends Quest {
 	private static final int MAX_LEVEL_FOR_EXP_SP = 46;
 	
 	public Q00185_NikolasCooperation() {
-		super(185, Q00185_NikolasCooperation.class.getSimpleName(), "Nikola's Cooperation");
-		addStartNpc(MAESTRO_NIKOLA);
-		addTalkId(MAESTRO_NIKOLA, RESEARCHER_LORAIN, DESTROYED_DEVICE);
+		super(185);
+		bindStartNpc(MAESTRO_NIKOLA);
+		bindTalk(MAESTRO_NIKOLA, RESEARCHER_LORAIN, DESTROYED_DEVICE);
 		registerQuestItems(METALLOGRAPH, BROKEN_METAL_PIECES, NIKOLAS_MAP);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -80,10 +80,10 @@ public class Q00512_BladeUnderFoot extends Quest {
 	}
 	
 	public Q00512_BladeUnderFoot() {
-		super(512, Q00512_BladeUnderFoot.class.getSimpleName(), "Blade Under Foot");
-		addStartNpc(WARDEN);
-		addTalkId(WARDEN);
-		addKillId(RAID_BOSSES.keySet());
+		super(512);
+		bindStartNpc(WARDEN);
+		bindTalk(WARDEN);
+		bindKill(RAID_BOSSES.keySet());
 		registerQuestItems(FRAGMENT_OF_THE_DUNGEON_LEADER_MARK);
 	}
 	
@@ -104,7 +104,7 @@ public class Q00512_BladeUnderFoot extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -141,7 +141,7 @@ public class Q00512_BladeUnderFoot extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if (st != null) {
 			if (player.getParty() != null) {
@@ -151,7 +151,6 @@ public class Q00512_BladeUnderFoot extends Quest {
 				st.playSound(Sound.ITEMSOUND_QUEST_MIDDLE);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

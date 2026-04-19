@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,14 +39,13 @@ public class Rignos extends AbstractNpcAI {
 	private static final int MIN_LV = 78;
 	
 	public Rignos() {
-		super(Rignos.class.getSimpleName(), "ai/npc");
-		addStartNpc(RIGNOS);
-		addTalkId(RIGNOS);
-		addFirstTalkId(RIGNOS);
+		bindStartNpc(RIGNOS);
+		bindTalk(RIGNOS);
+		bindFirstTalk(RIGNOS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "32349-03.html": {
 				return event;
@@ -78,7 +77,7 @@ public class Rignos extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override

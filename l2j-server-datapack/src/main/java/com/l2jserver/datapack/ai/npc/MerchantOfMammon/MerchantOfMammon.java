@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -35,17 +35,16 @@ public final class MerchantOfMammon extends AbstractNpcAI {
 	private static final int MERCHANT_MAMMON = 31113;
 	
 	public MerchantOfMammon() {
-		super(MerchantOfMammon.class.getSimpleName(), "ai/npc");
-		addStartNpc(MERCHANT_MAMMON);
-		addFirstTalkId(MERCHANT_MAMMON);
+		bindStartNpc(MERCHANT_MAMMON);
+		bindFirstTalk(MERCHANT_MAMMON);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.endsWith(".htm")) {
 			return "merchant_of_mammon" + event;
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override

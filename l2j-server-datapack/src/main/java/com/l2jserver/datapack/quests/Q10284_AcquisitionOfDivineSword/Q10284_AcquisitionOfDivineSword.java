@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,14 +46,14 @@ public final class Q10284_AcquisitionOfDivineSword extends Quest {
 	private static final Location EXIT_LOC = new Location(113793, -109342, -845, 0);
 	
 	public Q10284_AcquisitionOfDivineSword() {
-		super(10284, Q10284_AcquisitionOfDivineSword.class.getSimpleName(), "Acquisition of Divine Sword");
-		addStartNpc(RAFFORTY);
-		addTalkId(RAFFORTY, JINIA, TARUN, KRUN);
+		super(10284);
+		bindStartNpc(RAFFORTY);
+		bindTalk(RAFFORTY, JINIA, TARUN, KRUN);
 		registerQuestItems(COLD_RESISTANCE_POTION);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,15 +41,15 @@ public class Q00338_AlligatorHunter extends Quest {
 	private static final int SECOND_CHANCE = 19;
 	
 	public Q00338_AlligatorHunter() {
-		super(338, Q00338_AlligatorHunter.class.getSimpleName(), "Alligator Hunter");
-		addStartNpc(ENVERUN);
-		addTalkId(ENVERUN);
-		addKillId(ALLIGATOR);
+		super(338);
+		bindStartNpc(ENVERUN);
+		bindTalk(ENVERUN);
+		bindKill(ALLIGATOR);
 		registerQuestItems(ALLIGATOR_LEATHER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -84,7 +84,7 @@ public class Q00338_AlligatorHunter extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if (st != null) {
 			st.giveItems(ALLIGATOR_LEATHER, 1);
@@ -93,7 +93,6 @@ public class Q00338_AlligatorHunter extends Quest {
 			}
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -146,8 +146,7 @@ public class MC_Show extends AbstractNpcAI {
 	private static final Map<String, WalkInfo> WALKS = new HashMap<>();
 	
 	public MC_Show() {
-		super(MC_Show.class.getSimpleName(), "ai/fantasy_isle");
-		addSpawnId(32433, 32431, 32432, 32442, 32443, 32444, 32445, 32446, 32424, 32425, 32426, 32427, 32428);
+		bindSpawn(32433, 32431, 32432, 32442, 32443, 32444, 32445, 32446, 32424, 32425, 32426, 32427, 32428);
 		load();
 		scheduleTimer();
 	}
@@ -293,7 +292,7 @@ public class MC_Show extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (IS_STARTED) {
 			switch (npc.getId()) {
 				case 32433:
@@ -327,11 +326,10 @@ public class MC_Show extends AbstractNpcAI {
 					break;
 			}
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((event == null) || event.isEmpty()) {
 			LOG.warn("Null/Empty event for npc {} and player {}!", npc, player);
 			return null;

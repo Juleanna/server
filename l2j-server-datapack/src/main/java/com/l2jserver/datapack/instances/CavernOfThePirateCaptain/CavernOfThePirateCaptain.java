@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -148,11 +148,10 @@ public final class CavernOfThePirateCaptain extends AbstractInstance {
 	//@formatter:on
 	
 	public CavernOfThePirateCaptain() {
-		super(CavernOfThePirateCaptain.class.getSimpleName());
-		addStartNpc(PATHFINDER);
-		addTalkId(PATHFINDER);
-		addKillId(ZAKEN_60, ZAKEN_83);
-		addFirstTalkId(CANDLE);
+		bindStartNpc(PATHFINDER);
+		bindTalk(PATHFINDER);
+		bindKill(ZAKEN_60, ZAKEN_83);
+		bindFirstTalk(CANDLE);
 	}
 	
 	@Override
@@ -249,7 +248,7 @@ public final class CavernOfThePirateCaptain extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equals("enter60")) {
 			enterInstance(player, new CavernOfThePirateCaptainWorld(), "CavernOfThePirateCaptainWorldDay60.xml", TEMPLATE_ID_60);
 		} else if (event.equals("enter83")) {
@@ -307,13 +306,12 @@ public final class CavernOfThePirateCaptain extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
-		
 		if ((tmpworld != null) && (tmpworld instanceof CavernOfThePirateCaptainWorld world)) {
 			if (npc.getId() == ZAKEN_83) {
 				for (L2PcInstance playersInside : world.playersInside) {
@@ -340,7 +338,6 @@ public final class CavernOfThePirateCaptain extends AbstractInstance {
 			}
 			finishInstance(world);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -72,12 +72,12 @@ public class TerritoryWarSuperClass extends Quest {
 	public int RANDOM_MIN;
 	public int RANDOM_MAX;
 	
-	public TerritoryWarSuperClass(int questId, String name, String descr) {
-		super(questId, name, descr);
+	public TerritoryWarSuperClass(int questId) {
+		super(questId);
 		
 		if (questId < 0) {
 			// Outpost and Ward handled by the Super Class script
-			addSkillSeeId(36590);
+			bindSkillSee(36590);
 			
 			// Calculate next TW date
 			final Calendar cal = Calendar.getInstance();
@@ -171,7 +171,7 @@ public class TerritoryWarSuperClass extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
 		if ((npc.getCurrentHp() == npc.getMaxHp()) && Util.contains(NPC_IDS, npc.getId())) {
 			int territoryId = getTerritoryIdForThisNPCId(npc.getId());
 			if ((territoryId >= 81) && (territoryId <= 89)) {
@@ -189,13 +189,12 @@ public class TerritoryWarSuperClass extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, player, damage, isSummon);
 	}
 	
 	@Override
-	public String onDeath(L2Character killer, L2Character victim, QuestState qs) {
+	public void onDeath(L2Character killer, L2Character victim, QuestState qs) {
 		if ((killer == victim) || !(victim instanceof L2PcInstance) || (victim.getLevel() < 61)) {
-			return "";
+			return;
 		}
 		L2PcInstance actingPlayer = killer.getActingPlayer();
 		if ((actingPlayer != null) && (qs.getPlayer() != null)) {
@@ -217,11 +216,10 @@ public class TerritoryWarSuperClass extends Quest {
 			}
 			TerritoryWarManager.getInstance().giveTWPoint(actingPlayer, qs.getPlayer().getSiegeSide(), 1);
 		}
-		return "";
 	}
 	
 	@Override
-	public String onEnterWorld(L2PcInstance player) {
+	public void onEnterWorld(L2PcInstance player) {
 		int territoryId = TerritoryWarManager.getInstance().getRegisteredTerritoryId(player);
 		if (territoryId > 0) {
 			// register Territory Quest
@@ -247,11 +245,10 @@ public class TerritoryWarSuperClass extends Quest {
 				}
 			}
 		}
-		return null;
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		TerritoryWarManager manager = TerritoryWarManager.getInstance();
 		if (npc.getId() == CATAPULT_ID) {
 			manager.territoryCatapultDestroyed(TERRITORY_ID - 80);
@@ -265,25 +262,24 @@ public class TerritoryWarSuperClass extends Quest {
 		if ((killer.getSiegeSide() != TERRITORY_ID) && (TerritoryWarManager.getInstance().getTerritory(killer.getSiegeSide() - 80) != null)) {
 			manager.getTerritory(killer.getSiegeSide() - 80).getQuestDone()[0]++;
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if (targets.contains(npc)) {
 			if (skill.getId() == 845) {
 				if (TerritoryWarManager.getInstance().getHQForClan(caster.getClan()) != npc) {
-					return super.onSkillSee(npc, caster, skill, targets, isSummon);
+					return;
 				}
 				npc.deleteMe();
 				TerritoryWarManager.getInstance().setHQForClan(caster.getClan(), null);
 			} else if (skill.getId() == 847) {
 				if (TerritoryWarManager.getInstance().getHQForTerritory(caster.getSiegeSide()) != npc) {
-					return super.onSkillSee(npc, caster, skill, targets, isSummon);
+					return;
 				}
 				TerritoryWard ward = TerritoryWarManager.getInstance().getTerritoryWard(caster);
 				if (ward == null) {
-					return super.onSkillSee(npc, caster, skill, targets, isSummon);
+					return;
 				}
 				if ((caster.getSiegeSide() - 80) == ward.getOwnerCastleId()) {
 					for (TerritoryNPCSpawn wardSpawn : TerritoryWarManager.getInstance().getTerritory(ward.getOwnerCastleId()).getOwnedWard()) {
@@ -301,17 +297,16 @@ public class TerritoryWarSuperClass extends Quest {
 				}
 			}
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	// Used to register NPCs "For the Sake of the Territory ..." quests
 	public void registerKillIds() {
-		addKillId(CATAPULT_ID);
+		bindKill(CATAPULT_ID);
 		for (int mobid : LEADER_IDS) {
-			addKillId(mobid);
+			bindKill(mobid);
 		}
 		for (int mobid : GUARD_IDS) {
-			addKillId(mobid);
+			bindKill(mobid);
 		}
 	}
 	
@@ -419,7 +414,7 @@ public class TerritoryWarSuperClass extends Quest {
 	
 	public static void main(String[] args) {
 		// initialize superclass
-		new TerritoryWarSuperClass(-1, TerritoryWarSuperClass.class.getSimpleName(), "Territory War Superclass");
+		new TerritoryWarSuperClass(-1);
 		
 		// initialize subclasses
 		// "For The Sake" quests

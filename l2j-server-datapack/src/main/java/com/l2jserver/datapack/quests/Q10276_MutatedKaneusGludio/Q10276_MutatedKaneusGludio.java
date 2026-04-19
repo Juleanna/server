@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,15 +44,15 @@ public class Q10276_MutatedKaneusGludio extends Quest {
 	private static final int TISSUE_OA = 13831;
 	
 	public Q10276_MutatedKaneusGludio() {
-		super(10276, Q10276_MutatedKaneusGludio.class.getSimpleName(), "Mutated Kaneus - Gludio");
-		addStartNpc(BATHIS);
-		addTalkId(BATHIS, ROHMER);
-		addKillId(TOMLAN_KAMOS, OL_ARIOSH);
+		super(10276);
+		bindStartNpc(BATHIS);
+		bindTalk(BATHIS, ROHMER);
+		bindKill(TOMLAN_KAMOS, OL_ARIOSH);
 		registerQuestItems(TISSUE_TK, TISSUE_OA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -71,10 +71,10 @@ public class Q10276_MutatedKaneusGludio extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		QuestState st = getQuestState(killer, false);
 		if (st == null) {
-			return null;
+			return;
 		}
 		
 		final int npcId = npc.getId();
@@ -93,7 +93,6 @@ public class Q10276_MutatedKaneusGludio extends Quest {
 		} else if (st.isStarted()) {
 			rewardItem(npcId, st);
 		}
-		return null;
 	}
 	
 	@Override

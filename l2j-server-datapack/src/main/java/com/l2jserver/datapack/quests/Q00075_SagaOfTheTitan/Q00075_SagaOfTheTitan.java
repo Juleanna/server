@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class Q00075_SagaOfTheTitan extends AbstractSagaQuest {
 	public Q00075_SagaOfTheTitan() {
-		super(75, Q00075_SagaOfTheTitan.class.getSimpleName(), "Saga of the Titan");
+		super(75);
 		_npc = new int[] {
 			31327,
 			31624,

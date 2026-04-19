@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -34,14 +34,13 @@ public final class Jude extends AbstractNpcAI {
 	private static final int RING_OF_WIND_MASTERY = 9677;
 	
 	public Jude() {
-		super(Jude.class.getSimpleName(), "hellbound/AI/NPC");
-		addFirstTalkId(JUDE);
-		addStartNpc(JUDE);
-		addTalkId(JUDE);
+		bindFirstTalk(JUDE);
+		bindStartNpc(JUDE);
+		bindTalk(JUDE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ("TreasureSacks".equalsIgnoreCase(event)) {
 			if (HellboundEngine.getInstance().getLevel() == 3) {
 				if (getQuestItemsCount(player, NATIVE_TREASURE) >= 40) {
@@ -52,7 +51,7 @@ public final class Jude extends AbstractNpcAI {
 			}
 			return "32356-02a.htm";
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override

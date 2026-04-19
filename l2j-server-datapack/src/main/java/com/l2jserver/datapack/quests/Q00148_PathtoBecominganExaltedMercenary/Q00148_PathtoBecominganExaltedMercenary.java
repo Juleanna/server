@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -48,13 +48,13 @@ public class Q00148_PathtoBecominganExaltedMercenary extends Quest {
 	private static final int TOP_ELITE_CERTIFICATE = 13768;
 	
 	public Q00148_PathtoBecominganExaltedMercenary() {
-		super(148, Q00148_PathtoBecominganExaltedMercenary.class.getSimpleName(), "Path to Becoming an Exalted Mercenary");
-		addStartNpc(MERC);
-		addTalkId(MERC);
+		super(148);
+		bindStartNpc(MERC);
+		bindTalk(MERC);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -35,9 +35,9 @@ public class Q00646_SignsOfRevolt extends Quest {
 	private static final int MIN_LEVEL = 80;
 	
 	public Q00646_SignsOfRevolt() {
-		super(646, Q00646_SignsOfRevolt.class.getSimpleName(), "Signs of Revolt");
-		addStartNpc(TORRANT);
-		addTalkId(TORRANT);
+		super(646);
+		bindStartNpc(TORRANT);
+		bindTalk(TORRANT);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,7 +26,7 @@ import com.l2jserver.gameserver.network.NpcStringId;
  */
 public final class Q00737_DenyBlessings extends TerritoryWarSuperClass {
 	public Q00737_DenyBlessings() {
-		super(737, Q00737_DenyBlessings.class.getSimpleName(), "Deny Blessings");
+		super(737);
 		CLASS_IDS = new int[] {
 			43,
 			112,

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,13 +46,13 @@ public class Q00247_PossessorOfAPreciousSoul4 extends Quest {
 	private static final SkillHolder MIMIRS_ELIXIR = new SkillHolder(4339);
 	
 	public Q00247_PossessorOfAPreciousSoul4() {
-		super(247, Q00247_PossessorOfAPreciousSoul4.class.getSimpleName(), "Possessor Of A Precious Soul 4");
-		addStartNpc(CARADINE);
-		addTalkId(CARADINE, LADY_OF_LAKE);
+		super(247);
+		bindStartNpc(CARADINE);
+		bindTalk(CARADINE, LADY_OF_LAKE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,22 +51,22 @@ public final class Q00198_SevenSignsEmbryo extends Quest {
 	private static final SkillHolder NPC_HEAL = new SkillHolder(4065, 8);
 	
 	public Q00198_SevenSignsEmbryo() {
-		super(198, Q00198_SevenSignsEmbryo.class.getSimpleName(), "Seven Signs, Embryo");
-		addStartNpc(WOOD);
-		addTalkId(WOOD, FRANZ);
-		addKillId(SHILENS_EVIL_THOUGHTS);
+		super(198);
+		bindStartNpc(WOOD);
+		bindTalk(WOOD, FRANZ);
+		bindKill(SHILENS_EVIL_THOUGHTS);
 		registerQuestItems(SCULPTURE_OF_DOUBT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((npc.getId() == SHILENS_EVIL_THOUGHTS) && "despawn".equals(event)) {
 			if (!npc.isDead()) {
 				isBusy = false;
 				npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getId(), NpcStringId.NEXT_TIME_YOU_WILL_NOT_ESCAPE));
 				npc.deleteMe();
 			}
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState st = getQuestState(player, false);
@@ -142,10 +142,10 @@ public final class Q00198_SevenSignsEmbryo extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
 		if (partyMember == null) {
-			return null;
+			return;
 		}
 		
 		final QuestState st = getQuestState(partyMember, false);
@@ -160,7 +160,6 @@ public final class Q00198_SevenSignsEmbryo extends Quest {
 		npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getId(), NpcStringId.S1_YOU_MAY_HAVE_WON_THIS_TIME_BUT_NEXT_TIME_I_WILL_SURELY_CAPTURE_YOU).addStringParameter(partyMember.getName()));
 		npc.deleteMe();
 		partyMember.showQuestMovie(14);
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,8 +36,7 @@ public final class Sirra extends AbstractNpcAI {
 	private static final int FREYA_HARD_INSTID = 144;
 	
 	public Sirra() {
-		super(Sirra.class.getSimpleName(), "ai/npc");
-		addFirstTalkId(SIRRA);
+		bindFirstTalk(SIRRA);
 	}
 	
 	@Override

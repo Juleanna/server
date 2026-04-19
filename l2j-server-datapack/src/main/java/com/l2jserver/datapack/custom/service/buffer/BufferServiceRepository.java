@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2022 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -112,7 +112,7 @@ public final class BufferServiceRepository {
 	}
 	
 	private Map<Integer, UniqueBufflist> getPlayersULists(int playerObjectId) {
-		return uniqueBufflists.computeIfAbsent(playerObjectId, k -> new LinkedHashMap<>());
+		return uniqueBufflists.computeIfAbsent(playerObjectId, _ -> new LinkedHashMap<>());
 	}
 	
 	private UniqueBufflist getPlayersUList(int playerObjectId, String ulistName) {

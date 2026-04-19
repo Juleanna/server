@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,7 +26,7 @@ import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerSummonTalk;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerSummonTalk;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.PetStatusShow;
@@ -46,7 +46,7 @@ public class L2SummonAction implements IActionHandler {
 			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 			
 			// Notify to scripts
-			EventDispatcher.getInstance().notifyEventAsync(new OnPlayerSummonTalk((L2Summon) target), (L2Summon) target);
+			EventDispatcher.getInstance().notifyEventAsync(new PlayerSummonTalk((L2Summon) target), (L2Summon) target);
 		} else if (activeChar.getTarget() != target) {
 			activeChar.setTarget(target);
 		} else if (interact) {

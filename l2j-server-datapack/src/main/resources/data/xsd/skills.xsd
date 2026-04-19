@@ -349,6 +349,7 @@
 				<xs:attribute type="xs:string" name="ride" />
 				<xs:attribute type="xs:string" name="wyvern" />
 				<xs:attribute type="xs:string" name="shieldDefensePercent" />
+				<xs:attribute type="xs:string" name="step" />
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
@@ -587,6 +588,7 @@
 					<xs:enumeration value="InstantDispelByName" />
 					<xs:enumeration value="InstantDispelBySlotMyself" />
 					<xs:enumeration value="InstantEnchantArmor" />
+					<xs:enumeration value="InstantHealLink" />
 					<xs:enumeration value="InstantHpByLevelSelf" />
 					<xs:enumeration value="InstantMagicalAttackOverHit" />
 					<xs:enumeration value="InstantMpByLevelSelf" />

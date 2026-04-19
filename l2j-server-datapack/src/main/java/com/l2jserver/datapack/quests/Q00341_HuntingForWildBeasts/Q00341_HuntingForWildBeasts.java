@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,15 +51,15 @@ public class Q00341_HuntingForWildBeasts extends Quest {
 	private static final int REQUIRED_COUNT = 20;
 	
 	public Q00341_HuntingForWildBeasts() {
-		super(341, Q00341_HuntingForWildBeasts.class.getSimpleName(), "Hunting for Wild Beasts");
-		addStartNpc(PANO);
-		addTalkId(PANO);
-		addKillId(MONSTERS.keySet());
+		super(341);
+		bindStartNpc(PANO);
+		bindTalk(PANO);
+		bindKill(MONSTERS.keySet());
 		registerQuestItems(BEAR_SKIN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -102,7 +102,7 @@ public class Q00341_HuntingForWildBeasts extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && st.isCond(1)) {
 			long skins = st.getQuestItemsCount(BEAR_SKIN);
@@ -117,6 +117,5 @@ public class Q00341_HuntingForWildBeasts extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isPet);
 	}
 }

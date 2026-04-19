@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -48,10 +48,9 @@ public final class Anais extends AbstractNpcAI {
 	private int _pot = 0;
 	
 	public Anais() {
-		super(Anais.class.getSimpleName(), "ai/individual");
-		addAttackId(ANAIS);
-		addSpawnId(DIVINE_BURNER);
-		addKillId(GRAIL_WARD);
+		bindAttack(ANAIS);
+		bindSpawn(DIVINE_BURNER);
+		bindKill(GRAIL_WARD);
 	}
 	
 	private void burnerOnAttack(int pot, L2Npc anais) {
@@ -71,7 +70,7 @@ public final class Anais extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "CHECK": {
 				if (!npc.isAttackingNow()) {
@@ -122,11 +121,11 @@ public final class Anais extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (_pot == 0) {
 			burnerOnAttack(0, npc);
 		} else if ((npc.getCurrentHp() <= (npc.getMaxRecoverableHp() * 0.75)) && (_pot == 1)) {
@@ -136,17 +135,15 @@ public final class Anais extends AbstractNpcAI {
 		} else if ((npc.getCurrentHp() <= (npc.getMaxRecoverableHp() * 0.25)) && (_pot == 3)) {
 			burnerOnAttack(3, npc);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		_divineBurners.add(npc);
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		npc.doCast(DIVINE_NOVA.getSkill());
 		cancelQuestTimer("GUARD_ATTACK", npc, _nextTarget);
 		cancelQuestTimer("CHECK", npc, null);
@@ -155,6 +152,5 @@ public final class Anais extends AbstractNpcAI {
 			_current.setIsRunning(false);
 			_current = null;
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,13 +46,13 @@ public class Q00143_FallenAngelRequestOfDusk extends Quest {
 	private boolean isAngelSpawned = false;
 	
 	public Q00143_FallenAngelRequestOfDusk() {
-		super(143, Q00143_FallenAngelRequestOfDusk.class.getSimpleName(), "Fallen Angel - Request of Dusk");
-		addTalkId(NATOOLS, TOBIAS, CASIAN, ROCK, ANGEL);
+		super(143);
+		bindTalk(NATOOLS, TOBIAS, CASIAN, ROCK, ANGEL);
 		registerQuestItems(SEALED_PROPHECY_PATH_OF_THE_GOD, PROPHECY_PATH_OF_THE_GOD, EMPTY_SOUND_CRYSTAL, ANGEL_MEDICINE, ANGELS_MESSAGE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

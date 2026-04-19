@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,6 +41,8 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
@@ -98,12 +100,11 @@ public final class Beleth extends AbstractNpcAI {
 	private final List<L2Npc> _minions = new CopyOnWriteArrayList<>();
 	
 	public Beleth() {
-		super(Beleth.class.getSimpleName(), "ai/individual");
-		addEnterZoneId(ZONE.getId());
+		bindEnterZone(ZONE.getId());
 		registerMobs(REAL_BELETH, FAKE_BELETH);
-		addStartNpc(STONE_COFFIN);
-		addTalkId(STONE_COFFIN);
-		addFirstTalkId(ELF);
+		bindStartNpc(STONE_COFFIN);
+		bindTalk(STONE_COFFIN);
+		bindFirstTalk(ELF);
 		StatsSet info = GrandBossManager.getInstance().getStatsSet(REAL_BELETH);
 		int status = GrandBossManager.getInstance().getBossStatus(REAL_BELETH);
 		if (status == DEAD) {
@@ -120,7 +121,7 @@ public final class Beleth extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "BELETH_UNLOCK": {
 				GrandBossManager.getInstance().setBossStatus(REAL_BELETH, ALIVE);
@@ -508,11 +509,11 @@ public final class Beleth extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onEnterZone(L2Character character, L2ZoneType zone) {
+	public void onEnterZone(L2Character character, L2ZoneType zone) {
 		if (character.isPlayer() && (GrandBossManager.getInstance().getBossStatus(REAL_BELETH) == INIT)) {
 			if (_priest != null) {
 				_priest.deleteMe();
@@ -524,39 +525,36 @@ public final class Beleth extends AbstractNpcAI {
 			GrandBossManager.getInstance().setBossStatus(REAL_BELETH, FIGHT);
 			startQuestTimer("SPAWN1", 300000, null, null);
 		}
-		
-		return super.onEnterZone(character, zone);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if (!npc.isDead() && (npc.getId() == REAL_BELETH) && !npc.isCastingNow() && skill.hasEffectType(L2EffectType.HP) && (getRandom(100) < 80)) {
 			npc.setTarget(player);
 			npc.doCast(HORN_OF_RISING);
 		}
-		
-		return null;
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		final var npc = event.npc();
 		if (!npc.isDead() && !npc.isCastingNow()) {
 			if (getRandom(100) < 40) {
 				if (!npc.getKnownList().getKnownPlayersInRadius(200).isEmpty()) {
 					npc.doCast(BLEED);
-					return null;
+					return;
 				}
 			}
-			npc.setTarget(player);
+			npc.setTarget(event.player());
 			npc.doCast(FIREBALL);
 		}
-		
-		return null;
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
+	public void onSpellFinished(NpcSkillFinished event) {
+		final var npc = event.npc();
 		if (!npc.isDead() && !npc.isCastingNow()) {
+			final var player = event.player();
 			if (!player.isDead()) {
 				final double distance2 = npc.calculateDistance(player, false, false);
 				if ((distance2 > 890) && !npc.isMovementDisabled()) {
@@ -569,26 +567,28 @@ public final class Beleth extends AbstractNpcAI {
 					npc.setTarget(player);
 					npc.doCast(FIREBALL);
 				}
-				return null;
+				return;
 			}
+			
 			if (getRandom(100) < 40) {
 				if (!npc.getKnownList().getKnownPlayersInRadius(200).isEmpty()) {
 					npc.doCast(LIGHTENING);
-					return null;
+					return;
 				}
 			}
+			
 			for (L2PcInstance plr : npc.getKnownList().getKnownPlayersInRadius(950)) {
 				npc.setTarget(plr);
 				npc.doCast(FIREBALL);
-				return null;
+				return;
 			}
+			
 			((L2Attackable) npc).clearAggroList();
 		}
-		return null;
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.setRunning();
 		if (!npc.getKnownList().getKnownPlayersInRadius(300).isEmpty() && (getRandom(100) < 60)) {
 			npc.doCast(BLEED);
@@ -596,8 +596,6 @@ public final class Beleth extends AbstractNpcAI {
 		if (npc.getId() == REAL_BELETH) {
 			npc.getSpawn().setRespawnDelay(0);
 		}
-		
-		return null;
 	}
 	
 	@Override
@@ -622,9 +620,9 @@ public final class Beleth extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (getRandom(100) < 40) {
-			return null;
+			return;
 		}
 		
 		final double distance = npc.calculateDistance(attacker, false, false);
@@ -642,22 +640,20 @@ public final class Beleth extends AbstractNpcAI {
 		} else if (!npc.isDead() && !npc.isCastingNow()) {
 			if (!npc.getKnownList().getKnownPlayersInRadius(200).isEmpty()) {
 				npc.doCast(LIGHTENING);
-				return null;
+				return;
 			}
 			((L2Attackable) npc).clearAggroList();
 		}
-		
-		return null;
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.getId() == REAL_BELETH) {
 			cancelQuestTimer("CHECK_ATTACK", null, null);
 			
 			setBelethKiller(killer);
 			GrandBossManager.getInstance().setBossStatus(REAL_BELETH, DEAD);
-			final long respawnTime = (grandBoss().getIntervalOfBelethSpawn() + getRandom(-grandBoss().getRandomOfBelethSpawn(), grandBoss().getRandomOfBelethSpawn())) * 3600000;
+			final long respawnTime = grandBoss().getIntervalOfBelethSpawn() + getRandom(-(int) grandBoss().getRandomOfBelethSpawn(), (int) grandBoss().getRandomOfBelethSpawn());
 			StatsSet info = GrandBossManager.getInstance().getStatsSet(REAL_BELETH);
 			info.set("respawn_time", System.currentTimeMillis() + respawnTime);
 			GrandBossManager.getInstance().setStatsSet(REAL_BELETH, info);
@@ -694,8 +690,6 @@ public final class Beleth extends AbstractNpcAI {
 				startQuestTimer("SPAWN25", 60000, null, null);
 			}
 		}
-		
-		return null;
 	}
 	
 	private void setBelethKiller(L2PcInstance killer) {

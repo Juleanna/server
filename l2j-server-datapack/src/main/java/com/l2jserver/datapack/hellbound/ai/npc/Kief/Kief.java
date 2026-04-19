@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,14 +39,13 @@ public final class Kief extends AbstractNpcAI {
 	private static final int STINGER = 10012; // Scorpion Poison Stinger
 	
 	public Kief() {
-		super(Kief.class.getSimpleName(), "hellbound/AI/NPC");
-		addFirstTalkId(KIEF);
-		addStartNpc(KIEF);
-		addTalkId(KIEF);
+		bindFirstTalk(KIEF);
+		bindStartNpc(KIEF);
+		bindTalk(KIEF);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "Badges": {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -32,7 +32,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.L2Event;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
 import com.l2jserver.gameserver.model.events.EventType;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcFirstTalk;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcFirstTalk;
 import com.l2jserver.gameserver.network.serverpackets.MoveToPawn;
 
 public class L2NpcAction implements IActionHandler {
@@ -105,11 +105,11 @@ public class L2NpcAction implements IActionHandler {
 					if (npc.isEventMob()) {
 						L2Event.showEventHtml(activeChar, String.valueOf(npc.getObjectId()));
 					} else {
-						if (npc.hasListener(EventType.ON_NPC_QUEST_START)) {
+						if (npc.hasListener(EventType.NPC_QUEST_START)) {
 							activeChar.setLastQuestNpcObject(npc.getObjectId());
 						}
-						if (npc.hasListener(EventType.ON_NPC_FIRST_TALK)) {
-							EventDispatcher.getInstance().notifyEventAsync(new OnNpcFirstTalk(npc, activeChar), npc);
+						if (npc.hasListener(EventType.NPC_FIRST_TALK)) {
+							EventDispatcher.getInstance().notifyEventAsync(new NpcFirstTalk(npc, activeChar), npc);
 						} else {
 							npc.showChatWindow(activeChar);
 						}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,22 +46,21 @@ public final class DemonPrince extends AbstractNpcAI {
 	private static final Map<Integer, Boolean> ATTACK_STATE = new ConcurrentHashMap<>();
 	
 	public DemonPrince() {
-		super(DemonPrince.class.getSimpleName(), "hellbound/AI");
-		addAttackId(DEMON_PRINCE);
-		addKillId(DEMON_PRINCE);
-		addSpawnId(FIEND);
+		bindAttack(DEMON_PRINCE);
+		bindKill(DEMON_PRINCE);
+		bindSpawn(FIEND);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("cast") && (npc != null) && (npc.getId() == FIEND) && !npc.isDead()) {
 			npc.doCast(AOE[getRandom(AOE.length)]);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		if (!npc.isDead()) {
 			if (!ATTACK_STATE.containsKey(npc.getObjectId()) && (npc.getCurrentHp() < (npc.getMaxHp() * 0.5))) {
 				npc.doCast(UD);
@@ -77,21 +76,18 @@ public final class DemonPrince extends AbstractNpcAI {
 				spawnMinions(npc);
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		ATTACK_STATE.remove(npc.getObjectId());
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == FIEND) {
 			startQuestTimer("cast", 15000, npc, null);
 		}
-		return super.onSpawn(npc);
 	}
 	
 	private void spawnMinions(L2Npc master) {

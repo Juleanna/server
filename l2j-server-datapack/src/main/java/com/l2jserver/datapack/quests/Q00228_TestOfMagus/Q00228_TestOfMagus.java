@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -114,16 +114,16 @@ public final class Q00228_TestOfMagus extends Quest {
 	private static final int MIN_LVL = 39;
 	
 	public Q00228_TestOfMagus() {
-		super(228, Q00228_TestOfMagus.class.getSimpleName(), "Test Of Magus");
-		addStartNpc(BARD_RUKAL);
-		addTalkId(BARD_RUKAL, PARINA, EARTH_SNAKE, FLAME_SALAMANDER, WIND_SYLPH, WATER_UNDINE, ELDER_CASIAN);
-		addKillId(HARPY, MARSH_STAKATO, WYRM, MARSH_STAKATO_WORKER, TOAD_LORD, MARSH_STAKATO_SOLDIER, MARSH_STAKATO_DRONE, WINDSUS, ENCHANTED_MONSTEREYE, ENCHANTED_STOLEN_GOLEM, ENCHANTED_IRON_GOLEM, SINGING_FLOWER_PHANTASM, SINGING_FLOWER_NIGTMATE, SINGING_FLOWER_DARKLING, GHOST_FIRE);
+		super(228);
+		bindStartNpc(BARD_RUKAL);
+		bindTalk(BARD_RUKAL, PARINA, EARTH_SNAKE, FLAME_SALAMANDER, WIND_SYLPH, WATER_UNDINE, ELDER_CASIAN);
+		bindKill(HARPY, MARSH_STAKATO, WYRM, MARSH_STAKATO_WORKER, TOAD_LORD, MARSH_STAKATO_SOLDIER, MARSH_STAKATO_DRONE, WINDSUS, ENCHANTED_MONSTEREYE, ENCHANTED_STOLEN_GOLEM, ENCHANTED_IRON_GOLEM, SINGING_FLOWER_PHANTASM, SINGING_FLOWER_NIGTMATE, SINGING_FLOWER_DARKLING, GHOST_FIRE);
 		registerQuestItems(RUKALS_LETTER, PARINAS_LETTER, LILAC_CHARM, GOLDEN_SEED_1ST, GOLDEN_SEED_2ND, GOLDEN_SEED_3RD, SCORE_OF_ELEMENTS, DAZZLING_DROP.getId(), FLAME_CRYSTAL.getId(), HARPYS_FEATHER.getId(), WYRMS_WINGBONE.getId(), WINDSUS_MANE.getId(), ENCHANTED_MONSTER_EYE_SHELL.getId(), ENCHANTED_GOLEM_POWDER
 			.getId(), ENCHANTED_IRON_GOLEM_SCRAP.getId(), TONE_OF_WATER, TONE_OF_FIRE, TONE_OF_WIND, TONE_OF_EARTH, SALAMANDER_CHARM, SYLPH_CHARM, UNDINE_CHARM, SERPENT_CHARM);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -194,7 +194,7 @@ public final class Q00228_TestOfMagus extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, qs.getPlayer(), true)) {
 			if ((DROPLIST.get(npc) != null) && hasQuestItems(qs.getPlayer(), DROPLIST.get(npc).requiredItems())) {
@@ -234,7 +234,6 @@ public final class Q00228_TestOfMagus extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

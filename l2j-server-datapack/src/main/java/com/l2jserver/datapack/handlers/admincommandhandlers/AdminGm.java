@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.datapack.handlers.admincommandhandlers;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.xml.impl.AdminData;
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
@@ -29,7 +30,8 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * @version $Revision: 1.2.4.4 $ $Date: 2005/04/11 10:06:06 $
  */
 public class AdminGm implements IAdminCommandHandler {
-	private static Logger _log = Logger.getLogger(AdminGm.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminGm.class);
+	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_gm"
 	};
@@ -40,7 +42,7 @@ public class AdminGm implements IAdminCommandHandler {
 			AdminData.getInstance().deleteGm(activeChar);
 			activeChar.setAccessLevel(0);
 			activeChar.sendMessage("You no longer have GM status.");
-			_log.info("GM: " + activeChar.getName() + "(" + activeChar.getObjectId() + ") turned his GM status off");
+			LOG.info("GM: {}({}) turned his GM status off", activeChar.getName(), activeChar.getObjectId());
 		}
 		return true;
 	}

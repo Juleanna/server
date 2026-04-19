@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -322,10 +322,10 @@ public class Q00426_QuestForFishingShot extends Quest {
 	private static final int SWEET_FLUID = 7586;
 	
 	public Q00426_QuestForFishingShot() {
-		super(426, Q00426_QuestForFishingShot.class.getSimpleName(), "Quest for Fishing Shot");
-		addStartNpc(NPC);
-		addTalkId(NPC);
-		addKillId(MOBS.keySet());
+		super(426);
+		bindStartNpc(NPC);
+		bindTalk(NPC);
+		bindKill(MOBS.keySet());
 		registerQuestItems(SWEET_FLUID);
 	}
 	
@@ -340,7 +340,7 @@ public class Q00426_QuestForFishingShot extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -365,7 +365,7 @@ public class Q00426_QuestForFishingShot extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 2, npc);
 		if (qs != null) {
 			if (MOBS_SPECIAL.containsKey(npc.getId())) {
@@ -382,7 +382,6 @@ public class Q00426_QuestForFishingShot extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

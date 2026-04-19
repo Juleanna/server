@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -75,21 +75,21 @@ public final class Q00421_LittleWingsBigAdventure extends Quest {
 	}
 	
 	public Q00421_LittleWingsBigAdventure() {
-		super(421, Q00421_LittleWingsBigAdventure.class.getSimpleName(), "Little Wing's Big Adventure");
-		addStartNpc(CRONOS);
-		addTalkId(CRONOS, MIMYU);
-		addAttackId(NPC_DATA.keySet());
-		addKillId(NPC_DATA.keySet());
+		super(421);
+		bindStartNpc(CRONOS);
+		bindTalk(CRONOS, MIMYU);
+		bindAttack(NPC_DATA.keySet());
+		bindKill(NPC_DATA.keySet());
 		registerQuestItems(FAIRY_LEAF);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ("DESPAWN_GUARDIAN".equals(event)) {
 			if (npc != null) {
 				npc.deleteMe();
 			}
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState qs = getQuestState(player, false);
@@ -299,7 +299,7 @@ public final class Q00421_LittleWingsBigAdventure extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isCond(2)) {
 			if (isSummon) {
@@ -349,12 +349,10 @@ public final class Q00421_LittleWingsBigAdventure extends Quest {
 			npc.setTarget(attacker);
 			npc.doCast(VICIOUS_POISON);
 		}
-		
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (Util.checkIfInRange(1500, killer, npc, true)) {
 			for (int i = 0; i < 20; i++) {
 				L2Npc guardian = addSpawn(SOUL_OF_TREE_GUARDIAN, npc);
@@ -368,7 +366,6 @@ public final class Q00421_LittleWingsBigAdventure extends Quest {
 				npc.getAI().setIntention(CtrlIntention.AI_INTENTION_ATTACK, killer);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private static L2ItemInstance getFlute(L2PcInstance player) {

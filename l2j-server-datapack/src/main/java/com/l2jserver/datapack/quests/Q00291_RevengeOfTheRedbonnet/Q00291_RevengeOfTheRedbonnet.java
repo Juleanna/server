@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,15 +46,15 @@ public final class Q00291_RevengeOfTheRedbonnet extends Quest {
 	private static final int MIN_LVL = 4;
 	
 	public Q00291_RevengeOfTheRedbonnet() {
-		super(291, Q00291_RevengeOfTheRedbonnet.class.getSimpleName(), "Revenge of the Redbonnet");
-		addStartNpc(MARYSE_REDBONNET);
-		addTalkId(MARYSE_REDBONNET);
-		addKillId(BLACK_WOLF);
+		super(291);
+		bindStartNpc(MARYSE_REDBONNET);
+		bindTalk(MARYSE_REDBONNET);
+		bindKill(BLACK_WOLF);
 		registerQuestItems(BLACK_WOLF_PELT.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if ((qs != null) && event.equals("30553-03.htm")) {
 			qs.startQuest();
@@ -64,14 +64,13 @@ public final class Q00291_RevengeOfTheRedbonnet extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isCond(1) && Util.checkIfInRange(1500, npc, qs.getPlayer(), true)) {
 			if (giveItemRandomly(qs.getPlayer(), npc, BLACK_WOLF_PELT, true)) {
 				qs.setCond(2);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

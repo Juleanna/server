@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -61,16 +61,16 @@ public class Q00328_SenseForBusiness extends Quest {
 	private static final int MIN_LVL = 21;
 	
 	public Q00328_SenseForBusiness() {
-		super(328, Q00328_SenseForBusiness.class.getSimpleName(), "Sense for Business");
-		addStartNpc(SARIEN);
-		addTalkId(SARIEN);
-		addKillId(MONSTER_EYES.keySet());
-		addKillId(MONSTER_BASILISKS.keySet());
+		super(328);
+		bindStartNpc(SARIEN);
+		bindTalk(SARIEN);
+		bindKill(MONSTER_EYES.keySet());
+		bindKill(MONSTER_BASILISKS.keySet());
 		registerQuestItems(MONSTER_EYE_CARCASS, MONSTER_EYE_LENS, BASILISK_GIZZARD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -117,7 +117,7 @@ public class Q00328_SenseForBusiness extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && st.isStarted()) {
 			final int chance = getRandom(100);
@@ -136,6 +136,5 @@ public class Q00328_SenseForBusiness extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isPet);
 	}
 }

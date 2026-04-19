@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,22 +51,22 @@ public final class Q00197_SevenSignsTheSacredBookOfSeal extends Quest {
 	private boolean isBusy = false;
 	
 	public Q00197_SevenSignsTheSacredBookOfSeal() {
-		super(197, Q00197_SevenSignsTheSacredBookOfSeal.class.getSimpleName(), "Seven Signs, the Sacred Book of Seal");
-		addStartNpc(WOOD);
-		addTalkId(WOOD, ORVEN, LEOPARD, LAWRENCE, SOPHIA);
-		addKillId(SHILENS_EVIL_THOUGHTS);
+		super(197);
+		bindStartNpc(WOOD);
+		bindTalk(WOOD, ORVEN, LEOPARD, LAWRENCE, SOPHIA);
+		bindKill(SHILENS_EVIL_THOUGHTS);
 		registerQuestItems(MYSTERIOUS_HAND_WRITTEN_TEXT, SCULPTURE_OF_DOUBT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((npc.getId() == SHILENS_EVIL_THOUGHTS) && "despawn".equals(event)) {
 			if (!npc.isDead()) {
 				isBusy = false;
 				npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getId(), NpcStringId.NEXT_TIME_YOU_WILL_NOT_ESCAPE));
 				npc.deleteMe();
 			}
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState st = getQuestState(player, false);
@@ -186,10 +186,10 @@ public final class Q00197_SevenSignsTheSacredBookOfSeal extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance partyMember = getRandomPartyMember(player, 3);
 		if (partyMember == null) {
-			return null;
+			return;
 		}
 		
 		final QuestState st = getQuestState(partyMember, false);
@@ -202,7 +202,6 @@ public final class Q00197_SevenSignsTheSacredBookOfSeal extends Quest {
 		isBusy = false;
 		cancelQuestTimers("despawn");
 		npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getId(), NpcStringId.S1_YOU_MAY_HAVE_WON_THIS_TIME_BUT_NEXT_TIME_I_WILL_SURELY_CAPTURE_YOU).addStringParameter(partyMember.getName()));
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

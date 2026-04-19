@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -19,10 +19,9 @@
 package com.l2jserver.datapack.ai.npc.ForgeOfTheGods;
 
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.skills.BuffInfo;
 import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
@@ -43,38 +42,36 @@ public final class TarBeetle extends AbstractNpcAI {
 	private static final TarBeetleSpawn spawn = new TarBeetleSpawn();
 	
 	public TarBeetle() {
-		super(TarBeetle.class.getSimpleName(), "ai/npc");
-		addAggroRangeEnterId(TAR_BEETLE);
-		addSpellFinishedId(TAR_BEETLE);
+		bindAggroRangeEnter(TAR_BEETLE);
+		bindSpellFinished(TAR_BEETLE);
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		final var npc = event.npc();
 		if (npc.getScriptValue() > 0) {
-			final BuffInfo info = player.getEffectList().getBuffInfoBySkillId(TAR_SPITE);
+			final var info = event.player().getEffectList().getBuffInfoBySkillId(TAR_SPITE);
 			final int level = (info != null) ? info.getSkill().getAbnormalLvl() : 0;
 			if (level < 3) {
 				final Skill skill = SKILLS[level].getSkill();
 				if (!npc.isSkillDisabled(skill)) {
-					npc.setTarget(player);
+					npc.setTarget(event.player());
 					npc.doCast(skill);
 				}
 			}
 		}
-		return super.onAggroRangeEnter(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		if ((skill != null) && (skill.getId() == TAR_SPITE)) {
-			final int val = npc.getScriptValue() - 1;
-			if ((val <= 0) || (SKILLS[0].getSkill().getMpConsume2() > npc.getCurrentMp())) {
-				spawn.removeBeetle(npc);
+	public void onSpellFinished(NpcSkillFinished event) {
+		if ((event.skill() != null) && (event.skill().getId() == TAR_SPITE)) {
+			final int val = event.npc().getScriptValue() - 1;
+			if ((val <= 0) || (SKILLS[0].getSkill().getMpConsume2() > event.npc().getCurrentMp())) {
+				spawn.removeBeetle(event.npc());
 			} else {
-				npc.setScriptValue(val);
+				event.npc().setScriptValue(val);
 			}
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override

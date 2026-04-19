@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,14 +38,14 @@ public class Q10267_JourneyToGracia extends Quest {
 	private static final int LETTER = 13810;
 	
 	public Q10267_JourneyToGracia() {
-		super(10267, Q10267_JourneyToGracia.class.getSimpleName(), "Journey to Gracia");
-		addStartNpc(ORVEN);
-		addTalkId(ORVEN, KEUCEREUS, PAPIKU);
+		super(10267);
+		bindStartNpc(ORVEN);
+		bindTalk(ORVEN, KEUCEREUS, PAPIKU);
 		registerQuestItems(LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -47,12 +47,11 @@ public final class HotSprings extends AbstractNpcAI {
 	private static final int DISEASE_CHANCE = 10;
 	
 	public HotSprings() {
-		super(HotSprings.class.getSimpleName(), "ai/group_template");
-		addAttackId(BANDERSNATCHLING, FLAVA, ATROXSPAWN, NEPENTHES, ATROX, BANDERSNATCH);
+		bindAttack(BANDERSNATCHLING, FLAVA, ATROXSPAWN, NEPENTHES, ATROX, BANDERSNATCH);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (getRandom(100) < DISEASE_CHANCE) {
 			tryToInfect(npc, attacker, MALARIA);
 		}
@@ -76,7 +75,6 @@ public final class HotSprings extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	private void tryToInfect(L2Npc npc, L2Character player, int diseaseId) {

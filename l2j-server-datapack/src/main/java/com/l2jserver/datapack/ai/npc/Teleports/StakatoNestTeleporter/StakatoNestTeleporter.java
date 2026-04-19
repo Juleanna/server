@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,13 +41,12 @@ public final class StakatoNestTeleporter extends AbstractNpcAI {
 	private final static int KINTAIJIN = 32640;
 	
 	public StakatoNestTeleporter() {
-		super(StakatoNestTeleporter.class.getSimpleName(), "ai/npc/Teleports");
-		addStartNpc(KINTAIJIN);
-		addTalkId(KINTAIJIN);
+		bindStartNpc(KINTAIJIN);
+		bindTalk(KINTAIJIN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		int index = Integer.parseInt(event) - 1;
 		
 		if (LOCS.length > index) {
@@ -62,7 +61,7 @@ public final class StakatoNestTeleporter extends AbstractNpcAI {
 			}
 			player.teleToLocation(loc, false);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override

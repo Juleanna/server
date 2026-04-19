@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -24,7 +24,7 @@ package com.l2jserver.datapack.quests.TerritoryWarScripts;
  */
 public final class Q00732_ProtectTheReligiousAssociationLeader extends TerritoryWarSuperClass {
 	public Q00732_ProtectTheReligiousAssociationLeader() {
-		super(732, Q00732_ProtectTheReligiousAssociationLeader.class.getSimpleName(), "Protect the Religious Association Leader");
+		super(732);
 		NPC_IDS = new int[] {
 			36510,
 			36516,
@@ -36,7 +36,7 @@ public final class Q00732_ProtectTheReligiousAssociationLeader extends Territory
 			36552,
 			36558
 		};
-		addAttackId(NPC_IDS);
+		bindAttack(NPC_IDS);
 	}
 	
 	@Override

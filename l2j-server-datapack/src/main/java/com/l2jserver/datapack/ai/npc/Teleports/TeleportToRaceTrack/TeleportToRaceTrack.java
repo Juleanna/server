@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,15 +18,9 @@
  */
 package com.l2jserver.datapack.ai.npc.Teleports.TeleportToRaceTrack;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
-import com.l2jserver.gameserver.model.Location;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.network.NpcStringId;
-import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerMenuSelected;
 
 /**
  * Monster Derby Track teleport AI.
@@ -35,65 +29,76 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
 public final class TeleportToRaceTrack extends AbstractNpcAI {
 	// NPC
 	private static final int RACE_MANAGER = 30995;
-	// Locations
-	private static final Location TELEPORT = new Location(12661, 181687, -3540);
-	private static final Location DION_CASTLE_TOWN = new Location(15670, 142983, -2700);
-	private static final Location[] RETURN_LOCATIONS = {
-		new Location(-80826, 149775, -3043),
-		new Location(-12672, 122776, -3116),
-		new Location(15670, 142983, -2705),
-		new Location(83400, 147943, -3404),
-		new Location(111409, 219364, -3545),
-		new Location(82956, 53162, -1495),
-		new Location(146331, 25762, -2018),
-		new Location(116819, 76994, -2714),
-		new Location(43835, -47749, -792),
-		new Location(147930, -55281, -2728),
-		new Location(87386, -143246, -1293),
-		new Location(12882, 181053, -3560)
-	};
-	// Misc
-	private static final Map<Integer, Integer> TELEPORTERS = new HashMap<>();
-	static {
-		TELEPORTERS.put(30059, 2); // Trisha
-		TELEPORTERS.put(30080, 3); // Clarissa
-		TELEPORTERS.put(30177, 5); // Valentina
-		TELEPORTERS.put(30233, 7); // Esmeralda
-		TELEPORTERS.put(30256, 1); // Bella
-		TELEPORTERS.put(30320, 0); // Richlin
-		TELEPORTERS.put(30848, 6); // Elisa
-		TELEPORTERS.put(30899, 4); // Flauen
-		TELEPORTERS.put(31320, 8); // Ilyana
-		TELEPORTERS.put(31275, 9); // Tatiana
-		TELEPORTERS.put(31964, 10); // Bilia
-	}
-	// Player Variables
-	private static final String MONSTER_RETURN = "MONSTER_RETURN";
+	
+	private static final int Q00255_TUTORIAL = 255;
 	
 	public TeleportToRaceTrack() {
-		super(TeleportToRaceTrack.class.getSimpleName(), "ai/npc/Teleports");
-		addStartNpc(RACE_MANAGER);
-		addStartNpc(TELEPORTERS.keySet());
-		addTalkId(RACE_MANAGER);
-		addTalkId(TELEPORTERS.keySet());
+		bindMenuSelected(RACE_MANAGER);
 	}
 	
 	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player) {
-		if (npc.getId() == RACE_MANAGER) {
-			final int returnId = player.getVariables().getInt(MONSTER_RETURN, -1);
-			
-			if (returnId != -1) {
-				player.teleToLocation(RETURN_LOCATIONS[returnId]);
-				player.getVariables().remove(MONSTER_RETURN);
-			} else {
-				broadcastNpcSay(npc, Say2.ALL, NpcStringId.IF_YOUR_MEANS_OF_ARRIVAL_WAS_A_BIT_UNCONVENTIONAL_THEN_ILL_BE_SENDING_YOU_BACK_TO_RUNE_TOWNSHIP_WHICH_IS_THE_NEAREST_TOWN);
-				player.teleToLocation(DION_CASTLE_TOWN);
+	public void onMenuSelected(PlayerMenuSelected event) {
+		final var ask = event.ask();
+		final var reply = event.reply();
+		
+		final var talker = event.player();
+		
+		if (ask == Q00255_TUTORIAL) {
+			if (reply == 1) {
+				final var q255 = QuestManager.getInstance().getQuest(Q00255_TUTORIAL);
+				final var qs255 = q255.getQuestState(talker, true);
+				
+				int i0 = qs255.getMemoStateEx(1);
+				int i1 = i0 % 10000;
+				if (i1 >= 95 && i1 < 195) {
+					talker.teleToLocation(-12782, 122862, -3114);
+					return;
+				}
+				if (i1 >= 195 && i1 < 295) {
+					talker.teleToLocation(-80684, 149770, -3043);
+					return;
+				}
+				if (i1 >= 295 && i1 < 395) {
+					talker.teleToLocation(15744, 142928, -2704);
+					return;
+				}
+				if (i1 >= 395 && i1 < 495) {
+					talker.teleToLocation(83475, 147966, -3404);
+					return;
+				}
+				if (i1 >= 495 && i1 < 595) {
+					talker.teleToLocation(82971, 53207, -1470);
+					return;
+				}
+				if (i1 >= 595 && i1 < 695) {
+					talker.teleToLocation(117110, 76883, -2670);
+					return;
+				}
+				if (i1 >= 695 && i1 < 795) {
+					talker.teleToLocation(146705, 25840, -2000);
+					return;
+				}
+				if (i1 >= 795 && i1 < 895) {
+					talker.teleToLocation(111333, 219345, -3546);
+					return;
+				}
+				if (i1 >= 895 && i1 < 995) {
+					talker.teleToLocation(12919, 181038, -3560);
+					return;
+				}
+				if (i1 >= 995 && i1 < 1095) {
+					talker.teleToLocation(147870, -55380, -2728);
+					return;
+				}
+				if (i1 >= 1095 && i1 < 1195) {
+					talker.teleToLocation(43845, -47820, -792);
+					return;
+				}
+				if (i1 >= 1195 && i1 < 1295) {
+					talker.teleToLocation(87099, -143426, -1288);
+					return;
+				}
 			}
-		} else {
-			player.teleToLocation(TELEPORT);
-			player.getVariables().set(MONSTER_RETURN, TELEPORTERS.get(npc.getId()));
 		}
-		return super.onTalk(npc, player);
 	}
 }

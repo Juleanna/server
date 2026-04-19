@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,15 +44,15 @@ public final class Q00368_TrespassingIntoTheHolyGround extends Quest {
 	private static final int MIN_LEVEL = 36;
 	
 	public Q00368_TrespassingIntoTheHolyGround() {
-		super(368, Q00368_TrespassingIntoTheHolyGround.class.getSimpleName(), "Trespassing into the Holy Ground");
-		addStartNpc(RESTINA);
-		addTalkId(RESTINA);
-		addKillId(DROPLIST.getNpcIds());
+		super(368);
+		bindStartNpc(RESTINA);
+		bindTalk(RESTINA);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(BLADE_STAKATO_FANG);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -79,7 +79,7 @@ public final class Q00368_TrespassingIntoTheHolyGround extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final int i;
 		switch (npc.getId()) {
 			case 20795, 20797 -> i = 1;
@@ -90,7 +90,6 @@ public final class Q00368_TrespassingIntoTheHolyGround extends Quest {
 		if (st != null) {
 			giveItemRandomly(st.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,27 +46,26 @@ public final class DevastatedCastle extends ClanHallSiegeEngine {
 	private static Map<Integer, Integer> _damageToGustav = new HashMap<>();
 	
 	private DevastatedCastle() {
-		super(DevastatedCastle.class.getSimpleName(), "conquerablehalls", DEVASTATED_CASTLE);
-		addKillId(GUSTAV);
-		addSpawnId(MIKHAIL);
-		addSpawnId(DIETRICH);
-		addAttackId(GUSTAV);
+		super(DEVASTATED_CASTLE);
+		bindKill(GUSTAV);
+		bindSpawn(MIKHAIL);
+		bindSpawn(DIETRICH);
+		bindAttack(GUSTAV);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == MIKHAIL) {
 			broadcastNpcSay(npc, Say2.NPC_SHOUT, NpcStringId.GLORY_TO_ADEN_THE_KINGDOM_OF_THE_LION_GLORY_TO_SIR_GUSTAV_OUR_IMMORTAL_LORD);
 		} else if (npc.getId() == DIETRICH) {
 			broadcastNpcSay(npc, Say2.NPC_SHOUT, NpcStringId.SOLDIERS_OF_GUSTAV_GO_FORTH_AND_DESTROY_THE_INVADERS);
 		}
-		return null;
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (!_hall.isInSiege()) {
-			return null;
+			return;
 		}
 		
 		synchronized (this) {
@@ -88,13 +87,12 @@ public final class DevastatedCastle extends ClanHallSiegeEngine {
 				npc.getAI().setIntention(CtrlIntention.AI_INTENTION_CAST, SkillData.getInstance().getSkill(4235, 1), npc);
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (!_hall.isInSiege()) {
-			return null;
+			return;
 		}
 		
 		_missionAccomplished = true;
@@ -105,8 +103,6 @@ public final class DevastatedCastle extends ClanHallSiegeEngine {
 				endSiege();
 			}
 		}
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

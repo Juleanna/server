@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,10 +36,9 @@ public final class Falk extends AbstractNpcAI {
 	private static final int PREMIUM_CERT = 9852; // Premium Caravan Certificate
 	
 	public Falk() {
-		super(Falk.class.getSimpleName(), "hellbound/AI/NPC");
-		addFirstTalkId(FALK);
-		addStartNpc(FALK);
-		addTalkId(FALK);
+		bindFirstTalk(FALK);
+		bindStartNpc(FALK);
+		bindTalk(FALK);
 	}
 	
 	@Override
@@ -59,7 +58,7 @@ public final class Falk extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("badges")) {
 			if (!hasAtLeastOneQuestItem(player, BASIC_CERT, STANDART_CERT, PREMIUM_CERT)) {
 				if (getQuestItemsCount(player, DARION_BADGE) >= 20) {
@@ -70,6 +69,6 @@ public final class Falk extends AbstractNpcAI {
 				return "32297-02b.htm";
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

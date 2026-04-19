@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,10 +43,10 @@ public final class Q00904_DragonTrophyAntharas extends Quest {
 	private static final int MIN_LEVEL = 84;
 	
 	public Q00904_DragonTrophyAntharas() {
-		super(904, Q00904_DragonTrophyAntharas.class.getSimpleName(), "Dragon Trophy - Antharas");
-		addStartNpc(THEODRIC);
-		addTalkId(THEODRIC);
-		addKillId(ANTHARAS);
+		super(904);
+		bindStartNpc(THEODRIC);
+		bindTalk(THEODRIC);
+		bindKill(ANTHARAS);
 	}
 	
 	@Override
@@ -58,7 +58,7 @@ public final class Q00904_DragonTrophyAntharas extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -83,9 +83,8 @@ public final class Q00904_DragonTrophyAntharas extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		executeForEachPlayer(killer, npc, isSummon, true, true);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

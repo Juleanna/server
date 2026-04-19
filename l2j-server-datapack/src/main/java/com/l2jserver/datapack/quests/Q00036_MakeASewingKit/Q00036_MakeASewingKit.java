@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -45,15 +45,15 @@ public class Q00036_MakeASewingKit extends Quest {
 	private static final int COUNT = 10;
 	
 	public Q00036_MakeASewingKit() {
-		super(36, Q00036_MakeASewingKit.class.getSimpleName(), "Make a Sewing Kit");
-		addStartNpc(FERRIS);
-		addTalkId(FERRIS);
-		addKillId(ENCHANTED_IRON_GOLEM);
+		super(36);
+		bindStartNpc(FERRIS);
+		bindTalk(FERRIS);
+		bindKill(ENCHANTED_IRON_GOLEM);
 		registerQuestItems(ENCHANTED_IRON);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -89,7 +89,7 @@ public class Q00036_MakeASewingKit extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance member = getRandomPartyMember(player, 1);
 		if (member != null) {
 			final QuestState st = getQuestState(member, false);
@@ -102,7 +102,6 @@ public class Q00036_MakeASewingKit extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

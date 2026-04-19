@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -45,15 +45,15 @@ public class Q00044_HelpTheSon extends Quest {
 	private static final int PET_TICKET = 7585;
 	
 	public Q00044_HelpTheSon() {
-		super(44, Q00044_HelpTheSon.class.getSimpleName(), "Help The Son!");
-		addStartNpc(LUNDY);
-		addTalkId(LUNDY, DRIKUS);
-		addKillId(MAILLE_GUARD, MAILLE_LIZARDMAN, MAILLE_SCOUT);
+		super(44);
+		bindStartNpc(LUNDY);
+		bindTalk(LUNDY, DRIKUS);
+		bindKill(MAILLE_GUARD, MAILLE_LIZARDMAN, MAILLE_SCOUT);
 		registerQuestItems(GEMSTONE, GEMSTONE_FRAGMENT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -99,7 +99,7 @@ public class Q00044_HelpTheSon extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && st.isCond(2)) {
 			st.giveItems(GEMSTONE_FRAGMENT, 1);
@@ -109,7 +109,6 @@ public class Q00044_HelpTheSon extends Quest {
 				st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

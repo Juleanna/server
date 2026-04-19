@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -64,14 +64,13 @@ public final class MasterOfEnchanting extends LongTimeEvent {
 	private static final Date EVENT_START = new Date(2011, 7, 1);
 	
 	private MasterOfEnchanting() {
-		super(MasterOfEnchanting.class.getSimpleName(), "events");
-		addStartNpc(MASTER_YOGI);
-		addFirstTalkId(MASTER_YOGI);
-		addTalkId(MASTER_YOGI);
+		bindStartNpc(MASTER_YOGI);
+		bindFirstTalk(MASTER_YOGI);
+		bindTalk(MASTER_YOGI);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		if (event.equalsIgnoreCase("buy_staff")) {
 			if (!hasQuestItems(player, MASTER_YOGI_STAFF) && (getQuestItemsCount(player, Inventory.ADENA_ID) > STAFF_PRICE)) {

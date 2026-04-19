@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -69,12 +69,11 @@ public final class Sailren extends AbstractNpcAI {
 	}
 	
 	public Sailren() {
-		super(Sailren.class.getSimpleName(), "ai/individual");
-		addStartNpc(STATUE, CUBIC);
-		addTalkId(STATUE, CUBIC);
-		addFirstTalkId(STATUE);
-		addKillId(VELOCIRAPTOR, PTEROSAUR, TREX, SAILREN);
-		addAttackId(VELOCIRAPTOR, PTEROSAUR, TREX, SAILREN);
+		bindStartNpc(STATUE, CUBIC);
+		bindTalk(STATUE, CUBIC);
+		bindFirstTalk(STATUE);
+		bindKill(VELOCIRAPTOR, PTEROSAUR, TREX, SAILREN);
+		bindAttack(VELOCIRAPTOR, PTEROSAUR, TREX, SAILREN);
 		
 		final long remain = GlobalVariablesManager.getInstance().getLong("SailrenRespawn", 0) - System.currentTimeMillis();
 		if (remain > 0) {
@@ -84,7 +83,7 @@ public final class Sailren extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "32109-01.html":
 			case "32109-01a.html":
@@ -212,19 +211,18 @@ public final class Sailren extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (zone.isCharacterInZone(attacker)) {
 			_lastAttack = System.currentTimeMillis();
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (zone.isCharacterInZone(killer)) {
 			switch (npc.getId()) {
 				case SAILREN: {
@@ -258,7 +256,6 @@ public final class Sailren extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

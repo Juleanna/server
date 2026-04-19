@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,13 +37,13 @@ public class Q00652_AnAgedExAdventurer extends Quest {
 	private static final int ENCHANT_ARMOR_D = 956;
 	
 	public Q00652_AnAgedExAdventurer() {
-		super(652, Q00652_AnAgedExAdventurer.class.getSimpleName(), "An Aged Ex-Adventurer");
-		addStartNpc(TANTAN);
-		addTalkId(TANTAN, SARA);
+		super(652);
+		bindStartNpc(TANTAN);
+		bindTalk(TANTAN, SARA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -34,13 +34,11 @@ public final class NonLethalableNpcs extends AbstractNpcAI {
 	};
 	
 	public NonLethalableNpcs() {
-		super(NonLethalableNpcs.class.getSimpleName(), "ai/group_template");
-		addSpawnId(NPCS);
+		bindSpawn(NPCS);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.setLethalable(false);
-		return super.onSpawn(npc);
 	}
 }

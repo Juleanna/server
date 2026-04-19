@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -78,20 +78,19 @@ public final class TowerOfInfinitum extends AbstractNpcAI {
 	}
 	
 	public TowerOfInfinitum() {
-		super(TowerOfInfinitum.class.getSimpleName(), "hellbound/AI/Zones");
-		addStartNpc(JERIAN);
-		addTalkId(JERIAN);
+		bindStartNpc(JERIAN);
+		bindTalk(JERIAN);
 		
 		for (int i = GK_FIRST; i <= GK_LAST; i++) {
-			addStartNpc(i);
-			addTalkId(i);
+			bindStartNpc(i);
+			bindTalk(i);
 		}
 	}
 	
 	private static final Location ENTER_LOCATION = new Location(-22204, 277056, -15023);
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final int npcId = npc.getId();
 		

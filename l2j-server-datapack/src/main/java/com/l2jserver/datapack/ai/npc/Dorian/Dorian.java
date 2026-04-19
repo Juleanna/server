@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,12 +39,11 @@ public final class Dorian extends AbstractNpcAI {
 	private static final int BROKEN_SILVER_CROSS = 7154;
 	
 	public Dorian() {
-		super(Dorian.class.getSimpleName(), "ai/npc");
-		addSeeCreatureId(DORIAN);
+		bindSeeCreature(DORIAN);
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (creature.isPlayer()) {
 			final L2PcInstance pl = creature.getActingPlayer();
 			final QuestState qs = pl.getQuestState(Q00024_InhabitantsOfTheForestOfTheDead.class.getSimpleName());
@@ -55,6 +54,5 @@ public final class Dorian extends AbstractNpcAI {
 				broadcastNpcSay(npc, Say2.NPC_ALL, NpcStringId.THAT_SIGN);
 			}
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 }

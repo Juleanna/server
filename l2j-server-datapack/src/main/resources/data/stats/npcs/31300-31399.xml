@@ -670,7 +670,7 @@
 			<height normal="18" />
 		</collision>
 	</npc>
-	<npc id="31316" level="70" type="L2Trainer" name="Vincenz" title="Blacksmith">
+	<npc id="31316" level="70" type="L2Npc" name="Vincenz" title="Blacksmith">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -915,7 +915,7 @@
 			<height normal="23.5" />
 		</collision>
 	</npc>
-	<npc id="31322" level="70" type="L2Trainer" name="Erian" title="Master">
+	<npc id="31322" level="70" type="L2Npc" name="Erian" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -956,7 +956,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31323" level="70" type="L2Trainer" name="Beryl" title="Master">
+	<npc id="31323" level="70" type="L2Npc" name="Beryl" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1039,7 +1039,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31325" level="70" type="L2Trainer" name="Themis" title="Master">
+	<npc id="31325" level="70" type="L2Npc" name="Themis" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1121,7 +1121,7 @@
 			<height normal="26" />
 		</collision>
 	</npc>
-	<npc id="31327" level="70" type="L2Trainer" name="Tazki" title="Prefect">
+	<npc id="31327" level="70" type="L2Npc" name="Tazki" title="Prefect">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1204,7 +1204,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="31329" level="70" type="L2Trainer" name="Eliyah" title="Priest">
+	<npc id="31329" level="70" type="L2Npc" name="Eliyah" title="Priest">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1246,7 +1246,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="31330" level="70" type="L2Trainer" name="Wagner" title="Priest">
+	<npc id="31330" level="70" type="L2Npc" name="Wagner" title="Priest">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1329,7 +1329,7 @@
 			<height normal="24" />
 		</collision>
 	</npc>
-	<npc id="31332" level="70" type="L2Trainer" name="Amelia" title="Magister">
+	<npc id="31332" level="70" type="L2Npc" name="Amelia" title="Magister">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1369,7 +1369,7 @@
 			<height normal="23.5" />
 		</collision>
 	</npc>
-	<npc id="31333" level="70" type="L2Trainer" name="Rumiel" title="Magister">
+	<npc id="31333" level="70" type="L2Npc" name="Rumiel" title="Magister">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1450,7 +1450,7 @@
 			<height normal="25" />
 		</collision>
 	</npc>
-	<npc id="31335" level="70" type="L2Trainer" name="Kayan" title="Magister">
+	<npc id="31335" level="70" type="L2Npc" name="Kayan" title="Magister">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -1535,7 +1535,7 @@
 			<height normal="29" />
 		</collision>
 	</npc>
-	<npc id="31337" level="70" type="L2Trainer" name="Mekara" title="Seer">
+	<npc id="31337" level="70" type="L2Npc" name="Mekara" title="Seer">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />

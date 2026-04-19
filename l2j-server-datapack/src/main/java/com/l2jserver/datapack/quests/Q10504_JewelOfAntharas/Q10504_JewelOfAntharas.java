@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,10 +44,10 @@ public final class Q10504_JewelOfAntharas extends Quest {
 	private static final int MIN_LEVEL = 84;
 	
 	public Q10504_JewelOfAntharas() {
-		super(10504, Q10504_JewelOfAntharas.class.getSimpleName(), "Jewel of Antharas");
-		addStartNpc(THEODRIC);
-		addTalkId(THEODRIC);
-		addKillId(ANTHARAS);
+		super(10504);
+		bindStartNpc(THEODRIC);
+		bindTalk(THEODRIC);
+		bindKill(ANTHARAS);
 		registerQuestItems(CLEAR_CRYSTAL, FILLED_CRYSTAL_ANTHARAS_ENERGY);
 	}
 	
@@ -63,7 +63,7 @@ public final class Q10504_JewelOfAntharas extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -89,9 +89,8 @@ public final class Q10504_JewelOfAntharas extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		executeForEachPlayer(killer, npc, isSummon, true, true);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

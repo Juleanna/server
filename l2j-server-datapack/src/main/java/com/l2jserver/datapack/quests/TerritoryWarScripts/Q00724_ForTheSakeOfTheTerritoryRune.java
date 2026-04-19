@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,7 +26,7 @@ import com.l2jserver.gameserver.network.NpcStringId;
  */
 public final class Q00724_ForTheSakeOfTheTerritoryRune extends TerritoryWarSuperClass {
 	public Q00724_ForTheSakeOfTheTerritoryRune() {
-		super(724, Q00724_ForTheSakeOfTheTerritoryRune.class.getSimpleName(), "For the Sake of the Territory - Rune");
+		super(724);
 		CATAPULT_ID = 36506;
 		TERRITORY_ID = 88;
 		LEADER_IDS = new int[] {

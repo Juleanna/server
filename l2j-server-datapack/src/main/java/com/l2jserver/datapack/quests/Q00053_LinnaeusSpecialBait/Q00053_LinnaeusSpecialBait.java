@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,15 +39,15 @@ public class Q00053_LinnaeusSpecialBait extends Quest {
 	private static final QuestItemChanceHolder CRIMSON_DRAKE_HEART = new QuestItemChanceHolder(7624, 33.0, 100L);
 	
 	public Q00053_LinnaeusSpecialBait() {
-		super(53, Q00053_LinnaeusSpecialBait.class.getSimpleName(), "Linnaeus Special Bait");
-		addStartNpc(LINNAEUS);
-		addTalkId(LINNAEUS);
-		addKillId(CRIMSON_DRAKE);
+		super(53);
+		bindStartNpc(LINNAEUS);
+		bindTalk(LINNAEUS);
+		bindKill(CRIMSON_DRAKE);
 		registerQuestItems(CRIMSON_DRAKE_HEART.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -72,12 +72,11 @@ public class Q00053_LinnaeusSpecialBait extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		QuestState st = getRandomPartyMemberState(player, 1, 1, npc);
 		if ((st != null) && giveItemRandomly(st.getPlayer(), npc, CRIMSON_DRAKE_HEART, true)) {
 			st.setCond(2);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

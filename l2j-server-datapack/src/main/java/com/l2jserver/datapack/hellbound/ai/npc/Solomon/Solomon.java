@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -32,8 +32,7 @@ public final class Solomon extends AbstractNpcAI {
 	private static final int SOLOMON = 32355;
 	
 	public Solomon() {
-		super(Solomon.class.getSimpleName(), "hellbound/AI/NPC");
-		addFirstTalkId(SOLOMON);
+		bindFirstTalk(SOLOMON);
 	}
 	
 	@Override

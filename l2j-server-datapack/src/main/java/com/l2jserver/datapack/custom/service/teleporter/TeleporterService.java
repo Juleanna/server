@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2022 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.datapack.custom.service.teleporter;
+
+import static com.l2jserver.gameserver.config.Configuration.teleporterService;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,7 +39,6 @@ import com.l2jserver.datapack.custom.service.teleporter.model.entity.GroupTelepo
 import com.l2jserver.datapack.custom.service.teleporter.model.entity.GroupTeleportCategory;
 import com.l2jserver.datapack.custom.service.teleporter.model.entity.SoloTeleport;
 import com.l2jserver.datapack.custom.service.teleporter.model.entity.SoloTeleportCategory;
-import com.l2jserver.gameserver.config.Configuration;
 import com.l2jserver.gameserver.handler.BypassHandler;
 import com.l2jserver.gameserver.handler.ItemHandler;
 import com.l2jserver.gameserver.handler.VoicedCommandHandler;
@@ -76,7 +77,7 @@ public final class TeleporterService extends CustomServiceScript {
 	}
 	
 	public static void main(String[] args) {
-		if (!Configuration.teleporterService().enable()) {
+		if (!teleporterService().enable()) {
 			LOG.info("Disabled.");
 			return;
 		}
@@ -98,7 +99,7 @@ public final class TeleporterService extends CustomServiceScript {
 		
 		BypassHandler.getInstance().registerHandler(TeleporterServiceBypassHandler.getInstance());
 		
-		if (Configuration.teleporterService().getVoicedEnable()) {
+		if (teleporterService().getVoicedEnable()) {
 			VoicedCommandHandler.getInstance().registerHandler(TeleporterServiceVoicedCommandHandler.getInstance());
 			ItemHandler.getInstance().registerHandler(TeleporterServiceItemHandler.getInstance());
 		}
@@ -107,7 +108,7 @@ public final class TeleporterService extends CustomServiceScript {
 	@Override
 	public boolean unload() {
 		BypassHandler.getInstance().removeHandler(TeleporterServiceBypassHandler.getInstance());
-		if (Configuration.teleporterService().getVoicedEnable()) {
+		if (teleporterService().getVoicedEnable()) {
 			VoicedCommandHandler.getInstance().removeHandler(TeleporterServiceVoicedCommandHandler.getInstance());
 			ItemHandler.getInstance().removeHandler(TeleporterServiceItemHandler.getInstance());
 		}
@@ -518,22 +519,22 @@ public final class TeleporterService extends CustomServiceScript {
 		if (player.isDead() || player.isAlikeDead()) {
 			abortSysMsg = SystemMessage.getSystemMessage(SystemMessageId.S1_CANNOT_BE_USED);
 			abortSysMsg.addString("Teleporter");
-		} else if (isInsideAnyZoneOf(player, Configuration.teleporterService().getForbidInZones())) {
+		} else if (isInsideAnyZoneOf(player, teleporterService().getForbidInZones())) {
 			abortSysMsg = SystemMessage.getSystemMessage(SystemMessageId.S1_CANNOT_BE_USED);
 			abortSysMsg.addString("Teleporter");
-		} else if (Configuration.teleporterService().getForbidInEvents() && ((player.getEventStatus() != null) || (player.getBlockCheckerArena() != -1) || player.isOnEvent() || player.isInOlympiadMode() || TvTEvent.isPlayerParticipant(player.getObjectId()))) {
+		} else if (teleporterService().getForbidInEvents() && ((player.getEventStatus() != null) || (player.getBlockCheckerArena() != -1) || player.isOnEvent() || player.isInOlympiadMode() || TvTEvent.isPlayerParticipant(player.getObjectId()))) {
 			abortSysMsg = SystemMessage.getSystemMessage(SystemMessageId.S1_CANNOT_BE_USED);
 			abortSysMsg.addString("Teleporter");
-		} else if (Configuration.teleporterService().getForbidInDuell() && player.isInDuel()) {
+		} else if (teleporterService().getForbidInDuel() && player.isInDuel()) {
 			abortSysMsg = SystemMessage.getSystemMessage(SystemMessageId.S1_CANNOT_BE_USED);
 			abortSysMsg.addString("Teleporter");
-		} else if (Configuration.teleporterService().getForbidInFight() && AttackStanceTaskManager.getInstance().hasAttackStanceTask(player)) {
+		} else if (teleporterService().getForbidInFight() && AttackStanceTaskManager.getInstance().hasAttackStanceTask(player)) {
 			abortSysMsg = SystemMessage.getSystemMessage(SystemMessageId.S1_CANNOT_BE_USED);
 			abortSysMsg.addString("Teleporter");
-		} else if (Configuration.teleporterService().getForbidInPvp() && (player.getPvpFlag() == 1)) {
+		} else if (teleporterService().getForbidInPvp() && (player.getPvpFlag() == 1)) {
 			abortSysMsg = SystemMessage.getSystemMessage(SystemMessageId.S1_CANNOT_BE_USED);
 			abortSysMsg.addString("Teleporter");
-		} else if (Configuration.teleporterService().getForbidForChaoticPlayers() && (player.getKarma() > 0)) {
+		} else if (teleporterService().getForbidForChaoticPlayers() && (player.getKarma() > 0)) {
 			abortSysMsg = SystemMessage.getSystemMessage(SystemMessageId.S1_CANNOT_BE_USED);
 			abortSysMsg.addString("Teleporter");
 		} else {
@@ -559,6 +560,6 @@ public final class TeleporterService extends CustomServiceScript {
 	
 	@Override
 	protected boolean isDebugEnabled() {
-		return Configuration.teleporterService().getDebug();
+		return teleporterService().getDebug();
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,20 +41,19 @@ public final class MithrilMinesTeleporter extends AbstractNpcAI {
 	};
 	
 	public MithrilMinesTeleporter() {
-		super(MithrilMinesTeleporter.class.getSimpleName(), "ai/npc/Teleports");
-		addStartNpc(TELEPORT_CRYSTAL);
-		addFirstTalkId(TELEPORT_CRYSTAL);
-		addTalkId(TELEPORT_CRYSTAL);
+		bindStartNpc(TELEPORT_CRYSTAL);
+		bindFirstTalk(TELEPORT_CRYSTAL);
+		bindTalk(TELEPORT_CRYSTAL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		int index = Integer.parseInt(event) - 1;
 		if (LOCS.length > index) {
 			Location loc = LOCS[index];
 			player.teleToLocation(loc, false);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override

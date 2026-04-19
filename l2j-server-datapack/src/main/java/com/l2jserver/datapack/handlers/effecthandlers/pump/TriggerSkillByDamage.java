@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -20,7 +20,7 @@ package com.l2jserver.datapack.handlers.effecthandlers.pump;
 
 import static com.l2jserver.gameserver.enums.TriggerAttackType.NONE;
 import static com.l2jserver.gameserver.enums.TriggerTargetType.SELF;
-import static com.l2jserver.gameserver.model.events.EventType.ON_CREATURE_DAMAGE_RECEIVED;
+import static com.l2jserver.gameserver.model.events.EventType.CREATURE_DAMAGE_RECEIVED;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.enums.TriggerAttackType;
@@ -28,7 +28,7 @@ import com.l2jserver.gameserver.enums.TriggerTargetType;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.effects.AbstractEffect;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureDamageReceived;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureDamageReceived;
 import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
@@ -60,43 +60,43 @@ public final class TriggerSkillByDamage extends AbstractEffect {
 		_attackerType = params.getEnum("attackerType", TriggerAttackType.class, NONE);
 	}
 	
-	public void onDamageReceivedEvent(OnCreatureDamageReceived event) {
-		if (event.isDamageOverTime() || (_chance == 0) || (_skill.getSkillLvl() == 0)) {
+	public void onDamageReceivedEvent(CreatureDamageReceived event) {
+		if (event.damageOverTime() || (_chance == 0) || (_skill.getSkillLvl() == 0)) {
 			return;
 		}
 		
-		if (((_targetType == SELF) && (_skill.getSkill().getCastRange() > 0)) && (Util.calculateDistance(event.getAttacker(), event.getTarget(), true, false) > _skill.getSkill().getCastRange())) {
+		if (((_targetType == SELF) && (_skill.getSkill().getCastRange() > 0)) && (Util.calculateDistance(event.attacker(), event.target(), true, false) > _skill.getSkill().getCastRange())) {
 			return;
 		}
 		
-		if (event.getAttacker() == event.getTarget()) {
+		if (event.attacker() == event.target()) {
 			return;
 		}
 		
-		if ((event.getAttacker().getLevel() < _minAttackerLevel) || (event.getAttacker().getLevel() > _maxAttackerLevel)) {
+		if ((event.attacker().getLevel() < _minAttackerLevel) || (event.attacker().getLevel() > _maxAttackerLevel)) {
 			return;
 		}
 		
-		if ((event.getDamage() < _minDamage) || (Rnd.get(100) > _chance) || !_attackerType.check(event.getAttacker(), event.getTarget())) {
+		if ((event.damage() < _minDamage) || (Rnd.get(100) > _chance) || !_attackerType.check(event.attacker(), event.target())) {
 			return;
 		}
 		
 		final var triggerSkill = _skill.getSkill();
-		final var targets = _targetType.getTargets(event.getTarget(), event.getAttacker());
+		final var targets = _targetType.getTargets(event.target(), event.attacker());
 		for (var target : targets) {
 			if (!target.isInvul()) {
-				event.getTarget().makeTriggerCast(triggerSkill, target);
+				event.target().makeTriggerCast(triggerSkill, target);
 			}
 		}
 	}
 	
 	@Override
 	public void onExit(BuffInfo info) {
-		info.getEffected().removeListenerIf(ON_CREATURE_DAMAGE_RECEIVED, listener -> listener.getOwner() == this);
+		info.getEffected().removeListenerIf(CREATURE_DAMAGE_RECEIVED, listener -> listener.getOwner() == this);
 	}
 	
 	@Override
 	public void onStart(BuffInfo info) {
-		info.getEffected().addListener(new ConsumerEventListener(info.getEffected(), ON_CREATURE_DAMAGE_RECEIVED, (OnCreatureDamageReceived event) -> onDamageReceivedEvent(event), this));
+		info.getEffected().addListener(new ConsumerEventListener(info.getEffected(), CREATURE_DAMAGE_RECEIVED, (CreatureDamageReceived event) -> onDamageReceivedEvent(event), this));
 	}
 }

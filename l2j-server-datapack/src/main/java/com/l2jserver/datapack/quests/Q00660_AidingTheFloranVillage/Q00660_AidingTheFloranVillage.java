@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -60,15 +60,15 @@ public final class Q00660_AidingTheFloranVillage extends Quest {
 	private static final int ADENA_REWARD_6 = 5000;
 	
 	public Q00660_AidingTheFloranVillage() {
-		super(660, Q00660_AidingTheFloranVillage.class.getSimpleName(), "Aiding the Floran Village");
-		addStartNpc(MARIA, ALEX);
-		addTalkId(MARIA, ALEX);
-		addKillId(DROPLIST.getNpcIds());
+		super(660);
+		bindStartNpc(MARIA, ALEX);
+		bindTalk(MARIA, ALEX);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(WATCHING_EYES, ROUGHLY_HEWN_ROCK_GOLEM_SHARD, DELU_LIZARDMANS_SCALE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -210,12 +210,11 @@ public final class Q00660_AidingTheFloranVillage extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(player, 2, 2, npc);
 		if (qs != null) {
 			giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

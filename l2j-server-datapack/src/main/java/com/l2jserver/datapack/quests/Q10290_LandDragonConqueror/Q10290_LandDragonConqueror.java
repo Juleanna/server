@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,15 +46,15 @@ public final class Q10290_LandDragonConqueror extends Quest {
 	private static final int MIN_LEVEL = 83;
 	
 	public Q10290_LandDragonConqueror() {
-		super(10290, Q10290_LandDragonConqueror.class.getSimpleName(), "Land Dragon Conqueror");
-		addStartNpc(THEODRIC);
-		addTalkId(THEODRIC);
-		addKillId(ANTHARAS);
+		super(10290);
+		bindStartNpc(THEODRIC);
+		bindTalk(THEODRIC);
+		bindKill(ANTHARAS);
 		registerQuestItems(MIRACLE_NECKLACE, SHABBY_NECKLACE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -68,9 +68,9 @@ public final class Q10290_LandDragonConqueror extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		if (!player.isInParty()) {
-			return super.onKill(npc, player, isSummon);
+			return;
 		}
 		
 		Function<L2PcInstance, Boolean> rewardCheck = p -> {
@@ -92,7 +92,6 @@ public final class Q10290_LandDragonConqueror extends Quest {
 		} else {
 			player.getParty().forEachMember(rewardCheck);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

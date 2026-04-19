@@ -2112,8 +2112,10 @@
 		<set name="rideState" val="NONE;STRIDER;WYVERN;WOLF" />
 		<set name="targetType" val="ENEMY_NOT" />
 		<effects>
-			<effect name="HpPerMax">
-				<param power="30" />
+			<effect name="InstantHealLink">
+				<param amount="30" />
+				<param mode="PER" />
+				<param step="3" />
 			</effect>
 		</effects>
 	</skill>

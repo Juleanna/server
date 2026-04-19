@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -62,15 +62,15 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest {
 	private static final int MALRUK_SUCCUBUS_CLAW_CHANCE = 60;
 	
 	public Q00241_PossessorOfAPreciousSoul1() {
-		super(241, Q00241_PossessorOfAPreciousSoul1.class.getSimpleName(), "Possessor Of A Precious Soul 1");
-		addStartNpc(TALIEN);
-		addTalkId(TALIEN, STEDMIEL, GABRIELLE, GILMORE, KANTABILON, RAHORAKTI, CARADINE, KASSANDRA, VIRGIL, OGMAR);
-		addKillId(BARAHAM, MALRUK_SUCCUBUS_1, MALRUK_SUCCUBUS_TUREN_1, MALRUK_SUCCUBUS_2, MALRUK_SUCCUBUS_TUREN_2, TAIK_ORC_SUPPLY_LEADER);
+		super(241);
+		bindStartNpc(TALIEN);
+		bindTalk(TALIEN, STEDMIEL, GABRIELLE, GILMORE, KANTABILON, RAHORAKTI, CARADINE, KASSANDRA, VIRGIL, OGMAR);
+		bindKill(BARAHAM, MALRUK_SUCCUBUS_1, MALRUK_SUCCUBUS_TUREN_1, MALRUK_SUCCUBUS_2, MALRUK_SUCCUBUS_TUREN_2, TAIK_ORC_SUPPLY_LEADER);
 		registerQuestItems(LEGEND_OF_SEVENTEEN, MALRUK_SUCCUBUS_CLAW, ECHO_CRYSTAL, POETRY_BOOK, CRIMSON_MOSS, RAHORAKTIS_MEDICINE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -174,14 +174,14 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance partyMember;
 		final QuestState st;
 		switch (npc.getId()) {
 			case BARAHAM:
 				partyMember = getRandomPartyMember(player, 3);
 				if (partyMember == null) {
-					return null;
+					return;
 				}
 				
 				st = getQuestState(partyMember, false);
@@ -194,7 +194,7 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest {
 			case MALRUK_SUCCUBUS_TUREN_2:
 				partyMember = getRandomPartyMember(player, 6);
 				if (partyMember == null) {
-					return null;
+					return;
 				}
 				st = getQuestState(partyMember, false);
 				if ((MALRUK_SUCCUBUS_CLAW_CHANCE >= getRandom(100)) && (st.getQuestItemsCount(MALRUK_SUCCUBUS_CLAW) < 10)) {
@@ -209,7 +209,7 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest {
 			case TAIK_ORC_SUPPLY_LEADER:
 				partyMember = getRandomPartyMember(player, 14);
 				if (partyMember == null) {
-					return null;
+					return;
 				}
 				st = getQuestState(partyMember, false);
 				if ((CRIMSON_MOSS_CHANCE >= getRandom(100)) && (st.getQuestItemsCount(CRIMSON_MOSS) < 5)) {
@@ -222,7 +222,6 @@ public class Q00241_PossessorOfAPreciousSoul1 extends Quest {
 				}
 				break;
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

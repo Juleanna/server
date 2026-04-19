@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,15 +42,15 @@ public class Q00278_HomeSecurity extends Quest {
 	private static final QuestItemChanceHolder SEL_MAHUM_MANE = new QuestItemChanceHolder(15531, 300L);
 	
 	public Q00278_HomeSecurity() {
-		super(278, Q00278_HomeSecurity.class.getSimpleName(), "Home Security");
-		addStartNpc(TUNATUN);
-		addTalkId(TUNATUN);
-		addKillId(MONSTER);
+		super(278);
+		bindStartNpc(TUNATUN);
+		bindTalk(TUNATUN);
+		bindKill(MONSTER);
 		registerQuestItems(SEL_MAHUM_MANE.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
@@ -106,7 +106,7 @@ public class Q00278_HomeSecurity extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getRandomPartyMemberState(killer, 1, 3, npc);
 		if (st != null) {
 			switch (npc.getId()) {
@@ -123,7 +123,6 @@ public class Q00278_HomeSecurity extends Quest {
 				}
 			}
 		}
-		return null;
 	}
 	
 	@Override

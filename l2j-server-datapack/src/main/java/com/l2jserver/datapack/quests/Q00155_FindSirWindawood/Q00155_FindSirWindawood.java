@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,14 +39,14 @@ public class Q00155_FindSirWindawood extends Quest {
 	private static final int MIN_LEVEL = 3;
 	
 	public Q00155_FindSirWindawood() {
-		super(155, Q00155_FindSirWindawood.class.getSimpleName(), "Find Sir Windawood");
-		addStartNpc(ABELLOS);
-		addTalkId(ABELLOS, SIR_COLLIN_WINDAWOOD);
+		super(155);
+		bindStartNpc(ABELLOS);
+		bindTalk(ABELLOS, SIR_COLLIN_WINDAWOOD);
 		registerQuestItems(OFFICIAL_LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equalsIgnoreCase("30042-03.htm")) {
 			st.startQuest();

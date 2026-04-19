@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -85,10 +85,10 @@ public class Q00254_LegendaryTales extends Quest {
 	private static final int MIN_LEVEL = 80;
 	
 	public Q00254_LegendaryTales() {
-		super(254, Q00254_LegendaryTales.class.getSimpleName(), "Legendary Tales");
-		addStartNpc(GILMORE);
-		addTalkId(GILMORE);
-		addKillId(MONSTERS);
+		super(254);
+		bindStartNpc(GILMORE);
+		bindTalk(GILMORE);
+		bindKill(MONSTERS);
 		registerQuestItems(LARGE_DRAGON_SKULL);
 	}
 	
@@ -116,7 +116,7 @@ public class Q00254_LegendaryTales extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = getNoQuestMsg(player);
 		final QuestState st = getQuestState(player, false);
 		
@@ -180,7 +180,7 @@ public class Q00254_LegendaryTales extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isPet) {
 		if (player.isInParty()) {
 			for (L2PcInstance partyMember : player.getParty().getMembers()) {
 				actionForEachPlayer(partyMember, npc, false);
@@ -188,7 +188,6 @@ public class Q00254_LegendaryTales extends Quest {
 		} else {
 			actionForEachPlayer(player, npc, false);
 		}
-		return super.onKill(npc, player, isPet);
 	}
 	
 	@Override

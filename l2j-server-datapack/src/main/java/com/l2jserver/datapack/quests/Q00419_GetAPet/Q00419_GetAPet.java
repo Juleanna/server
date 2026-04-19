@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -183,16 +183,16 @@ public final class Q00419_GetAPet extends Quest {
 	}
 	
 	public Q00419_GetAPet() {
-		super(419, Q00419_GetAPet.class.getSimpleName(), "Get A Pet");
-		addStartNpc(PET_MENAGER_MARTIN);
-		addTalkId(PET_MENAGER_MARTIN, GUARD_METTY, ACCESSORY_MERCHANT_ELICE, GATEKEEPER_BELLA);
-		addKillId(LESSER_DARK_HORROR, PROWLER, GIANT_SPIDER, DARK_HORROR, TALON_SPIDER, BLADE_SPIDER, HOOK_SPIDER, HUNTER_TARANTULA, CRIMSON_SPIDER, PINCER_SPIDER, KASHA_SPIDER, KASHA_FANG_SPIDER, KASHA_BLADE_SPIDER, PLUNDER_TARANTULA, CRIMSON_SPIDER2);
+		super(419);
+		bindStartNpc(PET_MENAGER_MARTIN);
+		bindTalk(PET_MENAGER_MARTIN, GUARD_METTY, ACCESSORY_MERCHANT_ELICE, GATEKEEPER_BELLA);
+		bindKill(LESSER_DARK_HORROR, PROWLER, GIANT_SPIDER, DARK_HORROR, TALON_SPIDER, BLADE_SPIDER, HOOK_SPIDER, HUNTER_TARANTULA, CRIMSON_SPIDER, PINCER_SPIDER, KASHA_SPIDER, KASHA_FANG_SPIDER, KASHA_BLADE_SPIDER, PLUNDER_TARANTULA, CRIMSON_SPIDER2);
 		registerQuestItems(ANIMAL_LOVERS_LIST, ANIMAL_SLAYERS_1ST_LIST, ANIMAL_SLAYERS_2ND_LIST, ANIMAL_SLAYERS_3RD_LIST, ANIMAL_SLAYERS_4TH_LIST, ANIMAL_SLAYERS_5TH_LIST, BLOODY_FANG.getId(), BLOODY_CLAW.getId(), BLOODY_NAIL.getId(), BLOODY_KASHA_FANG.getId(), BLOODY_TARANTULA_NAIL
 			.getId(), ANIMAL_SLAYERS_LIST, BLOODY_RED_CLAW.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -347,14 +347,13 @@ public final class Q00419_GetAPet extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, qs.getPlayer(), true)) {
 			if (hasQuestItems(qs.getPlayer(), DROPLIST.get(npc).requiredItems())) {
 				giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

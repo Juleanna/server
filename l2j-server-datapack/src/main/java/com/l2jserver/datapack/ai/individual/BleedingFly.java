@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,20 +50,18 @@ public class BleedingFly extends AbstractNpcAI {
 	private static final double MIN_HP_PERCENTAGE = 0.25;
 	
 	public BleedingFly() {
-		super(BleedingFly.class.getSimpleName(), "ai/individual");
-		addAttackId(BLEEDING_FLY);
-		addSpawnId(BLEEDING_FLY);
+		bindAttack(BLEEDING_FLY);
+		bindSpawn(BLEEDING_FLY);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.getVariables().set(MID_HP_MINION_COUNT, 5);
 		npc.getVariables().set(LOW_HP_MINION_COUNT, 10);
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (Util.calculateDistance(npc, npc.getSpawn(), false, false) > MAX_CHASE_DIST) {
 			npc.teleToLocation(npc.getSpawn().getX(), npc.getSpawn().getY(), npc.getSpawn().getZ());
 		}
@@ -78,13 +76,12 @@ public class BleedingFly extends AbstractNpcAI {
 			npc.getVariables().set(LOW_HP_FLAG, true);
 			startQuestTimer(TIMER_LOW_HP, 1000, npc, null);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (npc.isDead()) {
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		if (TIMER_MID_HP.equals(event)) {
@@ -111,6 +108,6 @@ public class BleedingFly extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

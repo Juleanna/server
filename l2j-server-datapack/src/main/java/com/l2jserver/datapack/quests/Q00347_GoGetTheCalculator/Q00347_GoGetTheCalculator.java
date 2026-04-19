@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -48,15 +48,15 @@ public final class Q00347_GoGetTheCalculator extends Quest {
 	private static final int MIN_LVL = 12;
 	
 	public Q00347_GoGetTheCalculator() {
-		super(347, Q00347_GoGetTheCalculator.class.getSimpleName(), "Go Get the Calculator");
-		addStartNpc(BRUNON);
-		addTalkId(BRUNON, SILVERA, SPIRON, BALANKI);
-		addKillId(GEMSTONE_BEAST);
+		super(347);
+		bindStartNpc(BRUNON);
+		bindTalk(BRUNON, SILVERA, SPIRON, BALANKI);
+		bindKill(GEMSTONE_BEAST);
 		registerQuestItems(STOLEN_CALCULATOR, GEMSTONE.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -215,13 +215,12 @@ public final class Q00347_GoGetTheCalculator extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, 4, 3, npc);
 		if (qs != null) {
 			if (giveItemRandomly(qs.getPlayer(), npc, GEMSTONE, true)) {
 				qs.setCond(5);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

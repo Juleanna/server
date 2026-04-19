@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -35,13 +35,13 @@ public class Q00122_OminousNews extends Quest {
 	private static final int KARUDA = 32017;
 	
 	public Q00122_OminousNews() {
-		super(122, Q00122_OminousNews.class.getSimpleName(), "Ominous News");
-		addStartNpc(MOIRA);
-		addTalkId(MOIRA, KARUDA);
+		super(122);
+		bindStartNpc(MOIRA);
+		bindTalk(MOIRA, KARUDA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

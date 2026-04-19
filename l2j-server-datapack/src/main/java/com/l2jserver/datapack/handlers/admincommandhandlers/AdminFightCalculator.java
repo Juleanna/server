@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -154,9 +155,11 @@ public class AdminFightCalculator implements IAdminCommandHandler {
 			StringTokenizer st = new StringTokenizer(params);
 			mid1 = Integer.parseInt(st.nextToken());
 			mid2 = Integer.parseInt(st.nextToken());
-			
-			npc1 = new L2MonsterInstance(NpcData.getInstance().getTemplate(mid1));
-			npc2 = new L2MonsterInstance(NpcData.getInstance().getTemplate(mid2));
+
+			final var objectId1 = IdFactory.getInstance().getNextId();
+			final var objectId2 = IdFactory.getInstance().getNextId();
+			npc1 = new L2MonsterInstance(objectId1, NpcData.getInstance().getTemplate(mid1));
+			npc2 = new L2MonsterInstance(objectId2, NpcData.getInstance().getTemplate(mid2));
 		}
 		
 		int miss1 = 0;

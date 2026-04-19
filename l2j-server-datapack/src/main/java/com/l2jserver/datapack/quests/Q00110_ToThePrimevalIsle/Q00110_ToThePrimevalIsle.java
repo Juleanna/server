@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,14 +36,14 @@ public class Q00110_ToThePrimevalIsle extends Quest {
 	private static final int ANCIENT_BOOK = 8777;
 	
 	public Q00110_ToThePrimevalIsle() {
-		super(110, Q00110_ToThePrimevalIsle.class.getSimpleName(), "To the Primeval Isle");
-		addStartNpc(ANTON);
-		addTalkId(ANTON, MARQUEZ);
+		super(110);
+		bindStartNpc(ANTON);
+		bindTalk(ANTON, MARQUEZ);
 		registerQuestItems(ANCIENT_BOOK);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

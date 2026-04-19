@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,9 +42,8 @@ public final class SteelCitadelTeleport extends AbstractNpcAI {
 	private static final Location TELEPORT_CITADEL = new Location(16342, 209557, -9352);
 	
 	public SteelCitadelTeleport() {
-		super(SteelCitadelTeleport.class.getSimpleName(), "ai/npc/Teleports");
-		addStartNpc(NAIA_CUBE);
-		addTalkId(NAIA_CUBE);
+		bindStartNpc(NAIA_CUBE);
+		bindTalk(NAIA_CUBE);
 	}
 	
 	@Override

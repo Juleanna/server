@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -56,15 +56,15 @@ public final class Q00414_PathOfTheOrcRaider extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00414_PathOfTheOrcRaider() {
-		super(414, Q00414_PathOfTheOrcRaider.class.getSimpleName(), "Path Of The Orc Raider");
-		addStartNpc(PREFECT_KARUKIA);
-		addTalkId(PREFECT_KARUKIA, PREFRCT_KASMAN, PREFRCT_TAZEER);
-		addKillId(KURUKA_RATMAN_LEADER, UMBAR_ORC, TIMORA_ORC, GOBLIN_TOMB_RAIDER_LEADER);
+		super(414);
+		bindStartNpc(PREFECT_KARUKIA);
+		bindTalk(PREFECT_KARUKIA, PREFRCT_KASMAN, PREFRCT_TAZEER);
+		bindKill(KURUKA_RATMAN_LEADER, UMBAR_ORC, TIMORA_ORC, GOBLIN_TOMB_RAIDER_LEADER);
 		registerQuestItems(GREEN_BLOOD, GOBLIN_DWELLING_MAP, KURUKA_RATMAN_TOOTH, BETRAYER_UMBAR_REPORT, BETRAYER_ZAKAN_REPORT, HEAD_OF_BETRAYER, TIMORA_ORC_HEAD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -134,7 +134,7 @@ public final class Q00414_PathOfTheOrcRaider extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -190,7 +190,6 @@ public final class Q00414_PathOfTheOrcRaider extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

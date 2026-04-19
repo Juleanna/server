@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -104,10 +104,9 @@ public final class AirShipGludioGracia extends Quest implements Runnable {
 	private L2Npc _atcGracia = null;
 	
 	public AirShipGludioGracia() {
-		super(-1, AirShipGludioGracia.class.getSimpleName(), "gracia/vehicles");
-		addStartNpc(CONTROLLERS);
-		addFirstTalkId(CONTROLLERS);
-		addTalkId(CONTROLLERS);
+		bindStartNpc(CONTROLLERS);
+		bindFirstTalk(CONTROLLERS);
+		bindTalk(CONTROLLERS);
 		_ship = AirShipManager.getInstance().getNewAirShip(-149378, 252552, 198, 33837);
 		_ship.setOustLoc(OUST_GLUDIO);
 		_ship.setInDock(GLUDIO_DOCK_ID);
@@ -150,7 +149,7 @@ public final class AirShipGludioGracia extends Quest implements Runnable {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (player.isTransformed()) {
 			player.sendPacket(SystemMessageId.YOU_CANNOT_BOARD_AN_AIRSHIP_WHILE_TRANSFORMED);
 			return null;

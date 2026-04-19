@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class Q00100_SagaOfTheMaestro extends AbstractSagaQuest {
 	public Q00100_SagaOfTheMaestro() {
-		super(100, Q00100_SagaOfTheMaestro.class.getSimpleName(), "Saga of the Maestro");
+		super(100);
 		_npc = new int[] {
 			31592,
 			31273,

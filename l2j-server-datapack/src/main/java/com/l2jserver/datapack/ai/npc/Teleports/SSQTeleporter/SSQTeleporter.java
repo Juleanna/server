@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -80,10 +80,9 @@ public final class SSQTeleporter extends AbstractNpcAI {
 	private static final int MAX_QUEST_COUNT = 40;
 	
 	public SSQTeleporter() {
-		super(SSQTeleporter.class.getSimpleName(), "ai/npc/Teleports");
-		addStartNpc(NPCS);
-		addTalkId(NPCS);
-		addFirstTalkId(NPCS);
+		bindStartNpc(NPCS);
+		bindTalk(NPCS);
+		bindFirstTalk(NPCS);
 	}
 	
 	private int getMemoStateId(int npcId) {
@@ -108,7 +107,7 @@ public final class SSQTeleporter extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final SevenSigns ss = SevenSigns.getInstance();
 		final int ssqPart = ss.getPlayerCabal(player.getObjectId());
 		
@@ -229,7 +228,7 @@ public final class SSQTeleporter extends AbstractNpcAI {
 			}
 		}
 		
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override

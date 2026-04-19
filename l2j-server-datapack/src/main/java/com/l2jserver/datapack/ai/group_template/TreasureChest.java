@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -832,14 +832,12 @@ public final class TreasureChest extends AbstractNpcAI {
 	}
 	
 	public TreasureChest() {
-		super(TreasureChest.class.getSimpleName(), "ai/group_template");
-		
-		addSpawnId(DROPS.keySet());
-		addAttackId(DROPS.keySet());
+		bindSpawn(DROPS.keySet());
+		bindAttack(DROPS.keySet());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case TIMER_1:
 			case TIMER_2: {
@@ -847,19 +845,18 @@ public final class TreasureChest extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		// TODO(Zoey76): Disable Core AI.
 		npc.getVariables().set("MAESTRO_SKILL_USED", 0);
 		startQuestTimer(TIMER_2, MAX_SPAWN_TIME, npc, null);
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		if (attacker.getLevel() < PLAYER_LEVEL_THRESHOLD) {
 			npc.getVariables().set("MAX_LEVEL_DIFFERENCE", 6);
 		} else {
@@ -897,6 +894,5 @@ public final class TreasureChest extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 }

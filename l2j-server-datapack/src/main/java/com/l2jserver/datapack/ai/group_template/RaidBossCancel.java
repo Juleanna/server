@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -104,26 +104,23 @@ public final class RaidBossCancel extends AbstractNpcAI {
 	};
 	
 	public RaidBossCancel() {
-		super(RaidBossCancel.class.getSimpleName(), "ai/group_template");
-		addAttackId(RAID_BOSSES);
-		addSkillSeeId(RAID_BOSSES);
+		bindAttack(RAID_BOSSES);
+		bindSkillSee(RAID_BOSSES);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final SkillHolder selfRangeCancel = npc.getTemplate().getParameters().getObject("SelfRangeCancel_a", SkillHolder.class);
 		if (Util.checkIfInRange(150, npc, attacker, true) && (getRandom(750) < 1)) {
 			addSkillCastDesire(npc, attacker, selfRangeCancel, 1000000L);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
 		final SkillHolder selfRangeCancel = npc.getTemplate().getParameters().getObject("SelfRangeCancel_a", SkillHolder.class);
 		if (Util.checkIfInRange(150, npc, player, true) && (getRandom(750) < 1)) {
 			addSkillCastDesire(npc, player, selfRangeCancel, 1000000L);
 		}
-		return super.onSkillSee(npc, player, skill, targets, isSummon);
 	}
 }

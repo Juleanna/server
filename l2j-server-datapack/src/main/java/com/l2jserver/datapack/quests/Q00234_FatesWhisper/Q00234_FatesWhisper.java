@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -140,21 +140,21 @@ public final class Q00234_FatesWhisper extends Quest {
 	private static final int HAMMER_OF_DESTROYER = 7899;
 	
 	public Q00234_FatesWhisper() {
-		super(234, Q00234_FatesWhisper.class.getSimpleName(), "Fate's Whisper");
-		addStartNpc(MAESTRO_LEORIN);
-		addTalkId(ZENKIN, CLIFF, MASTER_KASPAR, HEAD_BLACKSMITH_FERRIS, MAESTRO_LEORIN);
-		addTalkId(COFFER_OF_THE_DEAD, CHEST_OF_KERNON, CHEST_OF_HALLATE, CHEST_OF_GOLKONDA);
+		super(234);
+		bindStartNpc(MAESTRO_LEORIN);
+		bindTalk(ZENKIN, CLIFF, MASTER_KASPAR, HEAD_BLACKSMITH_FERRIS, MAESTRO_LEORIN);
+		bindTalk(COFFER_OF_THE_DEAD, CHEST_OF_KERNON, CHEST_OF_HALLATE, CHEST_OF_GOLKONDA);
 		
-		addKillId(PLATINUM_TRIBE_GRUNT, PLATINUM_TRIBE_ARCHER, PLATINUM_TRIBE_WARRIOR, PLATINUM_TRIBE_SHAMAN, PLATINUM_TRIBE_LORD, GUARDIAN_ANGEL, SEAL_ANGEL, SEAL_ANGEL_R);
-		addKillId(DOMB_DEATH_CABRIO, KERNON, GOLKONDA_LONGHORN, HALLATE_THE_DEATH_LORD);
+		bindKill(PLATINUM_TRIBE_GRUNT, PLATINUM_TRIBE_ARCHER, PLATINUM_TRIBE_WARRIOR, PLATINUM_TRIBE_SHAMAN, PLATINUM_TRIBE_LORD, GUARDIAN_ANGEL, SEAL_ANGEL, SEAL_ANGEL_R);
+		bindKill(DOMB_DEATH_CABRIO, KERNON, GOLKONDA_LONGHORN, HALLATE_THE_DEATH_LORD);
 		
-		addSpawnId(COFFER_OF_THE_DEAD, CHEST_OF_KERNON, CHEST_OF_HALLATE, CHEST_OF_GOLKONDA);
-		addAttackId(BAIUM);
+		bindSpawn(COFFER_OF_THE_DEAD, CHEST_OF_KERNON, CHEST_OF_HALLATE, CHEST_OF_GOLKONDA);
+		bindAttack(BAIUM);
 		registerQuestItems(Q_BLOODY_FABRIC_Q0234.getId(), Q_WHITE_FABRIC_Q0234, Q_PIPETTE_KNIFE, Q_REIRIAS_SOULORB, Q_INFERNIUM_SCEPTER_1, Q_INFERNIUM_SCEPTER_2, Q_INFERNIUM_SCEPTER_3, Q_MAESTRO_REORINS_HAMMER, Q_MAESTRO_REORINS_MOLD, Q_INFERNIUM_VARNISH, Q_RED_PIPETTE_KNIFE);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		switch (npc.getId()) {
 			case COFFER_OF_THE_DEAD: {
 				startQuestTimer("23401", 1000 * 120, npc, null);
@@ -173,7 +173,6 @@ public final class Q00234_FatesWhisper extends Quest {
 				break;
 			}
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
@@ -420,12 +419,12 @@ public final class Q00234_FatesWhisper extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (player == null) {
 			if (event.equals("23401") || event.equals("23402") || event.equals("23403") || event.equals("23404")) {
 				npc.decayMe();
 			}
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState qs = getQuestState(player, false);
@@ -875,23 +874,23 @@ public final class Q00234_FatesWhisper extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		switch (npc.getId()) {
 			case DOMB_DEATH_CABRIO: {
 				addSpawn(COFFER_OF_THE_DEAD, npc.getLocation());
-				return super.onKill(npc, killer, isSummon);
+				return;
 			}
 			case KERNON: {
 				addSpawn(CHEST_OF_KERNON, npc.getLocation());
-				return super.onKill(npc, killer, isSummon);
+				return;
 			}
 			case GOLKONDA_LONGHORN: {
 				addSpawn(CHEST_OF_GOLKONDA, npc.getLocation());
-				return super.onKill(npc, killer, isSummon);
+				return;
 			}
 			case HALLATE_THE_DEATH_LORD: {
 				addSpawn(CHEST_OF_HALLATE, npc.getLocation());
-				return super.onKill(npc, killer, isSummon);
+				return;
 			}
 		}
 		
@@ -911,11 +910,10 @@ public final class Q00234_FatesWhisper extends Quest {
 			}
 			
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && (npc.getId() == BAIUM)) {
 			if ((attacker.getActiveWeaponItem() != null) && (attacker.getActiveWeaponItem().getId() == Q_PIPETTE_KNIFE)) {
@@ -925,7 +923,6 @@ public final class Q00234_FatesWhisper extends Quest {
 				npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.ALL, npc.getId(), WHO_DARES_TO_TRY_AND_STEAL_MY_NOBLE_BLOOD));
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override

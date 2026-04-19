@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -22,7 +22,9 @@ import static com.l2jserver.gameserver.config.Configuration.customs;
 import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
 import com.l2jserver.gameserver.model.L2Object;
@@ -38,7 +40,8 @@ import com.l2jserver.gameserver.network.SystemMessageId;
  * @version $Revision: 1.2.4.5 $ $Date: 2007/07/31 10:06:06 $
  */
 public class AdminKill implements IAdminCommandHandler {
-	private static Logger _log = Logger.getLogger(AdminKill.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminKill.class);
+	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_kill",
 		"admin_kill_monster"
@@ -105,7 +108,7 @@ public class AdminKill implements IAdminCommandHandler {
 	
 	private void kill(L2PcInstance activeChar, L2Character target) {
 		if (target instanceof L2PcInstance) {
-			if (!((L2PcInstance) target).isGM()) {
+			if (!target.isGM()) {
 				target.stopAllEffects(); // e.g. invincibility effect
 			}
 			target.reduceCurrentHp(target.getMaxHp() + target.getMaxCp() + 1, activeChar, null);
@@ -125,7 +128,7 @@ public class AdminKill implements IAdminCommandHandler {
 			}
 		}
 		if (general().debug()) {
-			_log.fine("GM: " + activeChar.getName() + "(" + activeChar.getObjectId() + ")" + " killed character " + target.getObjectId());
+			LOG.debug("GM: {}({}) killed character {}", activeChar.getName(), activeChar.getObjectId(), target.getObjectId());
 		}
 	}
 	

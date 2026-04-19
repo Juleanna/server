@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,15 +41,15 @@ public class Q00452_FindingtheLostSoldiers extends Quest {
 	};
 	
 	public Q00452_FindingtheLostSoldiers() {
-		super(452, Q00452_FindingtheLostSoldiers.class.getSimpleName(), "Finding the Lost Soldiers");
-		addStartNpc(JAKAN);
-		addTalkId(JAKAN);
-		addTalkId(SOLDIER_CORPSES);
+		super(452);
+		bindStartNpc(JAKAN);
+		bindTalk(JAKAN);
+		bindTalk(SOLDIER_CORPSES);
 		registerQuestItems(TAG_ID);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

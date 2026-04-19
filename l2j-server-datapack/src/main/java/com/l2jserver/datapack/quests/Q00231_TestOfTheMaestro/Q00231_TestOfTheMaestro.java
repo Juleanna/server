@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -73,15 +73,15 @@ public final class Q00231_TestOfTheMaestro extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00231_TestOfTheMaestro() {
-		super(231, Q00231_TestOfTheMaestro.class.getSimpleName(), "Test Of The Maestro");
-		addStartNpc(IRON_GATES_LOCKIRIN);
-		addTalkId(IRON_GATES_LOCKIRIN, GOLDEN_WHEELS_SPIRON, SILVER_SCALES_BALANKI, BRONZE_KEYS_KEEF, GRAY_PILLAR_MEMBER_FILAUR, BLACK_ANVILS_ARIN, MASTER_TOMA, CHIEF_CROTO, JAILER_DUBABAH, RESEARCHER_LORAIN);
-		addKillId(KING_BUGBEAR, GIANT_MIST_LEECH, STINGER_WASP, MARSH_SPIDER, EVIL_EYE_LORD);
+		super(231);
+		bindStartNpc(IRON_GATES_LOCKIRIN);
+		bindTalk(IRON_GATES_LOCKIRIN, GOLDEN_WHEELS_SPIRON, SILVER_SCALES_BALANKI, BRONZE_KEYS_KEEF, GRAY_PILLAR_MEMBER_FILAUR, BLACK_ANVILS_ARIN, MASTER_TOMA, CHIEF_CROTO, JAILER_DUBABAH, RESEARCHER_LORAIN);
+		bindKill(KING_BUGBEAR, GIANT_MIST_LEECH, STINGER_WASP, MARSH_SPIDER, EVIL_EYE_LORD);
 		registerQuestItems(RECOMMENDATION_OF_BALANKI, RECOMMENDATION_OF_FILAUR, RECOMMENDATION_OF_ARIN, LETTER_OF_SOLDER_DERACHMENT, PAINT_OF_KAMURU, NECKLACE_OF_KAMUTU, PAINT_OF_TELEPORT_DEVICE, TELEPORT_DEVICE, ARCHITECTURE_OF_CRUMA, REPORT_OF_CRUMA, INGREDIENTS_OF_ANTIDOTE, STINGER_WASP_NEEDLE, MARSH_SPIDERS_WEB, BLOOD_OF_LEECH, BROKEN_TELEPORT_DEVICE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -152,7 +152,7 @@ public final class Q00231_TestOfTheMaestro extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -198,7 +198,6 @@ public final class Q00231_TestOfTheMaestro extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

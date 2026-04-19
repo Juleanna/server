@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -33,8 +33,7 @@ public final class DivineBeast extends AbstractNpcAI {
 	private static final int CHECK_TIME = 2 * 1000;
 	
 	public DivineBeast() {
-		super(DivineBeast.class.getSimpleName(), "ai");
-		addSummonSpawnId(DIVINE_BEAST);
+		bindSummonSpawn(DIVINE_BEAST);
 	}
 	
 	@Override
@@ -43,7 +42,7 @@ public final class DivineBeast extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((player == null) || !player.hasServitor()) {
 			cancelQuestTimer(event, npc, player);
 		} else if (player.getTransformationId() != TRANSFORMATION_ID) {
@@ -51,6 +50,6 @@ public final class DivineBeast extends AbstractNpcAI {
 			player.getSummon().unSummon(player);
 		}
 		
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

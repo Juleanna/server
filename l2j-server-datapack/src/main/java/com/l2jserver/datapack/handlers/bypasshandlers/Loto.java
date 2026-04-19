@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -194,7 +194,8 @@ public class Loto implements IBypassHandler {
 			sm.addItemName(4442);
 			player.sendPacket(sm);
 			
-			L2ItemInstance item = new L2ItemInstance(IdFactory.getInstance().getNextId(), 4442);
+			final var objectId = IdFactory.getInstance().getNextId();
+			final var item = new L2ItemInstance(objectId, 4442);
 			item.setCount(1);
 			item.setCustomType1(lotonumber);
 			item.setEnchantLevel(enchant);
@@ -203,7 +204,7 @@ public class Loto implements IBypassHandler {
 			
 			InventoryUpdate iu = new InventoryUpdate();
 			iu.addItem(item);
-			L2ItemInstance adenaupdate = player.getInventory().getItemByItemId(57);
+			final var adenaupdate = player.getInventory().getItemByItemId(57);
 			iu.addModifiedItem(adenaupdate);
 			player.sendPacket(iu);
 			
@@ -262,7 +263,7 @@ public class Loto implements IBypassHandler {
 		} else if (val > 25) // >25 - check lottery ticket by item object id
 		{
 			int lotonumber = Lottery.getInstance().getId();
-			L2ItemInstance item = player.getInventory().getItemByObjectId(val);
+			final var item = player.getInventory().getItemByObjectId(val);
 			if ((item == null) || (item.getId() != 4442) || (item.getCustomType1() >= lotonumber)) {
 				return;
 			}

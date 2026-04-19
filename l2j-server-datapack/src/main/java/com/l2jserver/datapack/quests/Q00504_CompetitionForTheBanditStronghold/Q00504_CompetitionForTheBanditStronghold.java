@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -57,14 +57,14 @@ public final class Q00504_CompetitionForTheBanditStronghold extends Quest {
 	}
 	
 	public Q00504_CompetitionForTheBanditStronghold() {
-		super(504, Q00504_CompetitionForTheBanditStronghold.class.getSimpleName(), "Competition for the Bandit Stronghold");
-		addStartNpc(MESSENGER);
-		addTalkId(MESSENGER);
-		addKillId(MONSTERS.keySet());
+		super(504);
+		bindStartNpc(MESSENGER);
+		bindTalk(MESSENGER);
+		bindKill(MONSTERS.keySet());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if ((st != null) && event.equals("35437-02.htm")) {
@@ -76,10 +76,10 @@ public final class Q00504_CompetitionForTheBanditStronghold extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st == null) || !st.hasQuestItems(CONTEST_CERTIFICATE) || !st.isStarted()) {
-			return null;
+			return;
 		}
 		
 		if (getRandom(10) < MONSTERS.get(npc.getId())) {
@@ -90,7 +90,6 @@ public final class Q00504_CompetitionForTheBanditStronghold extends Quest {
 				st.playSound(Sound.ITEMSOUND_QUEST_MIDDLE);
 			}
 		}
-		return null;
 	}
 	
 	@Override

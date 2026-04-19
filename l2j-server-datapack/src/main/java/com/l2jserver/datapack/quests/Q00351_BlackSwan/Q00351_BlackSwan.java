@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -57,15 +57,15 @@ public final class Q00351_BlackSwan extends Quest {
 	private static final int MIN_LEVEL = 32;
 	
 	public Q00351_BlackSwan() {
-		super(351, Q00351_BlackSwan.class.getSimpleName(), "Black Swan");
-		addStartNpc(GOSTA, ROMAN);
-		addTalkId(GOSTA, IASON_HEINE, ROMAN);
-		addKillId(TASABA_LIZARDMAN1, TASABA_LIZARDMAN_SHAMAN1, TASABA_LIZARDMAN2, TASABA_LIZARDMAN_SHAMAN2);
+		super(351);
+		bindStartNpc(GOSTA, ROMAN);
+		bindTalk(GOSTA, IASON_HEINE, ROMAN);
+		bindKill(TASABA_LIZARDMAN1, TASABA_LIZARDMAN_SHAMAN1, TASABA_LIZARDMAN2, TASABA_LIZARDMAN_SHAMAN2);
 		registerQuestItems(ORDER_OF_GOSTA, LIZARD_FANG, BARREL_OF_LEAGUE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -125,11 +125,10 @@ public final class Q00351_BlackSwan extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 3, npc);
-		
 		if (qs == null) {
-			return null;
+			return;
 		}
 		
 		final int random = getRandom(20);
@@ -148,8 +147,6 @@ public final class Q00351_BlackSwan extends Quest {
 		} else {
 			giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

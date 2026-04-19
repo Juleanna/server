@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -26,9 +26,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.SevenSigns;
 import com.l2jserver.gameserver.SevenSignsFestival;
 import com.l2jserver.gameserver.handler.IBypassHandler;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.L2Party;
 import com.l2jserver.gameserver.model.L2Party.messageType;
 import com.l2jserver.gameserver.model.StatsSet;
@@ -65,7 +67,7 @@ public class Festival implements IBypassHandler {
 			}
 			
 			final L2Party party;
-			val = Integer.parseInt(command.substring(9, 10));
+			val = Integer.parseInt(command.substring(9));
 			switch (val) {
 				case 1: // Become a Participant
 					// Check if the festival period is active, if not then don't allow registration.
@@ -273,6 +275,273 @@ public class Festival implements IBypassHandler {
 							activeChar.sendMessage("Only the party leader can leave a festival when a party has minimum number of members.");
 						}
 					}
+					break;
+				case 10:
+					activeChar.teleToLocation(-114796, -179334, -6752);
+					npc.showChatWindow(activeChar, 10, "a", false);
+					break;
+				case 11:
+					final var q505 = QuestManager.getInstance().getQuest(505);
+					if (q505 != null) {
+						if (activeChar.hasQuestState(q505.getName())) {
+							final var qs505 = q505.getQuestState(activeChar, true);
+							qs505.exitQuest(true, false);
+						}
+					}
+					
+					final L2ItemInstance bloodOffering = activeChar.getInventory().getItemByItemId(SevenSignsFestival.FESTIVAL_OFFERING_ID);
+					if (bloodOffering != null) {
+						activeChar.destroyItem("SevenSigns", bloodOffering, npc, false);
+					}
+					
+					final var q255 = QuestManager.getInstance().getQuest(255);
+					final var qs255 = q255.getQuestState(activeChar, true);
+					
+					int i0 = qs255.getMemoStateEx(1);
+					int i1 = i0 % 10000;
+					int i2 = ((i0 - i1) + 5) / 10000;
+					
+					final var partType = npc.getTemplate().getParameters().getString("part_type", null);
+					
+					if (i1 >= 95 && i1 < 195) {
+						if (partType.equalsIgnoreCase("DAWN")) {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(-80542, 150315, -3040);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(-80602, 150352, -3040);
+								}
+							}
+						} else {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(-82340, 151575, -3120);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(-82392, 151584, -3120);
+								}
+							}
+						}
+						return true;
+					}
+					if (i1 >= 295 && i1 < 395) {
+						if (partType.equalsIgnoreCase("DAWN")) {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(16320, 142915, -2696);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(16383, 142899, -2696);
+								}
+							}
+						} else {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(18501, 144673, -3056);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(18523, 144624, -3056);
+								}
+							}
+						}
+						return true;
+					}
+					if (i1 >= 395 && i1 < 495) {
+						if (partType.equalsIgnoreCase("DAWN")) {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(83312, 149236, -3400);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(83313, 149304, -3400);
+								}
+							}
+						} else {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(81572, 148580, -3464);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(81571, 148641, -3464);
+								}
+							}
+						}
+						return true;
+					}
+					if (i1 >= 495 && i1 < 595) {
+						if (partType.equalsIgnoreCase("DAWN")) {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(111359, 220959, -3544);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(111411, 220955, -3544);
+								}
+							}
+						} else {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(112441, 220149, -3544);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(112452, 220204, -3592);
+								}
+							}
+						}
+						return true;
+					}
+					if (i1 >= 595 && i1 < 695) {
+						if (partType.equalsIgnoreCase("DAWN")) {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(83057, 53983, -1488);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(83069, 54043, -1488);
+								}
+							}
+						} else {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(82842, 54613, -1520);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(82791, 54616, -1520);
+								}
+							}
+						}
+						return true;
+					}
+					if (i1 >= 695 && i1 < 795) {
+						if (partType.equalsIgnoreCase("DAWN")) {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(146955, 26690, -2200);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(147015, 26689, -2200);
+								}
+							}
+						} else {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(147528, 28899, -2264);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(147528, 28962, -2264);
+								}
+							}
+						}
+						return true;
+					}
+					if (i1 >= 795 && i1 < 895) {
+						if (partType.equalsIgnoreCase("DAWN")) {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(115206, 74775, -2600);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(115174, 74722, -2608);
+								}
+							}
+						} else {
+							switch (Rnd.get(1)) {
+								case 0 -> {
+									activeChar.teleToLocation(116651, 77512, -2688);
+								}
+								case 1 -> {
+									activeChar.teleToLocation(116597, 77539, -2688);
+								}
+							}
+						}
+						return true;
+					}
+					if (i1 >= 995 && i1 < 1095) {
+						if (partType.equalsIgnoreCase("DAWN")) {
+							activeChar.teleToLocation(148326, -55533, -2776);
+						} else {
+							activeChar.teleToLocation(149968, -56645, -2976);
+						}
+						return true;
+					}
+					if (i1 >= 1095 && i1 < 1195) {
+						if (partType.equalsIgnoreCase("DAWN")) {
+							activeChar.teleToLocation(45605, -50360, -792);
+						} else {
+							activeChar.teleToLocation(44505, -48331, -792);
+						}
+						return true;
+					}
+					if (i1 >= 1195 && i1 < 1295) {
+						if (partType.equalsIgnoreCase("DAWN")) {
+							activeChar.teleToLocation(86730, -143148, -1336);
+						} else {
+							activeChar.teleToLocation(85048, -142046, -1536);
+						}
+						return true;
+					}
+					
+					if (i2 == 1) {
+						activeChar.teleToLocation(-41443, 210030, -5080);
+					} else {
+						if (i2 == 2) {
+							activeChar.teleToLocation(-53034, -250421, -7935);
+						} else {
+							if (i2 == 3) {
+								activeChar.teleToLocation(45160, 123605, -5408);
+							} else {
+								if (i2 == 4) {
+									activeChar.teleToLocation(46488, 170184, -4976);
+								} else {
+									if (i2 == 5) {
+										activeChar.teleToLocation(111521, 173905, -5432);
+									} else {
+										if (i2 == 6) {
+											activeChar.teleToLocation(-20395, -250930, -8191);
+										} else {
+											if (i2 == 7) {
+												activeChar.teleToLocation(-21482, 77253, -5168);
+											} else {
+												if (i2 == 8) {
+													activeChar.teleToLocation(140688, 79565, -5424);
+												} else {
+													if (i2 == 9) {
+														activeChar.teleToLocation(-52007, 78986, -4736);
+													} else {
+														if (i2 == 10) {
+															activeChar.teleToLocation(118547, 132669, -4824);
+														} else {
+															if (i2 == 11) {
+																activeChar.teleToLocation(172562, -17730, -4896);
+															} else {
+																if (i2 == 12) {
+																	activeChar.teleToLocation(83344, 209110, -5432);
+																} else {
+																	if (i2 == 13) {
+																		activeChar.teleToLocation(-19154, 13415, -4896);
+																	} else {
+																		if (i2 == 14) {
+																			activeChar.teleToLocation(12747, -248614, -9607);
+																		} else {
+																			if (i1 < 95) {
+																				npc.showChatWindow(activeChar, 11, "a", false);
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					
 					break;
 				case 0: // Distribute Accumulated Bonus
 					if (!SevenSigns.getInstance().isSealValidationPeriod()) {

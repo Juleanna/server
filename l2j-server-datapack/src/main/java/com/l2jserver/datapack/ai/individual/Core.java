@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -58,7 +58,6 @@ public final class Core extends AbstractNpcAI {
 	private final List<L2Attackable> _minions = new CopyOnWriteArrayList<>();
 	
 	public Core() {
-		super(Core.class.getSimpleName(), "ai/individual");
 		registerMobs(CORE, DEATH_KNIGHT, DOOM_WRAITH, SUSCEPTOR);
 		
 		_firstAttacked = false;
@@ -103,10 +102,9 @@ public final class Core extends AbstractNpcAI {
 		GrandBossManager.getInstance().addBoss(npc);
 		npc.broadcastPacket(Music.BS01_A_10000.getPacket());
 		// Spawn minions
-		L2Attackable mob;
 		for (int i = 0; i < 5; i++) {
 			final int x = 16800 + (i * 360);
-			mob = (L2Attackable) addSpawn(DEATH_KNIGHT, x, 110000, npc.getZ(), 280 + getRandom(40), false, 0);
+			var mob = (L2Attackable) addSpawn(DEATH_KNIGHT, x, 110000, npc.getZ(), 280 + getRandom(40), false, 0);
 			mob.setIsRaidMinion(true);
 			_minions.add(mob);
 			mob = (L2Attackable) addSpawn(DEATH_KNIGHT, x, 109000, npc.getZ(), 280 + getRandom(40), false, 0);
@@ -119,14 +117,14 @@ public final class Core extends AbstractNpcAI {
 		}
 		for (int i = 0; i < 4; i++) {
 			int x = 16800 + (i * 450);
-			mob = (L2Attackable) addSpawn(SUSCEPTOR, x, 110300, npc.getZ(), 280 + getRandom(40), false, 0);
+			final var mob = (L2Attackable) addSpawn(SUSCEPTOR, x, 110300, npc.getZ(), 280 + getRandom(40), false, 0);
 			mob.setIsRaidMinion(true);
 			_minions.add(mob);
 		}
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("core_unlock")) {
 			L2GrandBossInstance core = (L2GrandBossInstance) addSpawn(CORE, 17726, 108915, -6480, 0, false, 0);
 			GrandBossManager.getInstance().setBossStatus(CORE, ALIVE);
@@ -139,11 +137,11 @@ public final class Core extends AbstractNpcAI {
 			_minions.forEach(L2Attackable::decayMe);
 			_minions.clear();
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.getId() == CORE) {
 			if (_firstAttacked) {
 				if (getRandom(100) == 0) {
@@ -155,11 +153,10 @@ public final class Core extends AbstractNpcAI {
 				npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getId(), NpcStringId.INTRUDER_REMOVAL_SYSTEM_INITIATED));
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.getId() == CORE) {
 			int objId = npc.getObjectId();
 			npc.broadcastPacket(Music.BS02_D_10000.getPacket());
@@ -169,7 +166,7 @@ public final class Core extends AbstractNpcAI {
 			_firstAttacked = false;
 			GrandBossManager.getInstance().setBossStatus(CORE, DEAD);
 			// Calculate Min and Max respawn times randomly.
-			long respawnTime = (grandBoss().getIntervalOfCoreSpawn() + getRandom(-grandBoss().getRandomOfCoreSpawn(), grandBoss().getRandomOfCoreSpawn())) * 3600000;
+			final long respawnTime = grandBoss().getIntervalOfCoreSpawn() + getRandom(-(int) grandBoss().getRandomOfCoreSpawn(), (int) grandBoss().getRandomOfCoreSpawn());
 			startQuestTimer("core_unlock", respawnTime, null, null);
 			// also save the respawn time so that the info is maintained past reboots
 			StatsSet info = GrandBossManager.getInstance().getStatsSet(CORE);
@@ -181,14 +178,12 @@ public final class Core extends AbstractNpcAI {
 			_minions.remove(npc);
 			startQuestTimer("spawn_minion", 60000, npc, null);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == CORE) {
 			npc.setIsImmobilized(true);
 		}
-		return super.onSpawn(npc);
 	}
 }

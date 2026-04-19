@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,6 +21,7 @@ package com.l2jserver.datapack.hellbound.ai;
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 
 /**
@@ -34,29 +35,26 @@ public final class Typhoon extends AbstractNpcAI {
 	private static final SkillHolder STORM = new SkillHolder(5434); // Gust
 	
 	public Typhoon() {
-		super(Typhoon.class.getSimpleName(), "hellbound/AI");
-		addAggroRangeEnterId(TYPHOON);
-		addSpawnId(TYPHOON);
+		bindAggroRangeEnter(TYPHOON);
+		bindSpawn(TYPHOON);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("CAST") && (npc != null) && !npc.isDead()) {
 			npc.doSimultaneousCast(STORM);
 			startQuestTimer("CAST", 5000, npc, null);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
-		npc.doSimultaneousCast(STORM);
-		return super.onAggroRangeEnter(npc, player, isSummon);
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		event.npc().doSimultaneousCast(STORM);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("CAST", 5000, npc, null);
-		return super.onSpawn(npc);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -72,16 +72,16 @@ public final class Q00236_SeedsOfChaos extends Quest {
 	private static final int MIN_LEVEL = 75;
 	
 	public Q00236_SeedsOfChaos() {
-		super(236, Q00236_SeedsOfChaos.class.getSimpleName(), "Seeds Of Chaos");
-		addStartNpc(HIERARCH_KEKROPUS);
-		addTalkId(HIERARCH_KEKROPUS, KURSTIN, MYSTERIOU_WIZARD, VICE_HIERARCH_MAO, KATENAR, HARKILGAMED, RODENPICULA, ROCK, MOTHER_NORNIL, KATENAR_A, KATENAR_B, HARKILGAMED_A);
-		addKillId(NEEDLE_STAKATO_DRONE, SHOUT_OF_SPLENDOR, ALLIANCE_OF_SPLENDOR, ALLIANCE_OF_SPLENDOR_1, SIGNET_OF_SPLENDOR, CROWN_OF_SPLENDOR, FANG_OF_SPLENDOR, FANG_OF_SPLENDOR_1, WAILINGOF_SPLENDOR, WAILINGOF_SPLENDOR_1, VAMPIRE_WIZARD, VAMPIRE_WIZARD_A);
-		addSpawnId(KATENAR, HARKILGAMED, KATENAR_A, KATENAR_B, HARKILGAMED_A);
+		super(236);
+		bindStartNpc(HIERARCH_KEKROPUS);
+		bindTalk(HIERARCH_KEKROPUS, KURSTIN, MYSTERIOU_WIZARD, VICE_HIERARCH_MAO, KATENAR, HARKILGAMED, RODENPICULA, ROCK, MOTHER_NORNIL, KATENAR_A, KATENAR_B, HARKILGAMED_A);
+		bindKill(NEEDLE_STAKATO_DRONE, SHOUT_OF_SPLENDOR, ALLIANCE_OF_SPLENDOR, ALLIANCE_OF_SPLENDOR_1, SIGNET_OF_SPLENDOR, CROWN_OF_SPLENDOR, FANG_OF_SPLENDOR, FANG_OF_SPLENDOR_1, WAILINGOF_SPLENDOR, WAILINGOF_SPLENDOR_1, VAMPIRE_WIZARD, VAMPIRE_WIZARD_A);
+		bindSpawn(KATENAR, HARKILGAMED, KATENAR_A, KATENAR_B, HARKILGAMED_A);
 		registerQuestItems(SHINING_MEDALLION, BLOOD_JEWEL, BLACK_ECHO_CRYSTAL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ("KATENAR_120".equals(event)) {
 			final L2PcInstance c0 = npc.getVariables().getObject("player0", L2PcInstance.class);
 			final L2Npc npc0 = npc.getVariables().getObject("npc0", L2Npc.class);
@@ -94,7 +94,7 @@ public final class Q00236_SeedsOfChaos extends Quest {
 				}
 			}
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		} else if ("HARKILGAMED_120".equals(event)) {
 			final L2Npc npc0 = npc.getVariables().getObject("npc0", L2Npc.class);
 			if (npc0 != null) {
@@ -104,7 +104,7 @@ public final class Q00236_SeedsOfChaos extends Quest {
 				}
 			}
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		} else if ("KATENAR_A_120".equals(event)) {
 			final L2PcInstance c0 = npc.getVariables().getObject("player0", L2PcInstance.class);
 			final L2Npc npc0 = npc.getVariables().getObject("npc0", L2Npc.class);
@@ -117,7 +117,7 @@ public final class Q00236_SeedsOfChaos extends Quest {
 				}
 			}
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		} else if ("KATENAR_B_120".equals(event)) {
 			final L2PcInstance c0 = npc.getVariables().getObject("player0", L2PcInstance.class);
 			final L2Npc npc0 = npc.getVariables().getObject("npc0", L2Npc.class);
@@ -130,7 +130,7 @@ public final class Q00236_SeedsOfChaos extends Quest {
 				}
 			}
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		} else if ("HARKILGAMED_A_120".equals(event)) {
 			final L2Npc npc0 = npc.getVariables().getObject("npc0", L2Npc.class);
 			if (npc0 != null) {
@@ -140,7 +140,7 @@ public final class Q00236_SeedsOfChaos extends Quest {
 				}
 			}
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState qs = getQuestState(player, false);
@@ -533,7 +533,7 @@ public final class Q00236_SeedsOfChaos extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -580,7 +580,6 @@ public final class Q00236_SeedsOfChaos extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -896,7 +895,7 @@ public final class Q00236_SeedsOfChaos extends Quest {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		switch (npc.getId()) {
 			case KATENAR: {
 				final L2PcInstance c0 = npc.getVariables().getObject("player0", L2PcInstance.class);
@@ -936,6 +935,5 @@ public final class Q00236_SeedsOfChaos extends Quest {
 				break;
 			}
 		}
-		return super.onSpawn(npc);
 	}
 }

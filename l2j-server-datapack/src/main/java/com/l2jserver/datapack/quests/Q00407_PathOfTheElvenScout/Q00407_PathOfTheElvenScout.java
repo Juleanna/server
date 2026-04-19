@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -57,16 +57,16 @@ public final class Q00407_PathOfTheElvenScout extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00407_PathOfTheElvenScout() {
-		super(407, Q00407_PathOfTheElvenScout.class.getSimpleName(), "Path of the Elven Scout");
-		addStartNpc(MASTER_REORIA);
-		addTalkId(MASTER_REORIA, GUARD_BABENCO, GUARD_MORETTI, PRIAS);
-		addKillId(OL_MAHUM_PATROL, OL_MAHUM_SENTRY);
-		addAttackId(OL_MAHUM_PATROL, OL_MAHUM_SENTRY);
+		super(407);
+		bindStartNpc(MASTER_REORIA);
+		bindTalk(MASTER_REORIA, GUARD_BABENCO, GUARD_MORETTI, PRIAS);
+		bindKill(OL_MAHUM_PATROL, OL_MAHUM_SENTRY);
+		bindAttack(OL_MAHUM_PATROL, OL_MAHUM_SENTRY);
 		registerQuestItems(REISAS_LETTER, PRIASS_1ND_TORN_LETTER, PRIASS_2ND_TORN_LETTER, PRIASS_3ND_TORN_LETTER, PRIASS_4ND_TORN_LETTER, MORETTIES_HERB, MORETTIS_LETTER, PRIASS_LETTER, HONORARY_GUARD, RUSTED_KEY);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -113,21 +113,19 @@ public final class Q00407_PathOfTheElvenScout extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
-		final QuestState qs = getQuestState(attacker, false);
-		
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+		final var qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isStarted()) {
 			npc.setScriptValue(attacker.getObjectId());
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.isScriptValue(killer.getObjectId()) && Util.checkIfInRange(1500, npc, killer, false)) {
 			final QuestState qs = getQuestState(killer, false);
 			if (qs == null) {
-				return null;
+				return;
 			}
 			
 			if (npc.getId() == OL_MAHUM_SENTRY) {
@@ -156,7 +154,6 @@ public final class Q00407_PathOfTheElvenScout extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private void giveLetterAndCheckState(int letterId, QuestState qs) {

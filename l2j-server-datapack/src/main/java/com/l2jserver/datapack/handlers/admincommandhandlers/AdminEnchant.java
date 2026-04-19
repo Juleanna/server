@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -20,7 +20,8 @@ package com.l2jserver.datapack.handlers.admincommandhandlers;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
 import com.l2jserver.gameserver.model.L2Object;
@@ -38,7 +39,7 @@ import com.l2jserver.gameserver.network.serverpackets.UserInfo;
  * @version $Revision: 1.3.2.1.2.10 $ $Date: 2005/08/24 21:06:06 $
  */
 public class AdminEnchant implements IAdminCommandHandler {
-	private static Logger _log = Logger.getLogger(AdminEnchant.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminEnchant.class);
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_seteh", // 6
@@ -110,12 +111,12 @@ public class AdminEnchant implements IAdminCommandHandler {
 					}
 				} catch (StringIndexOutOfBoundsException e) {
 					if (general().developer()) {
-						_log.warning("Set enchant error: " + e);
+						LOG.warn("Set enchant error: {}", e.getMessage(), e);
 					}
 					activeChar.sendMessage("Please specify a new enchant value.");
 				} catch (NumberFormatException e) {
 					if (general().developer()) {
-						_log.warning("Set enchant error: " + e);
+						LOG.warn("Set enchant error: {}", e.getMessage(), e);
 					}
 					activeChar.sendMessage("Please specify a valid new enchant value.");
 				}

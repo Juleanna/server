@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -57,11 +57,11 @@ public final class Q00604_DaimonTheWhiteEyedPart2 extends Quest {
 	private static final int DYE_W2M2_C = 4600; // Greater Dye of WIT <Wit+2 Men-2>
 	
 	public Q00604_DaimonTheWhiteEyedPart2() {
-		super(604, Q00604_DaimonTheWhiteEyedPart2.class.getSimpleName(), "Daimon the White-Eyed - Part 2");
-		addStartNpc(EYE_OF_ARGOS);
-		addTalkId(EYE_OF_ARGOS, DAIMONS_ALTAR);
-		addSpawnId(DAIMON_THE_WHITE_EYED);
-		addKillId(DAIMON_THE_WHITE_EYED);
+		super(604);
+		bindStartNpc(EYE_OF_ARGOS);
+		bindTalk(EYE_OF_ARGOS, DAIMONS_ALTAR);
+		bindSpawn(DAIMON_THE_WHITE_EYED);
+		bindKill(DAIMON_THE_WHITE_EYED);
 		registerQuestItems(SUMMON_CRYSTAL, ESSENCE_OF_DAIMON);
 	}
 	
@@ -82,13 +82,13 @@ public final class Q00604_DaimonTheWhiteEyedPart2 extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ("DESPAWN".equals(event)) {
 			if (isDaimonSpawned()) {
 				npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getTemplate().getDisplayId(), NpcStringId.CAN_LIGHT_EXIST_WITHOUT_DARKNESS));
 				npc.deleteMe();
 			}
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState qs = getQuestState(player, false);
@@ -155,16 +155,14 @@ public final class Q00604_DaimonTheWhiteEyedPart2 extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		executeForEachPlayer(killer, npc, isSummon, true, false);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("DESPAWN", 1200000, npc, null);
 		npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getTemplate().getDisplayId(), NpcStringId.WHO_IS_CALLING_ME));
-		return super.onSpawn(npc);
 	}
 	
 	@Override

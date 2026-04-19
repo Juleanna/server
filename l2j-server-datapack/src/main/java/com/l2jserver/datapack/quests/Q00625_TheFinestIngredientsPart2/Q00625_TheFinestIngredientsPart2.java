@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -58,16 +58,16 @@ public final class Q00625_TheFinestIngredientsPart2 extends Quest {
 	private static final int MIN_LVL = 73;
 	
 	public Q00625_TheFinestIngredientsPart2() {
-		super(625, Q00625_TheFinestIngredientsPart2.class.getSimpleName(), "The Finest Ingredients - Part 2");
-		addStartNpc(JEREMY);
-		addTalkId(JEREMY, YETIS_TABLE);
-		addSpawnId(ICICLE_EMPEROR_BUMBALUMP);
-		addKillId(ICICLE_EMPEROR_BUMBALUMP);
+		super(625);
+		bindStartNpc(JEREMY);
+		bindTalk(JEREMY, YETIS_TABLE);
+		bindSpawn(ICICLE_EMPEROR_BUMBALUMP);
+		bindKill(ICICLE_EMPEROR_BUMBALUMP);
 		registerQuestItems(FOOD_FOR_BUMBALUMP.getId(), SPECIAL_YETI_MEAT.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -200,14 +200,13 @@ public final class Q00625_TheFinestIngredientsPart2 extends Quest {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("NPC_TALK", 1000 * 1200, npc, null);
 		npc.broadcastPacket(new NpcSay(npc.getObjectId(), Say2.NPC_ALL, npc.getTemplate().getDisplayId(), NpcStringId.I_SMELL_SOMETHING_DELICIOUS));
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, 1, 2, npc);
 		if ((qs != null) && Util.checkIfInRange(1500, npc, killer, true)) {
 			if (npc.getSummoner() == killer) {
@@ -215,7 +214,6 @@ public final class Q00625_TheFinestIngredientsPart2 extends Quest {
 				giveItems(qs.getPlayer(), SPECIAL_YETI_MEAT);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private static boolean isBumbalumpSpawned() {

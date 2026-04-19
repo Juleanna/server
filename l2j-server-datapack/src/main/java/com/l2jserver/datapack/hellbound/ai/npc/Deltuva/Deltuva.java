@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,13 +36,12 @@ public final class Deltuva extends AbstractNpcAI {
 	private static final Location TELEPORT = new Location(17934, 283189, -9701);
 	
 	public Deltuva() {
-		super(Deltuva.class.getSimpleName(), "hellbound/AI/NPC");
-		addStartNpc(DELTUVA);
-		addTalkId(DELTUVA);
+		bindStartNpc(DELTUVA);
+		bindTalk(DELTUVA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("teleport")) {
 			final QuestState hostQuest = player.getQuestState(Q00132_MatrasCuriosity.class.getSimpleName());
 			if ((hostQuest == null) || !hostQuest.isCompleted()) {
@@ -50,6 +49,6 @@ public final class Deltuva extends AbstractNpcAI {
 			}
 			player.teleToLocation(TELEPORT);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -52,15 +52,15 @@ public class Q00702_ATrapForRevenge extends Quest {
 	private static final int EXTRACTED_RED_STAR_STONE = 14009;
 	
 	public Q00702_ATrapForRevenge() {
-		super(702, Q00702_ATrapForRevenge.class.getSimpleName(), "A Trap for Revenge");
-		addStartNpc(PLENOS);
-		addTalkId(PLENOS, LEKON, TENIUS);
-		addKillId(MONSTERS);
+		super(702);
+		bindStartNpc(PLENOS);
+		bindTalk(PLENOS, LEKON, TENIUS);
+		bindKill(MONSTERS);
 		registerQuestItems(DRAKES_FLESH, ROTTEN_BLOOD, BAIT_FOR_DRAKES, VARIANT_DRAKE_WING_HORNS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
@@ -185,10 +185,10 @@ public class Q00702_ATrapForRevenge extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance partyMember = getRandomPartyMember(player, 2);
 		if (partyMember == null) {
-			return null;
+			return;
 		}
 		final QuestState st = getQuestState(partyMember, false);
 		final int chance = getRandom(1000);
@@ -250,7 +250,6 @@ public class Q00702_ATrapForRevenge extends Quest {
 				break;
 		}
 		st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
-		return null;
 	}
 	
 	@Override

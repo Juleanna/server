@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -79,18 +79,18 @@ public final class Q00403_PathOfTheRogue extends Quest {
 	}
 	
 	public Q00403_PathOfTheRogue() {
-		super(403, Q00403_PathOfTheRogue.class.getSimpleName(), "Path Of The Rogue");
-		addStartNpc(CAPTAIN_BEZIQUE);
-		addTalkId(CAPTAIN_BEZIQUE, NETI);
-		addAttackId(MONSTER_DROPS.keySet());
-		addAttackId(CATS_EYE_BANDIT);
-		addKillId(MONSTER_DROPS.keySet());
-		addKillId(CATS_EYE_BANDIT);
+		super(403);
+		bindStartNpc(CAPTAIN_BEZIQUE);
+		bindTalk(CAPTAIN_BEZIQUE, NETI);
+		bindAttack(MONSTER_DROPS.keySet());
+		bindAttack(CATS_EYE_BANDIT);
+		bindKill(MONSTER_DROPS.keySet());
+		bindKill(CATS_EYE_BANDIT);
 		registerQuestItems(BEZIQUES_LETTER, NETIS_BOW, NETIS_DAGGER, SPARTOIS_BONES, HORSESHOE_OF_LIGHT, MOST_WANTED_LIST, STOLEN_JEWELRY, STOLEN_TOMES, STOLEN_RING, STOLEN_NECKLACE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -147,7 +147,7 @@ public final class Q00403_PathOfTheRogue extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isStarted()) {
 			switch (npc.getScriptValue()) {
@@ -173,11 +173,10 @@ public final class Q00403_PathOfTheRogue extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && npc.isScriptValue(1) && Util.checkIfInRange(1500, npc, killer, true)) {
 			if (npc.getId() == CATS_EYE_BANDIT) {
@@ -206,7 +205,6 @@ public final class Q00403_PathOfTheRogue extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private boolean checkWeapon(L2PcInstance player) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -47,15 +47,15 @@ public final class Q00031_SecretBuriedInTheSwamp extends Quest {
 	private static final List<Integer> MONUMENTS = Arrays.asList(FORGOTTEN_MONUMENT_1, FORGOTTEN_MONUMENT_2, FORGOTTEN_MONUMENT_3, FORGOTTEN_MONUMENT_4);
 	
 	public Q00031_SecretBuriedInTheSwamp() {
-		super(31, Q00031_SecretBuriedInTheSwamp.class.getSimpleName(), "Secret Buried in the Swamp");
-		addStartNpc(ABERCROMBIE);
-		addTalkId(ABERCROMBIE, CORPSE_OF_DWARF);
-		addTalkId(MONUMENTS);
+		super(31);
+		bindStartNpc(ABERCROMBIE);
+		bindTalk(ABERCROMBIE, CORPSE_OF_DWARF);
+		bindTalk(MONUMENTS);
 		registerQuestItems(KRORINS_JOURNAL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {

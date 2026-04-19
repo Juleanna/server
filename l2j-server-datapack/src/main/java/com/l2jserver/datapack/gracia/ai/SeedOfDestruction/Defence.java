@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,6 +40,7 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventType;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.NpcStringId;
@@ -133,13 +134,12 @@ public class Defence extends AbstractNpcAI {
 	private static final int SOD_ZONE = 60009;
 	
 	public Defence() {
-		super(Defence.class.getSimpleName(), "gracia/AI");
-		addKillId(TIAT_RETURN, SPAWNER_PORTAL);
-		addAttackId(TIAT_RETURN);
-		addRouteFinishedId(TIAT_RETURN);
-		addRouteFinishedId(POSSIBLE_MOB_FROM_PORTAL_LIST);
-		addAggroRangeEnterId(TIAT_RETURN, TIAT_FIGHTER);
-		addAggroRangeEnterId(POSSIBLE_MOB_FROM_PORTAL_LIST);
+		bindKill(TIAT_RETURN, SPAWNER_PORTAL);
+		bindAttack(TIAT_RETURN);
+		bindRouteFinished(TIAT_RETURN);
+		bindRouteFinished(POSSIBLE_MOB_FROM_PORTAL_LIST);
+		bindAggroRangeEnter(TIAT_RETURN, TIAT_FIGHTER);
+		bindAggroRangeEnter(POSSIBLE_MOB_FROM_PORTAL_LIST);
 		startQuestTimer("start", 5000, null, null);
 	}
 	
@@ -150,7 +150,7 @@ public class Defence extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((event != "start") && (event != "check_for_fail") && (event != "defence_successful" //
 		)
 			&& (((leftDevice != null) && (rightDevice != null) && leftDevice.isDead() && rightDevice.isDead()) //
@@ -307,7 +307,7 @@ public class Defence extends AbstractNpcAI {
 	public void onRouteFinished(L2Npc npc) {
 		if (npc == tiatRet) {
 			WalkingManager.getInstance().cancelMoving(npc);
-			addMoveFinishedId(TIAT_RETURN);
+			bindMoveFinished(TIAT_RETURN);
 			tiatRet.getAI().setIntention(CtrlIntention.AI_INTENTION_MOVE_TO, TIAT_RETURN_FINAL_POINT);
 			cancelQuestTimer("check_walk_tiat_to_throne", npc, null);
 			startQuestTimer("tiat_move_to_throne_point_desire", 10000, tiatRet, null);
@@ -320,19 +320,18 @@ public class Defence extends AbstractNpcAI {
 	@Override
 	public void onMoveFinished(L2Npc npc) {
 		if (npc == tiatRet) {
-			tiatRet.removeListenerIf(EventType.ON_NPC_MOVE_FINISHED, listener -> listener.getOwner() == this);
+			tiatRet.removeListenerIf(EventType.NPC_MOVE_FINISHED, listener -> listener.getOwner() == this);
 		}
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
-		npc.setRunning();
-		addAttackDesire(npc, player);
-		return super.onAggroRangeEnter(npc, player, isSummon);
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		event.npc().setRunning();
+		addAttackDesire(event.npc(), event.player());
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc == tiatRet) {
 			cancelQuestTimer("defence_successful", null, null);
 			startQuestTimer("defence_successful", 2000, null, null);
@@ -360,17 +359,15 @@ public class Defence extends AbstractNpcAI {
 				startQuestTimer("defence_successful", 2000, null, null);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc == tiatRet) {
 			if (getQuestTimer("tiat_cast_thunder_storm", npc, null) == null) {
 				startQuestTimer("tiat_cast_thunder_storm", (getRandom(60) + 60) * 1000, npc, null);
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	public void initCycle(int cycleToStart) {

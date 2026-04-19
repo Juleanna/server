@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -95,15 +95,15 @@ public final class Q00327_RecoverTheFarmland extends Quest {
 	}
 	
 	public Q00327_RecoverTheFarmland() {
-		super(327, Q00327_RecoverTheFarmland.class.getSimpleName(), "Recover the Farmland");
-		addStartNpc(LEIKAN, PIOTUR);
-		addTalkId(LEIKAN, PIOTUR, IRIS, ASHA, NESTLE);
-		addKillId(TUREK_ORK_WARLORD, TUREK_ORK_ARCHER, TUREK_ORK_SKIRMISHER, TUREK_ORK_SUPPLIER, TUREK_ORK_FOOTMAN, TUREK_ORK_SENTINEL, TUREK_ORK_SHAMAN);
+		super(327);
+		bindStartNpc(LEIKAN, PIOTUR);
+		bindTalk(LEIKAN, PIOTUR, IRIS, ASHA, NESTLE);
+		bindKill(TUREK_ORK_WARLORD, TUREK_ORK_ARCHER, TUREK_ORK_SKIRMISHER, TUREK_ORK_SUPPLIER, TUREK_ORK_FOOTMAN, TUREK_ORK_SENTINEL, TUREK_ORK_SHAMAN);
 		registerQuestItems(TUREK_DOG_TAG, TUREK_MEDALLION, LEIKANS_LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -278,7 +278,7 @@ public final class Q00327_RecoverTheFarmland extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if (st != null) {
 			if ((npc.getId() == TUREK_ORK_SHAMAN) || (npc.getId() == TUREK_ORK_WARLORD)) {
@@ -291,7 +291,6 @@ public final class Q00327_RecoverTheFarmland extends Quest {
 				giveItems(killer, getRandom(CLAY_URN_FRAGMENT, JADE_NECKLACE_BEAD), 1);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

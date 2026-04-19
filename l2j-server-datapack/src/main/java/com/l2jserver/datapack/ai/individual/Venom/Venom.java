@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -30,10 +30,11 @@ import com.l2jserver.gameserver.model.TeleportWhereType;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.events.impl.sieges.castle.OnCastleSiegeFinish;
-import com.l2jserver.gameserver.model.events.impl.sieges.castle.OnCastleSiegeStart;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
+import com.l2jserver.gameserver.model.events.impl.sieges.castle.CastleSiegeFinish;
+import com.l2jserver.gameserver.model.events.impl.sieges.castle.CastleSiegeStart;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -97,15 +98,14 @@ public final class Venom extends AbstractNpcAI {
 	private static List<L2PcInstance> _targets = new ArrayList<>();
 	
 	public Venom() {
-		super(Venom.class.getSimpleName(), "ai/individual");
-		addStartNpc(DUNGEON_KEEPER, TELEPORT_CUBE);
-		addFirstTalkId(DUNGEON_KEEPER, TELEPORT_CUBE);
-		addTalkId(DUNGEON_KEEPER, TELEPORT_CUBE);
-		addSpawnId(VENOM, DUNGEON_KEEPER);
-		addSpellFinishedId(VENOM);
-		addAttackId(VENOM);
-		addKillId(VENOM);
-		addAggroRangeEnterId(VENOM);
+		bindStartNpc(DUNGEON_KEEPER, TELEPORT_CUBE);
+		bindFirstTalk(DUNGEON_KEEPER, TELEPORT_CUBE);
+		bindTalk(DUNGEON_KEEPER, TELEPORT_CUBE);
+		bindSpawn(VENOM, DUNGEON_KEEPER);
+		bindSpellFinished(VENOM);
+		bindAttack(VENOM);
+		bindKill(VENOM);
+		bindAggroRangeEnter(VENOM);
 		setCastleSiegeStartId(this::onSiegeStart, CASTLE);
 		setCastleSiegeFinishId(this::onSiegeFinish, CASTLE);
 		
@@ -137,7 +137,7 @@ public final class Venom extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "tower_check":
 				if (CastleManager.getInstance().getCastleById(CASTLE).getSiege().getControlTowerCount() <= 1) {
@@ -162,18 +162,17 @@ public final class Venom extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
-		if (isSummon) {
-			return super.onAggroRangeEnter(npc, player, isSummon);
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		if (event.isSummon()) {
+			return;
 		}
 		
-		if (_aggroMode && (_targets.size() < 10) && (getRandom(3) < 1) && !player.isDead()) {
-			_targets.add(player);
+		if (_aggroMode && (_targets.size() < 10) && (getRandom(3) < 1) && !event.player().isDead()) {
+			_targets.add(event.player());
 		}
-		return super.onAggroRangeEnter(npc, player, isSummon);
 	}
 	
-	public void onSiegeStart(OnCastleSiegeStart event) {
+	public void onSiegeStart(CastleSiegeStart event) {
 		_aggroMode = true;
 		_prisonIsOpen = false;
 		if ((_venom != null) && !_venom.isDead()) {
@@ -185,7 +184,7 @@ public final class Venom extends AbstractNpcAI {
 		}
 	}
 	
-	public void onSiegeFinish(OnCastleSiegeFinish event) {
+	public void onSiegeFinish(CastleSiegeFinish event) {
 		_aggroMode = false;
 		if ((_venom != null) && !_venom.isDead()) {
 			changeLocation(MoveTo.PRISON);
@@ -198,8 +197,10 @@ public final class Venom extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		switch (skill.getId()) {
+	public void onSpellFinished(NpcSkillFinished event) {
+		final var player = event.player();
+		final var npc = event.npc();
+		switch (event.skill().getId()) {
 			case 4222:
 				npc.teleToLocation(_loc);
 				break;
@@ -225,11 +226,10 @@ public final class Venom extends AbstractNpcAI {
 				}
 				break;
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		switch (npc.getId()) {
 			case DUNGEON_KEEPER: {
 				_massymore = npc;
@@ -256,11 +256,10 @@ public final class Venom extends AbstractNpcAI {
 			npc.doRevive();
 			
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final double distance = npc.calculateDistance(attacker, false, false);
 		if (_aggroMode && (getRandom(100) < 25)) {
 			npc.setTarget(attacker);
@@ -275,11 +274,10 @@ public final class Venom extends AbstractNpcAI {
 			npc.setTarget(attacker);
 			npc.doCast(SONIC_STORM);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		updateStatus(DEAD);
 		broadcastNpcSay(npc, Say2.NPC_SHOUT, NpcStringId.ITS_NOT_OVER_YET_IT_WONT_BE_OVER_LIKE_THIS_NEVER);
 		if (!CastleManager.getInstance().getCastleById(CASTLE).getSiege().isInProgress()) {
@@ -287,7 +285,6 @@ public final class Venom extends AbstractNpcAI {
 			startQuestTimer("cube_despawn", 120000, cube, null);
 		}
 		cancelQuestTimer("raid_check", npc, null);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	/**

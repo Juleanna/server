@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -47,14 +47,14 @@ public final class Q00040_ASpecialOrder extends Quest {
 	private static final int MIN_LVL = 40;
 	
 	public Q00040_ASpecialOrder() {
-		super(40, Q00040_ASpecialOrder.class.getSimpleName(), "A Special Order");
-		addStartNpc(HELVETIA);
-		addTalkId(HELVETIA, OFULLE, GESTO);
+		super(40);
+		bindStartNpc(HELVETIA);
+		bindTalk(HELVETIA, OFULLE, GESTO);
 		registerQuestItems(BOX_OF_FISH, BOX_OF_SEED);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

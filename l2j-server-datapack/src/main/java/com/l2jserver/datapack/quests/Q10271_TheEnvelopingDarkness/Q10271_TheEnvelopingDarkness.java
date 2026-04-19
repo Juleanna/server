@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,14 +36,14 @@ public class Q10271_TheEnvelopingDarkness extends Quest {
 	private static final int MEDIBAL_DOCUMENT = 13852;
 	
 	public Q10271_TheEnvelopingDarkness() {
-		super(10271, Q10271_TheEnvelopingDarkness.class.getSimpleName(), "The Enveloping Darkness");
-		addStartNpc(ORBYU);
-		addTalkId(ORBYU, EL, MEDIBAL_CORPSE);
+		super(10271);
+		bindStartNpc(ORBYU);
+		bindTalk(ORBYU, EL, MEDIBAL_CORPSE);
 		registerQuestItems(MEDIBAL_DOCUMENT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

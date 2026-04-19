@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -48,15 +48,13 @@ public final class TownPets extends AbstractNpcAI {
 	};
 	
 	public TownPets() {
-		super(TownPets.class.getSimpleName(), "ai/npc");
-		
 		if (general().allowPetWalkers()) {
-			addSpawnId(PETS);
+			bindSpawn(PETS);
 		}
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("move")) {
 			final int locX = (npc.getSpawn().getX() - 50) + getRandom(100);
 			final int locY = (npc.getSpawn().getY() - 50) + getRandom(100);
@@ -68,8 +66,7 @@ public final class TownPets extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("move", 3000, npc, null);
-		return super.onSpawn(npc);
 	}
 }

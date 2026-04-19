@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -29,13 +29,11 @@ public final class RagnaOrcHero extends AbstractNpcAI {
 	private static final int RAGNA_ORC_HERO = 22693;
 	
 	public RagnaOrcHero() {
-		super(RagnaOrcHero.class.getSimpleName(), "ai/individual");
-		addSpawnId(RAGNA_ORC_HERO);
+		bindSpawn(RAGNA_ORC_HERO);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		spawnMinions(npc, getRandom(100) < 70 ? "Privates1" : "Privates2");
-		return super.onSpawn(npc);
 	}
 }

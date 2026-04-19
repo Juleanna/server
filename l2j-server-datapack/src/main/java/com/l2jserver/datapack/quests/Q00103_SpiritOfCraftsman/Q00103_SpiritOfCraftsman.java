@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,14 +18,17 @@
  */
 package com.l2jserver.datapack.quests.Q00103_SpiritOfCraftsman;
 
-import com.l2jserver.datapack.quests.Q00281_HeadForTheHills.Q00281_HeadForTheHills;
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.Race;
+import com.l2jserver.gameserver.enums.audio.Voice;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.QuestItemChanceHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
+import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.gameserver.util.Util;
 
@@ -65,16 +68,22 @@ public final class Q00103_SpiritOfCraftsman extends Quest {
 	// Misc
 	private static final int MIN_LVL = 10;
 	
+	private static final int GUIDE_MISSION = 41;
+	
+	private static final ItemHolder SOULSHOTS_NO_GRADE_FOR_ROOKIES = new ItemHolder(5789, 7000);
+	private static final ItemHolder SOULSHOTS_NO_GRADE = new ItemHolder(1835, 1000);
+	private static final ItemHolder SPIRITSHOTS_NO_GRADE = new ItemHolder(2509, 500);
+	
 	public Q00103_SpiritOfCraftsman() {
-		super(103, Q00103_SpiritOfCraftsman.class.getSimpleName(), "Spirit of Craftsman");
-		addStartNpc(BLACKSMITH_KAROYD);
-		addTalkId(BLACKSMITH_KAROYD, CECON, HARNE);
-		addKillId(MARSH_ZOMBIE, DOOM_SOLDIER, SKELETON_HUNTER, SKELETON_HUNTER_ARCHER);
+		super(103);
+		bindStartNpc(BLACKSMITH_KAROYD);
+		bindTalk(BLACKSMITH_KAROYD, CECON, HARNE);
+		bindKill(MARSH_ZOMBIE, DOOM_SOLDIER, SKELETON_HUNTER, SKELETON_HUNTER_ARCHER);
 		registerQuestItems(KAROYDS_LETTER, CECKTINONS_VOUCHER1, CECKTINONS_VOUCHER2, SOUL_CATCHER, PRESERVE_OIL, ZOMBIE_HEAD, STEELBENDERS_HEAD, BONE_FRAGMENT.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -115,12 +124,33 @@ public final class Q00103_SpiritOfCraftsman extends Quest {
 					if (hasAtLeastOneQuestItem(talker, KAROYDS_LETTER, CECKTINONS_VOUCHER1, CECKTINONS_VOUCHER2)) {
 						htmltext = "30307-06.html";
 					} else if (hasQuestItems(talker, STEELBENDERS_HEAD)) {
-						Q00281_HeadForTheHills.giveNewbieReward(talker);
-						addExpAndSp(talker, 46663, 3999);
-						giveAdena(talker, 19799, true);
+						giveNewbieReward(talker);
+						
 						for (ItemHolder reward : REWARDS) {
 							rewardItems(talker, reward);
 						}
+						
+						// Newbie Guide
+						final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+						if (newbieGuide != null) {
+							final var newbieGuideQs = newbieGuide.getQuestState(talker, true);
+							if (!newbieGuideQs.haveNRMemo(talker, GUIDE_MISSION)) {
+								newbieGuideQs.setNRMemo(talker, GUIDE_MISSION);
+								newbieGuideQs.setNRMemoState(talker, GUIDE_MISSION, 100000);
+								
+								showOnScreenMsg(talker, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+							} else {
+								if (((newbieGuideQs.getNRMemoState(talker, GUIDE_MISSION) % 1000000) / 100000) != 1) {
+									newbieGuideQs.setNRMemo(talker, GUIDE_MISSION);
+									newbieGuideQs.setNRMemoState(talker, GUIDE_MISSION, newbieGuideQs.getNRMemoState(talker, GUIDE_MISSION) + 100000);
+									
+									showOnScreenMsg(talker, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+								}
+							}
+						}
+						
+						addExpAndSp(talker, 46663, 3999);
+						giveAdena(talker, 19799, true);
 						rewardItems(talker, BLOODSABER, 1);
 						qs.exitQuest(false, true);
 						talker.sendPacket(new SocialAction(talker.getObjectId(), 3));
@@ -186,10 +216,10 @@ public final class Q00103_SpiritOfCraftsman extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 3, npc);
 		if (qs == null) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		switch (npc.getId()) {
@@ -206,6 +236,23 @@ public final class Q00103_SpiritOfCraftsman extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
+	}
+	
+	/**
+	 * Give basic newbie reward.
+	 * @param player the player to reward
+	 */
+	private static void giveNewbieReward(L2PcInstance player) {
+		if (player.getLevel() < 25) {
+			if (!player.isMageClass()) {
+				giveItems(player, SOULSHOTS_NO_GRADE_FOR_ROOKIES);
+				playSound(player, Voice.TUTORIAL_VOICE_026_1000);
+			}
+		}
+		if (!player.isMageClass()) {
+			giveItems(player, SOULSHOTS_NO_GRADE);
+		} else {
+			giveItems(player, SPIRITSHOTS_NO_GRADE);
+		}
 	}
 }

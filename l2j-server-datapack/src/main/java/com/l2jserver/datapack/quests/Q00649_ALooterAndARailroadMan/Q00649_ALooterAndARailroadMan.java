@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -55,15 +55,15 @@ public final class Q00649_ALooterAndARailroadMan extends Quest {
 	}
 	
 	public Q00649_ALooterAndARailroadMan() {
-		super(649, Q00649_ALooterAndARailroadMan.class.getSimpleName(), "A Looter and a Railroad Man");
-		addStartNpc(RAILMAN_OBI);
-		addTalkId(RAILMAN_OBI);
-		addKillId(MONSTERS.keySet());
+		super(649);
+		bindStartNpc(RAILMAN_OBI);
+		bindTalk(RAILMAN_OBI);
+		bindKill(MONSTERS.keySet());
 		registerQuestItems(THIEF_GUILD_MARK);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -107,7 +107,7 @@ public final class Q00649_ALooterAndARailroadMan extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && st.isCond(1) && Util.checkIfInRange(1500, npc, killer, false) && (getRandom(1000) < MONSTERS.get(npc.getId()))) {
 			st.giveItems(THIEF_GUILD_MARK, 1);
@@ -117,6 +117,5 @@ public final class Q00649_ALooterAndARailroadMan extends Quest {
 				st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

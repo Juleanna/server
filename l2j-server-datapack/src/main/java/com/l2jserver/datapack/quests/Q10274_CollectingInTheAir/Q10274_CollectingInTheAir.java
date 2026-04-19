@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -57,15 +57,15 @@ public class Q10274_CollectingInTheAir extends Quest {
 	};
 	
 	public Q10274_CollectingInTheAir() {
-		super(10274, Q10274_CollectingInTheAir.class.getSimpleName(), "Collecting in the Air");
-		addStartNpc(LEKON);
-		addTalkId(LEKON);
-		addSkillSeeId(MOBS);
+		super(10274);
+		bindStartNpc(LEKON);
+		bindTalk(LEKON);
+		bindSkillSee(MOBS);
 		registerQuestItems(SCROLL, RED, BLUE, GREEN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -79,10 +79,10 @@ public class Q10274_CollectingInTheAir extends Quest {
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		final QuestState st = getQuestState(caster, false);
 		if ((st == null) || !st.isStarted()) {
-			return null;
+			return;
 		}
 		
 		if (st.isCond(1) && (skill.getId() == 2630)) {
@@ -106,7 +106,6 @@ public class Q10274_CollectingInTheAir extends Quest {
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 			npc.doDie(caster);
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override

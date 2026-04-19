@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -47,14 +47,14 @@ public class Q00126_TheNameOfEvil2 extends Quest {
 	private static final int ENCHANT_WEAPON_A = 729;
 	
 	public Q00126_TheNameOfEvil2() {
-		super(126, Q00126_TheNameOfEvil2.class.getSimpleName(), "The Name of Evil - 2");
-		addStartNpc(ASAMAH);
-		addTalkId(ASAMAH, ULU_KAIMU, BALU_KAIMU, CHUTA_KAIMU, WARRIORS_GRAVE, SHILENS_STONE_STATUE, MUSHIKA);
+		super(126);
+		bindStartNpc(ASAMAH);
+		bindTalk(ASAMAH, ULU_KAIMU, BALU_KAIMU, CHUTA_KAIMU, WARRIORS_GRAVE, SHILENS_STONE_STATUE, MUSHIKA);
 		registerQuestItems(GAZKH_FRAGMENT, BONE_POWDER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

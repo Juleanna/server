@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -19,6 +19,7 @@
 package com.l2jserver.datapack.ai.individual;
 
 import static com.l2jserver.gameserver.config.Configuration.grandBoss;
+import static com.l2jserver.gameserver.config.Configuration.npc;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -96,14 +97,13 @@ public final class QueenAnt extends AbstractNpcAI {
 	private static final int DEAD = 1;
 	
 	public QueenAnt() {
-		super(QueenAnt.class.getSimpleName(), "ai/individual");
-		addKillId(MOBS);
-		addSpawnId(MOBS);
-		addExitZoneId(ZONE);
-		addEnterZoneId(ZONE);
-		addSkillSeeId(QUEEN);
-		addMoveFinishedId(QUEEN);
-		addAttackId(QUEEN, NURSE, GUARD, ROYAL);
+		bindKill(MOBS);
+		bindSpawn(MOBS);
+		bindExitZone(ZONE);
+		bindEnterZone(ZONE);
+		bindSkillSee(QUEEN);
+		bindMoveFinished(QUEEN);
+		bindAttack(QUEEN, NURSE, GUARD, ROYAL);
 		
 		_zone = GrandBossManager.getInstance().getZone(QUEEN_X, QUEEN_Y, QUEEN_Z);
 		final StatsSet info = GrandBossManager.getInstance().getStatsSet(QUEEN);
@@ -133,7 +133,7 @@ public final class QueenAnt extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "CHECK_ZONE": {
 				if (npc != null) {
@@ -230,11 +230,11 @@ public final class QueenAnt extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		if ((_zone.isInsideZone(npc)) && (npc != null) && (_queen != null) && (!npc.isCastingNow()) && (!npc.isCoreAIDisabled())) {
 			switch (npc.getId()) {
 				case QUEEN: {
@@ -297,21 +297,19 @@ public final class QueenAnt extends AbstractNpcAI {
 			npc.getVariables().set(ATTACK_FLAG, true);
 			startQuestTimer("CORE_MOVEMENT", 5000, npc, null);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon, skill);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if ((skill.getEffectPoint() > 0) && (getRandom(100) < 15)) {
 			if ((_zone.isInsideZone(npc)) && (npc != null) && (!npc.isCastingNow()) && (!npc.isCoreAIDisabled())) {
 				addSkillCastDesire(npc, player, DECREASE_SPEED_1, 1000000L);
 			}
 		}
-		return super.onSkillSee(npc, player, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		final L2MonsterInstance mob = (L2MonsterInstance) npc;
 		switch (npc.getId()) {
 			case QUEEN: {
@@ -337,26 +335,25 @@ public final class QueenAnt extends AbstractNpcAI {
 				break;
 			}
 		}
-		
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onEnterZone(L2Character character, L2ZoneType zone) {
-		final L2PcInstance player = character.getActingPlayer();
-		notifyEvent("RAID_CURSE", _queen, player);
-		startQuestTimer("RAID_CURSE", 3000, _queen, player, true);
-		return super.onEnterZone(character, zone);
+	public void onEnterZone(L2Character character, L2ZoneType zone) {
+		if (npc().raidCurse()) {
+			final var player = character.getActingPlayer();
+			notifyEvent("RAID_CURSE", _queen, player);
+			startQuestTimer("RAID_CURSE", 3000, _queen, player, true);
+		}
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.getId() == QUEEN) {
 			cancelQuestTimers("HEAL");
 			cancelQuestTimers("ACTION");
 			npc.broadcastPacket(Music.BS02_D_10000.getPacket());
 			GrandBossManager.getInstance().setBossStatus(QUEEN, DEAD);
-			final long respawnTime = (grandBoss().getIntervalOfQueenAntSpawn() + getRandom(-grandBoss().getRandomOfQueenAntSpawn(), grandBoss().getRandomOfQueenAntSpawn())) * 3600000;
+			final long respawnTime = grandBoss().getIntervalOfQueenAntSpawn() + getRandom(-(int) grandBoss().getRandomOfQueenAntSpawn(), (int) grandBoss().getRandomOfQueenAntSpawn());
 			GrandBossManager.getInstance().getStatsSet(QUEEN).set("respawn_time", (System.currentTimeMillis() + respawnTime));
 			startQuestTimer("QUEEN_UNLOCK", respawnTime, null, null);
 			_nurses.clear();
@@ -379,18 +376,15 @@ public final class QueenAnt extends AbstractNpcAI {
 				}
 			}
 		}
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onExitZone(L2Character character, L2ZoneType zone) {
+	public void onExitZone(L2Character character, L2ZoneType zone) {
 		if ((character.isAttackable()) && (character.isRaid()) && (!_zone.isInsideZone(_queen)) && (_queen != null)) {
 			_queen.disableCoreAI(true);
 			_queen.setIsImmobilized(false);
 			startQuestTimer("CHECK_ZONE", 1000, _queen, null, true);
 		}
-		return super.onExitZone(character, zone);
 	}
 	
 	@Override

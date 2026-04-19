@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -23,8 +23,8 @@ import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.util.Util;
 
 /**
@@ -49,13 +49,12 @@ public class EmeraldHorn extends AbstractNpcAI {
 	private static final int MAX_CHASE_DIST = 2500;
 	
 	public EmeraldHorn() {
-		super(EmeraldHorn.class.getSimpleName(), "ai/individual");
-		addAttackId(EMERALD_HORN);
-		addSpellFinishedId(EMERALD_HORN);
+		bindAttack(EMERALD_HORN);
+		bindSpellFinished(EMERALD_HORN);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (Util.calculateDistance(npc, npc.getSpawn(), false, false) > MAX_CHASE_DIST) {
 			npc.teleToLocation(npc.getSpawn().getX(), npc.getSpawn().getY(), npc.getSpawn().getZ());
 		}
@@ -79,22 +78,21 @@ public class EmeraldHorn extends AbstractNpcAI {
 			npc.getVariables().set(CAST_FLAG, false);
 			npc.getVariables().set(HIGH_DAMAGE_FLAG, true);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
+	public void onSpellFinished(NpcSkillFinished event) {
 		if (getRandom(5) < 1) {
+			final var npc = event.npc();
 			npc.getVariables().set(TOTAL_DAMAGE_COUNT, 0);
 			npc.getVariables().set(CAST_FLAG, true);
 			addSkillCastDesire(npc, npc, REFLECT_ATTACK, 99999000000000000L);
-			startQuestTimer(DAMAGE_TIMER_15S, 15 * 1000, npc, player);
+			startQuestTimer(DAMAGE_TIMER_15S, 15 * 1000, npc, event.player());
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (DAMAGE_TIMER_15S.equals(event)) {
 			if (!npc.getVariables().getBoolean(HIGH_DAMAGE_FLAG, false)) {
 				final L2Character mostHated = ((L2Attackable) npc).getMostHated();
@@ -108,6 +106,6 @@ public class EmeraldHorn extends AbstractNpcAI {
 			}
 			npc.getVariables().set(CAST_FLAG, false);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

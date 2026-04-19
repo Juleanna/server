@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class Q00097_SagaOfTheShillienTemplar extends AbstractSagaQuest {
 	public Q00097_SagaOfTheShillienTemplar() {
-		super(97, Q00097_SagaOfTheShillienTemplar.class.getSimpleName(), "Saga of the Shillien Templar");
+		super(97);
 		_npc = new int[] {
 			31580,
 			31623,

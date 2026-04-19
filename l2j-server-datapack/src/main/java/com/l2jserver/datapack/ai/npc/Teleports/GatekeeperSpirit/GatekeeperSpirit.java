@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,15 +43,14 @@ public final class GatekeeperSpirit extends AbstractNpcAI {
 	private static final Location EXIT = new Location(182960, -11904, -4897);
 	
 	public GatekeeperSpirit() {
-		super(GatekeeperSpirit.class.getSimpleName(), "ai/npc/Teleports");
-		addStartNpc(GATEKEEPER_SPIRIT_ENTER, GATEKEEPER_SPIRIT_EXIT);
-		addFirstTalkId(GATEKEEPER_SPIRIT_ENTER, GATEKEEPER_SPIRIT_EXIT);
-		addTalkId(GATEKEEPER_SPIRIT_ENTER, GATEKEEPER_SPIRIT_EXIT);
-		addKillId(LILITH, ANAKIM);
+		bindStartNpc(GATEKEEPER_SPIRIT_ENTER, GATEKEEPER_SPIRIT_EXIT);
+		bindFirstTalk(GATEKEEPER_SPIRIT_ENTER, GATEKEEPER_SPIRIT_EXIT);
+		bindTalk(GATEKEEPER_SPIRIT_ENTER, GATEKEEPER_SPIRIT_EXIT);
+		bindKill(LILITH, ANAKIM);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "ANAKIM": {
@@ -86,7 +85,7 @@ public final class GatekeeperSpirit extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		switch (npc.getId()) {
 			case ANAKIM: {
 				startQuestTimer("ANAKIM", 10000, npc, killer);
@@ -97,6 +96,5 @@ public final class GatekeeperSpirit extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

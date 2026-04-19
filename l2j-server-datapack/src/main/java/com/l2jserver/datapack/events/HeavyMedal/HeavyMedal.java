@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -48,17 +48,16 @@ public final class HeavyMedal extends LongTimeEvent {
 	};
 	
 	private HeavyMedal() {
-		super(HeavyMedal.class.getSimpleName(), "events");
-		addStartNpc(CAT_ROY);
-		addStartNpc(CAT_WINNIE);
-		addTalkId(CAT_ROY);
-		addTalkId(CAT_WINNIE);
-		addFirstTalkId(CAT_ROY);
-		addFirstTalkId(CAT_WINNIE);
+		bindStartNpc(CAT_ROY);
+		bindStartNpc(CAT_WINNIE);
+		bindTalk(CAT_ROY);
+		bindTalk(CAT_WINNIE);
+		bindFirstTalk(CAT_ROY);
+		bindFirstTalk(CAT_WINNIE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		int level = checkLevel(player);
 		

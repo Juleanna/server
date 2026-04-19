@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,15 +39,15 @@ public class Q10289_FadeToBlack extends Quest {
 	private static final int ANAYS = 25701;
 	
 	public Q10289_FadeToBlack() {
-		super(10289, Q10289_FadeToBlack.class.getSimpleName(), "Fade to Black");
-		addStartNpc(GREYMORE);
-		addTalkId(GREYMORE);
-		addKillId(ANAYS);
+		super(10289);
+		bindStartNpc(GREYMORE);
+		bindTalk(GREYMORE);
+		bindKill(ANAYS);
 		registerQuestItems(MARK_OF_SPLENDOR, MARK_OF_DARKNESS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -188,7 +188,7 @@ public class Q10289_FadeToBlack extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc anays, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc anays, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 3, anays);
 		if (qs != null) {
 			if (qs.getPlayer().isInParty()) {
@@ -207,7 +207,6 @@ public class Q10289_FadeToBlack extends Quest {
 				rewardPlayer(qs, true);
 			}
 		}
-		return super.onKill(anays, killer, isSummon);
 	}
 	
 	@Override

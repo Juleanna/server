@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,18 +41,18 @@ public class Q10283_RequestOfIceMerchant extends Quest {
 	private int talker = 0;
 	
 	public Q10283_RequestOfIceMerchant() {
-		super(10283, Q10283_RequestOfIceMerchant.class.getSimpleName(), "Request of Ice Merchant");
-		addStartNpc(RAFFORTY);
-		addTalkId(RAFFORTY, KIER, JINIA);
+		super(10283);
+		bindStartNpc(RAFFORTY);
+		bindTalk(RAFFORTY, KIER, JINIA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((npc.getId() == JINIA) && "DESPAWN".equals(event)) {
 			isBusy = false;
 			talker = 0;
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState st = getQuestState(player, false);

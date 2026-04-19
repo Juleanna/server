@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -32,22 +32,19 @@ public final class Gordon extends AbstractNpcAI {
 	private static final int GORDON = 29095;
 	
 	public Gordon() {
-		super(Gordon.class.getSimpleName(), "ai/individual");
-		addSpawnId(GORDON);
-		addSeeCreatureId(GORDON);
+		bindSpawn(GORDON);
+		bindSeeCreature(GORDON);
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (creature.isPlayer() && ((L2PcInstance) creature).isCursedWeaponEquipped()) {
 			addAttackDesire(npc, creature);
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		((L2Attackable) npc).setCanReturnToSpawnPoint(false);
-		return super.onSpawn(npc);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,14 +44,13 @@ public final class Wedding extends AbstractNpcAI {
 	private static final int FORMAL_WEAR = 6408;
 	
 	public Wedding() {
-		super(Wedding.class.getSimpleName(), "custom/events");
-		addFirstTalkId(MANAGER_ID);
-		addTalkId(MANAGER_ID);
-		addStartNpc(MANAGER_ID);
+		bindFirstTalk(MANAGER_ID);
+		bindTalk(MANAGER_ID);
+		bindStartNpc(MANAGER_ID);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (player.getPartnerId() == 0) {
 			return "NoPartner.html";
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -31,7 +31,7 @@ import com.l2jserver.gameserver.model.base.ClassId;
  */
 public final class ElfHumanWizardChange1 extends AbstractNpcAI {
 	// NPCs
-	private static int[] NPCS = {
+	private static final int[] NPCS = {
 		30037, // Levian
 		30070, // Sylvain
 		30289, // Raymond
@@ -52,13 +52,12 @@ public final class ElfHumanWizardChange1 extends AbstractNpcAI {
 	private static final int ORACLE = 29;
 	
 	public ElfHumanWizardChange1() {
-		super(ElfHumanWizardChange1.class.getSimpleName(), "village_master");
-		addStartNpc(NPCS);
-		addTalkId(NPCS);
+		bindStartNpc(NPCS);
+		bindTalk(NPCS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "30037-01.htm": // levian003h

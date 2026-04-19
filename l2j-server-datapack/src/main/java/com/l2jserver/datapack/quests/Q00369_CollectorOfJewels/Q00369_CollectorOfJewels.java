@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -49,10 +49,10 @@ public final class Q00369_CollectorOfJewels extends Quest {
 	private static final int SECOND_STEP_LIMIT = 200;
 	
 	public Q00369_CollectorOfJewels() {
-		super(369, Q00369_CollectorOfJewels.class.getSimpleName(), "Collector of Jewels");
-		addStartNpc(NELL);
-		addTalkId(NELL);
-		addKillId(DROPLIST.getNpcIds());
+		super(369);
+		bindStartNpc(NELL);
+		bindTalk(NELL);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(FLARE_SHARD, FREEZING_SHARD);
 	}
 	
@@ -63,7 +63,7 @@ public final class Q00369_CollectorOfJewels extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -99,7 +99,7 @@ public final class Q00369_CollectorOfJewels extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		L2PcInstance luckyPlayer = getRandomPartyMember(killer, npc);
 		if (luckyPlayer != null) {
 			final QuestState st = getQuestState(luckyPlayer, false);
@@ -109,7 +109,6 @@ public final class Q00369_CollectorOfJewels extends Quest {
 				st.setCond((st.isMemoState(1) ? 2 : 4));
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

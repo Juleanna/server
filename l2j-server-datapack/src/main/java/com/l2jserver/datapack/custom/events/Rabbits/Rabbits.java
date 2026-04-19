@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -82,12 +82,11 @@ public final class Rabbits extends Event {
 	// @formatter:on
 	
 	private Rabbits() {
-		super(Rabbits.class.getSimpleName(), "custom/events");
-		addFirstTalkId(NPC_MANAGER, CHEST);
-		addTalkId(NPC_MANAGER);
-		addStartNpc(NPC_MANAGER);
-		addSkillSeeId(CHEST);
-		addAttackId(CHEST);
+		bindFirstTalk(NPC_MANAGER, CHEST);
+		bindTalk(NPC_MANAGER);
+		bindStartNpc(NPC_MANAGER);
+		bindSkillSee(CHEST);
+		bindAttack(CHEST);
 	}
 	
 	@Override
@@ -158,7 +157,7 @@ public final class Rabbits extends Event {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "900101-1.htm": {
@@ -189,7 +188,7 @@ public final class Rabbits extends Event {
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if (skill.getId() == RABBIT_TORNADO.getSkillId()) {
 			if (!npc.isInvisible() && targets.contains(npc)) {
 				dropItem(npc, caster, DROPLIST);
@@ -206,15 +205,13 @@ public final class Rabbits extends Event {
 				npc.setInvisible(false);
 			}
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		if (_isActive && ((skill == null) || (skill.getId() != RABBIT_TORNADO.getSkillId()))) {
 			RAID_CURSE.getSkill().applyEffects(npc, attacker);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	private static void dropItem(L2Npc npc, L2PcInstance player, int[][] droplist) {

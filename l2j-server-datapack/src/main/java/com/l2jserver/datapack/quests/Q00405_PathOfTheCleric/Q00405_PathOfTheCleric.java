@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -59,15 +59,15 @@ public final class Q00405_PathOfTheCleric extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00405_PathOfTheCleric() {
-		super(405, Q00405_PathOfTheCleric.class.getSimpleName(), "Path Of The Cleric");
-		addStartNpc(ZIGAUNT);
-		addTalkId(ZIGAUNT, GALLINT, VIVYAN, TRADER_SIMPLON, GUARD_PRAGA, LIONEL);
-		addKillId(RUIN_ZOMBIE, RUIN_ZOMBIE_LEADER);
+		super(405);
+		bindStartNpc(ZIGAUNT);
+		bindTalk(ZIGAUNT, GALLINT, VIVYAN, TRADER_SIMPLON, GUARD_PRAGA, LIONEL);
+		bindKill(RUIN_ZOMBIE, RUIN_ZOMBIE_LEADER);
 		registerQuestItems(LETTER_OF_ORDER_1ST, LETTER_OF_ORDER_2ND, LIONELS_BOOK, BOOK_OF_VIVYAN, BOOK_OF_SIMPLON, BOOK_OF_PRAGA, CERTIFICATE_OF_GALLINT, PENDANT_OF_MOTHER, NECKLACE_OF_MOTHER, LEMONIELLS_COVENANT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -100,7 +100,7 @@ public final class Q00405_PathOfTheCleric extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			if (hasQuestItems(killer, NECKLACE_OF_MOTHER) && !hasQuestItems(killer, PENDANT_OF_MOTHER)) {
@@ -108,7 +108,6 @@ public final class Q00405_PathOfTheCleric extends Quest {
 				playSound(qs.getPlayer(), Sound.ITEMSOUND_QUEST_MIDDLE);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

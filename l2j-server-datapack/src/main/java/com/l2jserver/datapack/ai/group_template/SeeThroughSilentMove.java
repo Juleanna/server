@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,15 +39,13 @@ public class SeeThroughSilentMove extends AbstractNpcAI {
 	//@formatter:on
 	
 	public SeeThroughSilentMove() {
-		super(SeeThroughSilentMove.class.getSimpleName(), "ai/group_template");
-		addSpawnId(MONSTERS);
+		bindSpawn(MONSTERS);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.isAttackable()) {
 			((L2Attackable) npc).setSeeThroughSilentMove(true);
 		}
-		return super.onSpawn(npc);
 	}
 }

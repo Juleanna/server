@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -49,10 +49,9 @@ public final class ElcadiasTent extends AbstractInstance {
 	private static final int TEMPLATE_ID = 158;
 	
 	public ElcadiasTent() {
-		super(ElcadiasTent.class.getSimpleName());
-		addFirstTalkId(GRUFF_LOOKING_MAN, ELCADIA);
-		addStartNpc(GRUFF_LOOKING_MAN, ELCADIA);
-		addTalkId(GRUFF_LOOKING_MAN, ELCADIA);
+		bindFirstTalk(GRUFF_LOOKING_MAN, ELCADIA);
+		bindStartNpc(GRUFF_LOOKING_MAN, ELCADIA);
+		bindTalk(GRUFF_LOOKING_MAN, ELCADIA);
 	}
 	
 	@Override

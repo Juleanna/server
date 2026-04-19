@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -55,16 +55,16 @@ public final class Q00401_PathOfTheWarrior extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00401_PathOfTheWarrior() {
-		super(401, Q00401_PathOfTheWarrior.class.getSimpleName(), "Path Of The Warrior");
-		addStartNpc(MASTER_AURON);
-		addTalkId(MASTER_AURON, TRADER_SIMPLON);
-		addAttackId(VENOMOUS_SPIDERS, ARACHNID_TRACKER);
-		addKillId(TRACKER_SKELETON, VENOMOUS_SPIDERS, TRACKER_SKELETON_LIDER, ARACHNID_TRACKER);
+		super(401);
+		bindStartNpc(MASTER_AURON);
+		bindTalk(MASTER_AURON, TRADER_SIMPLON);
+		bindAttack(VENOMOUS_SPIDERS, ARACHNID_TRACKER);
+		bindKill(TRACKER_SKELETON, VENOMOUS_SPIDERS, TRACKER_SKELETON_LIDER, ARACHNID_TRACKER);
 		registerQuestItems(AURONS_LETTER, WARRIOR_GUILD_MARK, RUSTED_BRONZE_SWORD1, RUSTED_BRONZE_SWORD2, RUSTED_BRONZE_SWORD3, SIMPLONS_LETTER, VENOMOUS_SPIDERS_LEG);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		
 		if (qs == null) {
@@ -127,7 +127,7 @@ public final class Q00401_PathOfTheWarrior extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isStarted()) {
 			switch (npc.getScriptValue()) {
@@ -150,11 +150,10 @@ public final class Q00401_PathOfTheWarrior extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -186,7 +185,6 @@ public final class Q00401_PathOfTheWarrior extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

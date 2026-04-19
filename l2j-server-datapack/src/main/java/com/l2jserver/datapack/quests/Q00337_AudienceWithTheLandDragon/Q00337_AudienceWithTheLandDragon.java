@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -82,22 +82,22 @@ public final class Q00337_AudienceWithTheLandDragon extends Quest {
 	private static final int MIN_LEVEL = 50;
 	
 	public Q00337_AudienceWithTheLandDragon() {
-		super(337, Q00337_AudienceWithTheLandDragon.class.getSimpleName(), "Audience With The Land Dragon");
-		addStartNpc(GABRIELLE);
-		addTalkId(GABRIELLE, WAREHOUSE_CHIEF_MOKE, BLACKSMITH_HELTON, PREFECT_CHAKIRIS, MAGISTER_KAIENA, ANTHARAS_WATCHMAN_GILMORE, ANTHARAS_WATCHMAN_THEODRIC, MASTER_KENDRA, HIGH_PRIEST_ORVEN);
-		addKillId(BLOOD_QUEEN, CAVE_MAIDEN, CAVE_KEEPER, CAVE_KEEPER_HOLD, CAVE_MAIDEN_HOLD, HARIT_LIZARDMAN_SHAMAN, HARIT_LIZARDMAN_MATRIARCH, HAMRUT, KRANROT, MARSH_STALKER, MARSH_DRAKE, ABYSSAL_JEWEL_1, ABYSSAL_JEWEL_2, ABYSSAL_JEWEL_3, JEWEL_GUARDIAN_MARA, JEWEL_GUARDIAN_MUSFEL, JEWEL_GUARDIAN_PYTON, GHOST_OF_OFFERING, HARIT_LIZARDMAN_ZEALOT);
-		addAttackId(ABYSSAL_JEWEL_1, ABYSSAL_JEWEL_2, ABYSSAL_JEWEL_3);
+		super(337);
+		bindStartNpc(GABRIELLE);
+		bindTalk(GABRIELLE, WAREHOUSE_CHIEF_MOKE, BLACKSMITH_HELTON, PREFECT_CHAKIRIS, MAGISTER_KAIENA, ANTHARAS_WATCHMAN_GILMORE, ANTHARAS_WATCHMAN_THEODRIC, MASTER_KENDRA, HIGH_PRIEST_ORVEN);
+		bindKill(BLOOD_QUEEN, CAVE_MAIDEN, CAVE_KEEPER, CAVE_KEEPER_HOLD, CAVE_MAIDEN_HOLD, HARIT_LIZARDMAN_SHAMAN, HARIT_LIZARDMAN_MATRIARCH, HAMRUT, KRANROT, MARSH_STALKER, MARSH_DRAKE, ABYSSAL_JEWEL_1, ABYSSAL_JEWEL_2, ABYSSAL_JEWEL_3, JEWEL_GUARDIAN_MARA, JEWEL_GUARDIAN_MUSFEL, JEWEL_GUARDIAN_PYTON, GHOST_OF_OFFERING, HARIT_LIZARDMAN_ZEALOT);
+		bindAttack(ABYSSAL_JEWEL_1, ABYSSAL_JEWEL_2, ABYSSAL_JEWEL_3);
 		registerQuestItems(FEATHER_OF_GABRIELLE, MARSH_STALKER_HORN, MARSH_DRAKE_TALONS, KRANROT_SKIN, HAMRUT_LEG, REMAINS_OF_SACRAFICE, TOTEM_OF_LAND_DRAGON, FRAGMENT_OF_ABYSS_JEWEL_1ST, FRAGMENT_OF_ABYSS_JEWEL_2ND, FRAGMENT_OF_ABYSS_JEWEL_3RD, MARA_FANG, MUSFEL_FANG, MARK_OF_WATCHMAN, HERALD_OF_SLAYER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ("DESPAWN".equals(event)) {
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		} else if ("DESPAWN_240".equals(event)) {
 			npc.deleteMe();
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState qs = getQuestState(player, false);
@@ -151,7 +151,7 @@ public final class Q00337_AudienceWithTheLandDragon extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isStarted()) {
 			switch (npc.getId()) {
@@ -222,11 +222,10 @@ public final class Q00337_AudienceWithTheLandDragon extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -437,7 +436,6 @@ public final class Q00337_AudienceWithTheLandDragon extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

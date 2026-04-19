@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -83,12 +83,11 @@ public final class StakatoNest extends AbstractNpcAI {
 	private static final SkillHolder EATING_FOLLOWER_HEAL = new SkillHolder(4484);
 	
 	public StakatoNest() {
-		super(StakatoNest.class.getSimpleName(), "ai/group_template");
 		registerMobs(STAKATO_MOBS);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final L2MonsterInstance mob = (L2MonsterInstance) npc;
 		
 		if ((mob.getId() == STAKATO_LEADER) && (getRandom(1000) < 100) && (mob.getCurrentHp() < (mob.getMaxHp() * 0.3))) {
@@ -108,11 +107,10 @@ public final class StakatoNest extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final L2MonsterInstance monster;
 		switch (npc.getId()) {
 			case STAKATO_NURSE:
@@ -158,21 +156,19 @@ public final class StakatoNest extends AbstractNpcAI {
 				}
 				break;
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if ((skill.getId() == GROWTH_ACCELERATOR) && Util.contains(COCOONS, npc.getId()) && targets.contains(npc)) {
 			npc.doDie(caster);
 			final L2Npc spawned = addSpawn(STAKATO_CHIEF, npc.getX(), npc.getY(), npc.getZ(), Util.calculateHeadingFrom(npc, caster), false, 0, true);
 			addAttackDesire(spawned, caster);
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((npc == null) || (player == null) || npc.isDead()) {
 			return null;
 		}
@@ -192,7 +188,7 @@ public final class StakatoNest extends AbstractNpcAI {
 			final L2Npc spawned = addSpawn(npcId, npc.getX(), npc.getY(), npc.getZ(), npc.getHeading(), false, 0, true);
 			addAttackDesire(spawned, player);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	private static L2MonsterInstance checkMinion(L2Npc npc) {

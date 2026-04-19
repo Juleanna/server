@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -193,13 +193,13 @@ public class Q00620_FourGoblets extends Quest {
 	private static final Map<Integer, Integer> MOB3 = new HashMap<>();
 	
 	public Q00620_FourGoblets() {
-		super(620, Q00620_FourGoblets.class.getSimpleName(), "Four Goblets");
-		addStartNpc(NAMELESS_SPIRIT);
-		addTalkId(NAMELESS_SPIRIT, GHOST_OF_WIGOTH_1, GHOST_OF_WIGOTH_2, GHOST_CHAMBERLAIN_OF_ELMOREDEN_1, CONQUERORS_SEPULCHER_MANAGER, EMPERORS_SEPULCHER_MANAGER, GREAT_SAGES_SEPULCHER_MANAGER, JUDGES_SEPULCHER_MANAGER);
-		addKillId(HALISHA_ALECTIA, HALISHA_TISHAS, HALISHA_MEKARA, HALISHA_MORIGUL);
-		addKillId(MOB1.keySet());
-		addKillId(MOB2.keySet());
-		addKillId(MOB3.keySet());
+		super(620);
+		bindStartNpc(NAMELESS_SPIRIT);
+		bindTalk(NAMELESS_SPIRIT, GHOST_OF_WIGOTH_1, GHOST_OF_WIGOTH_2, GHOST_CHAMBERLAIN_OF_ELMOREDEN_1, CONQUERORS_SEPULCHER_MANAGER, EMPERORS_SEPULCHER_MANAGER, GREAT_SAGES_SEPULCHER_MANAGER, JUDGES_SEPULCHER_MANAGER);
+		bindKill(HALISHA_ALECTIA, HALISHA_TISHAS, HALISHA_MEKARA, HALISHA_MORIGUL);
+		bindKill(MOB1.keySet());
+		bindKill(MOB2.keySet());
+		bindKill(MOB3.keySet());
 		registerQuestItems(SEALED_BOX, GOBLET_OF_ALECTIA, GOBLET_OF_TISHAS, GOBLET_OF_MEKARA, GOBLET_OF_MORIGUL, USED_GRAVE_PASS);
 	}
 	
@@ -245,7 +245,7 @@ public class Q00620_FourGoblets extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -377,7 +377,7 @@ public class Q00620_FourGoblets extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		switch (npc.getId()) {
 			case HALISHA_ALECTIA, HALISHA_TISHAS, HALISHA_MEKARA, HALISHA_MORIGUL -> executeForEachPlayer(player, npc, isSummon, true, false);
 			default -> {
@@ -387,7 +387,6 @@ public class Q00620_FourGoblets extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

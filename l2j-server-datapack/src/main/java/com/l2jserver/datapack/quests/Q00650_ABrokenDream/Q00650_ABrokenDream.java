@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -52,15 +52,15 @@ public final class Q00650_ABrokenDream extends Quest {
 	}
 	
 	public Q00650_ABrokenDream() {
-		super(650, Q00650_ABrokenDream.class.getSimpleName(), "A Broken Dream");
-		addStartNpc(GHOST_OF_A_RAILROAD_ENGINEER);
-		addTalkId(GHOST_OF_A_RAILROAD_ENGINEER);
-		addKillId(MONSTER_DROP_CHANCES.keySet());
+		super(650);
+		bindStartNpc(GHOST_OF_A_RAILROAD_ENGINEER);
+		bindTalk(GHOST_OF_A_RAILROAD_ENGINEER);
+		bindKill(MONSTER_DROP_CHANCES.keySet());
 		registerQuestItems(REMNANTS_OF_OLD_DWARVES_DREAMS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -115,7 +115,7 @@ public final class Q00650_ABrokenDream extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final List<L2PcInstance> randomList = new ArrayList<>();
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && st.isStarted()) {
@@ -140,6 +140,5 @@ public final class Q00650_ABrokenDream extends Quest {
 				playSound(player, Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

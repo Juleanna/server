@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -20,7 +20,6 @@ package com.l2jserver.datapack.quests.Q00454_CompletelyLost;
 
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.enums.QuestType;
-import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
@@ -30,7 +29,8 @@ import com.l2jserver.gameserver.model.events.ListenerRegisterType;
 import com.l2jserver.gameserver.model.events.annotations.Id;
 import com.l2jserver.gameserver.model.events.annotations.RegisterEvent;
 import com.l2jserver.gameserver.model.events.annotations.RegisterType;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureAttacked;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureAttacked;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcEventReceived;
 import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
@@ -54,20 +54,20 @@ public final class Q00454_CompletelyLost extends Quest {
 	private static final Location MOVE_TO = new Location(-180219, 186341, -10600);
 	
 	public Q00454_CompletelyLost() {
-		super(454, Q00454_CompletelyLost.class.getSimpleName(), "Completely Lost");
-		addStartNpc(INJURED_SOLDIER);
-		addTalkId(INJURED_SOLDIER, ERMIAN);
-		addSpawnId(ERMIAN);
-		addMoveFinishedId(INJURED_SOLDIER);
-		addSeeCreatureId(INJURED_SOLDIER);
-		addEventReceivedId(INJURED_SOLDIER);
+		super(454);
+		bindStartNpc(INJURED_SOLDIER);
+		bindTalk(INJURED_SOLDIER, ERMIAN);
+		bindSpawn(ERMIAN);
+		bindMoveFinished(INJURED_SOLDIER);
+		bindSeeCreature(INJURED_SOLDIER);
+		bindEventReceived(INJURED_SOLDIER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "QUEST_TIMER": {
-				npc.broadcastEvent("SCE_IM_ERMIAN", 300, null);
+				npc.broadcastScriptEvent("SCE_IM_ERMIAN", 300);
 				startQuestTimer("QUEST_TIMER", 100, npc, null);
 				break;
 			}
@@ -235,11 +235,11 @@ public final class Q00454_CompletelyLost extends Quest {
 		return htmltext;
 	}
 	
-	@RegisterEvent(EventType.ON_CREATURE_ATTACKED)
+	@RegisterEvent(EventType.CREATURE_ATTACKED)
 	@RegisterType(ListenerRegisterType.NPC)
 	@Id(INJURED_SOLDIER)
-	public TerminateReturn onAttacked(OnCreatureAttacked event) {
-		final L2Npc npc = (L2Npc) event.getTarget();
+	public TerminateReturn onAttacked(CreatureAttacked event) {
+		final L2Npc npc = (L2Npc) event.target();
 		// TODO: npc.changeStatus(2);
 		npc.getVariables().set("state", 1);
 		npc.getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
@@ -250,12 +250,13 @@ public final class Q00454_CompletelyLost extends Quest {
 	}
 	
 	@Override
-	public String onEventReceived(String eventName, L2Npc sender, L2Npc receiver, L2Object reference) {
-		switch (eventName) {
+	public void onEventReceived(NpcEventReceived event) {
+		final var receiver = event.receiver();
+		switch (event.eventName()) {
 			case "SCE_IM_ERMIAN": {
 				if (receiver.getVariables().getInt("state", 0) == 2) {
 					receiver.getVariables().set("state", 3);
-					receiver.getVariables().set("ermian", sender);
+					receiver.getVariables().set("ermian", event.sender());
 					receiver.getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
 					addMoveToDesire(receiver, MOVE_TO, 10000000);
 					receiver.sendScriptEvent("SCE_A_SEED_ESCORT_QUEST_SUCCESS", receiver, null);
@@ -332,7 +333,6 @@ public final class Q00454_CompletelyLost extends Quest {
 				break;
 			}
 		}
-		return super.onEventReceived(eventName, sender, receiver, reference);
 	}
 	
 	@Override
@@ -345,17 +345,15 @@ public final class Q00454_CompletelyLost extends Quest {
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (creature.isPlayer() && (npc.getVariables().getInt("state", 0) == 0)) {
 			addAttackDesire(npc, creature.getActingPlayer(), 10);
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("QUEST_TIMER", 1000, npc, null);
-		return super.onSpawn(npc);
 	}
 	
 	@Override

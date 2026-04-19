@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -62,10 +62,10 @@ public class Q00136_MoreThanMeetsTheEye extends Quest {
 	};
 	
 	public Q00136_MoreThanMeetsTheEye() {
-		super(136, Q00136_MoreThanMeetsTheEye.class.getSimpleName(), "More Than Meets the Eye");
-		addStartNpc(HARDIN);
-		addTalkId(HARDIN, ERRICKIN, CLAYTON);
-		addKillId(GHOST1, GHOST2, GHOST3, GLASS_JAGUAR, MIRROR);
+		super(136);
+		bindStartNpc(HARDIN);
+		bindTalk(HARDIN, ERRICKIN, CLAYTON);
+		bindKill(GHOST1, GHOST2, GHOST3, GLASS_JAGUAR, MIRROR);
 		
 		registerQuestItems(ECTOPLASM, STABILIZED_ECTOPLASM, ORDER, GLASS_JAGUAR_CRYSTAL, BOOK_OF_SEAL);
 	}
@@ -80,7 +80,7 @@ public class Q00136_MoreThanMeetsTheEye extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -131,10 +131,10 @@ public class Q00136_MoreThanMeetsTheEye extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if (st == null) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		final int npcId = npc.getId();
@@ -149,7 +149,6 @@ public class Q00136_MoreThanMeetsTheEye extends Quest {
 		} else if ((npcId == GLASS_JAGUAR) && st.isCond(7)) {
 			giveItem(st, GLASS_JAGUAR_CRYSTAL, 1, CRYSTAL_COUNT, 8);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

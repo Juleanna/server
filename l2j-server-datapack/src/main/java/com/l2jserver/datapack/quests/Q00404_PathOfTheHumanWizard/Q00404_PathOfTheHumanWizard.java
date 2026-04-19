@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -63,15 +63,15 @@ public final class Q00404_PathOfTheHumanWizard extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00404_PathOfTheHumanWizard() {
-		super(404, Q00404_PathOfTheHumanWizard.class.getSimpleName(), "Path Of The Human Wizard");
-		addStartNpc(PARINA);
-		addTalkId(PARINA, EARTH_SNAKE, WASTELAND_LIZARDMAN, FLAME_SALAMANDER, WIND_SYLPH, WATER_UNDINE);
-		addKillId(RED_BEAR, RATMAN_WARRIOR, WATER_SEER);
+		super(404);
+		bindStartNpc(PARINA);
+		bindTalk(PARINA, EARTH_SNAKE, WASTELAND_LIZARDMAN, FLAME_SALAMANDER, WIND_SYLPH, WATER_UNDINE);
+		bindKill(RED_BEAR, RATMAN_WARRIOR, WATER_SEER);
 		registerQuestItems(MAP_OF_LUSTER, KEY_OF_FLAME, FLAME_EARING, BROKEN_BRONZE_MIRROR, WIND_FEATHER, WIND_BANGLE, RAMAS_DIARY, SPARKLE_PEBBLE, WATER_NECKLACE, RUSTY_COIN, RED_SOIL, EARTH_RING);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -113,7 +113,7 @@ public final class Q00404_PathOfTheHumanWizard extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -144,7 +144,6 @@ public final class Q00404_PathOfTheHumanWizard extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

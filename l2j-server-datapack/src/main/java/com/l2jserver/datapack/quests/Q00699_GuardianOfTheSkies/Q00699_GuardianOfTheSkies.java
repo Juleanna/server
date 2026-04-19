@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,16 +53,16 @@ public class Q00699_GuardianOfTheSkies extends Quest {
 	private static final int BONUS_COUNT = 10;
 	
 	public Q00699_GuardianOfTheSkies() {
-		super(699, Q00699_GuardianOfTheSkies.class.getSimpleName(), "Guardian of the Skies");
-		addStartNpc(LEKON);
-		addTalkId(LEKON);
-		addKillId(VALDSTONE);
-		addKillId(MONSTERS.keySet());
+		super(699);
+		bindStartNpc(LEKON);
+		bindTalk(LEKON);
+		bindKill(VALDSTONE);
+		bindKill(MONSTERS.keySet());
 		registerQuestItems(VULTURES_GOLDEN_FEATHER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -88,7 +88,7 @@ public class Q00699_GuardianOfTheSkies extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if (st != null) {
 			if (npc.getId() == VALDSTONE) {
@@ -111,7 +111,6 @@ public class Q00699_GuardianOfTheSkies extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

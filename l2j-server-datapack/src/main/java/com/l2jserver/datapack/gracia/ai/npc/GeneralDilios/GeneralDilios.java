@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,13 +43,12 @@ public final class GeneralDilios extends AbstractNpcAI {
 	private final Set<L2Spawn> _guards = Collections.newSetFromMap(new ConcurrentHashMap<>());
 	
 	public GeneralDilios() {
-		super(GeneralDilios.class.getSimpleName(), "gracia/AI/NPC");
-		addTalkId(GENERAL_ID);
-		addSpawnId(GENERAL_ID, GUARD_ID);
+		bindTalk(GENERAL_ID);
+		bindSpawn(GENERAL_ID, GUARD_ID);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("SOD_STATE")) {
 			return switch (GraciaSeedsManager.getInstance().getSoDState()) {
 				case 1 -> "32549-2.html";
@@ -80,7 +79,7 @@ public final class GeneralDilios extends AbstractNpcAI {
 				startQuestTimer("guard_animation_" + (value + 1), 1500, null, null);
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	private NpcStringId getShoutMessage() {
@@ -101,13 +100,12 @@ public final class GeneralDilios extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == GENERAL_ID) {
 			startQuestTimer("command_0", 60000, null, null);
 			_general = npc;
 		} else if (npc.getId() == GUARD_ID) {
 			_guards.add(npc.getSpawn());
 		}
-		return super.onSpawn(npc);
 	}
 }

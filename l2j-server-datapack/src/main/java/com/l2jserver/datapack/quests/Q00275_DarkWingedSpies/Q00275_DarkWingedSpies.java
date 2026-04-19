@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,16 +50,16 @@ public final class Q00275_DarkWingedSpies extends Quest {
 	private static final int FANG_PRICE = 60;
 	
 	public Q00275_DarkWingedSpies() {
-		super(275, Q00275_DarkWingedSpies.class.getSimpleName(), "Dark Winged Spies");
-		addStartNpc(NERUGA_CHIEF_TANTUS);
-		addTalkId(NERUGA_CHIEF_TANTUS);
-		addKillId(DARKWING_BAT, VARANGKAS_TRACKER);
-		addSeeCreatureId(VARANGKAS_TRACKER);
+		super(275);
+		bindStartNpc(NERUGA_CHIEF_TANTUS);
+		bindTalk(NERUGA_CHIEF_TANTUS);
+		bindKill(DARKWING_BAT, VARANGKAS_TRACKER);
+		bindSeeCreature(VARANGKAS_TRACKER);
 		registerQuestItems(DARKWING_BAT_FANG.getId(), VARANGKAS_PARASITE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equals("30567-03.htm")) {
 			st.startQuest();
@@ -69,9 +69,8 @@ public final class Q00275_DarkWingedSpies extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
-		
 		if ((st != null) && st.isCond(1) && Util.checkIfInRange(1500, npc, killer, true)) {
 			final long count = st.getQuestItemsCount(DARKWING_BAT_FANG.getId());
 			
@@ -94,18 +93,15 @@ public final class Q00275_DarkWingedSpies extends Quest {
 				}
 			}
 		}
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (creature.isPlayer()) {
 			npc.setRunning();
 			((L2Attackable) npc).addDamageHate(creature, 0, 1);
 			npc.getAI().setIntention(CtrlIntention.AI_INTENTION_ATTACK, creature);
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override

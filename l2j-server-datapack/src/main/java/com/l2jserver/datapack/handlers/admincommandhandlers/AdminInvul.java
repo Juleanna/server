@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -20,7 +20,8 @@ package com.l2jserver.datapack.handlers.admincommandhandlers;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
 import com.l2jserver.gameserver.model.L2Object;
@@ -31,7 +32,8 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * @version $Revision: 1.2.4.4 $ $Date: 2007/07/31 10:06:02 $
  */
 public class AdminInvul implements IAdminCommandHandler {
-	private static Logger _log = Logger.getLogger(AdminInvul.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminInvul.class);
+	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_invul",
 		"admin_setinvul"
@@ -64,13 +66,13 @@ public class AdminInvul implements IAdminCommandHandler {
 			activeChar.setIsInvul(false);
 			text = activeChar.getName() + " is now mortal";
 			if (general().debug()) {
-				_log.fine("GM: Gm removed invul mode from character " + activeChar.getName() + "(" + activeChar.getObjectId() + ")");
+				LOG.debug("GM: Gm removed invul mode from character {}({})", activeChar.getName(), activeChar.getObjectId());
 			}
 		} else {
 			activeChar.setIsInvul(true);
 			text = activeChar.getName() + " is now invulnerable";
 			if (general().debug()) {
-				_log.fine("GM: Gm activated invul mode for character " + activeChar.getName() + "(" + activeChar.getObjectId() + ")");
+				LOG.debug("GM: Gm activated invul mode for character {}({})", activeChar.getName(), activeChar.getObjectId());
 			}
 		}
 		activeChar.sendMessage(text);

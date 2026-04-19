@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,14 +53,14 @@ public class Q00168_DeliverSupplies extends Quest {
 	}
 	
 	public Q00168_DeliverSupplies() {
-		super(168, Q00168_DeliverSupplies.class.getSimpleName(), "Deliver Supplies");
-		addStartNpc(JENNA);
-		addTalkId(JENNA, ROSELYN, KRISTIN, HARANT);
+		super(168);
+		bindStartNpc(JENNA);
+		bindTalk(JENNA, ROSELYN, KRISTIN, HARANT);
 		registerQuestItems(JENNAS_LETTER, SENTRY_BLADE1, SENTRY_BLADE2, SENTRY_BLADE3, OLD_BRONZE_SWORD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equals("30349-03.htm")) {
 			st.startQuest();

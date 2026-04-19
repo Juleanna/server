@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -133,10 +133,10 @@ public class Q00611_AllianceWithVarkaSilenos extends Quest {
 	};
 	
 	public Q00611_AllianceWithVarkaSilenos() {
-		super(611, Q00611_AllianceWithVarkaSilenos.class.getSimpleName(), "Alliance with Varka Silenos");
-		addStartNpc(NARAN_ASHANUK);
-		addTalkId(NARAN_ASHANUK);
-		addKillId(MOBS.keySet());
+		super(611);
+		bindStartNpc(NARAN_ASHANUK);
+		bindTalk(NARAN_ASHANUK);
+		bindKill(MOBS.keySet());
 		registerQuestItems(KETRA_BADGE_CAPTAIN, KETRA_BADGE_OFFICER, KETRA_BADGE_SOLDIER);
 	}
 	
@@ -160,7 +160,7 @@ public class Q00611_AllianceWithVarkaSilenos extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -231,7 +231,7 @@ public class Q00611_AllianceWithVarkaSilenos extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final L2PcInstance member = getRandomPartyMemberState(killer, State.STARTED);
 		if (member != null) {
 			final QuestState st = getQuestState(member, false);
@@ -240,7 +240,6 @@ public class Q00611_AllianceWithVarkaSilenos extends Quest {
 				st.giveItems(info.getItemId(), 1);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

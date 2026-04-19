@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class Q00069_SagaOfTheTrickster extends AbstractSagaQuest {
 	public Q00069_SagaOfTheTrickster() {
-		super(69, Q00069_SagaOfTheTrickster.class.getSimpleName(), "Saga of the Trickster");
+		super(69);
 		_npc = new int[] {
 			32138,
 			31270,

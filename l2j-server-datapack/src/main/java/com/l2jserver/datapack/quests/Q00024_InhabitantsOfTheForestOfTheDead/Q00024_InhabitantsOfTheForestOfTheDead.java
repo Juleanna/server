@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,15 +51,15 @@ public class Q00024_InhabitantsOfTheForestOfTheDead extends Quest {
 	// @formatter:on
 	
 	public Q00024_InhabitantsOfTheForestOfTheDead() {
-		super(24, Q00024_InhabitantsOfTheForestOfTheDead.class.getSimpleName(), "Inhabitants of the Forest of the Dead");
-		addStartNpc(DORIAN);
-		addTalkId(DORIAN, MYSTERIOUS_WIZARD, TOMBSTONE, LIDIA_MAID);
-		addKillId(MOBS);
+		super(24);
+		bindStartNpc(DORIAN);
+		bindTalk(DORIAN, MYSTERIOUS_WIZARD, TOMBSTONE, LIDIA_MAID);
+		bindKill(MOBS);
 		registerQuestItems(LIDIA_LETTER, LIDIA_HAIRPIN, SUSPICIOUS_TOTEM_DOLL, FLOWER_BOUQUET, SILVER_CROSS_OF_EINHASAD, BROKEN_SILVER_CROSS_OF_EINHASAD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -191,14 +191,12 @@ public class Q00024_InhabitantsOfTheForestOfTheDead extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
-		
 		if ((st != null) && st.isCond(9) && (getRandom(100) < 10)) {
 			st.giveItems(SUSPICIOUS_TOTEM_DOLL, 1);
 			st.setCond(10, true);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

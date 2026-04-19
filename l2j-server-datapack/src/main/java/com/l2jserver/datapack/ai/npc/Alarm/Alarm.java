@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,15 +40,14 @@ public final class Alarm extends AbstractNpcAI {
 	private static final int NIKOLAS_COOPERATION_ID = 185;
 	
 	public Alarm() {
-		super(Alarm.class.getSimpleName(), "ai/npc");
-		addStartNpc(ALARM);
-		addTalkId(ALARM);
-		addFirstTalkId(ALARM);
-		addSpawnId(ALARM);
+		bindStartNpc(ALARM);
+		bindTalk(ALARM);
+		bindFirstTalk(ALARM);
+		bindSpawn(ALARM);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		final L2PcInstance player0 = npc.getVariables().getObject("player0", L2PcInstance.class);
 		final L2Npc npc0 = npc.getVariables().getObject("npc0", L2Npc.class);
@@ -181,14 +180,13 @@ public final class Alarm extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("SELF_DESTRUCT_IN_60", 60000, npc, null);
 		broadcastNpcSay(npc, Say2.NPC_ALL, NpcStringId.INTRUDER_ALERT_THE_ALARM_WILL_SELF_DESTRUCT_IN_2_MINUTES);
 		final L2PcInstance player = npc.getVariables().getObject("player0", L2PcInstance.class);
 		if (player != null) {
 			playSound(player, Sound.ITEMSOUND_SIREN);
 		}
-		return super.onSpawn(npc);
 	}
 	
 	/**

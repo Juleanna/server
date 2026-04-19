@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -127,10 +127,10 @@ public final class Q00214_TrialOfTheScholar extends Quest {
 	private static final int LEVEL = 36;
 	
 	public Q00214_TrialOfTheScholar() {
-		super(214, Q00214_TrialOfTheScholar.class.getSimpleName(), "Trial Of The Scholar");
-		addStartNpc(MAGISTER_MIRIEN);
-		addTalkId(MAGISTER_MIRIEN, HIGH_PRIEST_SYLVAIN, CAPTAIN_LUCAS, WAREHOUSE_KEEPER_VALKON, MAGISTER_DIETER, GRAND_MAGISTER_JUREK, TRADER_EDROC, WAREHOUSE_KEEPER_RAUT, BLACKSMITH_POITAN, MARIA, ASTROLOGER_CRETA, ELDER_CRONOS, DRUNKARD_TRIFF, ELDER_CASIAN);
-		addKillId(MONSTER_EYE_DESTROYER, MEDUSA, GHOUL, SHACKLE1, BREKA_ORC_SHAMAN, SHACKLE2, FETTERED_SOUL, GRANDIS, ENCHANTED_GARGOYLE, LETO_LIZARDMAN_WARRIOR);
+		super(214);
+		bindStartNpc(MAGISTER_MIRIEN);
+		bindTalk(MAGISTER_MIRIEN, HIGH_PRIEST_SYLVAIN, CAPTAIN_LUCAS, WAREHOUSE_KEEPER_VALKON, MAGISTER_DIETER, GRAND_MAGISTER_JUREK, TRADER_EDROC, WAREHOUSE_KEEPER_RAUT, BLACKSMITH_POITAN, MARIA, ASTROLOGER_CRETA, ELDER_CRONOS, DRUNKARD_TRIFF, ELDER_CASIAN);
+		bindKill(MONSTER_EYE_DESTROYER, MEDUSA, GHOUL, SHACKLE1, BREKA_ORC_SHAMAN, SHACKLE2, FETTERED_SOUL, GRANDIS, ENCHANTED_GARGOYLE, LETO_LIZARDMAN_WARRIOR);
 		registerQuestItems(MIRIENS_1ST_SIGIL, MIRIENS_2ND_SIGIL, MIRIENS_3RD_SIGIL, MIRIENS_INSTRUCTION, MARIAS_1ST_LETTER, MARIAS_2ND_LETTER, LUCASS_LETTER, LUCILLAS_HANDBAG, CRETAS_1ST_LETTER, CRERAS_PAINTING1, CRERAS_PAINTING1, CRERAS_PAINTING3, BROWN_SCROLL_SCRAP
 			.getId(), CRYSTAL_OF_PURITY1, HIGH_PRIESTS_SIGIL, GRAND_MAGISTER_SIGIL, CRONOS_SIGIL, SYLVAINS_LETTER, SYMBOL_OF_SYLVAIN, JUREKS_LIST, MONSTER_EYE_DESTROYER_SKIN.getId(), SHAMANS_NECKLACE.getId(), SHACKLES_SCALP
 				.getId(), SYMBOL_OF_JUREK, CRONOS_LETTER, DIETERS_KEY, CRETAS_2ND_LETTER, DIETERS_LETTER, DIETERS_DIARY, RAUTS_LETTER_ENVELOPE, TRIFFS_RING, SCRIPTURE_CHAPTER_1, SCRIPTURE_CHAPTER_2, SCRIPTURE_CHAPTER_3, SCRIPTURE_CHAPTER_4, VALKONS_REQUEST, POITANS_NOTES, STRONG_LIGUOR, CRYSTAL_OF_PURITY2, CASIANS_LIST, GHOULS_SKIN
@@ -138,7 +138,7 @@ public final class Q00214_TrialOfTheScholar extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -380,7 +380,7 @@ public final class Q00214_TrialOfTheScholar extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			if ((DROPLIST_JUREK.get(npc) != null) && hasQuestItems(qs.getPlayer(), MIRIENS_2ND_SIGIL, GRAND_MAGISTER_SIGIL, JUREKS_LIST)) {
@@ -410,7 +410,6 @@ public final class Q00214_TrialOfTheScholar extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

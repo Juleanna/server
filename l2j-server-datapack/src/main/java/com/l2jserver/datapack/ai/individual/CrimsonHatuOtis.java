@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,13 +37,12 @@ public final class CrimsonHatuOtis extends AbstractNpcAI {
 	private static final SkillHolder BOSS_HASTE = new SkillHolder(4175);
 	
 	public CrimsonHatuOtis() {
-		super(CrimsonHatuOtis.class.getSimpleName(), "ai/individual");
-		addAttackId(CRIMSON_HATU_OTIS);
-		addKillId(CRIMSON_HATU_OTIS);
+		bindAttack(CRIMSON_HATU_OTIS);
+		bindKill(CRIMSON_HATU_OTIS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "SKILL": {
 				if (npc.isDead()) {
@@ -63,11 +62,11 @@ public final class CrimsonHatuOtis extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.isScriptValue(0)) {
 			npc.setScriptValue(1);
 			startQuestTimer("SKILL", 5000, npc, null);
@@ -76,13 +75,11 @@ public final class CrimsonHatuOtis extends AbstractNpcAI {
 			npc.setScriptValue(2);
 			startQuestTimer("BUFF", 1000, npc, null);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		cancelQuestTimer("SKILL", npc, null);
 		cancelQuestTimer("BUFF", npc, null);
-		return super.onKill(npc, player, isSummon);
 	}
 }

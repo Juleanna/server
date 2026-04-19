@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -52,7 +52,7 @@ public final class Q00049_TheRoadHome extends Quest {
 	// Reward
 	private static final int SCROLL_OF_ESCAPE_DWARVEN_VILLAGE = 7558;
 	// Get condition for each npc
-	private static Map<Integer, ItemHolder> NPC_ITEMS = new HashMap<>();
+	private static final Map<Integer, ItemHolder> NPC_ITEMS = new HashMap<>();
 	static {
 		NPC_ITEMS.put(GENTLER, new ItemHolder(1, GALLADUCCIS_ORDER_1));
 		NPC_ITEMS.put(SANDRA, new ItemHolder(3, GALLADUCCIS_ORDER_2));
@@ -60,15 +60,15 @@ public final class Q00049_TheRoadHome extends Quest {
 	}
 	
 	public Q00049_TheRoadHome() {
-		super(49, Q00049_TheRoadHome.class.getSimpleName(), "The Road Home");
-		addStartNpc(GALLADUCCI);
-		addTalkId(GALLADUCCI);
-		addTalkId(NPC_ITEMS.keySet());
+		super(49);
+		bindStartNpc(GALLADUCCI);
+		bindTalk(GALLADUCCI);
+		bindTalk(NPC_ITEMS.keySet());
 		registerQuestItems(GALLADUCCIS_ORDER_1, GALLADUCCIS_ORDER_2, GALLADUCCIS_ORDER_3, PURIFIED_MAGIC_NECKLACE, GEMSTONE_POWDER, MAGIC_SWORD_HILT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {

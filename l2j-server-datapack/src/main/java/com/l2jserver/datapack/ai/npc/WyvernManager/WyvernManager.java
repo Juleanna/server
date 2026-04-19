@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -95,10 +95,9 @@ public final class WyvernManager extends AbstractNpcAI {
 	}
 	
 	public WyvernManager() {
-		super(WyvernManager.class.getSimpleName(), "ai/npc");
-		addStartNpc(MANAGERS.keySet());
-		addTalkId(MANAGERS.keySet());
-		addFirstTalkId(MANAGERS.keySet());
+		bindStartNpc(MANAGERS.keySet());
+		bindTalk(MANAGERS.keySet());
+		bindFirstTalk(MANAGERS.keySet());
 	}
 	
 	private String mountWyvern(L2Npc npc, L2PcInstance player) {
@@ -174,7 +173,7 @@ public final class WyvernManager extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		switch (event) {
 			case "Return": {

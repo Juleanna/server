@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,12 +36,11 @@ public class DrakosWarrior extends AbstractNpcAI {
 	private static final SkillHolder SUMMON = new SkillHolder(6858);
 	
 	public DrakosWarrior() {
-		super(DrakosWarrior.class.getSimpleName(), "ai/individual");
-		addAttackId(DRAKOS_WARRIOR);
+		bindAttack(DRAKOS_WARRIOR);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (getRandom(100) < 1) {
 			addSkillCastDesire(npc, npc, SUMMON, 99999999900000000L);
 			final int count = 2 + getRandom(3);
@@ -49,6 +48,5 @@ public class DrakosWarrior extends AbstractNpcAI {
 				addSpawn(DRAKOS_ASSASSIN, npc.getX() + getRandom(200), npc.getY() + getRandom(200), npc.getZ(), 0, false, 0, false);
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 }

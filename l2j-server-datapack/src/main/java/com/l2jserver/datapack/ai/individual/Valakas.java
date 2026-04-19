@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -115,7 +115,6 @@ public final class Valakas extends AbstractNpcAI {
 	private static L2BossZone ZONE;
 	
 	public Valakas() {
-		super(Valakas.class.getSimpleName(), "ai/individual");
 		registerMobs(VALAKAS);
 		
 		ZONE = GrandBossManager.getInstance().getZone(212852, -114842, -1632);
@@ -173,7 +172,7 @@ public final class Valakas extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (npc != null) {
 			if (event.equalsIgnoreCase("beginning")) {
 				// Stores current time
@@ -307,29 +306,28 @@ public final class Valakas extends AbstractNpcAI {
 				ZONE.oustAllPlayers();
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.disableCoreAI(true);
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (!ZONE.isInsideZone(attacker)) {
 			attacker.doDie(attacker);
-			return null;
+			return;
 		}
 		
 		if (npc.isInvul()) {
-			return null;
+			return;
 		}
 		
 		if (GrandBossManager.getInstance().getBossStatus(VALAKAS) != FIGHTING) {
 			attacker.teleToLocation(ATTACKER_REMOVE);
-			return null;
+			return;
 		}
 		
 		// Debuff strider-mounted players.
@@ -340,12 +338,10 @@ public final class Valakas extends AbstractNpcAI {
 			}
 		}
 		_timeTracker = System.currentTimeMillis();
-		
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		// Cancel skill_task and regen_task.
 		cancelQuestTimer("regen_task", npc, null);
 		cancelQuestTimer("skill_task", npc, null);
@@ -365,21 +361,13 @@ public final class Valakas extends AbstractNpcAI {
 		
 		GrandBossManager.getInstance().setBossStatus(VALAKAS, DEAD);
 		// Calculate Min and Max respawn times randomly.
-		long respawnTime = grandBoss().getIntervalOfValakasSpawn() + getRandom(-grandBoss().getRandomOfValakasSpawn(), grandBoss().getRandomOfValakasSpawn());
-		respawnTime *= 3600000;
+		final long respawnTime = grandBoss().getIntervalOfValakasSpawn() + getRandom(-(int) grandBoss().getRandomOfValakasSpawn(), (int) grandBoss().getRandomOfValakasSpawn());
 		
 		startQuestTimer("valakas_unlock", respawnTime, null, null);
 		// also save the respawn time so that the info is maintained past reboots
 		StatsSet info = GrandBossManager.getInstance().getStatsSet(VALAKAS);
 		info.set("respawn_time", (System.currentTimeMillis() + respawnTime));
 		GrandBossManager.getInstance().setStatsSet(VALAKAS, info);
-		
-		return super.onKill(npc, killer, isSummon);
-	}
-	
-	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
-		return null;
 	}
 	
 	private void callSkillAI(L2Npc npc) {

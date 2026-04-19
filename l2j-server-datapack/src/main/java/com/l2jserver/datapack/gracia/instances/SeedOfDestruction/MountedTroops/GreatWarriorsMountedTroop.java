@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -196,10 +196,9 @@ public final class GreatWarriorsMountedTroop extends AbstractInstance {
 	};
 	
 	public GreatWarriorsMountedTroop() {
-		super(GreatWarriorsMountedTroop.class.getSimpleName(), "gracia/instances");
-		addStartNpc(EDRIC);
-		addTalkId(EDRIC);
-		addKillId(DOORMAN, REMNANT_MACHINE);
+		bindStartNpc(EDRIC);
+		bindTalk(EDRIC);
+		bindKill(DOORMAN, REMNANT_MACHINE);
 		for (int[] coord : HALL_ZONE_1_COORDINATES) {
 			_hallZone1.add(coord[0], coord[1], coord[2], coord[3], 0);
 		}
@@ -209,7 +208,7 @@ public final class GreatWarriorsMountedTroop extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "DOORMAN_KILLED": {
 				openDoor(DOORS[0], npc.getInstanceId());
@@ -325,7 +324,7 @@ public final class GreatWarriorsMountedTroop extends AbstractInstance {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof GreatWarriorsMountedTroopWorld) {
 			final GreatWarriorsMountedTroopWorld world = (GreatWarriorsMountedTroopWorld) InstanceManager.getInstance().getWorld(npc.getInstanceId());
@@ -352,6 +351,5 @@ public final class GreatWarriorsMountedTroop extends AbstractInstance {
 				finishInstance(world, EXIT_TIME * 60000);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

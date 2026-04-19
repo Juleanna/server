@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,14 +42,14 @@ public class Q00007_ATripBegins extends Quest {
 	private static final int MIN_LEVEL = 3;
 	
 	public Q00007_ATripBegins() {
-		super(7, Q00007_ATripBegins.class.getSimpleName(), "A Trip Begins");
-		addStartNpc(MIRABEL);
-		addTalkId(MIRABEL, ARIEL, ASTERIOS);
+		super(7);
+		bindStartNpc(MIRABEL);
+		bindTalk(MIRABEL, ARIEL, ASTERIOS);
 		registerQuestItems(ARIELS_RECOMMENDATION);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

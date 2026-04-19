@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -100,16 +100,16 @@ public final class Q00222_TestOfTheDuelist extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00222_TestOfTheDuelist() {
-		super(222, Q00222_TestOfTheDuelist.class.getSimpleName(), "Test Of The Duelist");
-		addStartNpc(DUELIST_KAIEN);
-		addTalkId(DUELIST_KAIEN);
-		addKillId(PUNCHER, NOBLE_ANT_LEADER, DEAD_SEEKER, EXCURO, KRATOR, MARSH_STAKATO_DRONE, BREKA_ORC_OVERLORD, FETTERED_SOUL, GRANDIS, ENCHANTED_MONSTEREYE, LETO_LIZARDMAN_OVERLORD, TIMAK_ORC_OVERLORD, TAMLIN_ORC, TAMLIN_ORC_ARCHER, LAKIN);
+		super(222);
+		bindStartNpc(DUELIST_KAIEN);
+		bindTalk(DUELIST_KAIEN);
+		bindKill(PUNCHER, NOBLE_ANT_LEADER, DEAD_SEEKER, EXCURO, KRATOR, MARSH_STAKATO_DRONE, BREKA_ORC_OVERLORD, FETTERED_SOUL, GRANDIS, ENCHANTED_MONSTEREYE, LETO_LIZARDMAN_OVERLORD, TIMAK_ORC_OVERLORD, TAMLIN_ORC, TAMLIN_ORC_ARCHER, LAKIN);
 		registerQuestItems(ORDER_GLUDIO, ORDER_DION, ORDER_GIRAN, ORDER_OREN, ORDER_ADEN, PUNCHERS_SHARD.getId(), NOBLE_ANTS_FEELER.getId(), DRONES_CHITIN.getId(), DEAD_SEEKER_FANG.getId(), OVERLORD_NECKLACE.getId(), FETTERED_SOULS_CHAIN.getId(), CHIEFS_AMULET.getId(), ENCHANTED_EYE_MEAT.getId(), TAMLIN_ORCS_RING
 			.getId(), TAMRIN_ORCS_ARROW.getId(), FINAL_ORDER, EXCUROS_SKIN.getId(), KRATORS_SHARD.getId(), GRANDIS_SKIN.getId(), TIMAK_ORCS_BELT.getId(), LAKINS_MACE.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -191,7 +191,7 @@ public final class Q00222_TestOfTheDuelist extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -203,7 +203,6 @@ public final class Q00222_TestOfTheDuelist extends Quest {
 				case EXCURO, KRATOR, GRANDIS, TIMAK_ORC_OVERLORD, LAKIN -> handleDropsAndQuestStateUpdate(qs, npc, 2, FINAL_ORDER, hasAllFinalOrderDrops(qs.getPlayer()), 5, 5);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private void handleDropsAndQuestStateUpdate(QuestState qs, L2Npc npc, int requiredMemoState, int requiredItemId, boolean hasAllDrops, int memoStateForUpdate, int condToSet) {

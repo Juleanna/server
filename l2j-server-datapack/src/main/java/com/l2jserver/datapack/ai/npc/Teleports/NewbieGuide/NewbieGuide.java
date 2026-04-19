@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -116,38 +116,34 @@ public final class NewbieGuide extends AbstractNpcAI {
 	}
 	
 	public NewbieGuide() {
-		super(NewbieGuide.class.getSimpleName(), "ai/npc/Teleports");
-		
-		int[] newbieList = {
-			NEWBIE_GUIDE_HUMAN,
-			NEWBIE_GUIDE_ELF,
-			NEWBIE_GUIDE_DARK_ELF,
-			NEWBIE_GUIDE_DWARF,
-			NEWBIE_GUIDE_ORC,
-			NEWBIE_GUIDE_KAMAEL,
-			NEWBIE_GUIDE_GLUDIN,
-			NEWBIE_GUIDE_GLUDIO,
-			ADVENTURERS_GUIDE
-		};
-		addStartNpc(newbieList);
-		addFirstTalkId(newbieList);
-		addTalkId(newbieList);
+		bindStartNpc(NEWBIE_GUIDE_HUMAN, NEWBIE_GUIDE_ELF, NEWBIE_GUIDE_DARK_ELF, NEWBIE_GUIDE_DWARF, NEWBIE_GUIDE_ORC, NEWBIE_GUIDE_KAMAEL, NEWBIE_GUIDE_GLUDIN, NEWBIE_GUIDE_GLUDIO, ADVENTURERS_GUIDE);
+		bindFirstTalk(NEWBIE_GUIDE_HUMAN, NEWBIE_GUIDE_ELF, NEWBIE_GUIDE_DARK_ELF, NEWBIE_GUIDE_DWARF, NEWBIE_GUIDE_ORC, NEWBIE_GUIDE_KAMAEL, NEWBIE_GUIDE_GLUDIN, NEWBIE_GUIDE_GLUDIO, ADVENTURERS_GUIDE);
+		bindTalk(NEWBIE_GUIDE_HUMAN, NEWBIE_GUIDE_ELF, NEWBIE_GUIDE_DARK_ELF, NEWBIE_GUIDE_DWARF, NEWBIE_GUIDE_ORC, NEWBIE_GUIDE_KAMAEL, NEWBIE_GUIDE_GLUDIN, NEWBIE_GUIDE_GLUDIO, ADVENTURERS_GUIDE);
 	}
 	
 	@Override
 	public String onFirstTalk(L2Npc npc, L2PcInstance player) {
 		QuestState qs = player.getQuestState(Q00255_Tutorial.class.getSimpleName());
 		if (qs != null) {
-			if (npc.getId() == ADVENTURERS_GUIDE) {
-				return "32327.htm";
+			switch (npc.getId()) {
+				case ADVENTURERS_GUIDE -> {
+					return "32327.htm";
+				}
+				case NEWBIE_GUIDE_GLUDIN -> {
+					return "31076.htm";
+				}
+				case NEWBIE_GUIDE_GLUDIO -> {
+					return "31077.htm";
+				}
 			}
-			return talkGuide(player, qs);
+			
+			return talkGuide(player, npc, qs);
 		}
 		return super.onFirstTalk(npc, player);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance talker) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance talker) {
 		if (event.endsWith(".htm")) {
 			return event;
 		}
@@ -158,7 +154,7 @@ public final class NewbieGuide extends AbstractNpcAI {
 			} else {
 				teleportRequest(talker, npc, Integer.parseInt(tel[1]));
 			}
-			return super.onAdvEvent(event, npc, talker);
+			return super.onEvent(event, npc, talker);
 		}
 		
 		final QuestState qs = getQuestState(talker, true);
@@ -168,7 +164,7 @@ public final class NewbieGuide extends AbstractNpcAI {
 			case -7: {
 				switch (reply) {
 					case 1: {
-						if (talker.getRace() == Race.KAMAEL) {
+						if (npc.getRace() == Race.KAMAEL) {
 							if (talker.getRace() != npc.getRace()) {
 								showPage(talker, "32135-003.htm");
 							} else if ((talker.getLevel() > 20) || ((talker.getRace() != Race.KAMAEL) || (talker.getClassId().level() != 0))) {
@@ -195,7 +191,7 @@ public final class NewbieGuide extends AbstractNpcAI {
 								}
 							}
 						} else if (talker.getRace() != npc.getRace()) {
-							showPage(talker, "");
+							showPage(talker, npc.getId() + "-003.htm");
 						} else if ((talker.getLevel() > 20) || (talker.getClassId().level() != 0)) {
 							showPage(talker, "");
 						} else if (!talker.isMageClass()) {
@@ -372,42 +368,42 @@ public final class NewbieGuide extends AbstractNpcAI {
 		}
 		switch (npc.getId()) {
 			case NEWBIE_GUIDE_HUMAN: {
-				String ansGuideHumanCnacelot = eventGuideHumanCnacelot(reply, qs);
+				String ansGuideHumanCnacelot = eventGuideHumanCnacelot(reply, talker, 2);
 				if (!ansGuideHumanCnacelot.isEmpty()) {
 					return ansGuideHumanCnacelot;
 				}
 				break;
 			}
 			case NEWBIE_GUIDE_ELF: {
-				String ansGuideElfRoios = eventGuideElfRoios(reply, qs);
+				String ansGuideElfRoios = eventGuideElfRoios(reply, talker, 2);
 				if (!ansGuideElfRoios.isEmpty()) {
 					return ansGuideElfRoios;
 				}
 				break;
 			}
 			case NEWBIE_GUIDE_DARK_ELF: {
-				String ansGuideDelfFrankia = eventGuideDelfFrankia(reply, qs);
+				String ansGuideDelfFrankia = eventGuideDelfFrankia(reply, talker, 2);
 				if (!ansGuideDelfFrankia.isEmpty()) {
 					return ansGuideDelfFrankia;
 				}
 				break;
 			}
 			case NEWBIE_GUIDE_DWARF: {
-				String ansGuideDwarfGullin = eventGuideDwarfGullin(reply, qs);
+				String ansGuideDwarfGullin = eventGuideDwarfGullin(reply, talker, 2);
 				if (!ansGuideDwarfGullin.isEmpty()) {
 					return ansGuideDwarfGullin;
 				}
 				break;
 			}
 			case NEWBIE_GUIDE_ORC: {
-				String ansGuideOrcTanai = eventGuideOrcTanai(reply, qs);
+				String ansGuideOrcTanai = eventGuideOrcTanai(reply, talker, 2);
 				if (!ansGuideOrcTanai.isEmpty()) {
 					return ansGuideOrcTanai;
 				}
 				break;
 			}
 			case NEWBIE_GUIDE_KAMAEL: {
-				String ansGuideKrenisk = eventGuideKrenisk(reply, qs);
+				String ansGuideKrenisk = eventGuideKrenisk(reply, talker, 2);
 				if (!ansGuideKrenisk.isEmpty()) {
 					return ansGuideKrenisk;
 				}
@@ -435,7 +431,7 @@ public final class NewbieGuide extends AbstractNpcAI {
 		}
 	}
 	
-	private String talkGuide(L2PcInstance talker, QuestState tutorialQS) {
+	private String talkGuide(L2PcInstance talker, L2Npc npc, QuestState tutorialQS) {
 		final QuestState qs = getQuestState(talker, true);
 		if ((tutorialQS.getMemoStateEx(1) < 5) && (getOneTimeQuestFlag(talker, GUIDE_MISSION) == 0)) {
 			if (!talker.isMageClass()) {
@@ -474,6 +470,9 @@ public final class NewbieGuide extends AbstractNpcAI {
 						qs.giveAdena(1041, true);
 						qs.addExpAndSp(4870, 195);
 					} else if (talker.getLevel() >= 3) {
+						qs.giveAdena(1186, true);
+						qs.addExpAndSp(5675, 227);
+					} else {
 						qs.giveAdena(1240, true);
 						qs.addExpAndSp(5970, 239);
 					}
@@ -483,61 +482,76 @@ public final class NewbieGuide extends AbstractNpcAI {
 					} else {
 						qs.setNRMemoState(talker, GUIDE_MISSION, qs.getNRMemoState(talker, GUIDE_MISSION) + 10);
 					}
-					return "newbie-guide-02.htm";
-				}
-				switch (talker.getRace()) {
-					case HUMAN:
-						qs.addRadar(-84436, 242793, -3729);
-						return "newbie-guide-01a.htm";
-					case ELF:
-						qs.addRadar(42978, 49115, 2994);
-						return "newbie-guide-01b.htm";
-					case DARK_ELF:
-						qs.addRadar(25790, 10844, -3727);
-						return "newbie-guide-01c.htm";
-					case ORC:
-						qs.addRadar(-47360, -113791, -237);
-						return "newbie-guide-01d.htm";
-					case DWARF:
-						qs.addRadar(112656, -174864, -611);
-						return "newbie-guide-01e.htm";
-					case KAMAEL:
-						qs.addRadar(-119378, 49242, 22);
-						return "newbie-guide-01f.htm";
-				}
-				if (!qs.haveNRMemo(talker, GUIDE_MISSION)) {
-					qs.setNRMemo(talker, GUIDE_MISSION);
-					qs.setNRMemoState(talker, GUIDE_MISSION, 0);
+					showPage(talker, "newbie-guide-02.htm");
+				} else {
+					switch (npc.getRace()) {
+						case HUMAN -> {
+							showRadar(talker, -84436, 242793, -3729, 2);
+							showPage(talker, "newbie-guide-01a.htm");
+						}
+						case ELF -> {
+							showRadar(talker, 42978, 49115, 2994, 2);
+							showPage(talker, "newbie-guide-01b.htm");
+						}
+						case DARK_ELF -> {
+							showRadar(talker, 25790, 10844, -3727, 2);
+							showPage(talker, "newbie-guide-01c.htm");
+						}
+						case ORC -> {
+							showRadar(talker, -47360, -113791, -237, 2);
+							showPage(talker, "newbie-guide-01d.htm");
+						}
+						case DWARF -> {
+							showRadar(talker, 112656, -174864, -611, 2);
+							showPage(talker, "newbie-guide-01e.htm");
+						}
+						case KAMAEL -> {
+							showRadar(talker, -119378, 49242, 22, 2);
+							showPage(talker, "newbie-guide-01f.htm");
+						}
+					}
+					if (!qs.haveNRMemo(talker, GUIDE_MISSION)) {
+						qs.setNRMemo(talker, GUIDE_MISSION);
+						qs.setNRMemoState(talker, GUIDE_MISSION, 0);
+					}
 				}
 			} else if (talker.getLevel() < 10) {
 				if ((((qs.getNRMemoState(talker, GUIDE_MISSION) % 1000) / 100) == 1) && (((qs.getNRMemoState(talker, GUIDE_MISSION) % 10000) / 100) == 1)) {
 					switch (talker.getRace()) {
-						case HUMAN:
+						case HUMAN -> {
 							if (!talker.isMageClass()) {
-								qs.addRadar(-71384, 258304, -3109);
-								return "newbie-guide-05a.htm";
+								showRadar(talker, -71384, 258304, -3109, 2);
+								showPage(talker, "newbie-guide-05a.htm");
+							} else {
+								showRadar(talker, -91008, 248016, -3568, 2);
+								showPage(talker, "newbie-guide-05b.htm");
 							}
-							qs.addRadar(-91008, 248016, -3568);
-							return "newbie-guide-05b.htm";
-						case ELF:
-							qs.addRadar(47595, 51569, -2996);
-							return "newbie-guide-05c.htm";
-						case DARK_ELF:
+						}
+						case ELF -> {
+							showRadar(talker, 47595, 51569, -2996, 2);
+							showPage(talker, "newbie-guide-05c.htm");
+						}
+						case DARK_ELF -> {
 							if (!talker.isMageClass()) {
-								qs.addRadar(10580, 17574, -4554);
-								return "newbie-guide-05d.htm";
+								showRadar(talker, 10580, 17574, -4554, 2);
+								showPage(talker, "newbie-guide-05d.htm");
+							} else {
+								showRadar(talker, 10775, 14190, -4242, 2);
+								showPage(talker, "newbie-guide-05e.htm");
 							}
-							qs.addRadar(10775, 14190, -4242);
-							return "newbie-guide-05e.htm";
-						case ORC:
-							qs.addRadar(46808, -113184, -112);
-							return "newbie-guide-05f.htm";
-						case DWARF:
-							qs.addRadar(115717, -183488, -1483);
-							return "newbie-guide-05g.htm";
-						case KAMAEL:
-							qs.addRadar(115717, -183488, -1483);
-							return "newbie-guide-05h.htm";
+						}
+						case ORC -> {
+							showRadar(talker, -46808, -113184, -112, 2);
+							showPage(talker, "newbie-guide-05f.htm");
+						}
+						case DWARF -> {
+							showRadar(talker, 115717, -183488, -1483, 2);
+							showPage(talker, "newbie-guide-05g.htm");
+						}
+						case KAMAEL -> {
+							showRadar(talker, -118080, 42835, 720, 2);
+							showPage(talker, "newbie-guide-05h.htm");
+						}
 					}
 					if (talker.getLevel() >= 9) {
 						qs.giveAdena(5563, true);
@@ -559,25 +573,31 @@ public final class NewbieGuide extends AbstractNpcAI {
 						qs.setNRMemoState(talker, GUIDE_MISSION, qs.getNRMemoState(talker, GUIDE_MISSION) + 10000);
 					}
 				} else if ((((qs.getNRMemoState(talker, GUIDE_MISSION) % 1000) / 100) == 1) && (((qs.getNRMemoState(talker, GUIDE_MISSION) % 10000) / 100) != 1)) {
-					switch (talker.getRace()) {
-						case HUMAN:
-							qs.addRadar(-82236, 241573, -3728);
-							return "newbie-guide-04a.htm";
-						case ELF:
-							qs.addRadar(42812, 51138, -2996);
-							return "newbie-guide-04b.htm";
-						case DARK_ELF:
-							qs.addRadar(7644, 18048, -4377);
-							return "newbie-guide-04c.htm";
-						case ORC:
-							qs.addRadar(-46802, -114011, -112);
-							return "newbie-guide-04d.htm";
-						case DWARF:
-							qs.addRadar(116103, -178407, -948);
-							return "newbie-guide-04e.htm";
-						case KAMAEL:
-							qs.addRadar(-119378, 49242, 22);
-							return "newbie-guide-04f.htm";
+					switch (npc.getRace()) {
+						case HUMAN -> {
+							showRadar(talker, -82236, 241573, -3728, 2);
+							showPage(talker, "newbie-guide-04a.htm");
+						}
+						case ELF -> {
+							showRadar(talker, 42812, 51138, -2996, 2);
+							showPage(talker, "newbie-guide-04b.htm");
+						}
+						case DARK_ELF -> {
+							showRadar(talker, 7644, 18048, -4377, 2);
+							showPage(talker, "newbie-guide-04c.htm");
+						}
+						case ORC -> {
+							showRadar(talker, -46802, -114011, -112, 2);
+							showPage(talker, "newbie-guide-04d.htm");
+						}
+						case DWARF -> {
+							showRadar(talker, 116103, -178407, -948, 2);
+							showPage(talker, "newbie-guide-04e.htm");
+						}
+						case KAMAEL -> {
+							showRadar(talker, -119378, 49242, 22, 2);
+							showPage(talker, "newbie-guide-04f.htm");
+						}
 					}
 					if (!qs.haveNRMemo(talker, GUIDE_MISSION)) {
 						qs.setNRMemo(talker, GUIDE_MISSION);
@@ -588,7 +608,7 @@ public final class NewbieGuide extends AbstractNpcAI {
 						qs.setNRMemo(talker, GUIDE_MISSION);
 						qs.setNRMemoState(talker, GUIDE_MISSION, 0);
 					}
-					return "newbie-guide-03.htm";
+					showPage(talker, "newbie-guide-03.htm");
 				}
 			} else {
 				setOneTimeQuestFlag(talker, GUIDE_MISSION, 1);
@@ -596,7 +616,7 @@ public final class NewbieGuide extends AbstractNpcAI {
 					qs.setNRMemo(talker, GUIDE_MISSION);
 					qs.setNRMemoState(talker, GUIDE_MISSION, 0);
 				}
-				return "newbie-guide-06.htm";
+				showPage(talker, "newbie-guide-06.htm");
 			}
 		} else if ((tutorialQS.getMemoStateEx(1) >= 5) && (getOneTimeQuestFlag(talker, GUIDE_MISSION) == 0)) {
 			if (talker.getLevel() < 6) {
@@ -620,64 +640,78 @@ public final class NewbieGuide extends AbstractNpcAI {
 					} else {
 						qs.setNRMemoState(talker, GUIDE_MISSION, qs.getNRMemoState(talker, GUIDE_MISSION) + 10);
 					}
-					return "newbie-guide-08.htm";
-				}
-				switch (talker.getRace()) {
-					case HUMAN:
-						qs.addRadar(-84436, 242793, -3729);
-						return "newbie-guide-07a.htm";
-					case ELF:
-						qs.addRadar(42978, 49115, 2994);
-						return "newbie-guide-07b.htm";
-					case DARK_ELF:
-						qs.addRadar(25790, 10844, -3727);
-						return "newbie-guide-07c.htm";
-					case ORC:
-						qs.addRadar(-47360, -113791, -237);
-						return "newbie-guide-07d.htm";
-					case DWARF:
-						qs.addRadar(112656, -174864, -611);
-						return "newbie-guide-07e.htm";
-					case KAMAEL:
-						qs.addRadar(-119378, 49242, 22);
-						return "newbie-guide-07f.htm";
-				}
-				if (!qs.haveNRMemo(talker, GUIDE_MISSION)) {
-					qs.setNRMemo(talker, GUIDE_MISSION);
-					qs.setNRMemoState(talker, GUIDE_MISSION, 0);
+					showPage(talker, "newbie-guide-08.htm");
+				} else {
+					switch (npc.getRace()) {
+						case HUMAN -> {
+							showRadar(talker, -84436, 242793, -3729, 2);
+							showPage(talker, "newbie-guide-07a.htm");
+						}
+						case ELF -> {
+							showRadar(talker, 42978, 49115, 2994, 2);
+							showPage(talker, "newbie-guide-07b.htm");
+						}
+						case DARK_ELF -> {
+							showRadar(talker, 25790, 10844, -3727, 2);
+							showPage(talker, "newbie-guide-07c.htm");
+						}
+						case ORC -> {
+							showRadar(talker, -47360, -113791, -237, 2);
+							showPage(talker, "newbie-guide-07d.htm");
+						}
+						case DWARF -> {
+							showRadar(talker, 112656, -174864, -611, 2);
+							showPage(talker, "newbie-guide-07e.htm");
+						}
+						case KAMAEL -> {
+							showRadar(talker, -119378, 49242, 22, 2);
+							showPage(talker, "newbie-guide-07f.htm");
+						}
+					}
+					if (!qs.haveNRMemo(talker, GUIDE_MISSION)) {
+						qs.setNRMemo(talker, GUIDE_MISSION);
+						qs.setNRMemoState(talker, GUIDE_MISSION, 0);
+					}
 				}
 			} else if (talker.getLevel() < 10) {
 				if (((qs.getNRMemoState(talker, GUIDE_MISSION) % 100000) / 10000) == 1) {
-					return "newbie-guide-09g.htm";
+					showPage(talker, "newbie-guide-09g.htm");
 				} else if ((((qs.getNRMemoState(talker, GUIDE_MISSION) % 1000) / 100) == 1) && (((qs.getNRMemoState(talker, GUIDE_MISSION) % 10000) / 1000) == 1) && (((qs.getNRMemoState(talker, GUIDE_MISSION) % 100000) / 10000) != 1)) {
 					switch (talker.getRace()) {
-						case HUMAN:
+						case HUMAN -> {
 							if (!talker.isMageClass()) {
-								qs.addRadar(-71384, 258304, -3109);
-								return "newbie-guide-10a.htm";
+								showRadar(talker, -71384, 258304, -3109, 2);
+								showPage(talker, "newbie-guide-10a.htm");
+							} else {
+								showRadar(talker, -91008, 248016, -3568, 2);
+								showPage(talker, "newbie-guide-10b.htm");
 							}
-							qs.addRadar(-91008, 248016, -3568);
-							return "newbie-guide-10b.htm";
-						case ELF:
-							qs.addRadar(47595, 51569, -2996);
-							return "newbie-guide-10c.htm";
-						case DARK_ELF:
+						}
+						case ELF -> {
+							showRadar(talker, 47595, 51569, -2996, 2);
+							showPage(talker, "newbie-guide-10c.htm");
+						}
+						case DARK_ELF -> {
 							if (!talker.isMageClass()) {
-								qs.addRadar(10580, 17574, -4554);
-								return "newbie-guide-10d.htm";
+								showRadar(talker, 10580, 17574, -4554, 2);
+								showPage(talker, "newbie-guide-10d.htm");
+							} else {
+								showRadar(talker, 10775, 14190, -4242, 2);
+								showPage(talker, "newbie-guide-10e.htm");
 							}
-							qs.addRadar(10775, 14190, -4242);
-							return "newbie-guide-10e.htm";
-						case ORC:
-							qs.addRadar(-46808, -113184, -112);
-							return "newbie-guide-10f.htm";
-						case DWARF:
-							qs.addRadar(115717, -183488, -1483);
-							return "newbie-guide-10g.htm";
-						case KAMAEL:
-							qs.addRadar(-118080, 42835, 720);
-							return "newbie-guide-10h.htm";
-						
+						}
+						case ORC -> {
+							showRadar(talker, -46808, -113184, -112, 2);
+							showPage(talker, "newbie-guide-10f.htm");
+						}
+						case DWARF -> {
+							showRadar(talker, 115717, -183488, -1483, 2);
+							showPage(talker, "newbie-guide-10g.htm");
+						}
+						case KAMAEL -> {
+							showRadar(talker, -118080, 42835, 720, 2);
+							showPage(talker, "newbie-guide-10h.htm");
+						}
 					}
 					if (talker.getLevel() >= 9) {
 						qs.giveAdena(5563, true);
@@ -699,25 +733,31 @@ public final class NewbieGuide extends AbstractNpcAI {
 						qs.setNRMemoState(talker, GUIDE_MISSION, qs.getNRMemoState(talker, GUIDE_MISSION) + 10000);
 					}
 				} else if ((((qs.getNRMemoState(talker, GUIDE_MISSION) % 1000) / 100) == 1) && (((qs.getNRMemoState(talker, GUIDE_MISSION) % 10000) / 1000) != 1)) {
-					switch (talker.getRace()) {
-						case HUMAN:
-							qs.addRadar(-82236, 241573, -3728);
-							return "newbie-guide-09a.htm";
-						case ELF:
-							qs.addRadar(42812, 51138, -2996);
-							return "newbie-guide-09b.htm";
-						case DARK_ELF:
-							qs.addRadar(7644, 18048, -4377);
-							return "newbie-guide-09c.htm";
-						case ORC:
-							qs.addRadar(-46802, -114011, -112);
-							return "newbie-guide-09d.htm";
-						case DWARF:
-							qs.addRadar(116103, -178407, -948);
-							return "newbie-guide-09e.htm";
-						case KAMAEL:
-							qs.addRadar(-119378, 49242, 22);
-							return "newbie-guide-09f.htm";
+					switch (npc.getRace()) {
+						case HUMAN -> {
+							showRadar(talker, -82236, 241573, -3728, 2);
+							showPage(talker, "newbie-guide-09a.htm");
+						}
+						case ELF -> {
+							showRadar(talker, 42812, 51138, -2996, 2);
+							showPage(talker, "newbie-guide-09b.htm");
+						}
+						case DARK_ELF -> {
+							showRadar(talker, 7644, 18048, -4377, 2);
+							showPage(talker, "newbie-guide-09c.htm");
+						}
+						case ORC -> {
+							showRadar(talker, -46802, -114011, -112, 2);
+							showPage(talker, "newbie-guide-09d.htm");
+						}
+						case DWARF -> {
+							showRadar(talker, 116103, -178407, -948, 2);
+							showPage(talker, "newbie-guide-09e.htm");
+						}
+						case KAMAEL -> {
+							showRadar(talker, -119378, 49242, 22, 2);
+							showPage(talker, "newbie-guide-09f.htm");
+						}
 					}
 					if (!qs.haveNRMemo(talker, GUIDE_MISSION)) {
 						qs.setNRMemo(talker, GUIDE_MISSION);
@@ -728,31 +768,37 @@ public final class NewbieGuide extends AbstractNpcAI {
 						qs.setNRMemo(talker, GUIDE_MISSION);
 						qs.setNRMemoState(talker, GUIDE_MISSION, 0);
 					}
-					return "newbie-guide-08.htm";
+					showPage(talker, "newbie-guide-08.htm");
 				}
 			} else if (talker.getLevel() < 15) {
 				if ((((qs.getNRMemoState(talker, GUIDE_MISSION) % 1000000) / 100000) == 1) && (((qs.getNRMemoState(talker, GUIDE_MISSION) % 10000000) / 1000000) == 1)) {
-					return "newbie-guide-15.htm";
+					showPage(talker, "newbie-guide-15.htm");
 				} else if ((((qs.getNRMemoState(talker, GUIDE_MISSION) % 1000000) / 100000) == 1) && (((qs.getNRMemoState(talker, GUIDE_MISSION) % 10000000) / 1000000) != 1)) {
-					switch (talker.getRace()) {
-						case HUMAN:
-							qs.addRadar(-84057, 242832, -3729);
-							return "newbie-guide-11a.htm";
-						case ELF:
-							qs.addRadar(45859, 50827, -3058);
-							return "newbie-guide-11b.htm";
-						case DARK_ELF:
-							qs.addRadar(11258, 14431, -4242);
-							return "newbie-guide-11c.htm";
-						case ORC:
-							qs.addRadar(-45863, -112621, -200);
-							return "newbie-guide-11d.htm";
-						case DWARF:
-							qs.addRadar(116268, -177524, -914);
-							return "newbie-guide-11e.htm";
-						case KAMAEL:
-							qs.addRadar(-125872, 38208, 1251);
-							return "newbie-guide-11f.htm";
+					switch (npc.getRace()) {
+						case HUMAN -> {
+							showRadar(talker, -84057, 242832, -3729, 2);
+							showPage(talker, "newbie-guide-11a.htm");
+						}
+						case ELF -> {
+							showRadar(talker, 45859, 50827, -3058, 2);
+							showPage(talker, "newbie-guide-11b.htm");
+						}
+						case DARK_ELF -> {
+							showRadar(talker, 11258, 14431, -4242, 2);
+							showPage(talker, "newbie-guide-11c.htm");
+						}
+						case ORC -> {
+							showRadar(talker, -45863, -112621, -200, 2);
+							showPage(talker, "newbie-guide-11d.htm");
+						}
+						case DWARF -> {
+							showRadar(talker, 116268, -177524, -914, 2);
+							showPage(talker, "newbie-guide-11e.htm");
+						}
+						case KAMAEL -> {
+							showRadar(talker, -125872, 38208, 1251, 2);
+							showPage(talker, "newbie-guide-11f.htm");
+						}
 					}
 					if (talker.getLevel() >= 14) {
 						qs.giveAdena(13002, true);
@@ -778,32 +824,40 @@ public final class NewbieGuide extends AbstractNpcAI {
 					}
 				} else if (((qs.getNRMemoState(talker, GUIDE_MISSION) % 1000000) / 100000) != 1) {
 					switch (talker.getRace()) {
-						case HUMAN:
+						case HUMAN -> {
 							if (!talker.isMageClass()) {
-								qs.addRadar(-71384, 258304, -3109);
-								return "newbie-guide-10a.htm";
+								showRadar(talker, -71384, 258304, -3109, 2);
+								showPage(talker, "newbie-guide-10a.htm");
+							} else {
+								showRadar(talker, -91008, 248016, -3568, 2);
+								showPage(talker, "newbie-guide-10b.htm");
 							}
-							qs.addRadar(-91008, 248016, -3568);
-							return "newbie-guide-10b.htm";
-						case ELF:
-							qs.addRadar(47595, 51569, -2996);
-							return "newbie-guide-10c.htm";
-						case DARK_ELF:
+						}
+						case ELF -> {
+							showRadar(talker, 47595, 51569, -2996, 2);
+							showPage(talker, "newbie-guide-10c.htm");
+						}
+						case DARK_ELF -> {
 							if (!talker.isMageClass()) {
-								qs.addRadar(10580, 17574, -4554);
-								return "newbie-guide-10d.htm";
+								showRadar(talker, 10580, 17574, -4554, 2);
+								showPage(talker, "newbie-guide-10d.htm");
+							} else {
+								showRadar(talker, 10775, 14190, -4242, 2);
+								showPage(talker, "newbie-guide-10e.htm");
 							}
-							qs.addRadar(10775, 14190, -4242);
-							return "newbie-guide-10e.htm";
-						case ORC:
-							qs.addRadar(-46808, -113184, -112);
-							return "newbie-guide-10f.htm";
-						case DWARF:
-							qs.addRadar(115717, -183488, -1483);
-							return "newbie-guide-10g.htm";
-						case KAMAEL:
-							qs.addRadar(-118080, 42835, 720);
-							return "newbie-guide-10h.htm";
+						}
+						case ORC -> {
+							showRadar(talker, -46808, -113184, -112, 2);
+							showPage(talker, "newbie-guide-10f.htm");
+						}
+						case DWARF -> {
+							showRadar(talker, 115717, -183488, -1483, 2);
+							showPage(talker, "newbie-guide-10g.htm");
+						}
+						case KAMAEL -> {
+							showRadar(talker, -118080, 42835, 720, 2);
+							showPage(talker, "newbie-guide-10h.htm");
+						}
 					}
 					if (!qs.haveNRMemo(talker, GUIDE_MISSION)) {
 						qs.setNRMemo(talker, GUIDE_MISSION);
@@ -813,7 +867,7 @@ public final class NewbieGuide extends AbstractNpcAI {
 			} else if (talker.getLevel() < 18) {
 				if ((((qs.getNRMemoState(talker, GUIDE_MISSION) % 100000000) / 10000000) == 1) && (((qs.getNRMemoState(talker, GUIDE_MISSION) % 1000000000) / 100000000) == 1)) {
 					setOneTimeQuestFlag(talker, GUIDE_MISSION, 1);
-					return "newbie-guide-13.htm";
+					showPage(talker, "newbie-guide-13.htm");
 				} else if ((((qs.getNRMemoState(talker, GUIDE_MISSION) % 100000000) / 10000000) == 1) && (((qs.getNRMemoState(talker, GUIDE_MISSION) % 1000000000) / 100000000) != 1)) {
 					if (talker.getLevel() >= 17) {
 						qs.giveAdena(22996, true);
@@ -832,31 +886,32 @@ public final class NewbieGuide extends AbstractNpcAI {
 						qs.setNRMemoState(talker, GUIDE_MISSION, qs.getNRMemoState(talker, GUIDE_MISSION) + 100000000);
 					}
 					setOneTimeQuestFlag(talker, GUIDE_MISSION, 1);
-					return "newbie-guide-12.htm";
+					showPage(talker, "newbie-guide-12.htm");
 				} else if (((qs.getNRMemoState(talker, GUIDE_MISSION) % 100000000) / 10000000) != 1) {
-					switch (talker.getRace()) {
-						case HUMAN:
-							qs.addRadar(-84057, 242832, -3729);
-							return "newbie-guide-11a.htm";
-						case ELF: {
-							qs.addRadar(45859, 50827, -3058);
-							return "newbie-guide-11b.htm";
+					switch (npc.getRace()) {
+						case HUMAN -> {
+							showRadar(talker, -84057, 242832, -3729, 2);
+							showPage(talker, "newbie-guide-11a.htm");
 						}
-						case DARK_ELF: {
-							qs.addRadar(11258, 14431, -4242);
-							return "newbie-guide-11c.htm";
+						case ELF -> {
+							showRadar(talker, 45859, 50827, -3058, 2);
+							showPage(talker, "newbie-guide-11b.htm");
 						}
-						case ORC: {
-							qs.addRadar(-45863, -112621, -200);
-							return "newbie-guide-11d.htm";
+						case DARK_ELF -> {
+							showRadar(talker, 11258, 14431, -4242, 2);
+							showPage(talker, "newbie-guide-11c.htm");
 						}
-						case DWARF: {
-							qs.addRadar(116268, -177524, -914);
-							return "newbie-guide-11e.htm";
+						case ORC -> {
+							showRadar(talker, -45863, -112621, -200, 2);
+							showPage(talker, "newbie-guide-11d.htm");
 						}
-						case KAMAEL: {
-							qs.addRadar(-125872, 38208, 1251);
-							return "newbie-guide-11f.htm";
+						case DWARF -> {
+							showRadar(talker, 116268, -177524, -914, 2);
+							showPage(talker, "newbie-guide-11e.htm");
+						}
+						case KAMAEL -> {
+							showRadar(talker, -125872, 38208, 1251, 2);
+							showPage(talker, "newbie-guide-11f.htm");
 						}
 					}
 				}
@@ -870,20 +925,20 @@ public final class NewbieGuide extends AbstractNpcAI {
 					qs.setNRMemo(talker, GUIDE_MISSION);
 					qs.setNRMemoState(talker, GUIDE_MISSION, 0);
 				}
-				return "newbie-guide-13.htm";
+				showPage(talker, "newbie-guide-13.htm");
 			} else {
 				setOneTimeQuestFlag(talker, GUIDE_MISSION, 1);
 				if (!qs.haveNRMemo(talker, GUIDE_MISSION)) {
 					qs.setNRMemo(talker, GUIDE_MISSION);
 					qs.setNRMemoState(talker, GUIDE_MISSION, 0);
 				}
-				return "newbie-guide-14.htm";
+				showPage(talker, "newbie-guide-14.htm");
 			}
 		}
 		return "";
 	}
 	
-	private String eventGuideHumanCnacelot(int event, QuestState qs) {
+	private String eventGuideHumanCnacelot(int event, L2PcInstance player, int type) {
 		switch (event) {
 			case 10:
 				return "30598-04.htm";
@@ -906,174 +961,174 @@ public final class NewbieGuide extends AbstractNpcAI {
 			case 19:
 				return "30598-04i.htm";
 			case 31:
-				qs.clearRadar();
-				qs.addRadar(-84108, 244604, -3729);
+				deleteAllRadar(player, type);
+				showRadar(player, -84108, 244604, -3729, 2);
 				return "30598-05.htm";
 			case 32:
-				qs.clearRadar();
-				qs.addRadar(-82236, 241573, -3728);
+				deleteAllRadar(player, type);
+				showRadar(player, -82236, 241573, -3728, 2);
 				return "30598-05.htm";
 			case 33:
-				qs.clearRadar();
-				qs.addRadar(-82515, 241221, -3728);
+				deleteAllRadar(player, type);
+				showRadar(player, -82515, 241221, -3728, 2);
 				return "30598-05.htm";
 			case 34:
-				qs.clearRadar();
-				qs.addRadar(-82319, 244709, -3727);
+				deleteAllRadar(player, type);
+				showRadar(player, -82319, 244709, -3727, 2);
 				return "30598-05.htm";
 			case 35:
-				qs.clearRadar();
-				qs.addRadar(-82659, 244992, -3717);
+				deleteAllRadar(player, type);
+				showRadar(player, -82659, 244992, -3717, 2);
 				return "30598-05.htm";
 			case 36:
-				qs.clearRadar();
-				qs.addRadar(-86114, 244682, -3727);
+				deleteAllRadar(player, type);
+				showRadar(player, -86114, 244682, -3727, 2);
 				return "30598-05.htm";
 			case 37:
-				qs.clearRadar();
-				qs.addRadar(-86328, 244448, -3724);
+				deleteAllRadar(player, type);
+				showRadar(player, -86328, 244448, -3724, 2);
 				return "30598-05.htm";
 			case 38:
-				qs.clearRadar();
-				qs.addRadar(-86322, 241215, -3727);
+				deleteAllRadar(player, type);
+				showRadar(player, -86322, 241215, -3727, 2);
 				return "30598-05.htm";
 			case 39:
-				qs.clearRadar();
-				qs.addRadar(-85964, 240947, -3727);
+				deleteAllRadar(player, type);
+				showRadar(player, -85964, 240947, -3727, 2);
 				return "30598-05.htm";
 			case 40:
-				qs.clearRadar();
-				qs.addRadar(-85026, 242689, -3729);
+				deleteAllRadar(player, type);
+				showRadar(player, -85026, 242689, -3729, 2);
 				return "30598-05.htm";
 			case 41:
-				qs.clearRadar();
-				qs.addRadar(-83789, 240799, -3717);
+				deleteAllRadar(player, type);
+				showRadar(player, -83789, 240799, -3717, 2);
 				return "30598-05.htm";
 			case 42: {
-				qs.clearRadar();
-				qs.addRadar(-84204, 240403, -3717);
+				deleteAllRadar(player, type);
+				showRadar(player, -84204, 240403, -3717, 2);
 				return "30598-05.htm";
 			}
 			case 43: {
-				qs.clearRadar();
-				qs.addRadar(-86385, 243267, -3717);
+				deleteAllRadar(player, type);
+				showRadar(player, -86385, 243267, -3717, 2);
 				return "30598-05.htm";
 			}
 			case 44: {
-				qs.clearRadar();
-				qs.addRadar(-86733, 242918, -3717);
+				deleteAllRadar(player, type);
+				showRadar(player, -86733, 242918, -3717, 2);
 				return "30598-05.htm";
 			}
 			case 45: {
-				qs.clearRadar();
-				qs.addRadar(-84516, 245449, -3714);
+				deleteAllRadar(player, type);
+				showRadar(player, -84516, 245449, -3714, 2);
 				return "30598-05.htm";
 			}
 			case 46: {
-				qs.clearRadar();
-				qs.addRadar(-84729, 245001, -3726);
+				deleteAllRadar(player, type);
+				showRadar(player, -84729, 245001, -3726, 2);
 				return "30598-05.htm";
 			}
 			case 47: {
-				qs.clearRadar();
-				qs.addRadar(-84965, 245222, -3726);
+				deleteAllRadar(player, type);
+				showRadar(player, -84965, 245222, -3726, 2);
 				return "30598-05.htm";
 			}
 			case 48: {
-				qs.clearRadar();
-				qs.addRadar(-84981, 244764, -3726);
+				deleteAllRadar(player, type);
+				showRadar(player, -84981, 244764, -3726, 2);
 				return "30598-05.htm";
 			}
 			case 49: {
-				qs.clearRadar();
-				qs.addRadar(-85186, 245001, -3726);
+				deleteAllRadar(player, type);
+				showRadar(player, -85186, 245001, -3726, 2);
 				return "30598-05.htm";
 			}
 			case 50: {
-				qs.clearRadar();
-				qs.addRadar(-83326, 242964, -3718);
+				deleteAllRadar(player, type);
+				showRadar(player, -83326, 242964, -3718, 2);
 				return "30598-05.htm";
 			}
 			case 51: {
-				qs.clearRadar();
-				qs.addRadar(-83020, 242553, -3718);
+				deleteAllRadar(player, type);
+				showRadar(player, -83020, 242553, -3718, 2);
 				return "30598-05.htm";
 			}
 			case 52: {
-				qs.clearRadar();
-				qs.addRadar(-83175, 243065, -3718);
+				deleteAllRadar(player, type);
+				showRadar(player, -83175, 243065, -3718, 2);
 				return "30598-05.htm";
 			}
 			case 53: {
-				qs.clearRadar();
-				qs.addRadar(-82809, 242751, -3718);
+				deleteAllRadar(player, type);
+				showRadar(player, -82809, 242751, -3718, 2);
 				return "30598-05.htm";
 			}
 			case 54: {
-				qs.clearRadar();
-				qs.addRadar(-81895, 243917, -3721);
+				deleteAllRadar(player, type);
+				showRadar(player, -81895, 243917, -3721, 2);
 				return "30598-05.htm";
 			}
 			case 55: {
-				qs.clearRadar();
-				qs.addRadar(-81840, 243534, -3721);
+				deleteAllRadar(player, type);
+				showRadar(player, -81840, 243534, -3721, 2);
 				return "30598-05.htm";
 			}
 			case 56: {
-				qs.clearRadar();
-				qs.addRadar(-81512, 243424, -3720);
+				deleteAllRadar(player, type);
+				showRadar(player, -81512, 243424, -3720, 2);
 				return "30598-05.htm";
 			}
 			case 57: {
-				qs.clearRadar();
-				qs.addRadar(-84436, 242793, -3729);
+				deleteAllRadar(player, type);
+				showRadar(player, -84436, 242793, -3729, 2);
 				return "30598-05.htm";
 			}
 			case 58: {
-				qs.clearRadar();
-				qs.addRadar(-78939, 240305, -3443);
+				deleteAllRadar(player, type);
+				showRadar(player, -78939, 240305, -3443, 2);
 				return "30598-05.htm";
 			}
 			case 59: {
-				qs.clearRadar();
-				qs.addRadar(-85301, 244587, -3725);
+				deleteAllRadar(player, type);
+				showRadar(player, -85301, 244587, -3725, 2);
 				return "30598-05.htm";
 			}
 			case 60: {
-				qs.clearRadar();
-				qs.addRadar(-83163, 243560, -3728);
+				deleteAllRadar(player, type);
+				showRadar(player, -83163, 243560, -3728, 2);
 				return "30598-05.htm";
 			}
 			case 61: {
-				qs.clearRadar();
-				qs.addRadar(-97131, 258946, -3622);
+				deleteAllRadar(player, type);
+				showRadar(player, -97131, 258946, -3622, 2);
 				return "30598-05.htm";
 			}
 			case 62: {
-				qs.clearRadar();
-				qs.addRadar(-114685, 222291, -2925);
+				deleteAllRadar(player, type);
+				showRadar(player, -114685, 222291, -2925, 2);
 				return "30598-05.htm";
 			}
 			case 63: {
-				qs.clearRadar();
-				qs.addRadar(-84057, 242832, -3729);
+				deleteAllRadar(player, type);
+				showRadar(player, -84057, 242832, -3729, 2);
 				return "30598-05.htm";
 			}
 			case 64: {
-				qs.clearRadar();
-				qs.addRadar(-100332, 238019, -3573);
+				deleteAllRadar(player, type);
+				showRadar(player, -100332, 238019, -3573, 2);
 				return "30598-05.htm";
 			}
 			case 65: {
-				qs.clearRadar();
-				qs.addRadar(-82041, 242718, -3725);
+				deleteAllRadar(player, type);
+				showRadar(player, -82041, 242718, -3725, 2);
 				return "30598-05.htm";
 			}
 		}
 		return "";
 	}
 	
-	private String eventGuideElfRoios(int event, QuestState qs) {
+	private String eventGuideElfRoios(int event, L2PcInstance player, int type) {
 		switch (event) {
 			case 10:
 				return "30599-04.htm";
@@ -1094,134 +1149,134 @@ public final class NewbieGuide extends AbstractNpcAI {
 			case 18:
 				return "30599-04h.htm";
 			case 31:
-				qs.clearRadar();
-				qs.addRadar(46926, 51511, -2977);
+				deleteAllRadar(player, type);
+				showRadar(player, 46926, 51511, -2977, 2);
 				return "30599-05.htm";
 			case 32:
-				qs.clearRadar();
-				qs.addRadar(44995, 51706, -2803);
+				deleteAllRadar(player, type);
+				showRadar(player, 44995, 51706, -2803, 2);
 				return "30599-05.htm";
 			case 33:
-				qs.clearRadar();
-				qs.addRadar(45727, 51721, -2803);
+				deleteAllRadar(player, type);
+				showRadar(player, 45727, 51721, -2803, 2);
 				return "30599-05.htm";
 			case 34:
-				qs.clearRadar();
-				qs.addRadar(42812, 51138, -2996);
+				deleteAllRadar(player, type);
+				showRadar(player, 42812, 51138, -2996, 2);
 				return "30599-05.htm";
 			case 35:
-				qs.clearRadar();
-				qs.addRadar(45487, 46511, -2996);
+				deleteAllRadar(player, type);
+				showRadar(player, 45487, 46511, -2996, 2);
 				return "30599-05.htm";
 			case 36:
-				qs.clearRadar();
-				qs.addRadar(47401, 51764, -2996);
+				deleteAllRadar(player, type);
+				showRadar(player, 47401, 51764, -2996, 2);
 				return "30599-05.htm";
 			case 37:
-				qs.clearRadar();
-				qs.addRadar(42971, 51372, -2996);
+				deleteAllRadar(player, type);
+				showRadar(player, 42971, 51372, -2996, 2);
 				return "30599-05.htm";
 			case 38:
-				qs.clearRadar();
-				qs.addRadar(47595, 51569, -2996);
+				deleteAllRadar(player, type);
+				showRadar(player, 47595, 51569, -2996, 2);
 				return "30599-05.htm";
 			case 39:
-				qs.clearRadar();
-				qs.addRadar(45778, 46534, -2996);
+				deleteAllRadar(player, type);
+				showRadar(player, 45778, 46534, -2996, 2);
 				return "30599-05.htm";
 			case 40:
-				qs.clearRadar();
-				qs.addRadar(44476, 47153, -2984);
+				deleteAllRadar(player, type);
+				showRadar(player, 44476, 47153, -2984, 2);
 				return "30599-05.htm";
 			case 41:
-				qs.clearRadar();
-				qs.addRadar(42700, 50057, -2984);
+				deleteAllRadar(player, type);
+				showRadar(player, 42700, 50057, -2984, 2);
 				return "30599-05.htm";
 			case 42:
-				qs.clearRadar();
-				qs.addRadar(42766, 50037, -2984);
+				deleteAllRadar(player, type);
+				showRadar(player, 42766, 50037, -2984, 2);
 				return "30599-05.htm";
 			case 43:
-				qs.clearRadar();
-				qs.addRadar(44683, 46952, -2981);
+				deleteAllRadar(player, type);
+				showRadar(player, 44683, 46952, -2981, 2);
 				return "30599-05.htm";
 			case 44:
-				qs.clearRadar();
-				qs.addRadar(44667, 46896, -2982);
+				deleteAllRadar(player, type);
+				showRadar(player, 44667, 46896, -2982, 2);
 				return "30599-05.htm";
 			case 45:
-				qs.clearRadar();
-				qs.addRadar(45725, 52105, -2795);
+				deleteAllRadar(player, type);
+				showRadar(player, 45725, 52105, -2795, 2);
 				return "30599-05.htm";
 			case 46:
-				qs.clearRadar();
-				qs.addRadar(44823, 52414, -2795);
+				deleteAllRadar(player, type);
+				showRadar(player, 44823, 52414, -2795, 2);
 				return "30599-05.htm";
 			case 47:
-				qs.clearRadar();
-				qs.addRadar(45000, 52101, -2795);
+				deleteAllRadar(player, type);
+				showRadar(player, 45000, 52101, -2795, 2);
 				return "30599-05.htm";
 			case 48:
-				qs.clearRadar();
-				qs.addRadar(45919, 52414, -2795);
+				deleteAllRadar(player, type);
+				showRadar(player, 45919, 52414, -2795, 2);
 				return "30599-05.htm";
 			case 49:
-				qs.clearRadar();
-				qs.addRadar(44692, 52261, -2795);
+				deleteAllRadar(player, type);
+				showRadar(player, 44692, 52261, -2795, 2);
 				return "30599-05.htm";
 			case 50:
-				qs.clearRadar();
-				qs.addRadar(47780, 49568, -2983);
+				deleteAllRadar(player, type);
+				showRadar(player, 47780, 49568, -2983, 2);
 				return "30599-05.htm";
 			case 51:
-				qs.clearRadar();
-				qs.addRadar(47912, 50170, -2983);
+				deleteAllRadar(player, type);
+				showRadar(player, 47912, 50170, -2983, 2);
 				return "30599-05.htm";
 			case 52:
-				qs.clearRadar();
-				qs.addRadar(47868, 50167, -2983);
+				deleteAllRadar(player, type);
+				showRadar(player, 47868, 50167, -2983, 2);
 				return "30599-05.htm";
 			case 53:
-				qs.clearRadar();
-				qs.addRadar(28928, 74248, -3773);
+				deleteAllRadar(player, type);
+				showRadar(player, 28928, 74248, -3773, 2);
 				return "30599-05.htm";
 			case 54:
-				qs.clearRadar();
-				qs.addRadar(43673, 49683, -3046);
+				deleteAllRadar(player, type);
+				showRadar(player, 43673, 49683, -3046, 2);
 				return "30599-05.htm";
 			case 55:
-				qs.clearRadar();
-				qs.addRadar(45610, 49008, -3059);
+				deleteAllRadar(player, type);
+				showRadar(player, 45610, 49008, -3059, 2);
 				return "30599-05.htm";
 			case 56:
-				qs.clearRadar();
-				qs.addRadar(50592, 54986, -3376);
+				deleteAllRadar(player, type);
+				showRadar(player, 50592, 54986, -3376, 2);
 				return "30599-05.htm";
 			case 57:
-				qs.clearRadar();
-				qs.addRadar(42978, 49115, -2994);
+				deleteAllRadar(player, type);
+				showRadar(player, 42978, 49115, -2994, 2);
 				return "30599-05.htm";
 			case 58:
-				qs.clearRadar();
-				qs.addRadar(46475, 50495, -3058);
+				deleteAllRadar(player, type);
+				showRadar(player, 46475, 50495, -3058, 2);
 				return "30599-05.htm";
 			case 59:
-				qs.clearRadar();
-				qs.addRadar(45859, 50827, -3058);
+				deleteAllRadar(player, type);
+				showRadar(player, 45859, 50827, -3058, 2);
 				return "30599-05.htm";
 			case 60:
-				qs.clearRadar();
-				qs.addRadar(51210, 82474, -3283);
+				deleteAllRadar(player, type);
+				showRadar(player, 51210, 82474, -3283, 2);
 				return "30599-05.htm";
 			case 61:
-				qs.clearRadar();
-				qs.addRadar(49262, 53607, -3216);
+				deleteAllRadar(player, type);
+				showRadar(player, 49262, 53607, -3216, 2);
 				return "30599-05.htm";
 		}
 		return "";
 	}
 	
-	private String eventGuideDelfFrankia(int event, QuestState qs) {
+	private String eventGuideDelfFrankia(int event, L2PcInstance player, int type) {
 		switch (event) {
 			case 10:
 				return "30600-04.htm";
@@ -1242,150 +1297,150 @@ public final class NewbieGuide extends AbstractNpcAI {
 			case 18:
 				return "30600-04h.htm";
 			case 31:
-				qs.clearRadar();
-				qs.addRadar(9670, 15537, -4574);
+				deleteAllRadar(player, type);
+				showRadar(player, 9670, 15537, -4574, 2);
 				return "30600-05.htm";
 			case 32:
-				qs.clearRadar();
-				qs.addRadar(15120, 15656, -4376);
+				deleteAllRadar(player, type);
+				showRadar(player, 15120, 15656, -4376, 2);
 				return "30600-05.htm";
 			case 33:
-				qs.clearRadar();
-				qs.addRadar(17306, 13592, -3724);
+				deleteAllRadar(player, type);
+				showRadar(player, 17306, 13592, -3724, 2);
 				return "30600-05.htm";
 			case 34:
-				qs.clearRadar();
-				qs.addRadar(15272, 16310, -4377);
+				deleteAllRadar(player, type);
+				showRadar(player, 15272, 16310, -4377, 2);
 				return "30600-05.htm";
 			case 35:
-				qs.clearRadar();
-				qs.addRadar(6449, 19619, -3694);
+				deleteAllRadar(player, type);
+				showRadar(player, 6449, 19619, -3694, 2);
 				return "30600-05.htm";
 			case 36:
-				qs.clearRadar();
-				qs.addRadar(-15404, 71131, -3445);
+				deleteAllRadar(player, type);
+				showRadar(player, -15404, 71131, -3445, 2);
 				return "30600-05.htm";
 			case 37:
-				qs.clearRadar();
-				qs.addRadar(7496, 17388, -4377);
+				deleteAllRadar(player, type);
+				showRadar(player, 7496, 17388, -4377, 2);
 				return "30600-05.htm";
 			case 38:
-				qs.clearRadar();
-				qs.addRadar(17102, 13002, -3743);
+				deleteAllRadar(player, type);
+				showRadar(player, 17102, 13002, -3743, 2);
 				return "30600-05.htm";
 			case 39:
-				qs.clearRadar();
-				qs.addRadar(6532, 19903, -3693);
+				deleteAllRadar(player, type);
+				showRadar(player, 6532, 19903, -3693, 2);
 				return "30600-05.htm";
 			case 40:
-				qs.clearRadar();
-				qs.addRadar(-15648, 71405, -3451);
+				deleteAllRadar(player, type);
+				showRadar(player, -15648, 71405, -3451, 2);
 				return "30600-05.htm";
 			case 41:
-				qs.clearRadar();
-				qs.addRadar(7644, 18048, -4377);
+				deleteAllRadar(player, type);
+				showRadar(player, 7644, 18048, -4377, 2);
 				return "30600-05.htm";
 			case 42:
-				qs.clearRadar();
-				qs.addRadar(-1301, 75883, -3566);
+				deleteAllRadar(player, type);
+				showRadar(player, -1301, 75883, -3566, 2);
 				return "30600-05.htm";
 			case 43:
-				qs.clearRadar();
-				qs.addRadar(-1152, 76125, -3566);
+				deleteAllRadar(player, type);
+				showRadar(player, -1152, 76125, -3566, 2);
 				return "30600-05.htm";
 			case 44:
-				qs.clearRadar();
-				qs.addRadar(10580, 17574, -4554);
+				deleteAllRadar(player, type);
+				showRadar(player, 10580, 17574, -4554, 2);
 				return "30600-05.htm";
 			case 45:
-				qs.clearRadar();
-				qs.addRadar(12009, 15704, -4554);
+				deleteAllRadar(player, type);
+				showRadar(player, 12009, 15704, -4554, 2);
 				return "30600-05.htm";
 			case 46:
-				qs.clearRadar();
-				qs.addRadar(11951, 15661, -4554);
+				deleteAllRadar(player, type);
+				showRadar(player, 11951, 15661, -4554, 2);
 				return "30600-05.htm";
 			case 47:
-				qs.clearRadar();
-				qs.addRadar(10761, 17970, -4554);
+				deleteAllRadar(player, type);
+				showRadar(player, 10761, 17970, -4554, 2);
 				return "30600-05.htm";
 			case 48:
-				qs.clearRadar();
-				qs.addRadar(10823, 18013, -4554);
+				deleteAllRadar(player, type);
+				showRadar(player, 10823, 18013, -4554, 2);
 				return "30600-05.htm";
 			case 49:
-				qs.clearRadar();
-				qs.addRadar(11283, 14226, -4242);
+				deleteAllRadar(player, type);
+				showRadar(player, 11283, 14226, -4242, 2);
 				return "30600-05.htm";
 			case 50:
-				qs.clearRadar();
-				qs.addRadar(10447, 14620, -4242);
+				deleteAllRadar(player, type);
+				showRadar(player, 10447, 14620, -4242, 2);
 				return "30600-05.htm";
 			case 51:
-				qs.clearRadar();
-				qs.addRadar(11258, 14431, -4242);
+				deleteAllRadar(player, type);
+				showRadar(player, 11258, 14431, -4242, 2);
 				return "30600-05.htm";
 			case 52:
-				qs.clearRadar();
-				qs.addRadar(10344, 14445, -4242);
+				deleteAllRadar(player, type);
+				showRadar(player, 10344, 14445, -4242, 2);
 				return "30600-05.htm";
 			case 53:
-				qs.clearRadar();
-				qs.addRadar(10315, 14293, -4242);
+				deleteAllRadar(player, type);
+				showRadar(player, 10315, 14293, -4242, 2);
 				return "30600-05.htm";
 			case 54:
-				qs.clearRadar();
-				qs.addRadar(10775, 14190, -4242);
+				deleteAllRadar(player, type);
+				showRadar(player, 10775, 14190, -4242, 2);
 				return "30600-05.htm";
 			case 55:
-				qs.clearRadar();
-				qs.addRadar(11235, 14078, -4242);
+				deleteAllRadar(player, type);
+				showRadar(player, 11235, 14078, -4242, 2);
 				return "30600-05.htm";
 			case 56:
-				qs.clearRadar();
-				qs.addRadar(11012, 14128, -4242);
+				deleteAllRadar(player, type);
+				showRadar(player, 11012, 14128, -4242, 2);
 				return "30600-05.htm";
 			case 57:
-				qs.clearRadar();
-				qs.addRadar(13380, 17430, -4542);
+				deleteAllRadar(player, type);
+				showRadar(player, 13380, 17430, -4542, 2);
 				return "30600-05.htm";
 			case 58:
-				qs.clearRadar();
-				qs.addRadar(13464, 17751, -4541);
+				deleteAllRadar(player, type);
+				showRadar(player, 13464, 17751, -4541, 2);
 				return "30600-05.htm";
 			case 59:
-				qs.clearRadar();
-				qs.addRadar(13763, 17501, -4542);
+				deleteAllRadar(player, type);
+				showRadar(player, 13763, 17501, -4542, 2);
 				return "30600-05.htm";
 			case 60:
-				qs.clearRadar();
-				qs.addRadar(-44225, 79721, -3652);
+				deleteAllRadar(player, type);
+				showRadar(player, -44225, 79721, -3652, 2);
 				return "30600-05.htm";
 			case 61:
-				qs.clearRadar();
-				qs.addRadar(-44015, 79683, -3652);
+				deleteAllRadar(player, type);
+				showRadar(player, -44015, 79683, -3652, 2);
 				return "30600-05.htm";
 			case 62:
-				qs.clearRadar();
-				qs.addRadar(25856, 10832, -3724);
+				deleteAllRadar(player, type);
+				showRadar(player, 25856, 10832, -3724, 2);
 				return "30600-05.htm";
 			case 63:
-				qs.clearRadar();
-				qs.addRadar(12328, 14947, -4574);
+				deleteAllRadar(player, type);
+				showRadar(player, 12328, 14947, -4574, 2);
 				return "30600-05.htm";
 			case 64:
-				qs.clearRadar();
-				qs.addRadar(13081, 18444, -4573);
+				deleteAllRadar(player, type);
+				showRadar(player, 13081, 18444, -4573, 2);
 				return "30600-05.htm";
 			case 65:
-				qs.clearRadar();
-				qs.addRadar(12311, 17470, -4574);
+				deleteAllRadar(player, type);
+				showRadar(player, 12311, 17470, -4574, 2);
 				return "30600-05.htm";
 		}
 		return "";
 	}
 	
-	private String eventGuideDwarfGullin(int event, QuestState qs) {
+	private String eventGuideDwarfGullin(int event, L2PcInstance player, int type) {
 		switch (event) {
 			case 10:
 				return "30601-04.htm";
@@ -1406,154 +1461,154 @@ public final class NewbieGuide extends AbstractNpcAI {
 			case 18:
 				return "30601-04h.htm";
 			case 31:
-				qs.clearRadar();
-				qs.addRadar(115072, -178176, -906);
+				deleteAllRadar(player, type);
+				showRadar(player, 115072, -178176, -906, 2);
 				return "30601-05.htm";
 			case 32:
-				qs.clearRadar();
-				qs.addRadar(117847, -182339, -1537);
+				deleteAllRadar(player, type);
+				showRadar(player, 117847, -182339, -1537, 2);
 				return "30601-05.htm";
 			case 33:
-				qs.clearRadar();
-				qs.addRadar(116617, -184308, -1569);
+				deleteAllRadar(player, type);
+				showRadar(player, 116617, -184308, -1569, 2);
 				return "30601-05.htm";
 			case 34:
-				qs.clearRadar();
-				qs.addRadar(117826, -182576, -1537);
+				deleteAllRadar(player, type);
+				showRadar(player, 117826, -182576, -1537, 2);
 				return "30601-05.htm";
 			case 35:
-				qs.clearRadar();
-				qs.addRadar(116378, -184308, -1571);
+				deleteAllRadar(player, type);
+				showRadar(player, 116378, -184308, -1571, 2);
 				return "30601-05.htm";
 			case 36:
-				qs.clearRadar();
-				qs.addRadar(115183, -176728, -791);
+				deleteAllRadar(player, type);
+				showRadar(player, 115183, -176728, -791, 2);
 				return "30601-05.htm";
 			case 37:
-				qs.clearRadar();
-				qs.addRadar(114969, -176752, -790);
+				deleteAllRadar(player, type);
+				showRadar(player, 114969, -176752, -790, 2);
 				return "30601-05.htm";
 			case 38:
-				qs.clearRadar();
-				qs.addRadar(117366, -178725, -1118);
+				deleteAllRadar(player, type);
+				showRadar(player, 117366, -178725, -1118, 2);
 				return "30601-05.htm";
 			case 39:
-				qs.clearRadar();
-				qs.addRadar(117378, -178914, -1120);
+				deleteAllRadar(player, type);
+				showRadar(player, 117378, -178914, -1120, 2);
 				return "30601-05.htm";
 			case 40:
-				qs.clearRadar();
-				qs.addRadar(116226, -178529, -948);
+				deleteAllRadar(player, type);
+				showRadar(player, 116226, -178529, -948, 2);
 				return "30601-05.htm";
 			case 41:
-				qs.clearRadar();
-				qs.addRadar(116190, -178441, -948);
+				deleteAllRadar(player, type);
+				showRadar(player, 116190, -178441, -948, 2);
 				return "30601-05.htm";
 			case 42:
-				qs.clearRadar();
-				qs.addRadar(116016, -178615, -948);
+				deleteAllRadar(player, type);
+				showRadar(player, 116016, -178615, -948, 2);
 				return "30601-05.htm";
 			case 43:
-				qs.clearRadar();
-				qs.addRadar(116190, -178615, -948);
+				deleteAllRadar(player, type);
+				showRadar(player, 116190, -178615, -948, 2);
 				return "30601-05.htm";
 			case 44:
-				qs.clearRadar();
-				qs.addRadar(116103, -178407, -948);
+				deleteAllRadar(player, type);
+				showRadar(player, 116103, -178407, -948, 2);
 				return "30601-05.htm";
 			case 45:
-				qs.clearRadar();
-				qs.addRadar(116103, -178653, -948);
+				deleteAllRadar(player, type);
+				showRadar(player, 116103, -178653, -948, 2);
 				return "30601-05.htm";
 			case 46:
-				qs.clearRadar();
-				qs.addRadar(115468, -182446, -1434);
+				deleteAllRadar(player, type);
+				showRadar(player, 115468, -182446, -1434, 2);
 				return "30601-05.htm";
 			case 47:
-				qs.clearRadar();
-				qs.addRadar(115315, -182155, -1444);
+				deleteAllRadar(player, type);
+				showRadar(player, 115315, -182155, -1444, 2);
 				return "30601-05.htm";
 			case 48:
-				qs.clearRadar();
-				qs.addRadar(115271, -182692, -1445);
+				deleteAllRadar(player, type);
+				showRadar(player, 115271, -182692, -1445, 2);
 				return "30601-05.htm";
 			case 49:
-				qs.clearRadar();
-				qs.addRadar(115900, -177316, -915);
+				deleteAllRadar(player, type);
+				showRadar(player, 115900, -177316, -915, 2);
 				return "30601-05.htm";
 			case 50:
-				qs.clearRadar();
-				qs.addRadar(116268, -177524, -914);
+				deleteAllRadar(player, type);
+				showRadar(player, 116268, -177524, -914, 2);
 				return "30601-05.htm";
 			case 51:
-				qs.clearRadar();
-				qs.addRadar(115741, -181645, -1344);
+				deleteAllRadar(player, type);
+				showRadar(player, 115741, -181645, -1344, 2);
 				return "30601-05.htm";
 			case 52:
-				qs.clearRadar();
-				qs.addRadar(116192, -181072, -1344);
+				deleteAllRadar(player, type);
+				showRadar(player, 116192, -181072, -1344, 2);
 				return "30601-05.htm";
 			case 53:
-				qs.clearRadar();
-				qs.addRadar(115205, -180024, -870);
+				deleteAllRadar(player, type);
+				showRadar(player, 115205, -180024, -870, 2);
 				return "30601-05.htm";
 			case 54:
-				qs.clearRadar();
-				qs.addRadar(114716, -180018, -871);
+				deleteAllRadar(player, type);
+				showRadar(player, 114716, -180018, -871, 2);
 				return "30601-05.htm";
 			case 55:
-				qs.clearRadar();
-				qs.addRadar(114832, -179520, -871);
+				deleteAllRadar(player, type);
+				showRadar(player, 114832, -179520, -871, 2);
 				return "30601-05.htm";
 			case 56:
-				qs.clearRadar();
-				qs.addRadar(115717, -183488, -1483);
+				deleteAllRadar(player, type);
+				showRadar(player, 115717, -183488, -1483, 2);
 				return "30601-05.htm";
 			case 57:
-				qs.clearRadar();
-				qs.addRadar(115618, -183265, -1483);
+				deleteAllRadar(player, type);
+				showRadar(player, 115618, -183265, -1483, 2);
 				return "30601-05.htm";
 			case 58:
-				qs.clearRadar();
-				qs.addRadar(114348, -178537, -813);
+				deleteAllRadar(player, type);
+				showRadar(player, 114348, -178537, -813, 2);
 				return "30601-05.htm";
 			case 59:
-				qs.clearRadar();
-				qs.addRadar(114990, -177294, -854);
+				deleteAllRadar(player, type);
+				showRadar(player, 114990, -177294, -854, 2);
 				return "30601-05.htm";
 			case 60:
-				qs.clearRadar();
-				qs.addRadar(114426, -178672, -812);
+				deleteAllRadar(player, type);
+				showRadar(player, 114426, -178672, -812, 2);
 				return "30601-05.htm";
 			case 61:
-				qs.clearRadar();
-				qs.addRadar(114409, -178415, -812);
+				deleteAllRadar(player, type);
+				showRadar(player, 114409, -178415, -812, 2);
 				return "30601-05.htm";
 			case 62:
-				qs.clearRadar();
-				qs.addRadar(117061, -181867, -1413);
+				deleteAllRadar(player, type);
+				showRadar(player, 117061, -181867, -1413, 2);
 				return "30601-05.htm";
 			case 63:
-				qs.clearRadar();
-				qs.addRadar(116164, -184029, -1507);
+				deleteAllRadar(player, type);
+				showRadar(player, 116164, -184029, -1507, 2);
 				return "30601-05.htm";
 			case 64:
-				qs.clearRadar();
-				qs.addRadar(115563, -182923, -1448);
+				deleteAllRadar(player, type);
+				showRadar(player, 115563, -182923, -1448, 2);
 				return "30601-05.htm";
 			case 65:
-				qs.clearRadar();
-				qs.addRadar(112656, -174864, -611);
+				deleteAllRadar(player, type);
+				showRadar(player, 112656, -174864, -611, 2);
 				return "30601-05.htm";
 			case 66:
-				qs.clearRadar();
-				qs.addRadar(116852, -183595, -1566);
+				deleteAllRadar(player, type);
+				showRadar(player, 116852, -183595, -1566, 2);
 				return "30601-05.htm";
 		}
 		return "";
 	}
 	
-	private String eventGuideOrcTanai(int event, QuestState qs) {
+	private String eventGuideOrcTanai(int event, L2PcInstance player, int type) {
 		switch (event) {
 			case 10:
 				return "30602-04.htm";
@@ -1576,114 +1631,114 @@ public final class NewbieGuide extends AbstractNpcAI {
 			case 19:
 				return "30602-04i.htm";
 			case 31:
-				qs.clearRadar();
-				qs.addRadar(-45264, -112512, -235);
+				deleteAllRadar(player, type);
+				showRadar(player, -45264, -112512, -235, 2);
 				return "30602-05.htm";
 			case 32:
-				qs.clearRadar();
-				qs.addRadar(-46576, -117311, -242);
+				deleteAllRadar(player, type);
+				showRadar(player, -46576, -117311, -242, 2);
 				return "30602-05.htm";
 			case 33:
-				qs.clearRadar();
-				qs.addRadar(-47360, -113791, -237);
+				deleteAllRadar(player, type);
+				showRadar(player, -47360, -113791, -237, 2);
 				return "30602-05.htm";
 			case 34:
-				qs.clearRadar();
-				qs.addRadar(-47360, -113424, -235);
+				deleteAllRadar(player, type);
+				showRadar(player, -47360, -113424, -235, 2);
 				return "30602-05.htm";
 			case 35:
-				qs.clearRadar();
-				qs.addRadar(-45744, -117165, -236);
+				deleteAllRadar(player, type);
+				showRadar(player, -45744, -117165, -236, 2);
 				return "30602-05.htm";
 			case 36:
-				qs.clearRadar();
-				qs.addRadar(-46528, -109968, -250);
+				deleteAllRadar(player, type);
+				showRadar(player, -46528, -109968, -250, 2);
 				return "30602-05.htm";
 			case 37:
-				qs.clearRadar();
-				qs.addRadar(-45808, -110055, -255);
+				deleteAllRadar(player, type);
+				showRadar(player, -45808, -110055, -255, 2);
 				return "30602-05.htm";
 			case 38:
-				qs.clearRadar();
-				qs.addRadar(-45731, -113844, -237);
+				deleteAllRadar(player, type);
+				showRadar(player, -45731, -113844, -237, 2);
 				return "30602-05.htm";
 			case 39:
-				qs.clearRadar();
-				qs.addRadar(-45728, -113360, -237);
+				deleteAllRadar(player, type);
+				showRadar(player, -45728, -113360, -237, 2);
 				return "30602-05.htm";
 			case 40:
-				qs.clearRadar();
-				qs.addRadar(-45952, -114784, -199);
+				deleteAllRadar(player, type);
+				showRadar(player, -45952, -114784, -199, 2);
 				return "30602-05.htm";
 			case 41:
-				qs.clearRadar();
-				qs.addRadar(-45952, -114496, -199);
+				deleteAllRadar(player, type);
+				showRadar(player, -45952, -114496, -199, 2);
 				return "30602-05.htm";
 			case 42:
-				qs.clearRadar();
-				qs.addRadar(-45863, -112621, -200);
+				deleteAllRadar(player, type);
+				showRadar(player, -45863, -112621, -200, 2);
 				return "30602-05.htm";
 			case 43:
-				qs.clearRadar();
-				qs.addRadar(-45864, -112540, -199);
+				deleteAllRadar(player, type);
+				showRadar(player, -45864, -112540, -199, 2);
 				return "30602-05.htm";
 			case 44:
-				qs.clearRadar();
-				qs.addRadar(-43264, -112532, -220);
+				deleteAllRadar(player, type);
+				showRadar(player, -43264, -112532, -220, 2);
 				return "30602-05.htm";
 			case 45:
-				qs.clearRadar();
-				qs.addRadar(-43910, -115518, -194);
+				deleteAllRadar(player, type);
+				showRadar(player, -43910, -115518, -194, 2);
 				return "30602-05.htm";
 			case 46:
-				qs.clearRadar();
-				qs.addRadar(-43950, -115457, -194);
+				deleteAllRadar(player, type);
+				showRadar(player, -43950, -115457, -194, 2);
 				return "30602-05.htm";
 			case 47:
-				qs.clearRadar();
-				qs.addRadar(-44416, -111486, -222);
+				deleteAllRadar(player, type);
+				showRadar(player, -44416, -111486, -222, 2);
 				return "30602-05.htm";
 			case 48:
-				qs.clearRadar();
-				qs.addRadar(-43926, -111794, -222);
+				deleteAllRadar(player, type);
+				showRadar(player, -43926, -111794, -222, 2);
 				return "30602-05.htm";
 			case 49:
-				qs.clearRadar();
-				qs.addRadar(-43109, -113770, -221);
+				deleteAllRadar(player, type);
+				showRadar(player, -43109, -113770, -221, 2);
 				return "30602-05.htm";
 			case 50:
-				qs.clearRadar();
-				qs.addRadar(-43114, -113404, -221);
+				deleteAllRadar(player, type);
+				showRadar(player, -43114, -113404, -221, 2);
 				return "30602-05.htm";
 			case 51:
-				qs.clearRadar();
-				qs.addRadar(-46768, -113610, -3);
+				deleteAllRadar(player, type);
+				showRadar(player, -46768, -113610, -3, 2);
 				return "30602-05.htm";
 			case 52:
-				qs.clearRadar();
-				qs.addRadar(-46802, -114011, -112);
+				deleteAllRadar(player, type);
+				showRadar(player, -46802, -114011, -112, 2);
 				return "30602-05.htm";
 			case 53:
-				qs.clearRadar();
-				qs.addRadar(-46247, -113866, -21);
+				deleteAllRadar(player, type);
+				showRadar(player, -46247, -113866, -21, 2);
 				return "30602-05.htm";
 			case 54:
-				qs.clearRadar();
-				qs.addRadar(-46808, -113184, -112);
+				deleteAllRadar(player, type);
+				showRadar(player, -46808, -113184, -112, 2);
 				return "30602-05.htm";
 			case 55:
-				qs.clearRadar();
-				qs.addRadar(-45328, -114736, -237);
+				deleteAllRadar(player, type);
+				showRadar(player, -45328, -114736, -237, 2);
 				return "30602-05.htm";
 			case 56:
-				qs.clearRadar();
-				qs.addRadar(-44624, -111873, -238);
+				deleteAllRadar(player, type);
+				showRadar(player, -44624, -111873, -238, 2);
 				return "30602-05.htm";
 		}
 		return "";
 	}
 	
-	private String eventGuideKrenisk(int event, QuestState qs) {
+	private String eventGuideKrenisk(int event, L2PcInstance player, int type) {
 		switch (event) {
 			case 10:
 				return "32135-04.htm";
@@ -1712,176 +1767,176 @@ public final class NewbieGuide extends AbstractNpcAI {
 			case 22:
 				return "32135-04l.htm";
 			case 31:
-				qs.clearRadar();
-				qs.addRadar(-116879, 46591, 380);
+				deleteAllRadar(player, type);
+				showRadar(player, -116879, 46591, 380, 2);
 				return "32135-05.htm";
 			case 32:
-				qs.clearRadar();
-				qs.addRadar(-119378, 49242, 22);
+				deleteAllRadar(player, type);
+				showRadar(player, -119378, 49242, 22, 2);
 				return "32135-05.htm";
 			case 33:
-				qs.clearRadar();
-				qs.addRadar(-119774, 49245, 22);
+				deleteAllRadar(player, type);
+				showRadar(player, -119774, 49245, 22, 2);
 				return "32135-05.htm";
 			case 34:
-				qs.clearRadar();
-				qs.addRadar(-119830, 51860, -787);
+				deleteAllRadar(player, type);
+				showRadar(player, -119830, 51860, -787, 2);
 				return "32135-05.htm";
 			case 35:
-				qs.clearRadar();
-				qs.addRadar(-119362, 51862, -780);
+				deleteAllRadar(player, type);
+				showRadar(player, -119362, 51862, -780, 2);
 				return "32135-05.htm";
 			case 36:
-				qs.clearRadar();
-				qs.addRadar(-112872, 46850, 68);
+				deleteAllRadar(player, type);
+				showRadar(player, -112872, 46850, 68, 2);
 				return "32135-05.htm";
 			case 37:
-				qs.clearRadar();
-				qs.addRadar(-112352, 47392, 68);
+				deleteAllRadar(player, type);
+				showRadar(player, -112352, 47392, 68, 2);
 				return "32135-05.htm";
 			case 38:
-				qs.clearRadar();
-				qs.addRadar(-110544, 49040, -1124);
+				deleteAllRadar(player, type);
+				showRadar(player, -110544, 49040, -1124, 2);
 				return "32135-05.htm";
 			case 39:
-				qs.clearRadar();
-				qs.addRadar(-110536, 45162, -1132);
+				deleteAllRadar(player, type);
+				showRadar(player, -110536, 45162, -1132, 2);
 				return "32135-05.htm";
 			case 40:
-				qs.clearRadar();
-				qs.addRadar(-115888, 43568, 524);
+				deleteAllRadar(player, type);
+				showRadar(player, -115888, 43568, 524, 2);
 				return "32135-05.htm";
 			case 41:
-				qs.clearRadar();
-				qs.addRadar(-115486, 43567, 525);
+				deleteAllRadar(player, type);
+				showRadar(player, -115486, 43567, 525, 2);
 				return "32135-05.htm";
 			case 42:
-				qs.clearRadar();
-				qs.addRadar(-116920, 47792, 464);
+				deleteAllRadar(player, type);
+				showRadar(player, -116920, 47792, 464, 2);
 				return "32135-05.htm";
 			case 43:
-				qs.clearRadar();
-				qs.addRadar(-116749, 48077, 462);
+				deleteAllRadar(player, type);
+				showRadar(player, -116749, 48077, 462, 2);
 				return "32135-05.htm";
 			case 44:
-				qs.clearRadar();
-				qs.addRadar(-117153, 48075, 463);
+				deleteAllRadar(player, type);
+				showRadar(player, -117153, 48075, 463, 2);
 				return "32135-05.htm";
 			case 45:
-				qs.clearRadar();
-				qs.addRadar(-119104, 43280, 559);
+				deleteAllRadar(player, type);
+				showRadar(player, -119104, 43280, 559, 2);
 				return "32135-05.htm";
 			case 46:
-				qs.clearRadar();
-				qs.addRadar(-119104, 43152, 559);
+				deleteAllRadar(player, type);
+				showRadar(player, -119104, 43152, 559, 2);
 				return "32135-05.htm";
 			case 47:
-				qs.clearRadar();
-				qs.addRadar(-117056, 43168, 559);
+				deleteAllRadar(player, type);
+				showRadar(player, -117056, 43168, 559, 2);
 				return "32135-05.htm";
 			case 48:
-				qs.clearRadar();
-				qs.addRadar(-117060, 43296, 559);
+				deleteAllRadar(player, type);
+				showRadar(player, -117060, 43296, 559, 2);
 				return "32135-05.htm";
 			case 49:
-				qs.clearRadar();
-				qs.addRadar(-118192, 42384, 838);
+				deleteAllRadar(player, type);
+				showRadar(player, -118192, 42384, 838, 2);
 				return "32135-05.htm";
 			case 50:
-				qs.clearRadar();
-				qs.addRadar(-117968, 42384, 838);
+				deleteAllRadar(player, type);
+				showRadar(player, -117968, 42384, 838, 2);
 				return "32135-05.htm";
 			case 51:
-				qs.clearRadar();
-				qs.addRadar(-118132, 42788, 723);
+				deleteAllRadar(player, type);
+				showRadar(player, -118132, 42788, 723, 2);
 				return "32135-05.htm";
 			case 52:
-				qs.clearRadar();
-				qs.addRadar(-118028, 42788, 720);
+				deleteAllRadar(player, type);
+				showRadar(player, -118028, 42788, 720, 2);
 				return "32135-05.htm";
 			case 53:
-				qs.clearRadar();
-				qs.addRadar(-114802, 44821, 524);
+				deleteAllRadar(player, type);
+				showRadar(player, -114802, 44821, 524, 2);
 				return "32135-05.htm";
 			case 54:
-				qs.clearRadar();
-				qs.addRadar(-114975, 44658, 524);
+				deleteAllRadar(player, type);
+				showRadar(player, -114975, 44658, 524, 2);
 				return "32135-05.htm";
 			case 55:
-				qs.clearRadar();
-				qs.addRadar(-114801, 45031, 525);
+				deleteAllRadar(player, type);
+				showRadar(player, -114801, 45031, 525, 2);
 				return "32135-05.htm";
 			case 56:
-				qs.clearRadar();
-				qs.addRadar(-120432, 45296, 416);
+				deleteAllRadar(player, type);
+				showRadar(player, -120432, 45296, 416, 2);
 				return "32135-05.htm";
 			case 57:
-				qs.clearRadar();
-				qs.addRadar(-120706, 45079, 419);
+				deleteAllRadar(player, type);
+				showRadar(player, -120706, 45079, 419, 2);
 				return "32135-05.htm";
 			case 58:
-				qs.clearRadar();
-				qs.addRadar(-120356, 45293, 416);
+				deleteAllRadar(player, type);
+				showRadar(player, -120356, 45293, 416, 2);
 				return "32135-05.htm";
 			case 59:
-				qs.clearRadar();
-				qs.addRadar(-120604, 44960, 423);
+				deleteAllRadar(player, type);
+				showRadar(player, -120604, 44960, 423, 2);
 				return "32135-05.htm";
 			case 60:
-				qs.clearRadar();
-				qs.addRadar(-120294, 46013, 384);
+				deleteAllRadar(player, type);
+				showRadar(player, -120294, 46013, 384, 2);
 				return "32135-05.htm";
 			case 61:
-				qs.clearRadar();
-				qs.addRadar(-120157, 45813, 355);
+				deleteAllRadar(player, type);
+				showRadar(player, -120157, 45813, 355, 2);
 				return "32135-05.htm";
 			case 62:
-				qs.clearRadar();
-				qs.addRadar(-120158, 46221, 354);
+				deleteAllRadar(player, type);
+				showRadar(player, -120158, 46221, 354, 2);
 				return "32135-05.htm";
 			case 63:
-				qs.clearRadar();
-				qs.addRadar(-120400, 46921, 415);
+				deleteAllRadar(player, type);
+				showRadar(player, -120400, 46921, 415, 2);
 				return "32135-05.htm";
 			case 64:
-				qs.clearRadar();
-				qs.addRadar(-120407, 46755, 423);
+				deleteAllRadar(player, type);
+				showRadar(player, -120407, 46755, 423, 2);
 				return "32135-05.htm";
 			case 65:
-				qs.clearRadar();
-				qs.addRadar(-120442, 47125, 422);
+				deleteAllRadar(player, type);
+				showRadar(player, -120442, 47125, 422, 2);
 				return "32135-05.htm";
 			case 66:
-				qs.clearRadar();
-				qs.addRadar(-118720, 48062, 473);
+				deleteAllRadar(player, type);
+				showRadar(player, -118720, 48062, 473, 2);
 				return "32135-05.htm";
 			case 67:
-				qs.clearRadar();
-				qs.addRadar(-118918, 47956, 474);
+				deleteAllRadar(player, type);
+				showRadar(player, -118918, 47956, 474, 2);
 				return "32135-05.htm";
 			case 68:
-				qs.clearRadar();
-				qs.addRadar(-118527, 47955, 473);
+				deleteAllRadar(player, type);
+				showRadar(player, -118527, 47955, 473, 2);
 				return "32135-05.htm";
 			case 69:
-				qs.clearRadar();
-				qs.addRadar(-117605, 48079, 472);
+				deleteAllRadar(player, type);
+				showRadar(player, -117605, 48079, 472, 2);
 				return "32135-05.htm";
 			case 70:
-				qs.clearRadar();
-				qs.addRadar(-117824, 48080, 476);
+				deleteAllRadar(player, type);
+				showRadar(player, -117824, 48080, 476, 2);
 				return "32135-05.htm";
 			case 71:
-				qs.clearRadar();
-				qs.addRadar(-118030, 47930, 465);
+				deleteAllRadar(player, type);
+				showRadar(player, -118030, 47930, 465, 2);
 				return "32135-05.htm";
 			case 72:
-				qs.clearRadar();
-				qs.addRadar(-119221, 46981, 380);
+				deleteAllRadar(player, type);
+				showRadar(player, -119221, 46981, 380, 2);
 				return "32135-05.htm";
 			case 73:
-				qs.clearRadar();
-				qs.addRadar(-118080, 42835, 720);
+				deleteAllRadar(player, type);
+				showRadar(player, -118080, 42835, 720, 2);
 				return "32135-05.htm";
 		}
 		return "";

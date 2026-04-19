@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -80,15 +80,15 @@ public final class Q00212_TrialOfDuty extends Quest {
 	private static final int MIN_LEVEL = 35;
 	
 	public Q00212_TrialOfDuty() {
-		super(212, Q00212_TrialOfDuty.class.getSimpleName(), "Trial of Duty");
-		addStartNpc(HANNAVALT);
-		addTalkId(HANNAVALT, DUSTIN, SIR_COLLIN_WINDAWOOD, SIR_ARON_TANFORD, SIR_KIEL_NIGHTHAWK, ISAEL_SILVERSHADOW, SPIRIT_OF_SIR_TALIANUS);
-		addKillId(HANGMAN_TREE, SKELETON_MARAUDER, SKELETON_RAIDER, STRAIN, GHOUL, BREKA_ORC_OVERLORD, LETO_LIZARDMAN, LETO_LIZARDMAN_ARCHER, LETO_LIZARDMAN_SOLDIER, LETO_LIZARDMAN_WARRIOR, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OVERLORD, SPIRIT_OF_SIR_HEROD);
+		super(212);
+		bindStartNpc(HANNAVALT);
+		bindTalk(HANNAVALT, DUSTIN, SIR_COLLIN_WINDAWOOD, SIR_ARON_TANFORD, SIR_KIEL_NIGHTHAWK, ISAEL_SILVERSHADOW, SPIRIT_OF_SIR_TALIANUS);
+		bindKill(HANGMAN_TREE, SKELETON_MARAUDER, SKELETON_RAIDER, STRAIN, GHOUL, BREKA_ORC_OVERLORD, LETO_LIZARDMAN, LETO_LIZARDMAN_ARCHER, LETO_LIZARDMAN_SOLDIER, LETO_LIZARDMAN_WARRIOR, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OVERLORD, SPIRIT_OF_SIR_HEROD);
 		registerQuestItems(LETTER_OF_DUSTIN, KNIGHTS_TEAR, MIRROR_OF_ORPIC, TEAR_OF_CONFESSION, REPORT_PIECE.getId(), TALIANUSS_REPORT, TEAR_OF_LOYALTY, MILITAS_ARTICLE.getId(), SAINTS_ASHES_URN, ATHEBALDTS_SKULL, ATHEBALDTS_RIBS, ATHEBALDTS_SHIN, LETTER_OF_WINDAWOOD, OLD_KNIGHTS_SWORD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String html = null;
 		
@@ -133,11 +133,10 @@ public final class Q00212_TrialOfDuty extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
-		
 		if ((qs == null) || !Util.checkIfInRange(1500, killer, npc, true)) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		switch (npc.getId()) {
@@ -204,7 +203,6 @@ public final class Q00212_TrialOfDuty extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

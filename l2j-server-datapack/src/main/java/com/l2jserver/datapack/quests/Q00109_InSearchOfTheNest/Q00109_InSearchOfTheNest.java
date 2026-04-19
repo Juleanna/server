@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,14 +37,14 @@ public class Q00109_InSearchOfTheNest extends Quest {
 	private static final int SCOUTS_NOTE = 14858;
 	
 	public Q00109_InSearchOfTheNest() {
-		super(109, Q00109_InSearchOfTheNest.class.getSimpleName(), "In Search of the Nest");
-		addStartNpc(PIERCE);
-		addTalkId(PIERCE, SCOUTS_CORPSE, KAHMAN);
+		super(109);
+		bindStartNpc(PIERCE);
+		bindTalk(PIERCE, SCOUTS_CORPSE, KAHMAN);
 		registerQuestItems(SCOUTS_NOTE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

@@ -1293,7 +1293,7 @@
 				<param HOLD="#defenceTraitPower" />
 			</effect>
 			<effect name="DefenceTrait">
-				<param PARALYZE="#defenceTraitPower" />
+				<param SHOCK="#defenceTraitPower" />
 			</effect>
 			<effect name="DefenceTrait">
 				<param PARALYZE="#defenceTraitPower" />

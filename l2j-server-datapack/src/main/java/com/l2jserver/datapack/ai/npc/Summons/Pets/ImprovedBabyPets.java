@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -30,7 +30,7 @@ import com.l2jserver.gameserver.model.events.EventType;
 import com.l2jserver.gameserver.model.events.ListenerRegisterType;
 import com.l2jserver.gameserver.model.events.annotations.RegisterEvent;
 import com.l2jserver.gameserver.model.events.annotations.RegisterType;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogout;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLogout;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.AbnormalType;
 import com.l2jserver.gameserver.network.SystemMessageId;
@@ -54,12 +54,11 @@ public final class ImprovedBabyPets extends AbstractNpcAI {
 	private static final int BUFF_CONTROL = 5771;
 	
 	public ImprovedBabyPets() {
-		super(ImprovedBabyPets.class.getSimpleName(), "ai/npc/Summons/Pets");
-		addSummonSpawnId(IMPROVED_BABY_PETS);
+		bindSummonSpawn(IMPROVED_BABY_PETS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (player != null) {
 			final L2PetInstance pet = (L2PetInstance) player.getSummon();
 			if (pet == null) {
@@ -69,7 +68,7 @@ public final class ImprovedBabyPets extends AbstractNpcAI {
 				final double hpPer = (player.getCurrentHp() / player.getMaxHp()) * 100;
 				final double mpPer = (player.getCurrentMp() / player.getMaxMp()) * 100;
 				final int healStep = (int) Math.floor((pet.getLevel() / 5.) - 11);
-				final int healType = pet.getTemplate().getParameters().getInt("heal_type", 0);
+				final int healType = pet.getTemplate().getParameters().getInt("heal_type", 1);
 				
 				switch (healType) {
 					case 0 -> {
@@ -94,14 +93,14 @@ public final class ImprovedBabyPets extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
-	@RegisterEvent(EventType.ON_PLAYER_LOGOUT)
+	@RegisterEvent(EventType.PLAYER_LOGOUT)
 	@RegisterType(ListenerRegisterType.GLOBAL)
-	public void OnPlayerLogout(OnPlayerLogout event) {
-		cancelQuestTimer("CAST_BUFF", null, event.getActiveChar());
-		cancelQuestTimer("CAST_HEAL", null, event.getActiveChar());
+	public void OnPlayerLogout(PlayerLogout event) {
+		cancelQuestTimer("CAST_BUFF", null, event.player());
+		cancelQuestTimer("CAST_HEAL", null, event.player());
 	}
 	
 	@Override

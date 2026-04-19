@@ -1110,7 +1110,7 @@
 		<set name="targetType" val="SELF" />
 		<effects>
 			<effect name="Buff">
-				<mul stat="pAtk" val="1.0041" />
+				<mul stat="mDef" val="1.0041" />
 			</effect>
 			<effect name="DefenceTrait">
 				<param SLEEP="11.66" />
@@ -1126,7 +1126,7 @@
 		<set name="targetType" val="SELF" />
 		<effects>
 			<effect name="Buff">
-				<mul stat="pAtk" val="1.0041" />
+				<mul stat="mDef" val="1.0041" />
 			</effect>
 			<effect name="DefenceTrait">
 				<param SLEEP="11.66" />

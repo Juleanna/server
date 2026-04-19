@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -96,15 +96,15 @@ public final class Q00218_TestimonyOfLife extends Quest {
 	private static final int LEVEL = 38;
 	
 	public Q00218_TestimonyOfLife() {
-		super(218, Q00218_TestimonyOfLife.class.getSimpleName(), "Testimony Of Life");
-		addStartNpc(MASTER_CARDIEN);
-		addTalkId(MASTER_CARDIEN, HIERARCH_ASTERIOS, BLACKSMITH_PUSHKIN, THALIA, PRIEST_ADONIUS, ARKENIA, ISAEL_SILVERSHADOW);
-		addKillId(ANT_RECRUIT, ANT_PATROL, ANT_GUARD, ANT_SOLDIER, ANT_WARRIOR_CAPTAIN, HARPY, WYRM, MARSH_SPIDER, GUARDIAN_BASILISK, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OVERLORD, UNICORN_OF_EVA);
+		super(218);
+		bindStartNpc(MASTER_CARDIEN);
+		bindTalk(MASTER_CARDIEN, HIERARCH_ASTERIOS, BLACKSMITH_PUSHKIN, THALIA, PRIEST_ADONIUS, ARKENIA, ISAEL_SILVERSHADOW);
+		bindKill(ANT_RECRUIT, ANT_PATROL, ANT_GUARD, ANT_SOLDIER, ANT_WARRIOR_CAPTAIN, HARPY, WYRM, MARSH_SPIDER, GUARDIAN_BASILISK, LETO_LIZARDMAN_SHAMAN, LETO_LIZARDMAN_OVERLORD, UNICORN_OF_EVA);
 		registerQuestItems(TALINS_SPEAR, CARDIENS_LETTER, CAMOMILE_CHARM, HIERARCHS_LETTER, MOONFLOWER_CHARM, GRAIL_DIAGRAM, THALIAS_1ST_LETTER, THALIAS_2ND_LETTER, THALIAS_INSTRUCTIONS, PUSHKINS_LIST, PURE_MITHRIL_CUP, ARKENIAS_CONTRACT, ARKENIAS_INSTRUCTIONS, ADONIUS_LIST, ANDARIEL_SCRIPTURE_COPY, STARDUST, ISAELS_INSTRUCTIONS, ISAELS_LETTER, GRAIL_OF_PURITY, TEARS_OF_UNICORN, WATER_OF_LIFE, PURE_MITHRIL_ORE, ANT_SOLDIER_ACID, WYRMS_TALON, SPIDER_ICHOR, HARPYS_DOWN, TALINS_SPEAR_BLADE, TALINS_SPEAR_SHAFT, TALINS_RUBY, TALINS_AQUAMARINE, TALINS_AMETHYST, TALINS_PERIDOT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -229,7 +229,7 @@ public final class Q00218_TestimonyOfLife extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -346,7 +346,6 @@ public final class Q00218_TestimonyOfLife extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -35,13 +35,13 @@ public class Q00121_PavelTheGiant extends Quest {
 	private static final int YUMI = 32041;
 	
 	public Q00121_PavelTheGiant() {
-		super(121, Q00121_PavelTheGiant.class.getSimpleName(), "Pavel the Giant");
-		addStartNpc(NEWYEAR);
-		addTalkId(NEWYEAR, YUMI);
+		super(121);
+		bindStartNpc(NEWYEAR);
+		bindTalk(NEWYEAR, YUMI);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

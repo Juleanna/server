@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,12 +37,11 @@ public final class HellboundCore extends AbstractNpcAI {
 	private static final SkillHolder BEAM = new SkillHolder(5493);
 	
 	public HellboundCore() {
-		super(HellboundCore.class.getSimpleName(), "hellbound/AI");
-		addSpawnId(HELLBOUND_CORE, NAIA);
+		bindSpawn(HELLBOUND_CORE, NAIA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("cast") && (HellboundEngine.getInstance().getLevel() <= 6)) {
 			for (L2Character naia : npc.getKnownList().getKnownCharactersInRadius(900)) {
 				if ((naia != null) && naia.isMonster() && (naia.getId() == NAIA) && !naia.isDead() && !naia.isChanneling()) {
@@ -52,17 +51,15 @@ public final class HellboundCore extends AbstractNpcAI {
 			}
 			startQuestTimer("cast", 10000, npc, null);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == NAIA) {
 			npc.setIsNoRndWalk(true);
 		} else {
 			startQuestTimer("cast", 10000, npc, null);
 		}
-		
-		return super.onSpawn(npc);
 	}
 }

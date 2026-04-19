@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,14 +36,13 @@ public final class TheValentineEvent extends LongTimeEvent {
 	private static final String COMPLETED = TheValentineEvent.class.getSimpleName() + "_completed";
 	
 	private TheValentineEvent() {
-		super(TheValentineEvent.class.getSimpleName(), "events");
-		addStartNpc(NPC);
-		addFirstTalkId(NPC);
-		addTalkId(NPC);
+		bindStartNpc(NPC);
+		bindFirstTalk(NPC);
+		bindTalk(NPC);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		if (event.equalsIgnoreCase("4301-3.htm")) {
 			if (player.getVariables().getBoolean(COMPLETED, false)) {

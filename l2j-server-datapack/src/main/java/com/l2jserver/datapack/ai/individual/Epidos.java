@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -57,13 +57,12 @@ public final class Epidos extends AbstractNpcAI {
 	private final Map<Integer, Double> _lastHp = new ConcurrentHashMap<>();
 	
 	public Epidos() {
-		super(Epidos.class.getSimpleName(), "ai/individual");
-		addKillId(EPIDOSES);
-		addSpawnId(EPIDOSES);
+		bindKill(EPIDOSES);
+		bindSpawn(EPIDOSES);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("check_minions")) {
 			if ((getRandom(1000) > 250) && _lastHp.containsKey(npc.getObjectId())) {
 				int hpDecreasePercent = (int) (((_lastHp.get(npc.getObjectId()) - npc.getCurrentHp()) * 100) / npc.getMaxHp());
@@ -97,21 +96,18 @@ public final class Epidos extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.isInsideRadius(-45474, 247450, -13994, 2000, true, false)) {
 			addSpawn(32376, -45482, 246277, -14184, 0, false, 0, false);
 		}
 		
 		_lastHp.remove(npc.getObjectId());
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("check_minions", 10000, npc, null);
 		startQuestTimer("check_idle", 600000, npc, null);
 		_lastHp.put(npc.getObjectId(), (double) npc.getMaxHp());
-		
-		return super.onSpawn(npc);
 	}
 }

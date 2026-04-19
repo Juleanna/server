@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -39,14 +39,14 @@ public final class Q00012_SecretMeetingWithVarkaSilenos extends Quest {
 	private static final int MIN_LEVEL = 74;
 	
 	public Q00012_SecretMeetingWithVarkaSilenos() {
-		super(12, Q00012_SecretMeetingWithVarkaSilenos.class.getSimpleName(), "Secret Meeting With Varka Silenos");
-		addStartNpc(CADMON);
-		addTalkId(CADMON, HELMUT, NARAN_ASHANUK);
+		super(12);
+		bindStartNpc(CADMON);
+		bindTalk(CADMON, HELMUT, NARAN_ASHANUK);
 		registerQuestItems(MUNITIONS_BOX);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

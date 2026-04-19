@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -59,15 +59,15 @@ public final class Q00259_RequestFromTheFarmOwner extends Quest {
 	}
 	
 	public Q00259_RequestFromTheFarmOwner() {
-		super(259, Q00259_RequestFromTheFarmOwner.class.getSimpleName(), "Request from the Farm Owner");
-		addStartNpc(EDMOND);
-		addTalkId(EDMOND, MARIUS);
-		addKillId(MONSTERS);
+		super(259);
+		bindStartNpc(EDMOND);
+		bindTalk(EDMOND, MARIUS);
+		bindKill(MONSTERS);
 		registerQuestItems(SPIDER_SKIN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -112,13 +112,12 @@ public final class Q00259_RequestFromTheFarmOwner extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if (st != null) {
 			st.giveItems(SPIDER_SKIN, 1);
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

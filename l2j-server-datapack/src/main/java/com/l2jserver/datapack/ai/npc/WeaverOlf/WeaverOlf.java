@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -145,13 +145,13 @@ public final class WeaverOlf extends AbstractNpcAI {
 	};
 	
 	public WeaverOlf() {
-		super(WeaverOlf.class.getSimpleName(), "ai/npc");
-		addStartNpc(NPCs);
-		addTalkId(NPCs);
+		bindFirstTalk(NPCs);
+		bindStartNpc(NPCs);
+		bindTalk(NPCs);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.contains("_grade_")) {
 			int grade = Integer.parseInt(event.substring(0, 1));
 			int price;
@@ -169,7 +169,7 @@ public final class WeaverOlf extends AbstractNpcAI {
 				price = UNSEAL_PRICE[grade];
 				itemIds = CLIPS_ORNAMENTS[grade];
 			} else {
-				return super.onAdvEvent(event, npc, player);
+				return super.onEvent(event, npc, player);
 			}
 			
 			if (hasQuestItems(player, itemIds[0])) {
@@ -194,9 +194,14 @@ public final class WeaverOlf extends AbstractNpcAI {
 			} else {
 				return npc.getId() + "-no.htm";
 			}
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		return event;
+	}
+	
+	@Override
+	public String onFirstTalk(L2Npc npc, L2PcInstance talker) {
+		return npc.getId() + ".htm";
 	}
 	
 	@Override

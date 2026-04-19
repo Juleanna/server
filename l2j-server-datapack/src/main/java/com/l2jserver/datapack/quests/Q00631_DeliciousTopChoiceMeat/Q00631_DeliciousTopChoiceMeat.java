@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -77,15 +77,15 @@ public class Q00631_DeliciousTopChoiceMeat extends Quest {
 	private static final int CRYSTAL_SPICE_COMPRESSED_PACK = 15483;
 	
 	public Q00631_DeliciousTopChoiceMeat() {
-		super(631, Q00631_DeliciousTopChoiceMeat.class.getSimpleName(), "Delicious Top Choice Meat");
-		addStartNpc(TUNATUN);
-		addTalkId(TUNATUN);
-		addKillId(DROPLIST.getNpcIds());
+		super(631);
+		bindStartNpc(TUNATUN);
+		bindTalk(TUNATUN);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(TOP_QUALITY_MEAT, PRIME_MEAT.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -126,14 +126,13 @@ public class Q00631_DeliciousTopChoiceMeat extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getRandomPartyMemberState(player, 1, 3, npc);
 		if (st != null) {
 			if (giveItemRandomly(st.getPlayer(), npc, DROPLIST.get(npc), true)) {
 				st.setCond(2);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

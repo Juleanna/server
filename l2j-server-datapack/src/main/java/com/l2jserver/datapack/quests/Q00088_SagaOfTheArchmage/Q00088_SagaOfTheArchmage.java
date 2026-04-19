@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class Q00088_SagaOfTheArchmage extends AbstractSagaQuest {
 	public Q00088_SagaOfTheArchmage() {
-		super(88, Q00088_SagaOfTheArchmage.class.getSimpleName(), "Saga of the Archmage");
+		super(88);
 		_npc = new int[] {
 			30176,
 			31627,

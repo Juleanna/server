@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -79,14 +79,13 @@ public final class ForgeOfTheGods extends AbstractNpcAI {
 	// private static int _npcsAlive = 0; TODO: Require zone spawn support
 	
 	public ForgeOfTheGods() {
-		super(ForgeOfTheGods.class.getSimpleName(), "ai/npc");
-		addKillId(FOG_MOBS);
-		addSpawnId(LAVASAURUSES);
+		bindKill(FOG_MOBS);
+		bindSpawn(LAVASAURUSES);
 		startQuestTimer("refresh", REFRESH * 1000, null, null, true);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "suicide":
 				if (npc != null) {
@@ -101,7 +100,7 @@ public final class ForgeOfTheGods extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		int rand = getRandom(100);
 		L2Npc mob = null;
 		_npcCount++;
@@ -139,13 +138,11 @@ public final class ForgeOfTheGods extends AbstractNpcAI {
 			((L2Attackable) mob).addDamageHate(killer, 0, 9999);
 			mob.getAI().setIntention(CtrlIntention.AI_INTENTION_ATTACK);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("suicide", 60000, npc, null);
-		return super.onSpawn(npc);
 	}
 	
 	private L2Npc spawnLavasaurus(L2Npc npc, int rand, int... mobs) {

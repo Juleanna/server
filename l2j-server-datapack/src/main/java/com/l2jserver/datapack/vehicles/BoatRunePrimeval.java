@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,8 +18,8 @@
  */
 package com.l2jserver.datapack.vehicles;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.enums.audio.Sound;
@@ -34,7 +34,7 @@ import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
  * @author DS
  */
 public class BoatRunePrimeval implements Runnable {
-	private static final Logger _log = Logger.getLogger(BoatRunePrimeval.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(BoatRunePrimeval.class);
 	
 	// Time: 239s
 	private static final VehiclePathPoint[] RUNE_TO_PRIMEVAL = {
@@ -141,7 +141,7 @@ public class BoatRunePrimeval implements Runnable {
 				_cycle = 0;
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage());
+			LOG.warn(e.getMessage());
 		}
 	}
 	

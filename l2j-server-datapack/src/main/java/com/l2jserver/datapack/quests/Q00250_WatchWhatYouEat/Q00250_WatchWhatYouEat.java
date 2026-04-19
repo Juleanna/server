@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,18 +50,18 @@ public class Q00250_WatchWhatYouEat extends Quest {
 	};
 	
 	public Q00250_WatchWhatYouEat() {
-		super(250, Q00250_WatchWhatYouEat.class.getSimpleName(), "Watch What You Eat");
-		addStartNpc(SALLY);
-		addFirstTalkId(SALLY);
-		addTalkId(SALLY);
+		super(250);
+		bindStartNpc(SALLY);
+		bindFirstTalk(SALLY);
+		bindTalk(SALLY);
 		for (int[] mob : MOBS) {
-			addKillId(mob[0]);
+			bindKill(mob[0]);
 		}
 		registerQuestItems(15493, 15494, 15495);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		QuestState st = getQuestState(player, false);
 		
@@ -93,10 +93,10 @@ public class Q00250_WatchWhatYouEat extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
-			return null;
+			return;
 		}
 		if (st.isStarted() && st.isCond(1)) {
 			for (int[] mob : MOBS) {
@@ -111,7 +111,6 @@ public class Q00250_WatchWhatYouEat extends Quest {
 				st.setCond(2, true);
 			}
 		}
-		return null;
 	}
 	
 	@Override

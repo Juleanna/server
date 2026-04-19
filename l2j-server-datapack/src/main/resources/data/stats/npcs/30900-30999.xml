@@ -41,7 +41,7 @@
 			<height normal="21.5" />
 		</collision>
 	</npc>
-	<npc id="30901" level="70" type="L2Trainer" name="Arti" title="Master">
+	<npc id="30901" level="70" type="L2Npc" name="Arti" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -81,7 +81,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="30902" level="70" type="L2Trainer" name="Karuna" title="Master">
+	<npc id="30902" level="70" type="L2Npc" name="Karuna" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -121,7 +121,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="30903" level="70" type="L2Trainer" name="Traus" title="Master">
+	<npc id="30903" level="70" type="L2Npc" name="Traus" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -161,7 +161,7 @@
 			<height normal="22.5" />
 		</collision>
 	</npc>
-	<npc id="30904" level="70" type="L2Trainer" name="Naiel" title="Master">
+	<npc id="30904" level="70" type="L2Npc" name="Naiel" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -242,7 +242,7 @@
 			<height normal="24" />
 		</collision>
 	</npc>
-	<npc id="30906" level="70" type="L2Trainer" name="Ranton" title="Priest">
+	<npc id="30906" level="70" type="L2Npc" name="Ranton" title="Priest">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -284,7 +284,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="30907" level="70" type="L2Trainer" name="Minevia" title="Magister">
+	<npc id="30907" level="70" type="L2Npc" name="Minevia" title="Magister">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -324,7 +324,7 @@
 			<height normal="23.5" />
 		</collision>
 	</npc>
-	<npc id="30908" level="70" type="L2Trainer" name="Tanios" title="Priest">
+	<npc id="30908" level="70" type="L2Npc" name="Tanios" title="Priest">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -366,7 +366,7 @@
 			<height normal="22.2" />
 		</collision>
 	</npc>
-	<npc id="30909" level="70" type="L2Trainer" name="Anabel" title="Magister">
+	<npc id="30909" level="70" type="L2Npc" name="Anabel" title="Magister">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -447,7 +447,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="30911" level="70" type="L2Trainer" name="Brikus" title="Master">
+	<npc id="30911" level="70" type="L2Npc" name="Brikus" title="Master">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -487,7 +487,7 @@
 			<height normal="23" />
 		</collision>
 	</npc>
-	<npc id="30912" level="70" type="L2Trainer" name="Xenovia" title="Magister">
+	<npc id="30912" level="70" type="L2Npc" name="Xenovia" title="Magister">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -570,7 +570,7 @@
 			<height normal="26" />
 		</collision>
 	</npc>
-	<npc id="30914" level="70" type="L2Trainer" name="Sorbo" title="Prefect">
+	<npc id="30914" level="70" type="L2Npc" name="Sorbo" title="Prefect">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -610,7 +610,7 @@
 			<height normal="24" />
 		</collision>
 	</npc>
-	<npc id="30915" level="70" type="L2Trainer" name="Takina" title="Seer">
+	<npc id="30915" level="70" type="L2Npc" name="Takina" title="Seer">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />

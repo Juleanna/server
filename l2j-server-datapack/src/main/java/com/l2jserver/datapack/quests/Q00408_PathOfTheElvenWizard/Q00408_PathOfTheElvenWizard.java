@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -61,15 +61,15 @@ public final class Q00408_PathOfTheElvenWizard extends Quest {
 	private static final int MIN_LEVEL = 18;
 	
 	public Q00408_PathOfTheElvenWizard() {
-		super(408, Q00408_PathOfTheElvenWizard.class.getSimpleName(), "Path Of The Elven Wizard");
-		addStartNpc(ROSSELA);
-		addTalkId(ROSSELA, GREENIS, THALIA, NORTHWIND);
-		addKillId(DRYAD_ELDER, SUKAR_WERERAT_LEADER, PINCER_SPIDER);
+		super(408);
+		bindStartNpc(ROSSELA);
+		bindTalk(ROSSELA, GREENIS, THALIA, NORTHWIND);
+		bindKill(DRYAD_ELDER, SUKAR_WERERAT_LEADER, PINCER_SPIDER);
 		registerQuestItems(ROSELLAS_LETTER, RED_DOWN, MAGICAL_POWERS_RUBY, PURE_AQUAMARINE, APPETIZING_APPLE, GOLD_LEAVES, IMMORTAL_LOVE, AMETHYST, NOBILITY_AMETHYST, FERTILITY_PERIDOT, GREENISS_CHARM, SAP_OF_THE_MOTHER_TREE, LUCKY_POTPOURRI);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -159,7 +159,7 @@ public final class Q00408_PathOfTheElvenWizard extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -198,7 +198,6 @@ public final class Q00408_PathOfTheElvenWizard extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

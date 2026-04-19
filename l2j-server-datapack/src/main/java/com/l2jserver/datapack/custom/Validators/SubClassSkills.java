@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -89,18 +89,17 @@ public final class SubClassSkills extends Quest {
 	};
 	
 	private SubClassSkills() {
-		super(-1, SubClassSkills.class.getSimpleName(), "custom");
 		setOnEnterWorld(true);
 	}
 	
 	@Override
-	public String onEnterWorld(L2PcInstance player) {
+	public void onEnterWorld(L2PcInstance player) {
 		if (!general().skillCheckEnable()) {
-			return null;
+			return;
 		}
 		
 		if (player.canOverrideCond(PcCondOverride.SKILL_CONDITIONS) && !general().skillCheckGM()) {
-			return null;
+			return;
 		}
 		
 		final List<Skill> certSkills = getCertSkills(player);
@@ -112,7 +111,7 @@ public final class SubClassSkills extends Quest {
 					player.removeSkill(s);
 				}
 			}
-			return null;
+			return;
 		}
 		
 		int[][] cSkills = new int[certSkills.size()][2]; // skillId/skillLvl
@@ -248,8 +247,6 @@ public final class SubClassSkills extends Quest {
 				Util.handleIllegalPlayerAction(player, "Invalid cert item without variable or with wrong count:" + item.getObjectId(), IllegalActionPunishmentType.NONE);
 			}
 		}
-		
-		return null;
 	}
 	
 	private List<Skill> getCertSkills(L2PcInstance player) {

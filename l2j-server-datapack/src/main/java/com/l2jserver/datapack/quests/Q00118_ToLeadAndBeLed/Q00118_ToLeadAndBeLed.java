@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -64,15 +64,15 @@ public final class Q00118_ToLeadAndBeLed extends Quest {
 	private static final int CRYSTAL_COUNT_2 = 771;
 	
 	public Q00118_ToLeadAndBeLed() {
-		super(118, Q00118_ToLeadAndBeLed.class.getSimpleName(), "To Lead And Be Led");
-		addStartNpc(BLACKSMITH_PINTER);
-		addTalkId(BLACKSMITH_PINTER);
-		addKillId(MAILLE_LIZARDMAN, MAILLE_LIZARDMAN_SCOUT, MAILLE_LIZARDMAN_GUARD, KING_OF_THE_ARANEID);
+		super(118);
+		bindStartNpc(BLACKSMITH_PINTER);
+		bindTalk(BLACKSMITH_PINTER);
+		bindKill(MAILLE_LIZARDMAN, MAILLE_LIZARDMAN_SCOUT, MAILLE_LIZARDMAN_GUARD, KING_OF_THE_ARANEID);
 		registerQuestItems(LEG_OF_KING_ARANEID.getId(), BLOOD_OF_MAILLE_LIZARDMAN.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		// Manage Sponsor's quest events.
 		if (player.getApprentice() > 0) {
@@ -187,7 +187,7 @@ public final class Q00118_ToLeadAndBeLed extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted()) {
 			switch (npc.getId()) {
@@ -208,7 +208,6 @@ public final class Q00118_ToLeadAndBeLed extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

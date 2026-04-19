@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,14 +40,14 @@ public class Q00029_ChestCaughtWithABaitOfEarth extends Quest {
 	private static final int PLATED_LEATHER_GLOVES = 2455;
 	
 	public Q00029_ChestCaughtWithABaitOfEarth() {
-		super(29, Q00029_ChestCaughtWithABaitOfEarth.class.getSimpleName(), "Chest Caught With A Bait Of Earth");
-		addStartNpc(WILLIE);
-		addTalkId(WILLIE, ANABEL);
+		super(29);
+		bindStartNpc(WILLIE);
+		bindTalk(WILLIE, ANABEL);
 		registerQuestItems(SMALL_GLASS_BOX);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

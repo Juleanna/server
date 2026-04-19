@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -29,6 +29,7 @@ import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.quest.QuestState;
@@ -116,14 +117,13 @@ public final class DisciplesNecropolisPast extends AbstractInstance {
 	}
 	
 	public DisciplesNecropolisPast() {
-		super(DisciplesNecropolisPast.class.getSimpleName());
-		addAttackId(SEAL_DEVICE);
-		addFirstTalkId(SHUNAIMAN, LEON, DISCIPLES_GATEKEEPER);
-		addKillId(LILIM_BUTCHER, LILIM_MAGUS, LILIM_KNIGHT_ERRANT, LILIM_KNIGHT, SHILENS_EVIL_THOUGHTS1, SHILENS_EVIL_THOUGHTS2, LILIM_SLAYER, LILIM_GREAT_MAGUS, LILIM_GUARD_KNIGHT);
-		addAggroRangeEnterId(LILIM_BUTCHER, LILIM_MAGUS, LILIM_KNIGHT_ERRANT, LILIM_KNIGHT, SHILENS_EVIL_THOUGHTS1, SHILENS_EVIL_THOUGHTS2, LILIM_SLAYER, LILIM_GREAT_MAGUS, LILIM_GUARD_KNIGHT);
-		addSpawnId(SEAL_DEVICE);
-		addStartNpc(PROMISE_OF_MAMMON);
-		addTalkId(PROMISE_OF_MAMMON, SHUNAIMAN, LEON, DISCIPLES_GATEKEEPER);
+		bindAttack(SEAL_DEVICE);
+		bindFirstTalk(SHUNAIMAN, LEON, DISCIPLES_GATEKEEPER);
+		bindKill(LILIM_BUTCHER, LILIM_MAGUS, LILIM_KNIGHT_ERRANT, LILIM_KNIGHT, SHILENS_EVIL_THOUGHTS1, SHILENS_EVIL_THOUGHTS2, LILIM_SLAYER, LILIM_GREAT_MAGUS, LILIM_GUARD_KNIGHT);
+		bindAggroRangeEnter(LILIM_BUTCHER, LILIM_MAGUS, LILIM_KNIGHT_ERRANT, LILIM_KNIGHT, SHILENS_EVIL_THOUGHTS1, SHILENS_EVIL_THOUGHTS2, LILIM_SLAYER, LILIM_GREAT_MAGUS, LILIM_GUARD_KNIGHT);
+		bindSpawn(SEAL_DEVICE);
+		bindStartNpc(PROMISE_OF_MAMMON);
+		bindTalk(PROMISE_OF_MAMMON, SHUNAIMAN, LEON, DISCIPLES_GATEKEEPER);
 	}
 	
 	protected void spawnNPC(DNPWorld world) {
@@ -175,7 +175,7 @@ public final class DisciplesNecropolisPast extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getPlayerWorld(player);
 		if (tmpworld instanceof DNPWorld world) {
 			switch (event) {
@@ -247,11 +247,12 @@ public final class DisciplesNecropolisPast extends AbstractInstance {
 				}
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		final var npc = event.npc();
 		switch (npc.getId()) {
 			case LILIM_BUTCHER:
 			case LILIM_GUARD_KNIGHT: {
@@ -285,11 +286,10 @@ public final class DisciplesNecropolisPast extends AbstractInstance {
 				break;
 			}
 		}
-		return super.onAggroRangeEnter(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
 		InstanceWorld tmpworld = InstanceManager.getInstance().getPlayerWorld(player);
 		if (tmpworld instanceof DNPWorld) {
 			if (npc.isScriptValue(0)) {
@@ -305,7 +305,6 @@ public final class DisciplesNecropolisPast extends AbstractInstance {
 				npc.doCast(SEAL_ISOLATION);
 			}
 		}
-		return super.onAttack(npc, player, damage, isSummon);
 	}
 	
 	@Override
@@ -314,7 +313,7 @@ public final class DisciplesNecropolisPast extends AbstractInstance {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getPlayerWorld(player);
 		if (tmpworld instanceof DNPWorld world) {
 			checkDoors(npc, world);
@@ -337,13 +336,11 @@ public final class DisciplesNecropolisPast extends AbstractInstance {
 				break;
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.setIsMortal(false);
-		return super.onSpawn(npc);
 	}
 	
 	@Override

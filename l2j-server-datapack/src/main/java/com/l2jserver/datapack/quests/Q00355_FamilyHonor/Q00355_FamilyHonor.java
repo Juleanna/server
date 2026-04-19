@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -64,15 +64,15 @@ public final class Q00355_FamilyHonor extends Quest {
 	private static final int MIN_LEVEL = 36;
 	
 	public Q00355_FamilyHonor() {
-		super(355, Q00355_FamilyHonor.class.getSimpleName(), "Family Honor");
-		addStartNpc(GALIBREDO);
-		addTalkId(GALIBREDO, PATRIN);
-		addKillId(DROPLIST.getNpcIds());
+		super(355);
+		bindStartNpc(GALIBREDO);
+		bindTalk(GALIBREDO, PATRIN);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(GALFREDO_ROMERS_BUST);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -151,16 +151,13 @@ public final class Q00355_FamilyHonor extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
-		
 		if ((qs == null) || !Util.checkIfInRange(1500, npc, qs.getPlayer(), true)) {
-			return null;
+			return;
 		}
 		
 		giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

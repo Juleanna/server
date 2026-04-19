@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,13 +38,13 @@ public class Q00119_LastImperialPrince extends Quest {
 	private static final int MIN_LEVEL = 74;
 	
 	public Q00119_LastImperialPrince() {
-		super(119, Q00119_LastImperialPrince.class.getSimpleName(), "Last Imperial Prince");
-		addStartNpc(NAMELESS_SPIRIT);
-		addTalkId(NAMELESS_SPIRIT, DEVORIN);
+		super(119);
+		bindStartNpc(NAMELESS_SPIRIT);
+		bindTalk(NAMELESS_SPIRIT, DEVORIN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

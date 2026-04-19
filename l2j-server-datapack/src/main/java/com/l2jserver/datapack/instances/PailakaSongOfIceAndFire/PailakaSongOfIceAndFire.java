@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -56,14 +56,13 @@ public final class PailakaSongOfIceAndFire extends AbstractInstance {
 	private static final int ZONE = 20108;
 	
 	public PailakaSongOfIceAndFire() {
-		super(PailakaSongOfIceAndFire.class.getSimpleName());
-		addStartNpc(ADLER1);
-		addTalkId(ADLER1);
-		addAttackId(BOTTLE, BRAZIER);
-		addExitZoneId(ZONE);
-		addSeeCreatureId(GARGOS);
-		addSpawnId(BLOOM);
-		addKillId(BLOOM);
+		bindStartNpc(ADLER1);
+		bindTalk(ADLER1);
+		bindAttack(BOTTLE, BRAZIER);
+		bindExitZone(ZONE);
+		bindSeeCreature(GARGOS);
+		bindSpawn(BLOOM);
+		bindKill(BLOOM);
 	}
 	
 	@Override
@@ -75,7 +74,7 @@ public final class PailakaSongOfIceAndFire extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "enter": {
 				enterInstance(player, new PSoIWorld(), "PailakaSongOfIceAndFire.xml", TEMPLATE_ID);
@@ -105,11 +104,11 @@ public final class PailakaSongOfIceAndFire extends AbstractInstance {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
 		if ((damage > 0) && npc.isScriptValue(0)) {
 			switch (getRandom(6)) {
 				case 0: {
@@ -138,39 +137,34 @@ public final class PailakaSongOfIceAndFire extends AbstractInstance {
 			npc.setScriptValue(1);
 			startQuestTimer("DELETE", 3000, npc, null);
 		}
-		return super.onAttack(npc, player, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		npc.dropItem(player, getRandomBoolean() ? SHIELD_POTION : HEAL_POTION, getRandom(1, 7));
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onExitZone(L2Character character, L2ZoneType zone) {
+	public void onExitZone(L2Character character, L2ZoneType zone) {
 		if ((character.isPlayer()) && !character.isDead() && !character.isTeleporting() && ((L2PcInstance) character).isOnline()) {
 			final InstanceWorld world = InstanceManager.getInstance().getWorld(character.getInstanceId());
 			if ((world != null) && (world.getTemplateId() == TEMPLATE_ID)) {
 				startQuestTimer("TELEPORT", 1000, null, (L2PcInstance) character);
 			}
 		}
-		return super.onExitZone(character, zone);
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (npc.isScriptValue(0) && creature.isPlayer()) {
 			npc.setScriptValue(1);
 			startQuestTimer("GARGOS_LAUGH", 1000, npc, creature.getActingPlayer());
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.setInvisible(true);
 		startQuestTimer("BLOOM_TIMER", 1000, npc, null);
-		return super.onSpawn(npc);
 	}
 }

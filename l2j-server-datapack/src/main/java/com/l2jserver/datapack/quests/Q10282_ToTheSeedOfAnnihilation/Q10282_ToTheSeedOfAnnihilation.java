@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,14 +37,14 @@ public class Q10282_ToTheSeedOfAnnihilation extends Quest {
 	private static final int SOA_ORDERS = 15512;
 	
 	public Q10282_ToTheSeedOfAnnihilation() {
-		super(10282, Q10282_ToTheSeedOfAnnihilation.class.getSimpleName(), "To the Seed of Annihilation");
-		addStartNpc(KBALDIR);
-		addTalkId(KBALDIR, KLEMIS);
+		super(10282);
+		bindStartNpc(KBALDIR);
+		bindTalk(KBALDIR, KLEMIS);
 		registerQuestItems(SOA_ORDERS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

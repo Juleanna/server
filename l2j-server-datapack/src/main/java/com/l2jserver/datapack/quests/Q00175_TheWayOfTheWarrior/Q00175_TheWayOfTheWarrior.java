@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -20,8 +20,10 @@ package com.l2jserver.datapack.quests.Q00175_TheWayOfTheWarrior;
 
 import java.util.List;
 
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.audio.Voice;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
@@ -29,9 +31,7 @@ import com.l2jserver.gameserver.model.holders.QuestItemChanceHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
-import com.l2jserver.gameserver.model.variables.PlayerVariables;
 import com.l2jserver.gameserver.network.NpcStringId;
-import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 
 /**
@@ -45,8 +45,6 @@ public final class Q00175_TheWayOfTheWarrior extends Quest {
 	// Items
 	private static final QuestItemChanceHolder WOLF_TAIL = new QuestItemChanceHolder(9807, 50.0, 5L);
 	private static final QuestItemChanceHolder MUERTOS_CLAW = new QuestItemChanceHolder(9808, 10L);
-	// Message
-	private static final ExShowScreenMessage MESSAGE = new ExShowScreenMessage(NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
 	// Misc
 	private static final int MIN_LEVEL = 10;
 	// Buff
@@ -73,17 +71,19 @@ public final class Q00175_TheWayOfTheWarrior extends Quest {
 		22246, // Muertos Commander
 	};
 	
+	private static final int GUIDE_MISSION = 41;
+	
 	public Q00175_TheWayOfTheWarrior() {
-		super(175, Q00175_TheWayOfTheWarrior.class.getSimpleName(), "The Way of the Warrior");
-		addStartNpc(KEKROPUS);
-		addTalkId(KEKROPUS, PERWAN);
-		addKillId(MOUNTAIN_WEREWOLF);
-		addKillId(MONSTERS);
+		super(175);
+		bindStartNpc(KEKROPUS);
+		bindTalk(KEKROPUS, PERWAN);
+		bindKill(MOUNTAIN_WEREWOLF);
+		bindKill(MONSTERS);
 		registerQuestItems(WOLF_TAIL.getId(), MUERTOS_CLAW.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -111,13 +111,34 @@ public final class Q00175_TheWayOfTheWarrior extends Quest {
 			case "32138-13.html": {
 				if (hasItem(player, MUERTOS_CLAW)) {
 					takeItem(player, MUERTOS_CLAW);
-					giveAdena(player, 8799, true);
-					giveItems(player, REWARDS);
-					giveNewbieReward(player);
 					giveItems(player, WARRIORS_SWORD, 1);
-					addExpAndSp(player, 20739, 1777);
 					qs.exitQuest(false, true);
 					player.sendPacket(new SocialAction(player.getObjectId(), 3));
+					giveNewbieReward(player);
+					
+					// Newbie Guide
+					final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+					if (newbieGuide != null) {
+						final var newbieGuideQs = newbieGuide.getQuestState(player, true);
+						if (!newbieGuideQs.haveNRMemo(player, GUIDE_MISSION)) {
+							newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+							newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, 100000);
+							
+							showOnScreenMsg(player, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+						} else {
+							if (((newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) % 1000000) / 100000) != 1) {
+								newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+								newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) + 100000);
+								
+								showOnScreenMsg(player, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+							}
+						}
+					}
+					
+					addExpAndSp(player, 20739, 1777);
+					giveAdena(player, 8799, true);
+					giveItems(player, REWARDS);
+					
 					htmltext = event;
 				}
 				break;
@@ -135,7 +156,7 @@ public final class Q00175_TheWayOfTheWarrior extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (npc.getId() == MOUNTAIN_WEREWOLF) {
 			final QuestState qs = getRandomPartyMemberState(killer, 2, 3, npc);
 			if ((qs != null) && giveItemRandomly(qs.getPlayer(), npc, WOLF_TAIL, true)) {
@@ -147,7 +168,6 @@ public final class Q00175_TheWayOfTheWarrior extends Quest {
 				qs.setCond(8);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -247,18 +267,9 @@ public final class Q00175_TheWayOfTheWarrior extends Quest {
 	}
 	
 	public static void giveNewbieReward(L2PcInstance player) {
-		final PlayerVariables vars = player.getVariables();
-		if ((player.getLevel() < 25) && !vars.getBoolean("NEWBIE_SHOTS", false)) {
+		if (player.getLevel() < 25) {
 			playSound(player, Voice.TUTORIAL_VOICE_026_1000);
 			giveItems(player, SOULSHOTS_NO_GRADE_FOR_ROOKIES);
-			vars.set("NEWBIE_SHOTS", true);
-		}
-		if (vars.getString("GUIDE_MISSION", null) == null) {
-			vars.set("GUIDE_MISSION", 100000);
-			player.sendPacket(MESSAGE);
-		} else if (((vars.getInt("GUIDE_MISSION") % 1000000) / 100000) != 1) {
-			vars.set("GUIDE_MISSION", vars.getInt("GUIDE_MISSION") + 100000);
-			player.sendPacket(MESSAGE);
 		}
 	}
 }

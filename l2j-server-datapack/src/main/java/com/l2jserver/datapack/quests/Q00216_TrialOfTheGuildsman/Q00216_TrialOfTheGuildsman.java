@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -99,16 +99,16 @@ public final class Q00216_TrialOfTheGuildsman extends Quest {
 	private static final int MIN_LVL = 35;
 	
 	public Q00216_TrialOfTheGuildsman() {
-		super(216, Q00216_TrialOfTheGuildsman.class.getSimpleName(), "Trial Of The Guildsman");
-		addStartNpc(WAREHOUSE_KEEPER_VALKON);
-		addTalkId(WAREHOUSE_KEEPER_VALKON, WAREHOUSE_KEEPER_NORMAN, BLACKSMITH_ALTRAN, BLACKSMITH_PINTER, BLACKSMITH_DUNING);
-		addKillId(ANT, ANT_CAPTAIN, ANT_OVERSEER, GRANITE_GOLEM, MANDRAGORA_SPROUT1, MANDRAGORA_SAPLONG, MANDRAGORA_BLOSSOM, SILENOS, STRAIN, GHOUL, DEAD_SEEKER, MANDRAGORA_SPROUT2, BREKA_ORC, BREKA_ORC_ARCHER, BREKA_ORC_SHAMAN, BREKA_ORC_OVERLORD, BREKA_ORC_WARRIOR);
+		super(216);
+		bindStartNpc(WAREHOUSE_KEEPER_VALKON);
+		bindTalk(WAREHOUSE_KEEPER_VALKON, WAREHOUSE_KEEPER_NORMAN, BLACKSMITH_ALTRAN, BLACKSMITH_PINTER, BLACKSMITH_DUNING);
+		bindKill(ANT, ANT_CAPTAIN, ANT_OVERSEER, GRANITE_GOLEM, MANDRAGORA_SPROUT1, MANDRAGORA_SAPLONG, MANDRAGORA_BLOSSOM, SILENOS, STRAIN, GHOUL, DEAD_SEEKER, MANDRAGORA_SPROUT2, BREKA_ORC, BREKA_ORC_ARCHER, BREKA_ORC_SHAMAN, BREKA_ORC_OVERLORD, BREKA_ORC_WARRIOR);
 		registerQuestItems(RECIPE_JOURNEYMAN_RING, RECIPE_AMBER_BEAD, VALKONS_RECOMMENDATION, MANDRAGORA_BERRY, ALLTRANS_INSTRUCTIONS, ALLTRANS_1ST_RECOMMENDATION, ALLTRANS_2ND_RECOMMENDATION, NORMANS_INSTRUCTIONS, NORMANS_RECEIPT, DUNINGS_INSTRUCTIONS, DUNINGS_KEY, NORMANS_LIST, GRAY_BONE_POWDER
 			.getId(), GRANITE_WHETSTONE.getId(), RED_PIGMENT.getId(), BRAIDED_YARN.getId(), JOURNEYMAN_GEM, PINTERS_INSTRUCTIONS, AMBER_BEAD.getId(), AMBER_LUMP, JOURNEYMAN_DECO_BEADS, JOURNEYMAN_RING);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -239,7 +239,7 @@ public final class Q00216_TrialOfTheGuildsman extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		switch (npc.getId()) {
 			case ANT, ANT_CAPTAIN, ANT_OVERSEER -> {
 				final QuestState qs = getRandomPartyMemberState(killer, -1, 2, npc);
@@ -292,7 +292,6 @@ public final class Q00216_TrialOfTheGuildsman extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

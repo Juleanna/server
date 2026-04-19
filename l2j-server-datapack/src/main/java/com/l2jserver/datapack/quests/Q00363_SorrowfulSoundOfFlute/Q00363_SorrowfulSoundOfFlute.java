@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -47,14 +47,14 @@ public final class Q00363_SorrowfulSoundOfFlute extends Quest {
 	private static final int MIN_LEVEL = 15;
 	
 	public Q00363_SorrowfulSoundOfFlute() {
-		super(363, Q00363_SorrowfulSoundOfFlute.class.getSimpleName(), "Sorrowful Sound of Flute");
-		addStartNpc(NANARIN);
-		addTalkId(NANARIN, POITAN, RANSPO, ALDO, HOLVAS, OPIX, BARBADO);
+		super(363);
+		bindStartNpc(NANARIN);
+		bindTalk(NANARIN, POITAN, RANSPO, ALDO, HOLVAS, OPIX, BARBADO);
 		registerQuestItems(EVENT_CLOTHES, NANARINS_FLUTE, SABRINS_BLACK_BEER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

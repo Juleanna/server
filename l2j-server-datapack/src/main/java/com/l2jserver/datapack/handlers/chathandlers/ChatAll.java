@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -22,7 +22,9 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.Collection;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.handler.IChatHandler;
 import com.l2jserver.gameserver.handler.IVoicedCommandHandler;
@@ -37,7 +39,7 @@ import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
  * @author durgus
  */
 public class ChatAll implements IChatHandler {
-	private static Logger _log = Logger.getLogger(ChatAll.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(ChatAll.class);
 	
 	private static final int[] COMMAND_IDS = {
 		0
@@ -58,7 +60,7 @@ public class ChatAll implements IChatHandler {
 			} else {
 				command = text.substring(1);
 				if (general().debug()) {
-					_log.info("Command: " + command);
+					LOG.info("Command: {}", command);
 				}
 				vch = VoicedCommandHandler.getInstance().getHandler(command);
 			}
@@ -67,7 +69,7 @@ public class ChatAll implements IChatHandler {
 				vcd_used = true;
 			} else {
 				if (general().debug()) {
-					_log.warning("No handler registered for bypass '" + command + "'");
+					LOG.warn("No handler registered for bypass '{}'", command);
 				}
 				vcd_used = false;
 			}
@@ -78,9 +80,8 @@ public class ChatAll implements IChatHandler {
 				return;
 			}
 			
-			/**
-			 * Match the character "." literally (Exactly 1 time) Match any character that is NOT a . character. Between one and unlimited times as possible, giving back as needed (greedy)
-			 */
+			// Match the character "." literally (Exactly 1 time) Match any character that is NOT a . character.
+			// Between one and unlimited times as possible, giving back as needed (greedy).
 			if (text.matches("\\.{1}[^\\.]+")) {
 				activeChar.sendPacket(SystemMessageId.INCORRECT_SYNTAX);
 			} else {

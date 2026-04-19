@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -61,15 +61,15 @@ public class Q10272_LightFragment extends Quest {
 	};
 	
 	public Q10272_LightFragment() {
-		super(10272, Q10272_LightFragment.class.getSimpleName(), "Light Fragment");
-		addStartNpc(ORBYU);
-		addTalkId(ORBYU, ARTIUS, GINBY, LELRIKIA, LEKON);
-		addKillId(MOBS);
+		super(10272);
+		bindStartNpc(ORBYU);
+		bindTalk(ORBYU, ARTIUS, GINBY, LELRIKIA, LEKON);
+		bindKill(MOBS);
 		registerQuestItems(FRAGMENT_POWDER.getId(), LIGHT_FRAGMENT_POWDER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -121,12 +121,11 @@ public class Q10272_LightFragment extends Quest {
 	}
 	
 	@Override
-	public final String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public final void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && st.isCond(5)) {
 			giveItemRandomly(player, npc, FRAGMENT_POWDER, true);
 		}
-		return null;
 	}
 	
 	@Override

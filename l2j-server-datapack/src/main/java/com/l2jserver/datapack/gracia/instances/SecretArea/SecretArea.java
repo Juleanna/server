@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,10 +46,9 @@ public final class SecretArea extends Quest {
 	};
 	
 	public SecretArea() {
-		super(-1, SecretArea.class.getSimpleName(), "gracia/instances");
-		addStartNpc(GINBY);
-		addTalkId(GINBY);
-		addTalkId(LELRIKIA);
+		bindStartNpc(GINBY);
+		bindTalk(GINBY);
+		bindTalk(LELRIKIA);
 	}
 	
 	protected void enterInstance(L2PcInstance player) {
@@ -74,7 +73,7 @@ public final class SecretArea extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = getNoQuestMsg(player);
 		if ((npc.getId() == GINBY) && event.equalsIgnoreCase("enter")) {
 			enterInstance(player);

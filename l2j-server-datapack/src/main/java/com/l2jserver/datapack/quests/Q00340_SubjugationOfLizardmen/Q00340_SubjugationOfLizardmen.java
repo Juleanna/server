@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -61,15 +61,15 @@ public final class Q00340_SubjugationOfLizardmen extends Quest {
 	private static final int MIN_LEVEL = 17;
 	
 	public Q00340_SubjugationOfLizardmen() {
-		super(340, Q00340_SubjugationOfLizardmen.class.getSimpleName(), "Subjugation Of Lizardmen");
-		addStartNpc(GUARD_WEISZ);
-		addTalkId(GUARD_WEISZ, HIGH_PRIESTESS_LEVIAN, PRIEST_ADONIUS, CHEST_OF_BIFRONS);
-		addKillId(FELIM_LIZARDMAN, FELIM_LIZARDMAN_SCOUT, FELIM_LIZARDMAN_WARRIOR, LANGK_LIZARDMAN_WARRIOR, LANGK_LIZARDMAN_SCOUT, LANGK_LIZARDMAN, SERPENT_DEMON_BIFRONS);
+		super(340);
+		bindStartNpc(GUARD_WEISZ);
+		bindTalk(GUARD_WEISZ, HIGH_PRIESTESS_LEVIAN, PRIEST_ADONIUS, CHEST_OF_BIFRONS);
+		bindKill(FELIM_LIZARDMAN, FELIM_LIZARDMAN_SCOUT, FELIM_LIZARDMAN_WARRIOR, LANGK_LIZARDMAN_WARRIOR, LANGK_LIZARDMAN_SCOUT, LANGK_LIZARDMAN, SERPENT_DEMON_BIFRONS);
 		registerQuestItems(TRADE_CARGO.getId(), AGNESS_HOLY_SYMBOL, AGNESS_ROSARY, SINISTER_TOTEM);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -143,7 +143,7 @@ public final class Q00340_SubjugationOfLizardmen extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -177,7 +177,6 @@ public final class Q00340_SubjugationOfLizardmen extends Quest {
 				case SERPENT_DEMON_BIFRONS -> addSpawn(CHEST_OF_BIFRONS, npc, true, 30000);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

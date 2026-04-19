@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -118,16 +118,16 @@ public final class Q00219_TestimonyOfFate extends Quest {
 	private static final int MIN_LEVEL = 37;
 	
 	public Q00219_TestimonyOfFate() {
-		super(219, Q00219_TestimonyOfFate.class.getSimpleName(), "Testimony Of Fate");
-		addStartNpc(MAGISTER_KAIRA);
-		addTalkId(MAGISTER_KAIRA, MAGISTER_ROA, WAREHOUSE_KEEPER_NORMAN, TETRARCH_THIFIELL, ARKENIA, MASTER_IXIA, ALDERS_SPIRIT, BROTHER_METHEUS, BLOODY_PIXY, BLIGHT_TREANT);
-		addKillId(HANGMAN_TREE, MARSH_STAKATO, MEDUSA, TYRANT, TYRANT_KINGPIN, DEAD_SEEKER, MARSH_STAKATO_WORKER, MARSH_STAKATO_SOLDIER, MARSH_SPIDER, MARSH_STAKATO_DRONE, BREKA_ORC_OVERLORD, GRANDIS, LETO_LIZARDMAN_OVERLORD, KARUL_BUGBEAR, BLACK_WILLOW_LURKER);
+		super(219);
+		bindStartNpc(MAGISTER_KAIRA);
+		bindTalk(MAGISTER_KAIRA, MAGISTER_ROA, WAREHOUSE_KEEPER_NORMAN, TETRARCH_THIFIELL, ARKENIA, MASTER_IXIA, ALDERS_SPIRIT, BROTHER_METHEUS, BLOODY_PIXY, BLIGHT_TREANT);
+		bindKill(HANGMAN_TREE, MARSH_STAKATO, MEDUSA, TYRANT, TYRANT_KINGPIN, DEAD_SEEKER, MARSH_STAKATO_WORKER, MARSH_STAKATO_SOLDIER, MARSH_SPIDER, MARSH_STAKATO_DRONE, BREKA_ORC_OVERLORD, GRANDIS, LETO_LIZARDMAN_OVERLORD, KARUL_BUGBEAR, BLACK_WILLOW_LURKER);
 		registerQuestItems(KAIRAS_LETTER, METHEUSS_FUNERAL_JAR, KASANDRAS_REMAINS, HERBALISM_TEXTBOOK, IXIAS_LIST, MEDUSAS_ICHOR.getId(), MARSH_SPIDER_FLUIDS.getId(), DEAD_SEEKER_DUNG.getId(), TYRANTS_BLOOD.getId(), NIGHTSHADE_ROOT
 			.getId(), BELLADONNA, ALDERS_SKULL1, ALDERS_SKULL2, ALDERS_RECEIPT, REVELATIONS_MANUSCRIPT, KAIRAS_RECOMMENDATION, KAIRAS_INSTRUCTIONS, PALUS_CHARM, THIFIELLS_LETTER, ARKENIAS_NOTE, PIXY_GARNET, GRANDISS_SKULL, KARUL_BUGBEAR_SKULL, BREKA_OVERLORD_SKULL, LETO_OVERLORD_SKULL, RED_FAIRY_DUST, TIMIRIRAN_SEED, BLACK_WILLOW_LEAF, BLIGHT_TREANT_SAP, ARKENIAS_LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -212,7 +212,7 @@ public final class Q00219_TestimonyOfFate extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, qs.getPlayer(), true)) {
 			if ((DROPLIST.get(npc) != null) && hasQuestItems(qs.getPlayer(), DROPLIST.get(npc).requiredItems())) {
@@ -269,7 +269,6 @@ public final class Q00219_TestimonyOfFate extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

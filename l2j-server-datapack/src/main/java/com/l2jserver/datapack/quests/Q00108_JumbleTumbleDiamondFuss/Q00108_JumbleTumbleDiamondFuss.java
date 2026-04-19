@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,9 +18,11 @@
  */
 package com.l2jserver.datapack.quests.Q00108_JumbleTumbleDiamondFuss;
 
-import com.l2jserver.datapack.quests.Q00281_HeadForTheHills.Q00281_HeadForTheHills;
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.audio.Sound;
+import com.l2jserver.gameserver.enums.audio.Voice;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
@@ -29,6 +31,7 @@ import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestDroplist;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
+import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.gameserver.util.Util;
 
@@ -84,16 +87,21 @@ public final class Q00108_JumbleTumbleDiamondFuss extends Quest {
 	};
 	private static final int SILVERSMITH_HAMMER = 1511;
 	
+	private static final int GUIDE_MISSION = 41;
+	
+	private static final ItemHolder SPIRITSHOTS_NO_GRADE_FOR_ROOKIES = new ItemHolder(5790, 3000);
+	private static final ItemHolder SOULSHOTS_NO_GRADE_FOR_ROOKIES = new ItemHolder(5789, 7000);
+	
 	public Q00108_JumbleTumbleDiamondFuss() {
-		super(108, Q00108_JumbleTumbleDiamondFuss.class.getSimpleName(), "Jumble, Tumble, Diamond Fuss");
-		addStartNpc(COLLECTOR_GOUPH);
-		addTalkId(COLLECTOR_GOUPH, TRADER_REEP, CARRIER_TOROCCO, MINER_MARON, BLACKSMITH_BRUNON, WAREHOUSE_KEEPER_MURDOC, WAREHOUSE_KEEPER_AIRY);
-		addKillId(GOBLIN_BRIGAND_LEADER, GOBLIN_BRIGAND_LIEUTENANT, BLADE_BAT);
+		super(108);
+		bindStartNpc(COLLECTOR_GOUPH);
+		bindTalk(COLLECTOR_GOUPH, TRADER_REEP, CARRIER_TOROCCO, MINER_MARON, BLACKSMITH_BRUNON, WAREHOUSE_KEEPER_MURDOC, WAREHOUSE_KEEPER_AIRY);
+		bindKill(GOBLIN_BRIGAND_LEADER, GOBLIN_BRIGAND_LIEUTENANT, BLADE_BAT);
 		registerQuestItems(GOUPHS_CONTRACT, REEPS_CONTRACT, ELVEN_WINE, BRUNONS_DICE, BRUNONS_CONTRACT, AQUAMARINE.getId(), CHRYSOBERYL.getId(), GEM_BOX, COAL_PIECE, BRUNONS_LETTER, BERRY_TART, BAT_DIAGRAM, STAR_DIAMOND.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -185,7 +193,27 @@ public final class Q00108_JumbleTumbleDiamondFuss extends Quest {
 							}
 							case 12: {
 								if (st.hasQuestItems(STAR_DIAMOND.getId())) {
-									Q00281_HeadForTheHills.giveNewbieReward(talker);
+									giveNewbieReward(talker);
+									
+									// Newbie Guide
+									final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+									if (newbieGuide != null) {
+										final var newbieGuideQs = newbieGuide.getQuestState(talker, true);
+										if (!newbieGuideQs.haveNRMemo(talker, GUIDE_MISSION)) {
+											newbieGuideQs.setNRMemo(talker, GUIDE_MISSION);
+											newbieGuideQs.setNRMemoState(talker, GUIDE_MISSION, 100000);
+											
+											showOnScreenMsg(talker, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+										} else {
+											if (((newbieGuideQs.getNRMemoState(talker, GUIDE_MISSION) % 1000000) / 100000) != 1) {
+												newbieGuideQs.setNRMemo(talker, GUIDE_MISSION);
+												newbieGuideQs.setNRMemoState(talker, GUIDE_MISSION, newbieGuideQs.getNRMemoState(talker, GUIDE_MISSION) + 100000);
+												
+												showOnScreenMsg(talker, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+											}
+										}
+									}
+									
 									st.addExpAndSp(34565, 2962);
 									st.giveAdena(14666, true);
 									for (ItemHolder reward : REWARDS) {
@@ -407,7 +435,7 @@ public final class Q00108_JumbleTumbleDiamondFuss extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && Util.checkIfInRange(1500, npc, st.getPlayer(), true)) {
 			switch (npc.getId()) {
@@ -446,6 +474,21 @@ public final class Q00108_JumbleTumbleDiamondFuss extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
+	}
+	
+	/**
+	 * Give basic newbie reward.
+	 * @param player the player to reward
+	 */
+	private static void giveNewbieReward(L2PcInstance player) {
+		if (player.getLevel() < 25) {
+			if (player.isMageClass()) {
+				giveItems(player, SPIRITSHOTS_NO_GRADE_FOR_ROOKIES);
+				playSound(player, Voice.TUTORIAL_VOICE_027_1000);
+			} else {
+				giveItems(player, SOULSHOTS_NO_GRADE_FOR_ROOKIES);
+				playSound(player, Voice.TUTORIAL_VOICE_026_1000);
+			}
+		}
 	}
 }

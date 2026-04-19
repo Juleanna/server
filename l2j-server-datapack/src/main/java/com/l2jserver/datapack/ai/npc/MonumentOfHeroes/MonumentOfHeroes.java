@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -56,13 +56,12 @@ public final class MonumentOfHeroes extends AbstractNpcAI {
 	};
 	
 	public MonumentOfHeroes() {
-		super(MonumentOfHeroes.class.getSimpleName(), "ai/npc");
-		addStartNpc(MONUMENTS);
-		addTalkId(MONUMENTS);
+		bindStartNpc(MONUMENTS);
+		bindTalk(MONUMENTS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "HeroWeapon": {
 				if (player.isHero()) {
@@ -90,6 +89,6 @@ public final class MonumentOfHeroes extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

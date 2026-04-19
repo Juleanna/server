@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,14 +38,13 @@ public final class Bernarde extends AbstractNpcAI {
 	private static final int TREASURE = 9684;
 	
 	public Bernarde() {
-		super(Bernarde.class.getSimpleName(), "hellbound/AI/NPC");
-		addFirstTalkId(BERNARDE);
-		addStartNpc(BERNARDE);
-		addTalkId(BERNARDE);
+		bindFirstTalk(BERNARDE);
+		bindStartNpc(BERNARDE);
+		bindTalk(BERNARDE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "HolyWater": {
 				if (HellboundEngine.getInstance().getLevel() == 2) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,13 +38,13 @@ public class Q00020_BringUpWithLove extends Quest {
 	private static final int MIN_LEVEL = 82;
 	
 	public Q00020_BringUpWithLove() {
-		super(20, Q00020_BringUpWithLove.class.getSimpleName(), "Bring Up With Love");
-		addStartNpc(TUNATUN);
-		addTalkId(TUNATUN);
+		super(20);
+		bindStartNpc(TUNATUN);
+		bindTalk(TUNATUN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,7 +43,9 @@ import com.l2jserver.gameserver.util.Broadcast;
  * @since 2.6.0.0
  */
 public class Unstuck implements IUserCommandHandler {
-	private static final long FIVE_MINUTES = MINUTES.toSeconds(5);
+	
+	private static final long TWO_MINUTES = MINUTES.toMillis(2);
+	private static final long FIVE_MINUTES = MINUTES.toMillis(5);
 	
 	private static final SkillHolder ESCAPE_5_MINUTES = new SkillHolder(2099);
 	
@@ -77,7 +79,7 @@ public class Unstuck implements IUserCommandHandler {
 			return false;
 		}
 		
-		final int unstuckTimer = (activeChar.isGM() ? 1000 : character().getUnstuckInterval());
+		final int unstuckTimer = (activeChar.isGM() ? 1000 : (int) character().getUnstuckInterval());
 		activeChar.forceIsCasting(GameTimeController.getInstance().getGameTicks() + (unstuckTimer / MILLIS_IN_TICK));
 		
 		if (activeChar.isGM()) {
@@ -90,7 +92,8 @@ public class Unstuck implements IUserCommandHandler {
 			return true;
 		}
 		
-		if (MILLISECONDS.toSeconds(character().getUnstuckInterval()) > 100) {
+		// TODO(Zoey76): Find official-like messages.
+		if (character().getUnstuckInterval() > TWO_MINUTES) {
 			activeChar.sendMessage("You use Escape: " + MILLISECONDS.toMinutes(character().getUnstuckInterval()) + " minutes.");
 		} else {
 			activeChar.sendMessage("You use Escape: " + MILLISECONDS.toSeconds(character().getUnstuckInterval()) + " seconds.");

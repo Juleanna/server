@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,14 +40,14 @@ public class Q00027_ChestCaughtWithABaitOfWind extends Quest {
 	private static final int BLACK_PEARL_RING = 880;
 	
 	public Q00027_ChestCaughtWithABaitOfWind() {
-		super(27, Q00027_ChestCaughtWithABaitOfWind.class.getSimpleName(), "Chest Caught With A Bait Of Wind");
-		addStartNpc(LANOSCO);
-		addTalkId(LANOSCO, SHALING);
+		super(27);
+		bindStartNpc(LANOSCO);
+		bindTalk(LANOSCO, SHALING);
 		registerQuestItems(STRANGE_BLUESPRINT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

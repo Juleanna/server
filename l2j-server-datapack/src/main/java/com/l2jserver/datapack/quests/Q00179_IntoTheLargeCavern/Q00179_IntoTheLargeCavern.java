@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,13 +40,13 @@ public class Q00179_IntoTheLargeCavern extends Quest {
 	private static final int MAX_LEVEL = 21;
 	
 	public Q00179_IntoTheLargeCavern() {
-		super(179, Q00179_IntoTheLargeCavern.class.getSimpleName(), "Into The Large Cavern");
-		addStartNpc(KEKROPUS);
-		addTalkId(KEKROPUS, MENACING_MACHINE);
+		super(179);
+		bindStartNpc(KEKROPUS);
+		bindTalk(KEKROPUS, MENACING_MACHINE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

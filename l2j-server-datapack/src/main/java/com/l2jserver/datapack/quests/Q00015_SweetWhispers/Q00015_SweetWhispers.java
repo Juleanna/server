@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -36,13 +36,13 @@ public class Q00015_SweetWhispers extends Quest {
 	private static final int M_NECROMANCER = 31518;
 	
 	public Q00015_SweetWhispers() {
-		super(15, Q00015_SweetWhispers.class.getSimpleName(), "Sweet Whispers");
-		addStartNpc(VLADIMIR);
-		addTalkId(VLADIMIR, HIERARCH, M_NECROMANCER);
+		super(15);
+		bindStartNpc(VLADIMIR);
+		bindTalk(VLADIMIR, HIERARCH, M_NECROMANCER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

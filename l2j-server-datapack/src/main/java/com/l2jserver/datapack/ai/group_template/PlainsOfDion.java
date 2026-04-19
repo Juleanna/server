@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,12 +53,11 @@ public final class PlainsOfDion extends AbstractNpcAI {
 	};
 	
 	public PlainsOfDion() {
-		super(PlainsOfDion.class.getSimpleName(), "ai/group_template");
-		addAttackId(DELU_LIZARDMEN);
+		bindAttack(DELU_LIZARDMEN);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
 		if (npc.isScriptValue(0)) {
 			final int i = getRandom(5);
 			if (i < 2) {
@@ -76,6 +75,5 @@ public final class PlainsOfDion extends AbstractNpcAI {
 			}
 			npc.setScriptValue(1);
 		}
-		return super.onAttack(npc, player, damage, isSummon);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -23,11 +23,11 @@ import java.util.List;
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.gameserver.instancemanager.WalkingManager;
 import com.l2jserver.gameserver.model.L2Object;
-import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.NpcStringId;
@@ -51,17 +51,16 @@ public class Knoriks extends AbstractNpcAI {
 	private static int SpawnCount = 0;
 	
 	public Knoriks() {
-		super(Knoriks.class.getSimpleName(), "ai/individual");
-		addAggroRangeEnterId(KNORIKS);
-		addSkillSeeId(KNORIKS);
-		addTeleportId(KNORIKS);
-		addAttackId(KNORIKS);
-		addSpawnId(KNORIKS);
+		bindAggroRangeEnter(KNORIKS);
+		bindSkillSee(KNORIKS);
+		bindTeleport(KNORIKS);
+		bindAttack(KNORIKS);
+		bindSpawn(KNORIKS);
 		startQuestTimer("KNORIKS_SPAWN", 1800000, null, null);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "CORE_AI": {
 				if (npc != null) {
@@ -86,11 +85,11 @@ public class Knoriks extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		final L2Character mostHated = ((L2Attackable) npc).getMostHated();
 		if ((mostHated != null) && (npc.isInsideRadius(attacker, 250, false, false))) {
 			if ((getRandom(100) < 10) && (!npc.isCastingNow())) {
@@ -110,33 +109,30 @@ public class Knoriks extends AbstractNpcAI {
 			npc.disableCoreAI(true);
 			npc.teleToLocation(npc.getSpawn().getLocation());
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if ((getRandom(100) < 10) && (!npc.isCastingNow()) && (!npc.isInsideRadius(player, 250, false, false))) {
 			addSkillCastDesire(npc, player, DARK_WIND, 1000000L);
 		}
-		return super.onSkillSee(npc, player, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
-		final L2Spawn spawn = npc.getSpawn();
+	public void onSpawn(L2Npc npc) {
+		final var spawn = npc.getSpawn();
 		spawn.setAmount(1);
 		spawn.setRespawnDelay(1800);
 		spawn.startRespawn();
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onAggroRangeEnter(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onAggroRangeEnter(AttackableAggroRangeEnter event) {
+		final var npc = event.npc();
 		if ((getRandom(100) < 50) && (!npc.getVariables().getBoolean(SHOUT_FLAG, false))) {
 			npc.getVariables().set(SHOUT_FLAG, true);
 			broadcastNpcSay(npc, Say2.NPC_SHOUT, NpcStringId.WHOS_THERE_IF_YOU_DISTURB_THE_TEMPER_OF_THE_GREAT_LAND_DRAGON_ANTHARAS_I_WILL_NEVER_FORGIVE_YOU);
 		}
-		return super.onAggroRangeEnter(npc, player, isSummon);
 	}
 	
 	@Override

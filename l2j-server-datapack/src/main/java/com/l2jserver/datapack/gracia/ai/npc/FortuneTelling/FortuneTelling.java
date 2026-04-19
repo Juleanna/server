@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -35,9 +35,8 @@ public class FortuneTelling extends AbstractNpcAI {
 	private static final int COST = 1000;
 	
 	public FortuneTelling() {
-		super(FortuneTelling.class.getSimpleName(), "gracia/AI/NPC");
-		addStartNpc(MINE);
-		addTalkId(MINE);
+		bindStartNpc(MINE);
+		bindTalk(MINE);
 	}
 	
 	@Override

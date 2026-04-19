@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,14 +46,14 @@ public class Q00510_AClansPrestige extends Quest {
 	};
 	
 	public Q00510_AClansPrestige() {
-		super(510, Q00510_AClansPrestige.class.getSimpleName(), "A Clan's Prestige");
-		addStartNpc(VALDIS);
-		addTalkId(VALDIS);
-		addKillId(MOBS);
+		super(510);
+		bindStartNpc(VALDIS);
+		bindTalk(VALDIS);
+		bindKill(MOBS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -71,9 +71,9 @@ public class Q00510_AClansPrestige extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		if (player.getClan() == null) {
-			return null;
+			return;
 		}
 		
 		QuestState st = null;
@@ -90,7 +90,6 @@ public class Q00510_AClansPrestige extends Quest {
 			st.rewardItems(TYRANNOSAURUS_CLAW, 1);
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
-		return null;
 	}
 	
 	@Override

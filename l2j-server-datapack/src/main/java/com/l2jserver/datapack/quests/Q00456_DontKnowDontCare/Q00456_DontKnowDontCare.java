@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -132,12 +132,12 @@ public final class Q00456_DontKnowDontCare extends Quest {
 	private final Map<Integer, Set<Integer>> allowedPlayerMap = new ConcurrentHashMap<>();
 	
 	public Q00456_DontKnowDontCare() {
-		super(456, Q00456_DontKnowDontCare.class.getSimpleName(), "Don't Know, Don't Care");
-		addStartNpc(SEPARATED_SOUL);
-		addTalkId(SEPARATED_SOUL);
-		addFirstTalkId(DRAKE_LORD_CORPSE, BEHEMOTH_LEADER_CORPSE, DRAGON_BEAST_CORPSE);
-		addTalkId(DRAKE_LORD_CORPSE, BEHEMOTH_LEADER_CORPSE, DRAGON_BEAST_CORPSE);
-		addKillId(MONSTER_NPCS.keySet());
+		super(456);
+		bindStartNpc(SEPARATED_SOUL);
+		bindTalk(SEPARATED_SOUL);
+		bindFirstTalk(DRAKE_LORD_CORPSE, BEHEMOTH_LEADER_CORPSE, DRAGON_BEAST_CORPSE);
+		bindTalk(DRAKE_LORD_CORPSE, BEHEMOTH_LEADER_CORPSE, DRAGON_BEAST_CORPSE);
+		bindKill(MONSTER_NPCS.keySet());
 		registerQuestItems(DRAKE_LORD_ESSENCE, BEHEMOTH_LEADER_ESSENCE, DRAGON_BEAST_ESSENCE);
 	}
 	
@@ -207,7 +207,7 @@ public final class Q00456_DontKnowDontCare extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = player != null ? getQuestState(player, false) : null;
 		String htmltext = null;
 		switch (event) {
@@ -237,16 +237,15 @@ public final class Q00456_DontKnowDontCare extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (!killer.isInParty() || !killer.getParty().isInCommandChannel()) {
 			// only the killing cc gets the quest
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		final L2CommandChannel cc = killer.getParty().getCommandChannel();
-		
 		if (cc.getMemberCount() < MIN_PLAYERS) {
-			return super.onKill(npc, killer, isSummon);
+			return;
 		}
 		
 		Set<Integer> allowedPlayers = new HashSet<>();
@@ -272,8 +271,6 @@ public final class Q00456_DontKnowDontCare extends Quest {
 			allowedPlayerMap.put(spawned.getObjectId(), allowedPlayers);
 			startQuestTimer(TIMER_UNSPAWN_RAID_CORPSE, 300000, npc, null);
 		}
-		
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private static void rewardPlayer(L2PcInstance player, L2Npc npc) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,9 +18,11 @@
  */
 package com.l2jserver.datapack.ai.group_template;
 
+import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -38,18 +40,23 @@ public final class LairOfAntharas extends AbstractNpcAI {
 	
 	final private static int DRAGON_GUARD = 22852;
 	final private static int DRAGON_MAGE = 22853;
+	
+	private static final int DRAKE_LEADER = 22848;
+	private static final int DRAKE_WARRIOR = 22849;
+	private static final int DRAKE_SCOUT = 22850;
+	private static final int DRAKE_MAGE = 22851;
+	
 	// Misc
 	final private static int KNIGHT_CHANCE = 30;
 	
 	public LairOfAntharas() {
-		super(LairOfAntharas.class.getSimpleName(), "ai/group_template");
-		addKillId(DRAGON_KNIGHT, DRAGON_KNIGHT2, DRAGON_GUARD, DRAGON_MAGE);
-		addSpawnId(DRAGON_KNIGHT, DRAGON_KNIGHT2, DRAGON_GUARD, DRAGON_MAGE);
-		addMoveFinishedId(DRAGON_GUARD, DRAGON_MAGE);
+		bindKill(DRAGON_KNIGHT, DRAGON_KNIGHT2, DRAGON_GUARD, DRAGON_MAGE);
+		bindSpawn(DRAGON_KNIGHT, DRAGON_KNIGHT2, DRAGON_GUARD, DRAGON_MAGE, DRAKE_LEADER);
+		bindMoveFinished(DRAGON_GUARD, DRAGON_MAGE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equals("CHECK_HOME") && (npc != null) && !npc.isDead()) {
 			if ((npc.calculateDistance(npc.getSpawn().getLocation(), false, false) > 10) && !npc.isInCombat()) {
 				((L2Attackable) npc).returnHome();
@@ -58,11 +65,11 @@ public final class LairOfAntharas extends AbstractNpcAI {
 				npc.broadcastPacket(new ValidateLocation(npc));
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		switch (npc.getId()) {
 			case DRAGON_KNIGHT: {
 				if (getRandom(100) > KNIGHT_CHANCE) {
@@ -88,17 +95,24 @@ public final class LairOfAntharas extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		final L2Attackable mob = (L2Attackable) npc;
 		mob.setOnKillDelay(0);
 		if ((npc.getId() == DRAGON_GUARD) || (npc.getId() == DRAGON_MAGE)) {
 			mob.setIsNoRndWalk(true);
 			startQuestTimer("CHECK_HOME", 10000, npc, null, true);
+		} else if (npc.getId() == DRAKE_LEADER && npc instanceof L2MonsterInstance master) {
+			for (int i = 0; i < 4; i++) {
+				final var minionType = Rnd.get(3);
+				switch (minionType) {
+					case 0 -> addMinion(master, DRAKE_WARRIOR);
+					case 1 -> addMinion(master, DRAKE_SCOUT);
+					case 2 -> addMinion(master, DRAKE_MAGE);
+				}
+			}
 		}
-		return super.onSpawn(npc);
 	}
 }

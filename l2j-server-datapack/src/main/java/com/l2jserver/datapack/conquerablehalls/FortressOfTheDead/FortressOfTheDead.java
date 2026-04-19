@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -44,20 +44,20 @@ public final class FortressOfTheDead extends ClanHallSiegeEngine {
 	private static Map<Integer, Integer> _damageToLidia = new HashMap<>();
 	
 	public FortressOfTheDead() {
-		super(FortressOfTheDead.class.getSimpleName(), "conquerablehalls", FORTRESS_OF_DEAD);
-		addKillId(LIDIA);
-		addKillId(ALFRED);
-		addKillId(GISELLE);
+		super(FORTRESS_OF_DEAD);
+		bindKill(LIDIA);
+		bindKill(ALFRED);
+		bindKill(GISELLE);
 		
-		addSpawnId(LIDIA);
-		addSpawnId(ALFRED);
-		addSpawnId(GISELLE);
+		bindSpawn(LIDIA);
+		bindSpawn(ALFRED);
+		bindSpawn(GISELLE);
 		
-		addAttackId(LIDIA);
+		bindAttack(LIDIA);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (npc.getId() == LIDIA) {
 			broadcastNpcSay(npc, Say2.NPC_SHOUT, NpcStringId.HMM_THOSE_WHO_ARE_NOT_OF_THE_BLOODLINE_ARE_COMING_THIS_WAY_TO_TAKE_OVER_THE_CASTLE_HUMPH_THE_BITTER_GRUDGES_OF_THE_DEAD_YOU_MUST_NOT_MAKE_LIGHT_OF_THEIR_POWER);
 		} else if (npc.getId() == ALFRED) {
@@ -65,13 +65,12 @@ public final class FortressOfTheDead extends ClanHallSiegeEngine {
 		} else if (npc.getId() == GISELLE) {
 			broadcastNpcSay(npc, Say2.NPC_SHOUT, NpcStringId.ARISE_MY_FAITHFUL_SERVANTS_YOU_MY_PEOPLE_WHO_HAVE_INHERITED_THE_BLOOD_IT_IS_THE_CALLING_OF_MY_DAUGHTER_THE_FEAST_OF_BLOOD_WILL_NOW_BEGIN);
 		}
-		return null;
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (!_hall.isInSiege()) {
-			return null;
+			return;
 		}
 		
 		synchronized (this) {
@@ -88,13 +87,12 @@ public final class FortressOfTheDead extends ClanHallSiegeEngine {
 				}
 			}
 		}
-		return null;
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (!_hall.isInSiege()) {
-			return null;
+			return;
 		}
 		
 		final int npcId = npc.getId();
@@ -110,8 +108,6 @@ public final class FortressOfTheDead extends ClanHallSiegeEngine {
 				endSiege();
 			}
 		}
-		
-		return null;
 	}
 	
 	@Override

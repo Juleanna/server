@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -78,18 +78,17 @@ public class SeedOfAnnihilation extends AbstractNpcAI {
 	}
 	
 	public SeedOfAnnihilation() {
-		super(SeedOfAnnihilation.class.getSimpleName(), "gracia/AI");
 		loadSeedRegionData();
 		for (int i : TELEPORT_ZONES.keySet()) {
-			addEnterZoneId(i);
+			bindEnterZone(i);
 		}
 		for (SeedRegion element : _regionsData) {
 			for (int elite_mob_id : element.elite_mob_ids) {
-				addSpawnId(elite_mob_id);
+				bindSpawn(elite_mob_id);
 			}
 		}
-		addStartNpc(32739);
-		addTalkId(32739);
+		bindStartNpc(32739);
+		bindTalk(32739);
 		startEffectZonesControl();
 	}
 	
@@ -259,17 +258,16 @@ public class SeedOfAnnihilation extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		for (SeedRegion element : _regionsData) {
 			if (Util.contains(element.elite_mob_ids, npc.getId())) {
 				spawnGroupOfMinion((L2MonsterInstance) npc, element.minion_lists[getRandom(element.minion_lists.length)]);
 			}
 		}
-		return super.onSpawn(npc);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equalsIgnoreCase("ChangeSeedsStatus")) {
 			int buffsNow = getRandom(ZONE_BUFFS_LIST.length);
 			saveGlobalQuestVar("SeedBuffsList", String.valueOf(buffsNow));
@@ -301,12 +299,11 @@ public class SeedOfAnnihilation extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onEnterZone(L2Character character, L2ZoneType zone) {
+	public void onEnterZone(L2Character character, L2ZoneType zone) {
 		if (TELEPORT_ZONES.containsKey(zone.getId())) {
 			Location teleLoc = TELEPORT_ZONES.get(zone.getId());
 			character.teleToLocation(teleLoc, false);
 		}
-		return super.onEnterZone(character, zone);
 	}
 	
 	private static class SeedRegion {

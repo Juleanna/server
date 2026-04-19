@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -55,17 +55,17 @@ public final class Q10292_SevenSignsGirlOfDoubt extends Quest {
 	private static final int CREATURE_OF_THE_DUSK2 = 27424;
 	
 	public Q10292_SevenSignsGirlOfDoubt() {
-		super(10292, Q10292_SevenSignsGirlOfDoubt.class.getSimpleName(), "Seven Signs, Girl of Doubt");
-		addStartNpc(WOOD);
-		addSpawnId(ELCADIA);
-		addTalkId(WOOD, FRANZ, ELCADIA, HARDIN);
-		addKillId(DROPLIST.getNpcIds());
-		addKillId(CREATURE_OF_THE_DUSK1, CREATURE_OF_THE_DUSK2);
+		super(10292);
+		bindStartNpc(WOOD);
+		bindSpawn(ELCADIA);
+		bindTalk(WOOD, FRANZ, ELCADIA, HARDIN);
+		bindKill(DROPLIST.getNpcIds());
+		bindKill(CREATURE_OF_THE_DUSK1, CREATURE_OF_THE_DUSK2);
 		registerQuestItems(ELCADIAS_MARK.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -165,7 +165,7 @@ public final class Q10292_SevenSignsGirlOfDoubt extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getRandomPartyMemberState(player, -1, 3, npc);
 		if (st != null) {
 			QuestDropInfo markDropInfo = DROPLIST.get(npc);
@@ -180,13 +180,11 @@ public final class Q10292_SevenSignsGirlOfDoubt extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		npc.getVariables().set(I_QUEST1, false);
-		return super.onSpawn(npc);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -64,8 +64,8 @@ public abstract class AbstractSagaQuest extends Quest {
 	};
 	// @formatter:on
 	
-	public AbstractSagaQuest(int questId, String name, String descr) {
-		super(questId, name, descr);
+	protected AbstractSagaQuest(int id) {
+		super(id);
 	}
 	
 	private QuestState findQuest(L2PcInstance player) {
@@ -134,7 +134,7 @@ public abstract class AbstractSagaQuest extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -386,7 +386,7 @@ public abstract class AbstractSagaQuest extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance player, int damage, boolean isSummon) {
 		QuestState st2 = findRightState(npc);
 		if (st2 != null) {
 			int cond = st2.getCond();
@@ -416,7 +416,6 @@ public abstract class AbstractSagaQuest extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, player, damage, isSummon);
 	}
 	
 	@Override
@@ -468,7 +467,7 @@ public abstract class AbstractSagaQuest extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		int npcId = npc.getId();
 		QuestState st = getQuestState(player, false);
 		for (int Archon_Minion = 21646; Archon_Minion < 21652; Archon_Minion++) {
@@ -496,7 +495,7 @@ public abstract class AbstractSagaQuest extends Quest {
 						}
 					}
 				}
-				return super.onKill(npc, player, isSummon);
+				return;
 			}
 		}
 		
@@ -519,7 +518,7 @@ public abstract class AbstractSagaQuest extends Quest {
 						st1.setCond(16, true);
 					}
 				}
-				return super.onKill(npc, player, isSummon);
+				return;
 			}
 		}
 		
@@ -535,7 +534,7 @@ public abstract class AbstractSagaQuest extends Quest {
 						st.setCond(7, true);
 					}
 				}
-				return super.onKill(npc, player, isSummon);
+				return;
 			}
 		}
 		if ((st != null) && (npcId != _mob[2])) {
@@ -584,22 +583,21 @@ public abstract class AbstractSagaQuest extends Quest {
 				DeleteSpawn(st, npc);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance player, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if (SPAWN_LIST.containsKey(npc) && (SPAWN_LIST.get(npc) != player.getObjectId())) {
 			L2PcInstance quest_player = (L2PcInstance) L2World.getInstance().findObject(SPAWN_LIST.get(npc));
 			if (quest_player == null) {
-				return null;
+				return;
 			}
 			
 			for (L2Object obj : targets) {
 				if ((obj == quest_player) || (obj == npc)) {
 					QuestState st2 = findRightState(npc);
 					if (st2 == null) {
-						return null;
+						return;
 					}
 					autoChat(npc, _text[5].replace("PLAYERNAME", player.getName()));
 					cancelQuestTimer("Archon Hellisha has despawned", npc, st2.getPlayer());
@@ -608,7 +606,6 @@ public abstract class AbstractSagaQuest extends Quest {
 				}
 			}
 		}
-		return super.onSkillSee(npc, player, skill, targets, isSummon);
 	}
 	
 	@Override
@@ -778,18 +775,18 @@ public abstract class AbstractSagaQuest extends Quest {
 	}
 	
 	public void registerNPCs() {
-		addStartNpc(_npc[0]);
-		addAttackId(_mob[2], _mob[1]);
-		addSkillSeeId(_mob[1]);
-		addFirstTalkId(_npc[4]);
-		addTalkId(_npc);
-		addKillId(_mob);
+		bindStartNpc(_npc[0]);
+		bindAttack(_mob[2], _mob[1]);
+		bindSkillSee(_mob[1]);
+		bindFirstTalk(_npc[4]);
+		bindTalk(_npc);
+		bindKill(_mob);
 		final int[] questItemIds = _items.clone();
 		questItemIds[0] = 0;
 		questItemIds[2] = 0; // remove Ice Crystal and Divine Stone of Wisdom
 		registerQuestItems(questItemIds);
 		for (int Archon_Minion = 21646; Archon_Minion < 21652; Archon_Minion++) {
-			addKillId(Archon_Minion);
+			bindKill(Archon_Minion);
 		}
 		int[] Archon_Hellisha_Norm = {
 			18212,
@@ -798,9 +795,9 @@ public abstract class AbstractSagaQuest extends Quest {
 			18216,
 			18218
 		};
-		addKillId(Archon_Hellisha_Norm);
+		bindKill(Archon_Hellisha_Norm);
 		for (int Guardian_Angel = 27214; Guardian_Angel < 27217; Guardian_Angel++) {
-			addKillId(Guardian_Angel);
+			bindKill(Guardian_Angel);
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -55,15 +55,14 @@ public final class CharacterBirthday extends Quest {
 	};
 	
 	private CharacterBirthday() {
-		super(-1, CharacterBirthday.class.getSimpleName(), "events");
-		addStartNpc(ALEGRIA);
-		addStartNpc(GK);
-		addTalkId(ALEGRIA);
-		addTalkId(GK);
+		bindStartNpc(ALEGRIA);
+		bindStartNpc(GK);
+		bindTalk(ALEGRIA);
+		bindTalk(GK);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		if (event.equalsIgnoreCase("despawn_npc")) {
 			npc.doDie(player);

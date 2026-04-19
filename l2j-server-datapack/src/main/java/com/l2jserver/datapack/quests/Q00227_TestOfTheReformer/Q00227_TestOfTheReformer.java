@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -104,17 +104,17 @@ public final class Q00227_TestOfTheReformer extends Quest {
 	private static final int MIN_LEVEL = 39;
 	
 	public Q00227_TestOfTheReformer() {
-		super(227, Q00227_TestOfTheReformer.class.getSimpleName(), "Test Of The Reformer");
-		addStartNpc(PRIESTESS_PUPINA);
-		addTalkId(PRIESTESS_PUPINA, PREACHER_SLA, RAMUS, KATARI, KAKAN, NYAKURI, OL_MAHUM_PILGRIM);
-		addAttackId(NAMELESS_REVENANT, CRIMSON_WEREWOLF);
-		addKillId(MISERY_SKELETON, SKELETON_ARCHER, SKELETON_MARKSMAN, SKELETON_LORD, SILENT_HORROR, NAMELESS_REVENANT, ARURAUNE, OL_MAHUM_INSPECTOR, OL_MAHUM_BETRAYER, CRIMSON_WEREWOLF, KRUDEL_LIZARDMAN);
-		addSpawnId(OL_MAHUM_PILGRIM, OL_MAHUM_INSPECTOR, OL_MAHUM_BETRAYER, CRIMSON_WEREWOLF, KRUDEL_LIZARDMAN);
+		super(227);
+		bindStartNpc(PRIESTESS_PUPINA);
+		bindTalk(PRIESTESS_PUPINA, PREACHER_SLA, RAMUS, KATARI, KAKAN, NYAKURI, OL_MAHUM_PILGRIM);
+		bindAttack(NAMELESS_REVENANT, CRIMSON_WEREWOLF);
+		bindKill(MISERY_SKELETON, SKELETON_ARCHER, SKELETON_MARKSMAN, SKELETON_LORD, SILENT_HORROR, NAMELESS_REVENANT, ARURAUNE, OL_MAHUM_INSPECTOR, OL_MAHUM_BETRAYER, CRIMSON_WEREWOLF, KRUDEL_LIZARDMAN);
+		bindSpawn(OL_MAHUM_PILGRIM, OL_MAHUM_INSPECTOR, OL_MAHUM_BETRAYER, CRIMSON_WEREWOLF, KRUDEL_LIZARDMAN);
 		registerQuestItems(BOOK_OF_REFORM, LETTER_OF_INTRODUCTION, SLAS_LETTER, GREETINGS, Ol_MAHUM_MONEY, KATARIS_LETTER, NYAKURIS_LETTER, UNDEAD_LIST, RAMUSS_LETTER, RAMUSS_LETTER, RIPPED_DIARY, HUGE_NAIL, LETTER_OF_BETRAYER, BONE_FRAGMENT4, BONE_FRAGMENT5, BONE_FRAGMENT6, BONE_FRAGMENT7, BONE_FRAGMENT8, KAKANS_LETTER, LETTER_GREETINGS1, LETTER_GREETINGS2);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ("DESPAWN".equals(event)) {
 			final int SPAWNED = npc.getVariables().getInt("SPAWNED", 0);
 			if (SPAWNED < 60) {
@@ -122,7 +122,7 @@ public final class Q00227_TestOfTheReformer extends Quest {
 			} else {
 				npc.deleteMe();
 			}
-			return super.onAdvEvent(event, npc, player);
+			return super.onEvent(event, npc, player);
 		}
 		
 		final QuestState qs = getQuestState(player, false);
@@ -202,7 +202,7 @@ public final class Q00227_TestOfTheReformer extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		final QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isStarted()) {
 			switch (npc.getId()) {
@@ -228,11 +228,10 @@ public final class Q00227_TestOfTheReformer extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -346,7 +345,6 @@ public final class Q00227_TestOfTheReformer extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -531,7 +529,7 @@ public final class Q00227_TestOfTheReformer extends Quest {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		switch (npc.getId()) {
 			case OL_MAHUM_INSPECTOR:
 			case CRIMSON_WEREWOLF:
@@ -549,6 +547,5 @@ public final class Q00227_TestOfTheReformer extends Quest {
 				break;
 			}
 		}
-		return super.onSpawn(npc);
 	}
 }

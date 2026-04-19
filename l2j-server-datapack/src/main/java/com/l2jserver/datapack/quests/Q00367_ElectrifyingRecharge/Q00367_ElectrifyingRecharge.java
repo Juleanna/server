@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -48,15 +48,15 @@ public final class Q00367_ElectrifyingRecharge extends Quest {
 	private static final Skill NPC_THUNDER_STORM = new SkillHolder(4072, 4).getSkill();
 	
 	public Q00367_ElectrifyingRecharge() {
-		super(367, Q00367_ElectrifyingRecharge.class.getSimpleName(), "Electrifying Recharge!");
-		addStartNpc(LORAIN);
-		addTalkId(LORAIN);
-		addAttackId(CATHEROK);
+		super(367);
+		bindStartNpc(LORAIN);
+		bindTalk(LORAIN);
+		bindAttack(CATHEROK);
 		registerQuestItems(TITAN_LAMP1, TITAN_LAMP2, TITAN_LAMP3, TITAN_LAMP4, TITAN_LAMP5, BROKEN_TITAN_LAMP);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -84,14 +84,14 @@ public final class Q00367_ElectrifyingRecharge extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.isScriptValue(367)) {
-			return super.onAttack(npc, attacker, damage, isSummon);
+			return;
 		}
 		
 		QuestState qs = getQuestState(attacker, false);
 		if ((qs == null) || !qs.isStarted()) {
-			return super.onAttack(npc, attacker, damage, isSummon);
+			return;
 		}
 		
 		npc.setScriptValue(367);
@@ -106,7 +106,7 @@ public final class Q00367_ElectrifyingRecharge extends Quest {
 		
 		final L2PcInstance luckyPlayer = getRandomPartyMember(attacker, npc);
 		if (luckyPlayer == null) {
-			return super.onAttack(npc, attacker, damage, isSummon);
+			return;
 		}
 		qs = getQuestState(luckyPlayer, false);
 		
@@ -136,7 +136,6 @@ public final class Q00367_ElectrifyingRecharge extends Quest {
 				playSound(luckyPlayer, Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override

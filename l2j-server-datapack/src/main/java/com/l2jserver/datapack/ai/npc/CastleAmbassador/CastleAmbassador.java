@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -19,11 +19,10 @@
 package com.l2jserver.datapack.ai.npc.CastleAmbassador;
 
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
-import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.entity.Castle;
 import com.l2jserver.gameserver.model.entity.Fort;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcEventReceived;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 
 /**
@@ -48,16 +47,15 @@ public final class CastleAmbassador extends AbstractNpcAI {
 	// @formatter:on
 	
 	public CastleAmbassador() {
-		super(CastleAmbassador.class.getSimpleName(), "ai/npc");
-		addStartNpc(CASTLE_AMBASSADOR);
-		addTalkId(CASTLE_AMBASSADOR);
-		addFirstTalkId(CASTLE_AMBASSADOR);
-		addEventReceivedId(CASTLE_AMBASSADOR);
-		addSpawnId(CASTLE_AMBASSADOR);
+		bindStartNpc(CASTLE_AMBASSADOR);
+		bindTalk(CASTLE_AMBASSADOR);
+		bindFirstTalk(CASTLE_AMBASSADOR);
+		bindEventReceived(CASTLE_AMBASSADOR);
+		bindSpawn(CASTLE_AMBASSADOR);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (npc != null) {
 			final Fort fortresss = npc.getFort();
 			String htmltext = null;
@@ -90,7 +88,7 @@ public final class CastleAmbassador extends AbstractNpcAI {
 						fortresss.setFortState(1, fortresss.getCastleIdByAmbassador(npc.getId()));
 					}
 					cancelQuestTimer("DESPAWN", npc, null);
-					npc.broadcastEvent("DESPAWN", 1000, null);
+					npc.broadcastScriptEvent("DESPAWN", 1000);
 					npc.deleteMe();
 					break;
 				}
@@ -103,15 +101,14 @@ public final class CastleAmbassador extends AbstractNpcAI {
 				player.sendPacket(packet);
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onEventReceived(String eventName, L2Npc sender, L2Npc receiver, L2Object reference) {
-		if (receiver != null) {
-			receiver.deleteMe();
+	public void onEventReceived(NpcEventReceived event) {
+		if (event.receiver() != null) {
+			event.receiver().deleteMe();
 		}
-		return super.onEventReceived(eventName, sender, receiver, reference);
 	}
 	
 	@Override
@@ -134,13 +131,12 @@ public final class CastleAmbassador extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
-		final Castle castle = npc.getFort().getCastleByAmbassador(npc.getId());
+	public void onSpawn(L2Npc npc) {
+		final var castle = npc.getFort().getCastleByAmbassador(npc.getId());
 		if (castle.getOwnerId() == 0) {
 			npc.deleteMe();
 		} else {
 			startQuestTimer("DESPAWN", 3600000, npc, null);
 		}
-		return super.onSpawn(npc);
 	}
 }

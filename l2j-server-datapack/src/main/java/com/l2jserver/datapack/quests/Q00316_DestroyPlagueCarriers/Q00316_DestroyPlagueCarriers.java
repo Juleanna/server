@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,11 +51,11 @@ public final class Q00316_DestroyPlagueCarriers extends Quest {
 		.build();
 	
 	public Q00316_DestroyPlagueCarriers() {
-		super(316, Q00316_DestroyPlagueCarriers.class.getSimpleName(), "Destroy Plague Carriers");
-		addStartNpc(ELLENIA);
-		addTalkId(ELLENIA);
-		addAttackId(VAROOL_FOULCLAW);
-		addKillId(DROPLIST.getNpcIds());
+		super(316);
+		bindStartNpc(ELLENIA);
+		bindTalk(ELLENIA);
+		bindAttack(VAROOL_FOULCLAW);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(WERERAT_FANG, VAROOL_FOULCLAW_FANG.getId());
 	}
 	
@@ -65,7 +65,7 @@ public final class Q00316_DestroyPlagueCarriers extends Quest {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -94,21 +94,19 @@ public final class Q00316_DestroyPlagueCarriers extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.isScriptValue(0)) {
 			npc.broadcastPacket(new NpcSay(npc, Say2.NPC_ALL, NpcStringId.WHY_DO_YOU_OPPRESS_US_SO));
 			npc.setScriptValue(1);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getRandomPartyMemberState(killer, -1, 3, npc);
 		if (qs != null) {
 			giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

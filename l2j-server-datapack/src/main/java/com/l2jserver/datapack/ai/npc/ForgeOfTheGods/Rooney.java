@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -45,13 +45,12 @@ public final class Rooney extends AbstractNpcAI {
 	};
 	
 	public Rooney() {
-		super(Rooney.class.getSimpleName(), "ai/npc");
-		addSeeCreatureId(ROONEY);
+		bindSeeCreature(ROONEY);
 		addSpawn(ROONEY, LOCATIONS[getRandom(LOCATIONS.length)], false, 0);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "teleport": {
 				if (!npc.isDecayed()) {
@@ -91,13 +90,12 @@ public final class Rooney extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (creature.isPlayer() && npc.isScriptValue(0)) {
 			broadcastNpcSay(npc, Say2.NPC_ALL, NpcStringId.WELCOME);
 			startQuestTimer("teleport", 3600000, npc, null);
 			startQuestTimer("message1", 60000, npc, null);
 			npc.setScriptValue(1);
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 }

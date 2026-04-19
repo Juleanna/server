@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -29,7 +29,7 @@ import com.l2jserver.datapack.custom.service.discord.DiscordBot;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.Containers;
 import com.l2jserver.gameserver.model.events.EventType;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerChat;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerChat;
 import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.items.type.CrystalType;
@@ -47,19 +47,19 @@ public class ChatListener extends ListenerAdapter {
 	private static final Pattern ITEM_LINK = Pattern.compile("[\b]\tType=[0-9]+[\\s]+\tID=([0-9]+)[\\s]+\tColor=[0-9]+[\\s]+\tUnderline=[0-9]+[\\s]+\tTitle=\u001B(.[^\u001B]*)[^\b]");
 	
 	public ChatListener() {
-		Containers.Global().addListener(new ConsumerEventListener(Containers.Global(), EventType.ON_PLAYER_CHAT, (OnPlayerChat event) -> {
+		Containers.Global().addListener(new ConsumerEventListener(Containers.Global(), EventType.PLAYER_CHAT, (PlayerChat event) -> {
 			EmbedBuilder eb = new EmbedBuilder();
-			String type = switch (event.getChatType()) {
+			String type = switch (event.chatType()) {
 				case 1 -> "Shout";
 				case 8 -> "Trade";
 				case 17 -> "Hero";
 				default -> null;
 			};
 			if ((type != null) && discord().enableBot()) {
-				String replacedText = onShiftItems(event.getActiveChar(), event.getText());
+				String replacedText = onShiftItems(event.player(), event.text());
 				eb.setColor(Color.CYAN);
 				eb.setTitle("***___" + type + "___***");
-				eb.setDescription("**" + event.getActiveChar().getName() + ":** ``" + replacedText + "``");
+				eb.setDescription("**" + event.player().getName() + ":** ``" + replacedText + "``");
 				DiscordBot.sendMessageTo(eb, discord().getGameChatChannelId());
 			}
 		}, this));

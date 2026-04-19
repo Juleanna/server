@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,15 +46,15 @@ public final class Q00637_ThroughOnceMore extends Quest {
 	private static final QuestItemChanceHolder NECRO_HEART = new QuestItemChanceHolder(8066, 90.0, 10L);
 	
 	public Q00637_ThroughOnceMore() {
-		super(637, Q00637_ThroughOnceMore.class.getSimpleName(), "Through the Gate Once More");
-		addStartNpc(FLAURON);
-		addTalkId(FLAURON);
-		addKillId(MOBS);
+		super(637);
+		bindStartNpc(FLAURON);
+		bindTalk(FLAURON);
+		bindKill(MOBS);
 		registerQuestItems(NECRO_HEART.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -69,12 +69,11 @@ public final class Q00637_ThroughOnceMore extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && st.isStarted() && giveItemRandomly(st.getPlayer(), npc, NECRO_HEART, true)) {
 			st.setCond(2);
 		}
-		return null;
 	}
 	
 	@Override

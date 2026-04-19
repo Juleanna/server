@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,7 +28,6 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.network.SystemMessageId;
-import com.l2jserver.gameserver.util.Util;
 
 /**
  * Rift Watcher AI
@@ -56,10 +55,8 @@ public final class RiftWatcher extends AbstractNpcAI {
 	private static final int MAX_DISTANCE = 1500;
 	
 	public RiftWatcher() {
-		super(RiftWatcher.class.getSimpleName(), "ai/npc");
-		
-		addStartNpc(NPCS);
-		addFirstTalkId(NPCS);
+		bindStartNpc(NPCS);
+		bindFirstTalk(NPCS);
 	}
 	
 	private int getItemsNeeded(int npcId) {
@@ -87,7 +84,7 @@ public final class RiftWatcher extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.endsWith(".htm")) {
 			return "rift_watcher_" + event;
 		}
@@ -156,8 +153,7 @@ public final class RiftWatcher extends AbstractNpcAI {
 							
 							i6 = getGameTicks();
 							for (L2PcInstance c1 : player.getParty().getMembers()) {
-								final double distance = Util.calculateDistance(npc, c0, true, false);
-								if (distance <= MAX_DISTANCE) {
+								if (npc.calculateDistance(c1, true, false) <= MAX_DISTANCE) {
 									Quest q635 = QuestManager.getInstance().getQuest(Q00635_IntoTheDimensionalRift);
 									QuestState qs635 = q635.getQuestState(c1, true);
 									
@@ -479,7 +475,7 @@ public final class RiftWatcher extends AbstractNpcAI {
 			}
 		}
 		
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override

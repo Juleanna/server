@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -81,14 +81,14 @@ public final class Q00662_AGameOfCards extends Quest {
 	private static final int REQUIRED_CHIP_COUNT = 50;
 	
 	public Q00662_AGameOfCards() {
-		super(662, Q00662_AGameOfCards.class.getSimpleName(), "A Game of Cards");
-		addStartNpc(KLUMP);
-		addTalkId(KLUMP);
-		addKillId(DROPLIST.getNpcIds());
+		super(662);
+		bindStartNpc(KLUMP);
+		bindTalk(KLUMP);
+		bindKill(DROPLIST.getNpcIds());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -528,12 +528,11 @@ public final class Q00662_AGameOfCards extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getRandomPartyMemberState(killer, -1, 3, npc);
 		if (st != null) {
 			giveItemRandomly(st.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private static String setHtml(String htmltext, int var, String regex) {

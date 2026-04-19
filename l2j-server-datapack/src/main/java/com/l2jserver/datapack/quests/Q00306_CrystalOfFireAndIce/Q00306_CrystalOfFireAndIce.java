@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -51,15 +51,15 @@ public final class Q00306_CrystalOfFireAndIce extends Quest {
 	private static final int MIN_LEVEL = 17;
 	
 	public Q00306_CrystalOfFireAndIce() {
-		super(306, Q00306_CrystalOfFireAndIce.class.getSimpleName(), "Crystals of Fire and Ice");
-		addStartNpc(KATERINA);
-		addTalkId(KATERINA);
-		addKillId(DROPLIST.getNpcIds());
+		super(306);
+		bindStartNpc(KATERINA);
+		bindTalk(KATERINA);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(FLAME_SHARD, ICE_SHARD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -87,7 +87,7 @@ public final class Q00306_CrystalOfFireAndIce extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs;
 		if (npc.getId() == UNDINE_NOBLE) { // Undine Noble gives quest drops only for the killer
 			qs = getQuestState(killer, false);
@@ -100,7 +100,6 @@ public final class Q00306_CrystalOfFireAndIce extends Quest {
 				giveItemRandomly(qs.getPlayer(), npc, DROPLIST.get(npc), true);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

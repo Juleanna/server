@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -46,15 +46,15 @@ public final class Q10293_SevenSignsForbiddenBookOfTheElmoreAdenKingdom extends 
 	private static final int MIN_LEVEL = 81;
 	
 	public Q10293_SevenSignsForbiddenBookOfTheElmoreAdenKingdom() {
-		super(10293, Q10293_SevenSignsForbiddenBookOfTheElmoreAdenKingdom.class.getSimpleName(), "Seven Signs, Forbidden Book of the Elmore-Aden Kingdom");
-		addFirstTalkId(SOPHIA3);
-		addStartNpc(ELCADIA);
-		addTalkId(ELCADIA, ELCADIA_INSTANCE, SOPHIA1, SOPHIA2, SOPHIA3, PILE_OF_BOOKS1, PILE_OF_BOOKS2, PILE_OF_BOOKS3, PILE_OF_BOOKS4, PILE_OF_BOOKS5);
+		super(10293);
+		bindFirstTalk(SOPHIA3);
+		bindStartNpc(ELCADIA);
+		bindTalk(ELCADIA, ELCADIA_INSTANCE, SOPHIA1, SOPHIA2, SOPHIA3, PILE_OF_BOOKS1, PILE_OF_BOOKS2, PILE_OF_BOOKS3, PILE_OF_BOOKS4, PILE_OF_BOOKS5);
 		registerQuestItems(SOLINAS_BIOGRAPHY);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

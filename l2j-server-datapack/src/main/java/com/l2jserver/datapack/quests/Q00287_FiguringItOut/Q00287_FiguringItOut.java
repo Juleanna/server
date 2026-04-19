@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -83,15 +83,15 @@ public class Q00287_FiguringItOut extends Quest {
 	private static final int MIN_LEVEL = 82;
 	
 	public Q00287_FiguringItOut() {
-		super(287, Q00287_FiguringItOut.class.getSimpleName(), "Figuring It Out!");
-		addStartNpc(LAKI);
-		addTalkId(LAKI);
-		addKillId(MONSTERS.keySet());
+		super(287);
+		bindStartNpc(LAKI);
+		bindTalk(LAKI);
+		bindKill(MONSTERS.keySet());
 		registerQuestItems(VIAL_OF_TANTA_BLOOD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		
 		if (st == null) {
@@ -145,10 +145,10 @@ public class Q00287_FiguringItOut extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final L2PcInstance partyMember = getRandomPartyMember(player, 1);
 		if (partyMember == null) {
-			return super.onKill(npc, player, isSummon);
+			return;
 		}
 		final QuestState st = getQuestState(partyMember, false);
 		
@@ -156,7 +156,6 @@ public class Q00287_FiguringItOut extends Quest {
 			st.giveItems(VIAL_OF_TANTA_BLOOD, 1);
 			st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

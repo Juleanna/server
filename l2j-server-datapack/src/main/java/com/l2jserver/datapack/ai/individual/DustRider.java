@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -40,12 +40,11 @@ public class DustRider extends AbstractNpcAI {
 	private static final double MIN_HP_PERCENTAGE = 0.30;
 	
 	public DustRider() {
-		super(DustRider.class.getSimpleName(), "ai/individual");
-		addAttackId(DUST_RIDER);
+		bindAttack(DUST_RIDER);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (Util.calculateDistance(npc, npc.getSpawn(), false, false) > MAX_CHASE_DIST) {
 			npc.teleToLocation(npc.getSpawn().getX(), npc.getSpawn().getY(), npc.getSpawn().getZ());
 		}
@@ -54,6 +53,5 @@ public class DustRider extends AbstractNpcAI {
 			npc.getVariables().set(CAST_FLAG, true);
 			addSkillCastDesire(npc, npc, NPC_HASTE_LVL_3, 99999999999000000L);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 }

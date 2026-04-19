@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -33,9 +33,9 @@ public final class Q00639_GuardiansOfTheHolyGrail extends Quest {
 	private static final int DOMINIC = 31350;
 	
 	public Q00639_GuardiansOfTheHolyGrail() {
-		super(639, Q00639_GuardiansOfTheHolyGrail.class.getSimpleName(), "Guardians of the Holy Grail");
-		addStartNpc(DOMINIC);
-		addTalkId(DOMINIC);
+		super(639);
+		bindStartNpc(DOMINIC);
+		bindTalk(DOMINIC);
 	}
 	
 	@Override

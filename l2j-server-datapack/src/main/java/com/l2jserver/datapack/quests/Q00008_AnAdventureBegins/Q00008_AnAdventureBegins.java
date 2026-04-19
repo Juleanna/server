@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,14 +42,14 @@ public class Q00008_AnAdventureBegins extends Quest {
 	private static final int MIN_LEVEL = 3;
 	
 	public Q00008_AnAdventureBegins() {
-		super(8, Q00008_AnAdventureBegins.class.getSimpleName(), "An Adventure Begins");
-		addStartNpc(JASMINE);
-		addTalkId(JASMINE, ROSELYN, HARNE);
+		super(8);
+		bindStartNpc(JASMINE);
+		bindTalk(JASMINE, ROSELYN, HARNE);
 		registerQuestItems(ROSELYNS_NOTE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

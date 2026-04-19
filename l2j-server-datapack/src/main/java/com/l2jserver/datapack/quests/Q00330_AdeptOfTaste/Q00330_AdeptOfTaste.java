@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -91,15 +91,15 @@ public final class Q00330_AdeptOfTaste extends Quest {
 	private static final int MIN_LEVEL = 24;
 	
 	public Q00330_AdeptOfTaste() {
-		super(330, Q00330_AdeptOfTaste.class.getSimpleName(), "Adept Of Taste");
-		addStartNpc(JONAS);
-		addTalkId(JONAS, ACCESSORY_MERCHANT_SONIA, PRIESTESS_GLYVKA, MAGISTER_ROLLANT, GUARD_JACOB, GROCER_PANO, MAGISTER_MIRIEN);
-		addKillId(HOBGOBLIN, MANDRAGORA_SPROUT1, MANDRAGORA_SAPLING, MANDRAGORA_BLOSSOM, BLOODY_BEE, MANDRAGORA_SPROUT2, GRAY_ANT, GIANT_CRIMSON_ANT, STINGER_WASP, MONSTER_EYE_SEARCHER, MONSTER_EYE_GAZER);
+		super(330);
+		bindStartNpc(JONAS);
+		bindTalk(JONAS, ACCESSORY_MERCHANT_SONIA, PRIESTESS_GLYVKA, MAGISTER_ROLLANT, GUARD_JACOB, GROCER_PANO, MAGISTER_MIRIEN);
+		bindKill(HOBGOBLIN, MANDRAGORA_SPROUT1, MANDRAGORA_SAPLING, MANDRAGORA_BLOSSOM, BLOODY_BEE, MANDRAGORA_SPROUT2, GRAY_ANT, GIANT_CRIMSON_ANT, STINGER_WASP, MONSTER_EYE_SEARCHER, MONSTER_EYE_GAZER);
 		registerQuestItems(INGREDIENT_LIST, SONIAS_BOTANY_BOOK, RED_MANDRAGORA_ROOT, WHITE_MANDRAGORA_ROOT, RED_MANDRAGORA_SAP, WHITE_MANDRAGORA_SAP, JACOBS_INSECT_BOOK, NECTAR, ROYAL_JELLY, HONEY, GOLDEN_HONEY, PANOS_CONTRACT, HOBGOBLIN_AMULET, DIONIAN_POTATO, GLYVKAS_BOTANY_BOOK, GREEN_MARSH_MOSS, BROWN_MARSH_MOSS, GREEN_MOSS_BUNDLE, BROWN_MOSS_BUNDLE, ROLLANTS_CREATURE_BOOK, BODY_OF_MONSTER_EYE, MONSTER_EYE_MEAT, JONASS_1ST_STEAK_DISH, JONASS_2ND_STEAK_DISH, JONASS_3RD_STEAK_DISH, JONASS_4TH_STEAK_DISH, JONASS_5TH_STEAK_DISH, MIRIENS_REVIEW_1, MIRIENS_REVIEW_2, MIRIENS_REVIEW_3, MIRIENS_REVIEW_4, MIRIENS_REVIEW_5);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -166,7 +166,7 @@ public final class Q00330_AdeptOfTaste extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -439,7 +439,6 @@ public final class Q00330_AdeptOfTaste extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.Location;
  */
 public class Q00099_SagaOfTheFortuneSeeker extends AbstractSagaQuest {
 	public Q00099_SagaOfTheFortuneSeeker() {
-		super(99, Q00099_SagaOfTheFortuneSeeker.class.getSimpleName(), "Saga of the Fortune Seeker");
+		super(99);
 		_npc = new int[] {
 			31594,
 			31623,

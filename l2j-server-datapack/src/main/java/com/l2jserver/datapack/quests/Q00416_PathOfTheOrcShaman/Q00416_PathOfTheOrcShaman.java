@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -86,16 +86,16 @@ public final class Q00416_PathOfTheOrcShaman extends Quest {
 		DURKA_SPIRIT, 9);
 	
 	public Q00416_PathOfTheOrcShaman() {
-		super(416, Q00416_PathOfTheOrcShaman.class.getSimpleName(), "Path of the Orc Shaman");
-		addStartNpc(TATARU_ZU_HESTUI);
-		addTalkId(TATARU_ZU_HESTUI, UMOS, MOIRA, DEAD_LEOPARDS_CARCASS, DUDA_MARA_TOTEM_SPIRIT, HESTUI_TOTEM_SPIRIT, TOTEM_SPIRIT_OF_GANDI);
-		addKillId(MOBS_CONDITIONS.keySet());
-		addKillId(BLACK_LEOPARD);
+		super(416);
+		bindStartNpc(TATARU_ZU_HESTUI);
+		bindTalk(TATARU_ZU_HESTUI, UMOS, MOIRA, DEAD_LEOPARDS_CARCASS, DUDA_MARA_TOTEM_SPIRIT, HESTUI_TOTEM_SPIRIT, TOTEM_SPIRIT_OF_GANDI);
+		bindKill(MOBS_CONDITIONS.keySet());
+		bindKill(BLACK_LEOPARD);
 		registerQuestItems(FIRE_CHARM, KASHA_BEAR_PELT.getId(), KASHA_BLADE_SPIDER_HUSK.getId(), FIRST_FIERY_EGG.getId(), HESTUI_MASK, SECOND_FIERY_EGG, TOTEM_SPIRIT_CLAW, TATARUS_LETTER, FLAME_CHARM, GRIZZLY_BLOOD.getId(), BLOOD_CAULDRON, SPIRIT_NET, BOUND_DURKA_SPIRIT, DURKA_PARASITE, TOTEM_SPIRIT_BLOOD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;
@@ -235,10 +235,10 @@ public final class Q00416_PathOfTheOrcShaman extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getRandomPartyMemberState(player, -1, 3, npc);
 		if (st == null) {
-			return super.onKill(npc, player, isSummon);
+			return;
 		}
 		
 		if (npc.getId() == BLACK_LEOPARD) {
@@ -263,7 +263,7 @@ public final class Q00416_PathOfTheOrcShaman extends Quest {
 					st.setCond(19, true);
 				}
 			}
-			return super.onKill(npc, player, isSummon);
+			return;
 		}
 		
 		final int mobCond = MOBS_CONDITIONS.get(npc.getId());
@@ -300,7 +300,6 @@ public final class Q00416_PathOfTheOrcShaman extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

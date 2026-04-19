@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -43,9 +43,8 @@ public final class JiniaGuildHideout1 extends AbstractInstance {
 	private static final int TEMPLATE_ID = 140;
 	
 	public JiniaGuildHideout1() {
-		super(JiniaGuildHideout1.class.getSimpleName());
-		addStartNpc(RAFFORTY);
-		addTalkId(RAFFORTY);
+		bindStartNpc(RAFFORTY);
+		bindTalk(RAFFORTY);
 	}
 	
 	@Override

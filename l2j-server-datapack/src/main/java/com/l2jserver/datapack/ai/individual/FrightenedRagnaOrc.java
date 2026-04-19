@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,7 +21,6 @@ package com.l2jserver.datapack.ai.individual;
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.model.Location;
-import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
@@ -45,13 +44,12 @@ public final class FrightenedRagnaOrc extends AbstractNpcAI {
 	private static final SkillHolder SKILL = new SkillHolder(6234);
 	
 	public FrightenedRagnaOrc() {
-		super(FrightenedRagnaOrc.class.getSimpleName(), "ai/individual");
-		addAttackId(MOB_ID);
-		addKillId(MOB_ID);
+		bindAttack(MOB_ID);
+		bindKill(MOB_ID);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (npc.isScriptValue(0)) {
 			npc.setScriptValue(1);
 			startQuestTimer("say", (getRandom(5) + 3) * 1000, npc, null, true);
@@ -60,20 +58,18 @@ public final class FrightenedRagnaOrc extends AbstractNpcAI {
 			broadcastNpcSay(npc, Say2.NPC_ALL, NpcStringId.WAIT_WAIT_STOP_SAVE_ME_AND_ILL_GIVE_YOU_10000000_ADENA);
 			npc.setScriptValue(2);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final NpcStringId msg = getRandomBoolean() ? NpcStringId.UGH_A_CURSE_UPON_YOU : NpcStringId.I_REALLY_DIDNT_WANT_TO_FIGHT;
 		broadcastNpcSay(npc, Say2.NPC_ALL, msg);
 		cancelQuestTimer("say", npc, null);
 		cancelQuestTimer("reward", npc, player);
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		switch (event) {
 			case "say": {
 				if (npc.isDead() || !npc.isScriptValue(1)) {
@@ -100,7 +96,7 @@ public final class FrightenedRagnaOrc extends AbstractNpcAI {
 						npc.setScriptValue(3);
 						npc.doCast(SKILL);
 						for (int i = 0; i < 10; i++) {
-							((L2Attackable) npc).dropItem(player, Inventory.ADENA_ID, ADENA);
+							npc.dropItem(player, Inventory.ADENA_ID, ADENA);
 						}
 					} else {
 						final NpcStringId msg = getRandomBoolean() ? NpcStringId.THANKS_BUT_THAT_THING_ABOUT_10000000_ADENA_WAS_A_LIE_SEE_YA : NpcStringId.YOURE_PRETTY_DUMB_TO_BELIEVE_ME;

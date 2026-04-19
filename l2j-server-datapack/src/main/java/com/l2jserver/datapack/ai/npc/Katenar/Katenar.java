@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,15 +37,14 @@ public final class Katenar extends AbstractNpcAI {
 	private static final int SEALED_DOCUMENT = 9803;
 	
 	public Katenar() {
-		super(Katenar.class.getSimpleName(), "ai/npc");
-		addStartNpc(KATENAR);
-		addTalkId(KATENAR);
-		addFirstTalkId(KATENAR);
-		addSpawnId(KATENAR);
+		bindStartNpc(KATENAR);
+		bindTalk(KATENAR);
+		bindFirstTalk(KATENAR);
+		bindSpawn(KATENAR);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final L2Npc npc0 = npc.getVariables().getObject("npc0", L2Npc.class);
 		String htmltext = null;
 		
@@ -104,12 +103,11 @@ public final class Katenar extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		startQuestTimer("CREATED_50", 50000, npc, null);
 		final L2PcInstance player = npc.getVariables().getObject("player0", L2PcInstance.class);
 		if (player != null) {
 			broadcastNpcSay(npc, Say2.NPC_ALL, NpcStringId.I_AM_LATE);
 		}
-		return super.onSpawn(npc);
 	}
 }

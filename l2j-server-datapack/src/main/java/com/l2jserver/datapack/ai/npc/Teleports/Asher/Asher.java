@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,13 +38,12 @@ public class Asher extends AbstractNpcAI {
 	private static final int ADENA = 50000;
 	
 	public Asher() {
-		super(Asher.class.getSimpleName(), "ai/npc/Teleports");
-		addFirstTalkId(ASHER);
-		addStartNpc(ASHER);
+		bindFirstTalk(ASHER);
+		bindStartNpc(ASHER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equals("teleport")) {
 			if (player.getAdena() >= ADENA) {
 				player.teleToLocation(LOCATION);
@@ -55,6 +54,6 @@ public class Asher extends AbstractNpcAI {
 		} else if (event.equals("32714-01.html")) {
 			return event;
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

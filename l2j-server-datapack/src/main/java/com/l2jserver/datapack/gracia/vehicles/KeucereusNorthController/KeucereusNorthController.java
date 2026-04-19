@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -62,14 +62,13 @@ public final class KeucereusNorthController extends AirShipController {
 	};
 	
 	public KeucereusNorthController() {
-		super(-1, KeucereusNorthController.class.getSimpleName(), "gracia/vehicles");
-		addStartNpc(CONTROLLER_ID);
-		addFirstTalkId(CONTROLLER_ID);
-		addTalkId(CONTROLLER_ID);
+		bindStartNpc(CONTROLLER_ID);
+		bindFirstTalk(CONTROLLER_ID);
+		bindTalk(CONTROLLER_ID);
 		
 		_dockZone = DOCK_ZONE;
-		addEnterZoneId(DOCK_ZONE);
-		addExitZoneId(DOCK_ZONE);
+		bindEnterZone(DOCK_ZONE);
+		bindExitZone(DOCK_ZONE);
 		
 		_shipSpawnX = -184145;
 		_shipSpawnY = 242373;

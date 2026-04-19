@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -24,7 +24,7 @@ package com.l2jserver.datapack.quests.TerritoryWarScripts;
  */
 public final class Q00733_ProtectTheEconomicAssociationLeader extends TerritoryWarSuperClass {
 	public Q00733_ProtectTheEconomicAssociationLeader() {
-		super(733, Q00733_ProtectTheEconomicAssociationLeader.class.getSimpleName(), "Protect the Economic Association Leader");
+		super(733);
 		NPC_IDS = new int[] {
 			36513,
 			36519,
@@ -36,7 +36,7 @@ public final class Q00733_ProtectTheEconomicAssociationLeader extends TerritoryW
 			36555,
 			36561
 		};
-		addAttackId(NPC_IDS);
+		bindAttack(NPC_IDS);
 	}
 	
 	@Override

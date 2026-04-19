@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,7 +21,9 @@ package com.l2jserver.datapack.handlers.admincommandhandlers;
 import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.xml.impl.ClassListData;
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
@@ -38,7 +40,7 @@ import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
  * @version $Revision: 1.2.4.6 $ $Date: 2005/04/11 10:06:06 $
  */
 public class AdminExpSp implements IAdminCommandHandler {
-	private static Logger _log = Logger.getLogger(AdminExpSp.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AdminExpSp.class);
 	
 	private static final String[] ADMIN_COMMANDS = {
 		"admin_add_exp_sp_to_character",
@@ -127,7 +129,7 @@ public class AdminExpSp implements IAdminCommandHandler {
 			// Admin information
 			activeChar.sendMessage("Added " + expval + " xp and " + spval + " sp to " + player.getName() + ".");
 			if (general().debug()) {
-				_log.fine("GM: " + activeChar.getName() + "(" + activeChar.getObjectId() + ") added " + expval + " xp and " + spval + " sp to " + player.getObjectId() + ".");
+				LOG.debug("GM: {}({}) added {} xp and {} sp to {}.", activeChar.getName(), activeChar.getObjectId(), expval, spval, player.getObjectId());
 			}
 		}
 		return true;
@@ -165,7 +167,7 @@ public class AdminExpSp implements IAdminCommandHandler {
 			// Admin information
 			activeChar.sendMessage("Removed " + expval + " xp and " + spval + " sp from " + player.getName() + ".");
 			if (general().debug()) {
-				_log.fine("GM: " + activeChar.getName() + "(" + activeChar.getObjectId() + ") removed " + expval + " xp and " + spval + " sp from " + player.getObjectId() + ".");
+				LOG.debug("GM: {}({}) removed {} xp and {} sp from {}.", activeChar.getName(), activeChar.getObjectId(), expval, spval, player.getObjectId());
 			}
 		}
 		return true;

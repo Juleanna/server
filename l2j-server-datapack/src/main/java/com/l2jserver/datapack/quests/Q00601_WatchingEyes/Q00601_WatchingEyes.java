@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -70,15 +70,15 @@ public class Q00601_WatchingEyes extends Quest {
 	};
 	
 	public Q00601_WatchingEyes() {
-		super(601, Q00601_WatchingEyes.class.getSimpleName(), "Watching Eyes");
-		addStartNpc(EYE_OF_ARGOS);
-		addTalkId(EYE_OF_ARGOS);
-		addKillId(MOBS.keySet());
+		super(601);
+		bindStartNpc(EYE_OF_ARGOS);
+		bindTalk(EYE_OF_ARGOS);
+		bindKill(MOBS.keySet());
 		registerQuestItems(PROOF_OF_AVENGER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		
 		if (st == null) {
@@ -111,9 +111,8 @@ public class Q00601_WatchingEyes extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState st = getQuestState(player, false);
-		
 		if ((st != null) && st.isCond(1) && (getRandom(1000) < MOBS.get(npc.getId()))) {
 			st.giveItems(PROOF_OF_AVENGER, 1);
 			if (st.getQuestItemsCount(PROOF_OF_AVENGER) == 100) {
@@ -122,7 +121,6 @@ public class Q00601_WatchingEyes extends Quest {
 				st.playSound(Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 	
 	@Override

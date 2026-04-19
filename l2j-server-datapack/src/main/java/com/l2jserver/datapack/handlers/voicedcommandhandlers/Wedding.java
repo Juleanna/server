@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -19,12 +19,14 @@
 package com.l2jserver.datapack.handlers.voicedcommandhandlers;
 
 import static com.l2jserver.gameserver.config.Configuration.customs;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.GameTimeController;
@@ -56,24 +58,30 @@ import com.l2jserver.gameserver.util.Broadcast;
  * @author evill33t
  */
 public class Wedding implements IVoicedCommandHandler {
-	static final Logger _log = Logger.getLogger(Wedding.class.getName());
-	private static final String[] _voicedCommands = {
+	private static final Logger LOG = LoggerFactory.getLogger(Wedding.class);
+	
+	private static final String[] COMMANDS = {
 		"divorce",
 		"engage",
 		"gotolove"
 	};
 	
 	@Override
-	public boolean useVoicedCommand(String command, L2PcInstance activeChar, String params) {
-		if (activeChar == null) {
+	public boolean useVoicedCommand(String command, L2PcInstance player, String params) {
+		if (!customs().allowWedding()) {
 			return false;
 		}
+		
+		if (player == null) {
+			return false;
+		}
+		
 		if (command.startsWith("engage")) {
-			return engage(activeChar);
+			return engage(player);
 		} else if (command.startsWith("divorce")) {
-			return divorce(activeChar);
+			return divorce(player);
 		} else if (command.startsWith("gotolove")) {
-			return goToLove(activeChar);
+			return goToLove(player);
 		}
 		return false;
 	}
@@ -149,7 +157,7 @@ public class Wedding implements IVoicedCommandHandler {
 			return false;
 		}
 		final L2PcInstance ptarget = (L2PcInstance) activeChar.getTarget();
-		// check if player target himself
+		// check if player targets themselves
 		if (ptarget.getObjectId() == activeChar.getObjectId()) {
 			activeChar.sendMessage("Is there something wrong with you, are you trying to go out with youself?");
 			return false;
@@ -171,7 +179,7 @@ public class Wedding implements IVoicedCommandHandler {
 		}
 		
 		if ((ptarget.getAppearance().getSex() == activeChar.getAppearance().getSex()) && !customs().weddingAllowSameSex()) {
-			activeChar.sendMessage("Gay marriage is not allowed on this server!");
+			activeChar.sendMessage("Same-sex marriage is not available on this server.");
 			return false;
 		}
 		
@@ -188,7 +196,7 @@ public class Wedding implements IVoicedCommandHandler {
 				}
 			}
 		} catch (Exception e) {
-			_log.warning("could not read friend data:" + e);
+			LOG.warn("Could not read friend data:{}", String.valueOf(e));
 		}
 		
 		if (!foundOnFriendList) {
@@ -213,7 +221,7 @@ public class Wedding implements IVoicedCommandHandler {
 		
 		if (activeChar.getPartnerId() == 0) {
 			activeChar.sendMessage("Couldn't find your fiance in the Database - Inform a Gamemaster.");
-			_log.severe("Married but couldn't find parter for " + activeChar.getName());
+			LOG.error("Married but couldn't find partner for {}", activeChar.getName());
 			return false;
 		}
 		
@@ -377,8 +385,8 @@ public class Wedding implements IVoicedCommandHandler {
 			return false;
 		}
 		
-		final int teleportTimer = customs().getWeddingTeleportDuration();
-		activeChar.sendMessage("After " + (teleportTimer / 60000) + " min. you will be teleported to your partner.");
+		final int teleportTimer = (int) customs().getWeddingTeleportDuration();
+		activeChar.sendMessage("After " + MILLISECONDS.toMinutes(teleportTimer) + " min. you will be teleported to your partner.");
 		activeChar.getInventory().reduceAdena("Wedding", customs().getWeddingTeleportPrice(), activeChar, null);
 		
 		activeChar.getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
@@ -429,13 +437,13 @@ public class Wedding implements IVoicedCommandHandler {
 			try {
 				_activeChar.teleToLocation(_partnerLoc);
 			} catch (Exception e) {
-				_log.log(Level.SEVERE, "", e);
+				LOG.error(e.getMessage(), e);
 			}
 		}
 	}
 	
 	@Override
 	public String[] getVoicedCommandList() {
-		return _voicedCommands;
+		return COMMANDS;
 	}
 }

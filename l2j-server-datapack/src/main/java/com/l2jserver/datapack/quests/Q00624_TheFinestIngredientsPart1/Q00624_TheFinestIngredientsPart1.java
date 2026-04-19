@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,15 +53,15 @@ public final class Q00624_TheFinestIngredientsPart1 extends Quest {
 	}
 	
 	public Q00624_TheFinestIngredientsPart1() {
-		super(624, Q00624_TheFinestIngredientsPart1.class.getSimpleName(), "The Finest Ingredients - Part 1");
-		addStartNpc(JEREMY);
-		addTalkId(JEREMY);
-		addKillId(MONSTER_DROPS.keySet());
+		super(624);
+		bindStartNpc(JEREMY);
+		bindTalk(JEREMY);
+		bindKill(MONSTER_DROPS.keySet());
 		registerQuestItems(TRUNK_OF_NEPENTHES, FOOT_OF_BANDERSNATCHLING, SECRET_SPICE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -88,7 +88,7 @@ public final class Q00624_TheFinestIngredientsPart1 extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final L2PcInstance partyMember = getRandomPartyMember(killer, 1);
 		if ((partyMember != null) && partyMember.isInsideRadius(npc, 1500, true, false)) {
 			final int item = MONSTER_DROPS.get(npc.getId());
@@ -106,7 +106,6 @@ public final class Q00624_TheFinestIngredientsPart1 extends Quest {
 				playSound(partyMember, Sound.ITEMSOUND_QUEST_ITEMGET);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

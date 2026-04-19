@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -363,7 +363,7 @@ public final class AdminPForge implements IAdminCommandHandler {
 							case "$tboid":
 								target = activeChar.getTarget();
 								if ((target != null) && (target instanceof L2Playable)) {
-									boat = ((L2Playable) target).getActingPlayer().getBoat();
+									boat = target.getActingPlayer().getBoat();
 									if (boat != null) {
 										value = String.valueOf(boat.getObjectId());
 									} else {

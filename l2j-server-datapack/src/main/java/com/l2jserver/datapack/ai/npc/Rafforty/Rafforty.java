@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -35,14 +35,13 @@ public final class Rafforty extends AbstractNpcAI {
 	private static final int BOTTLE = 16027;
 	
 	public Rafforty() {
-		super(Rafforty.class.getSimpleName(), "ai/npc");
-		addStartNpc(RAFFORTY);
-		addFirstTalkId(RAFFORTY);
-		addTalkId(RAFFORTY);
+		bindStartNpc(RAFFORTY);
+		bindFirstTalk(RAFFORTY);
+		bindTalk(RAFFORTY);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		switch (event) {
 			case "32020-01.html":

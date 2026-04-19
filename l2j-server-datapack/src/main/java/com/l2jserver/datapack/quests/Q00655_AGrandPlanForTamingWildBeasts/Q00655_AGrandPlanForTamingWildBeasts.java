@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,14 +50,14 @@ public final class Q00655_AGrandPlanForTamingWildBeasts extends Quest {
 	private static final String PATH_TO_HTML = "com/l2jserver/datapack/conquerablehalls/flagwar/WildBeastReserve/messenger_initial.htm";
 	
 	public Q00655_AGrandPlanForTamingWildBeasts() {
-		super(655, Q00655_AGrandPlanForTamingWildBeasts.class.getSimpleName(), "A Grand Plan for Taming Wild Beasts");
-		addStartNpc(MESSENGER);
-		addTalkId(MESSENGER);
+		super(655);
+		bindStartNpc(MESSENGER);
+		bindTalk(MESSENGER);
 		registerQuestItems(CRYSTAL_OF_PURITY, TRAINER_LICENSE);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;

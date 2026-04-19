@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -20,10 +20,11 @@ package com.l2jserver.datapack.ai.npc.Teleports.Survivor;
 
 import com.l2jserver.datapack.ai.npc.AbstractNpcAI;
 import com.l2jserver.gameserver.instancemanager.GraciaSeedsManager;
-import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerMenuSelected;
 import com.l2jserver.gameserver.model.itemcontainer.Inventory;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 
 /**
  * Gracia Survivor teleport AI.<br>
@@ -33,64 +34,104 @@ import com.l2jserver.gameserver.model.itemcontainer.Inventory;
 public final class Survivor extends AbstractNpcAI {
 	// NPC
 	private static final int SURVIVOR = 32632;
+	
+	private static final int MS_ASK_GRACIA = -1425;
+	
+	private static final int REPLY_TELE_GLUDIO_AIRSHIP_WHARF = 1;
+	private static final int REPLY_SEEDS_STATUS = 2;
+	
 	// Misc
 	private static final int MIN_LEVEL = 75;
-	// Location
-	private static final Location TELEPORT = new Location(-149406, 255247, -80);
 	
 	public Survivor() {
-		super(Survivor.class.getSimpleName(), "ai/npc/Teleports");
-		addStartNpc(SURVIVOR);
-		addTalkId(SURVIVOR);
+		bindFirstTalk(SURVIVOR);
+		bindStartNpc(SURVIVOR);
+		bindMenuSelected(SURVIVOR);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
-		if (event.equalsIgnoreCase("STATUS")) {
-			String htmltext = getHtm(player.getHtmlPrefix(), "32632-4.htm");
-			String destructionStatus = "";
-			String infinityStatus = "";
-			// TODO: Implement Seed of Infinity & stages
-			// switch(GraciaSeedsManager.getInstance().getSoIState()){
-			// case 1:
-			// infinityStatus = "It's under the enemy's occupation, and the military forces of adventurers and clan members are unleashing an onslaught upon the Hall of Suffering and the Hall of Erosion.";
-			// case 2:
-			// infinityStatus = "It's under enemy occupation, but the situation is currently favorable, and an infiltration route to the Heart has been secured. All that is left is the final battle with Ekimus and the clean-up of his followers hiding in the Hall of Suffering!";
-			// case 3:
-			// infinityStatus = "Our forces have occupied it and are currently investigating the depths.";
-			// case 4:
-			// infinityStatus = "It's under occupation by our forces, but the enemy has resurrected and is attacking toward the Hall of Suffering and the Hall of Erosion.";
-			// case 5:
-			// infinityStatus = "It's under occupation by our forces, but the enemy has already overtaken the Hall of Erosion and is driving out our forces from the Hall of Suffering toward the Heart. It seems that Ekimus will revive shortly.";
-			// }
-			switch (GraciaSeedsManager.getInstance().getSoDState()) {
-				case 1:
-					destructionStatus = "It's currently occupied by the enemy and our troops are attacking.";
-				case 2:
-					destructionStatus = "It's under occupation by our forces, and I heard that Kucereus' clan is organizing the remnants.";
-				default:
-					destructionStatus = "Although we currently have control of it, the enemy is pushing back with a powerful attack.";
-			}
-			htmltext = htmltext.replaceAll("%sod%", destructionStatus);
-			htmltext = htmltext.replaceAll("%soi%", infinityStatus);
-			return htmltext;
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
+		if (event.endsWith(".htm")) {
+			showPage(player, event);
 		}
-		if ("32632-2.htm".equals(event)) {
-			if (player.getLevel() < MIN_LEVEL) {
-				event = "32632-3.htm";
-			} else if (player.getAdena() < 150000) {
-				return event;
-			} else {
-				takeItems(player, Inventory.ADENA_ID, 150000);
-				player.teleToLocation(TELEPORT);
-				return null;
-			}
-		}
-		return event;
+		
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onTalk(L2Npc npc, L2PcInstance player) {
-		return "32632-1.htm";
+	public String onFirstTalk(L2Npc npc, L2PcInstance talker) {
+		showPage(talker, "looser_of_gracia001.htm");
+		
+		return super.onFirstTalk(npc, talker);
+	}
+	
+	@Override
+	public void onMenuSelected(PlayerMenuSelected event) {
+		final var ask = event.ask();
+		final var reply = event.reply();
+		
+		final var talker = event.player();
+		final var npc = event.npc();
+		
+		switch (ask) {
+			case MS_ASK_GRACIA -> {
+				switch (reply) {
+					case REPLY_TELE_GLUDIO_AIRSHIP_WHARF -> {
+						if (talker.getLevel() < MIN_LEVEL) {
+							showPage(talker, "looser_of_gracia005.htm");
+							return;
+						}
+						if (getQuestItemsCount(talker, Inventory.ADENA_ID) >= 150000) {
+							takeItems(talker, Inventory.ADENA_ID, 150000);
+							talker.teleToLocation(-149406, 255247, -85);
+						} else {
+							showPage(talker, "looser_of_gracia004.htm");
+						}
+					}
+					case REPLY_SEEDS_STATUS -> {
+						int i1 = 0;
+						
+						String html = getHtm(talker.getHtmlPrefix(), "looser_of_gracia003.htm");
+						var i0 = 1; // GraciaSeedsManager.getInstance().getSoIState();
+						switch (i0) {
+							case 1 -> {
+								i1 = 1800711;
+							}
+							case 2 -> {
+								i1 = 1800712;
+							}
+							case 3 -> {
+								i1 = 1800713;
+							}
+							case 4 -> {
+								i1 = 1800714;
+							}
+							case 5 -> {
+								i1 = 1800715;
+							}
+							case 6 -> {
+								i1 = 1800716;
+							}
+						}
+						html = html.replace("<?stat_unde?>", "<fstring>" + i1 + "</fstring>");
+						
+						i0 = GraciaSeedsManager.getInstance().getSoDState();
+						switch (i0) {
+							case 1 -> {
+								i1 = 1800708;
+							}
+							case 2 -> {
+								i1 = 1800709;
+							}
+							case 3 -> {
+								i1 = 1800710;
+							}
+						}
+						html = html.replace("<?stat_dest?>", "<fstring>" + i1 + "</fstring>");
+						talker.sendPacket(new NpcHtmlMessage(npc.getObjectId(), html));
+					}
+				}
+			}
+		}
 	}
 }

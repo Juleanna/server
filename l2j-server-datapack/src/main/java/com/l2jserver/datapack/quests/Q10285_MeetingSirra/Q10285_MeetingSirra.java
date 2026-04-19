@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -50,13 +50,13 @@ public final class Q10285_MeetingSirra extends Quest {
 	private static final Location FREYA_LOC = new Location(103045, -124361, -2768, 0);
 	
 	public Q10285_MeetingSirra() {
-		super(10285, Q10285_MeetingSirra.class.getSimpleName(), "Meeting Sirra");
-		addStartNpc(RAFFORTY);
-		addTalkId(RAFFORTY, JINIA, KEGOR, SIRRA, JINIA2, FREYAS_STEWARD);
+		super(10285);
+		bindStartNpc(RAFFORTY);
+		bindTalk(RAFFORTY, JINIA, KEGOR, SIRRA, JINIA2, FREYAS_STEWARD);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

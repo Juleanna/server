@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -60,6 +60,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2GrandBossInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.instancezone.InstanceWorld;
 import com.l2jserver.gameserver.model.skills.Skill;
@@ -230,17 +231,16 @@ public final class FinalEmperialTomb extends AbstractInstance {
 	// @formatter:on
 	
 	public FinalEmperialTomb() {
-		super(FinalEmperialTomb.class.getSimpleName());
 		load();
-		addAttackId(SCARLET1, FRINTEZZA);
-		addAttackId(PORTRAITS);
-		addStartNpc(GUIDE, CUBE);
-		addTalkId(GUIDE, CUBE);
-		addKillId(HALL_ALARM, HALL_KEEPER_CAPTAIN, DARK_CHOIR_PLAYER, SCARLET2);
-		addKillId(PORTRAITS);
-		addKillId(DEMONS);
-		addKillId(_mustKillMobsId);
-		addSpellFinishedId(HALL_KEEPER_SUICIDAL_SOLDIER);
+		bindAttack(SCARLET1, FRINTEZZA);
+		bindAttack(PORTRAITS);
+		bindStartNpc(GUIDE);
+		bindTalk(GUIDE);
+		bindKill(HALL_ALARM, HALL_KEEPER_CAPTAIN, DARK_CHOIR_PLAYER, SCARLET2);
+		bindKill(PORTRAITS);
+		bindKill(DEMONS);
+		bindKill(_mustKillMobsId);
+		bindSpellFinished(HALL_KEEPER_SUICIDAL_SOLDIER);
 	}
 	
 	private void load() {
@@ -754,7 +754,7 @@ public final class FinalEmperialTomb extends AbstractInstance {
 					for (int doorId : SECOND_ROUTE_DOORS) {
 						closeDoor(doorId, _world.getInstanceId());
 					}
-					addSpawn(29061, -87904, -141296, -9168, 0, false, 0, false, _world.getInstanceId());
+					addSpawn(CUBE, -87904, -141296, -9168, 0, false, 0, false, _world.getInstanceId());
 					break;
 				case 2:
 					_world.frintezzaDummy = addSpawn(29052, -87784, -155083, -9087, 16048, false, 0, false, _world.getInstanceId());
@@ -1142,7 +1142,7 @@ public final class FinalEmperialTomb extends AbstractInstance {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		final InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof FETWorld world) {
 			if ((npc.getId() == SCARLET1) && (world.getStatus() == 3) && (npc.getCurrentHp() < (npc.getMaxHp() * 0.80))) {
@@ -1161,19 +1161,17 @@ public final class FinalEmperialTomb extends AbstractInstance {
 				}
 			}
 		}
-		return null;
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		if (skill.isSuicideAttack()) {
-			return onKill(npc, null, false);
+	public void onSpellFinished(NpcSkillFinished event) {
+		if (event.skill().isSuicideAttack()) {
+			onKill(event.npc(), null, false);
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		InstanceWorld tmpworld = InstanceManager.getInstance().getWorld(npc.getInstanceId());
 		if (tmpworld instanceof FETWorld world) {
 			if (npc.getId() == HALL_ALARM) {
@@ -1207,7 +1205,6 @@ public final class FinalEmperialTomb extends AbstractInstance {
 				world.portraits.remove(npc);
 			}
 		}
-		return "";
 	}
 	
 	@Override
@@ -1216,12 +1213,7 @@ public final class FinalEmperialTomb extends AbstractInstance {
 		getQuestState(player, true);
 		if (npcId == GUIDE) {
 			enterInstance(player, new FETWorld(), "FinalEmperialTomb.xml", TEMPLATE_ID);
-		} else if (npc.getId() == CUBE) {
-			int x = -87534 + getRandom(500);
-			int y = -153048 + getRandom(500);
-			player.teleToLocation(x, y, -9165);
-			return null;
 		}
-		return "";
+		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -65,8 +65,6 @@ public abstract class CustomServiceScript extends AbstractNpcAI {
 	private final Map<Integer, String> lastPlayerHtmls = new ConcurrentHashMap<>();
 	
 	public CustomServiceScript(String name) {
-		super(name, SCRIPT_COLLECTION);
-		
 		Objects.requireNonNull(name);
 		scriptName = name;
 		scriptPath = Paths.get(SCRIPT_COLLECTION, scriptName);

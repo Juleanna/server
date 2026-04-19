@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,15 +18,19 @@
  */
 package com.l2jserver.datapack.quests.Q00101_SwordOfSolidarity;
 
-import com.l2jserver.datapack.quests.Q00281_HeadForTheHills.Q00281_HeadForTheHills;
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.audio.Sound;
+import com.l2jserver.gameserver.enums.audio.Voice;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
+import com.l2jserver.gameserver.network.NpcStringId;
+import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 
 /**
  * Sword of Solidarity (101)
@@ -61,16 +65,20 @@ public class Q00101_SwordOfSolidarity extends Quest {
 	// Misc
 	private static final int MIN_LVL = 9;
 	
+	private static final int GUIDE_MISSION = 41;
+	
+	private static final ItemHolder SOULSHOTS_NO_GRADE_FOR_ROOKIES = new ItemHolder(5789, 7000);
+	
 	public Q00101_SwordOfSolidarity() {
-		super(101, Q00101_SwordOfSolidarity.class.getSimpleName(), "Sword of Solidarity");
-		addStartNpc(ROIEN);
-		addKillId(MONSTERS);
-		addTalkId(ROIEN, ALTRAN);
+		super(101);
+		bindStartNpc(ROIEN);
+		bindKill(MONSTERS);
+		bindTalk(ROIEN, ALTRAN);
 		registerQuestItems(BROKEN_SWORD_HANDLE, BROKEN_BLADE_BOTTOM, BROKEN_BLADE_TOP, ALTRANS_NOTE, ROIENS_LETTER, DIRECTIONS_TO_RUINS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st != null) {
@@ -97,13 +105,35 @@ public class Q00101_SwordOfSolidarity extends Quest {
 				}
 				case "30283-07.html": {
 					if (st.isCond(5) && st.hasQuestItems(BROKEN_SWORD_HANDLE)) {
-						Q00281_HeadForTheHills.giveNewbieReward(player);
+						giveNewbieReward(player);
 						for (ItemHolder reward : REWARDS) {
 							st.giveItems(reward);
 						}
 						st.addExpAndSp(25747, 2171);
 						st.giveAdena(10981, true);
 						st.exitQuest(false, true);
+						
+						player.sendPacket(new SocialAction(player.getObjectId(), 3));
+						
+						// Newbie Guide
+						final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+						if (newbieGuide != null) {
+							final var newbieGuideQs = newbieGuide.getQuestState(player, true);
+							if (!newbieGuideQs.haveNRMemo(player, GUIDE_MISSION)) {
+								newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+								newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, 100000);
+								
+								showOnScreenMsg(player, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+							} else {
+								if (((newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) % 1000000) / 100000) != 1) {
+									newbieGuideQs.setNRMemo(player, GUIDE_MISSION);
+									newbieGuideQs.setNRMemoState(player, GUIDE_MISSION, newbieGuideQs.getNRMemoState(player, GUIDE_MISSION) + 100000);
+									
+									showOnScreenMsg(player, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+								}
+							}
+						}
+						
 						htmltext = event;
 					}
 					break;
@@ -114,7 +144,7 @@ public class Q00101_SwordOfSolidarity extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && st.isCond(2) && (getRandom(5) == 0)) {
 			if (!st.hasQuestItems(BROKEN_BLADE_TOP)) {
@@ -133,7 +163,6 @@ public class Q00101_SwordOfSolidarity extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -236,5 +265,18 @@ public class Q00101_SwordOfSolidarity extends Quest {
 			}
 		}
 		return htmltext;
+	}
+	
+	/**
+	 * Give basic newbie reward.
+	 * @param player the player to reward
+	 */
+	private static void giveNewbieReward(L2PcInstance player) {
+		if (player.getLevel() < 25) {
+			if (!player.isMageClass()) {
+				giveItems(player, SOULSHOTS_NO_GRADE_FOR_ROOKIES);
+				playSound(player, Voice.TUTORIAL_VOICE_026_1000);
+			}
+		}
 	}
 }

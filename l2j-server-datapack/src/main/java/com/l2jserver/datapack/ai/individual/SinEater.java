@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,8 +27,8 @@ import com.l2jserver.gameserver.model.events.ListenerRegisterType;
 import com.l2jserver.gameserver.model.events.annotations.Id;
 import com.l2jserver.gameserver.model.events.annotations.RegisterEvent;
 import com.l2jserver.gameserver.model.events.annotations.RegisterType;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureAttacked;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureKill;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureAttacked;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureKill;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.NpcSay;
@@ -42,13 +42,12 @@ public final class SinEater extends AbstractNpcAI {
 	private static final int SIN_EATER = 12564;
 	
 	public SinEater() {
-		super(SinEater.class.getSimpleName(), "ai/individual");
-		addSummonSpawnId(SIN_EATER);
-		addSummonTalkId(SIN_EATER);
+		bindSummonSpawn(SIN_EATER);
+		bindSummonTalk(SIN_EATER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equals("TALK") && (player != null) && (player.getSummon() != null)) {
 			if (getRandom(100) < 30) {
 				final int random = getRandom(100);
@@ -68,15 +67,15 @@ public final class SinEater extends AbstractNpcAI {
 			}
 			startQuestTimer("TALK", 60000, null, player);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
-	@RegisterEvent(EventType.ON_CREATURE_KILL)
+	@RegisterEvent(EventType.CREATURE_KILL)
 	@RegisterType(ListenerRegisterType.NPC)
 	@Id(SIN_EATER)
-	public void onCreatureKill(OnCreatureKill event) {
+	public void onCreatureKill(CreatureKill event) {
 		final int random = getRandom(100);
-		final L2Summon summon = (L2Summon) event.getTarget();
+		final L2Summon summon = (L2Summon) event.target();
 		
 		if (random < 30) {
 			broadcastSummonSay(summon, NpcStringId.OH_THIS_IS_JUST_GREAT_WHAT_ARE_YOU_GOING_TO_DO_NOW);
@@ -87,13 +86,13 @@ public final class SinEater extends AbstractNpcAI {
 		}
 	}
 	
-	@RegisterEvent(EventType.ON_CREATURE_ATTACKED)
+	@RegisterEvent(EventType.CREATURE_ATTACKED)
 	@RegisterType(ListenerRegisterType.NPC)
 	@Id(SIN_EATER)
-	public void onCreatureAttacked(OnCreatureAttacked event) {
+	public void onCreatureAttacked(CreatureAttacked event) {
 		if (getRandom(100) < 30) {
 			final int random = getRandom(100);
-			final L2Summon summon = (L2Summon) event.getTarget();
+			final L2Summon summon = (L2Summon) event.target();
 			
 			if (random < 35) {
 				broadcastSummonSay(summon, NpcStringId.OH_THAT_SMARTS);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -41,13 +41,13 @@ public class Q00009_IntoTheCityOfHumans extends Quest {
 	private static final int MIN_LEVEL = 3;
 	
 	public Q00009_IntoTheCityOfHumans() {
-		super(9, Q00009_IntoTheCityOfHumans.class.getSimpleName(), "Into the City of Humans");
-		addStartNpc(PETUKAI);
-		addTalkId(PETUKAI, TANAPI, TAMIL);
+		super(9);
+		bindStartNpc(PETUKAI);
+		bindTalk(PETUKAI, TANAPI, TAMIL);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

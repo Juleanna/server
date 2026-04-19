@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -98,15 +98,15 @@ public final class Q00232_TestOfTheLord extends Quest {
 	private static final Location FIRST_ORC_SPAWN = new Location(21036, -107690, -3038);
 	
 	public Q00232_TestOfTheLord() {
-		super(232, Q00232_TestOfTheLord.class.getSimpleName(), "Test Of The Lord");
-		addStartNpc(FLAME_LORD_KAKAI);
-		addTalkId(FLAME_LORD_KAKAI, SEER_SOMAK, SEER_MANAKIA, TRADER_JAKAL, BLACKSMITH_SUMARI, ATUBA_CHIEF_VARKEES, NERUGA_CHIEF_TANTUS, URUTU_CHIEF_HATOS, DUDA_MARA_CHIEF_TAKUNA, GANDI_CHIEF_CHIANTA, FIRST_ORC, ANCESTOR_MARTANKUS);
-		addKillId(MARSH_SPIDER, BREKA_ORC_SHAMAN, BREKA_ORC_OVERLORD, ENCHANTED_MONSTEREYE, TIMAK_ORC, TIMAK_ORC_ARCHER, TIMAK_ORC_SOLDIER, TIMAK_ORC_SOLDIER, TIMAK_ORC_WARRIOR, TIMAK_ORC_SHAMAN, TIMAK_ORC_OVERLORD, RAGNA_ORC_OVERLORD, RAGNA_ORC_SEER);
+		super(232);
+		bindStartNpc(FLAME_LORD_KAKAI);
+		bindTalk(FLAME_LORD_KAKAI, SEER_SOMAK, SEER_MANAKIA, TRADER_JAKAL, BLACKSMITH_SUMARI, ATUBA_CHIEF_VARKEES, NERUGA_CHIEF_TANTUS, URUTU_CHIEF_HATOS, DUDA_MARA_CHIEF_TAKUNA, GANDI_CHIEF_CHIANTA, FIRST_ORC, ANCESTOR_MARTANKUS);
+		bindKill(MARSH_SPIDER, BREKA_ORC_SHAMAN, BREKA_ORC_OVERLORD, ENCHANTED_MONSTEREYE, TIMAK_ORC, TIMAK_ORC_ARCHER, TIMAK_ORC_SOLDIER, TIMAK_ORC_SOLDIER, TIMAK_ORC_WARRIOR, TIMAK_ORC_SHAMAN, TIMAK_ORC_OVERLORD, RAGNA_ORC_OVERLORD, RAGNA_ORC_SEER);
 		registerQuestItems(ORDEAL_NECKLACE, VARKEES_CHARM, TANTUS_CHARM, HATOS_CHARM, TAKUNA_CHARM, CHIANTA_CHARM, MANAKIAS_ORDERS, BREKA_ORC_FANG, MANAKIAS_AMULET, HUGE_ORC_FANG, SUMARIS_LETTER, URUTU_BLADE, TIMAK_ORC_SKULL, SWORD_INTO_SKULL, NERUGA_AXE_BLADE, AXE_OF_CEREMONY, MARSH_SPIDER_FEELER, MARSH_SPIDER_FEET, HANDIWORK_SPIDER_BROOCH, ENCHANTED_MONSTER_CORNEA, MONSTER_EYE_WOODCARVING, BEAR_FANG_NECKLACE, MARTANKUS_CHARM, RAGNA_ORC_HEAD, RAGNA_CHIEF_NOTICE, IMMORTAL_FLAME);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -205,7 +205,7 @@ public final class Q00232_TestOfTheLord extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -289,7 +289,6 @@ public final class Q00232_TestOfTheLord extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

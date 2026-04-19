@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,14 +38,14 @@ public class Q00113_StatusOfTheBeaconTower extends Quest {
 	private static final int FIRE_BOX = 8086;
 	
 	public Q00113_StatusOfTheBeaconTower() {
-		super(113, Q00113_StatusOfTheBeaconTower.class.getSimpleName(), "Status of the Beacon Tower");
-		addStartNpc(MOIRA);
-		addTalkId(MOIRA, TORRANT);
+		super(113);
+		bindStartNpc(MOIRA);
+		bindTalk(MOIRA, TORRANT);
 		registerQuestItems(FIRE_BOX, FLAME_BOX);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		
 		if (st == null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  *
  * This file is part of L2J DataPack.
  *
@@ -55,15 +55,15 @@ public final class Q00292_BrigandsSweep extends Quest {
 	private static final int MIN_LVL = 5;
 	
 	public Q00292_BrigandsSweep() {
-		super(292, Q00292_BrigandsSweep.class.getSimpleName(), "Brigands Sweep");
-		addStartNpc(SPIRON);
-		addTalkId(SPIRON, BALANKI);
-		addKillId(DROPLIST.getNpcIds());
+		super(292);
+		bindStartNpc(SPIRON);
+		bindTalk(SPIRON, BALANKI);
+		bindKill(DROPLIST.getNpcIds());
 		registerQuestItems(GOBLIN_NECKLACE, GOBLIN_PENDANT, GOBLIN_LORD_PENDANT, SUSPICIOUS_MEMO.getId(), SUSPICIOUS_CONTRACT);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String html = null;
 		if (qs == null) {
@@ -96,7 +96,7 @@ public final class Q00292_BrigandsSweep extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, qs.getPlayer(), true)) {
 			final int chance = getRandom(10);
@@ -116,7 +116,6 @@ public final class Q00292_BrigandsSweep extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

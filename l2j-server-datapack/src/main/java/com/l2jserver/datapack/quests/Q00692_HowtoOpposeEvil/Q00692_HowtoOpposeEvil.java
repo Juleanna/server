@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -62,14 +62,14 @@ public final class Q00692_HowtoOpposeEvil extends Quest {
 		.build();
 	
 	public Q00692_HowtoOpposeEvil() {
-		super(692, Q00692_HowtoOpposeEvil.class.getSimpleName(), "How to Oppose Evil");
-		addStartNpc(DILIOS);
-		addTalkId(DILIOS, KIRKLAN);
-		addKillId(DROPLIST.getNpcIds());
+		super(692);
+		bindStartNpc(DILIOS);
+		bindTalk(DILIOS, KIRKLAN);
+		bindKill(DROPLIST.getNpcIds());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);
@@ -107,12 +107,11 @@ public final class Q00692_HowtoOpposeEvil extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		QuestState st = getRandomPartyMemberState(player, 3, 1, npc);
 		if (st != null) {
 			giveItemRandomly(st.getPlayer(), npc, DROPLIST.get(npc), true);
 		}
-		return null;
 	}
 	
 	@Override

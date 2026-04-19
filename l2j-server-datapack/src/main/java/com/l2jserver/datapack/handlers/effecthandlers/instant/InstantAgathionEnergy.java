@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -64,12 +64,12 @@ public final class InstantAgathionEnergy extends AbstractEffect {
 		
 		final var target = info.getEffected().getActingPlayer();
 		final var agathionInfo = AgathionRepository.getInstance().getByNpcId(target.getAgathionId());
-		if ((agathionInfo == null) || (agathionInfo.getMaxEnergy() <= 0)) {
+		if ((agathionInfo == null) || (agathionInfo.maxEnergy() <= 0)) {
 			return;
 		}
 		
 		final var agathionItem = target.getInventory().getPaperdollItem(PAPERDOLL_LBRACELET);
-		if ((agathionItem == null) || (agathionInfo.getItemId() != agathionItem.getId())) {
+		if ((agathionItem == null) || (agathionInfo.itemId() != agathionItem.getId())) {
 			return;
 		}
 		

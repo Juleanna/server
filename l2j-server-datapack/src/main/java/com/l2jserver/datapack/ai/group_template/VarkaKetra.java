@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -131,11 +131,10 @@ public class VarkaKetra extends AbstractNpcAI {
 	};
 	
 	public VarkaKetra() {
-		super(VarkaKetra.class.getSimpleName(), "ai/group_template");
-		addKillId(KETRA);
-		addKillId(VARKA);
-		addNpcHateId(KETRA);
-		addNpcHateId(VARKA);
+		bindKill(KETRA);
+		bindKill(VARKA);
+		bindNpcHate(KETRA);
+		bindNpcHate(VARKA);
 	}
 	
 	@Override
@@ -173,9 +172,8 @@ public class VarkaKetra extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		executeForEachPlayer(killer, npc, isSummon, true, false);
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

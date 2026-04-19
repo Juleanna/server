@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -18,14 +18,15 @@
  */
 package com.l2jserver.datapack.handlers.effecthandlers.pump;
 
+import static com.l2jserver.gameserver.model.events.EventType.PLAYABLE_EXP_CHANGED;
+
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.effects.AbstractEffect;
-import com.l2jserver.gameserver.model.events.EventType;
-import com.l2jserver.gameserver.model.events.impl.character.playable.OnPlayableExpChanged;
+import com.l2jserver.gameserver.model.events.impl.character.playable.PlayableExpChanged;
 import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
 import com.l2jserver.gameserver.model.stats.Stats;
@@ -47,7 +48,7 @@ public final class SoulEating extends AbstractEffect {
 	@Override
 	public void onExit(BuffInfo info) {
 		if (info.getEffected().isPlayer()) {
-			info.getEffected().removeListenerIf(EventType.ON_PLAYABLE_EXP_CHANGED, listener -> listener.getOwner() == this);
+			info.getEffected().removeListenerIf(PLAYABLE_EXP_CHANGED, listener -> listener.getOwner() == this);
 		}
 	}
 	
@@ -73,7 +74,7 @@ public final class SoulEating extends AbstractEffect {
 	@Override
 	public void onStart(BuffInfo info) {
 		if (info.getEffected().isPlayer()) {
-			info.getEffected().addListener(new ConsumerEventListener(info.getEffected(), EventType.ON_PLAYABLE_EXP_CHANGED, (OnPlayableExpChanged event) -> onExperienceReceived(event.getActiveChar(), (event.getNewExp() - event.getOldExp())), this));
+			info.getEffected().addListener(new ConsumerEventListener(info.getEffected(), PLAYABLE_EXP_CHANGED, (PlayableExpChanged event) -> onExperienceReceived(event.player(), (event.newExp() - event.oldExp())), this));
 		}
 	}
 }

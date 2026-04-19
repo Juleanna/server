@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -59,9 +59,8 @@ public final class CabaleBuffer extends AbstractNpcAI {
 	private static final int PREACHER_MAGE = 4362;
 	
 	public CabaleBuffer() {
-		super(CabaleBuffer.class.getSimpleName(), "ai/npc");
-		addFirstTalkId(SevenSigns.ORATOR_NPC_ID, SevenSigns.PREACHER_NPC_ID);
-		addSpawnId(SevenSigns.ORATOR_NPC_ID, SevenSigns.PREACHER_NPC_ID);
+		bindFirstTalk(SevenSigns.ORATOR_NPC_ID, SevenSigns.PREACHER_NPC_ID);
+		bindSpawn(SevenSigns.ORATOR_NPC_ID, SevenSigns.PREACHER_NPC_ID);
 	}
 	
 	@Override
@@ -70,10 +69,9 @@ public final class CabaleBuffer extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		ThreadPoolManager.getInstance().scheduleGeneral(new CabaleAI(npc), 3000);
 		ThreadPoolManager.getInstance().scheduleGeneral(new Talk(npc), 60000);
-		return super.onSpawn(npc);
 	}
 	
 	protected class Talk implements Runnable {

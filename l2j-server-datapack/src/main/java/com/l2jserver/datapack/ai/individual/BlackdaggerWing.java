@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -25,8 +25,8 @@ import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.util.Util;
 
 /**
@@ -50,14 +50,13 @@ public class BlackdaggerWing extends AbstractNpcAI {
 	private static final double MID_HP_PERCENTAGE = 0.50;
 	
 	public BlackdaggerWing() {
-		super(BlackdaggerWing.class.getSimpleName(), "ai/individual");
-		addAttackId(BLACKDAGGER_WING);
-		addSeeCreatureId(BLACKDAGGER_WING);
-		addSpellFinishedId(BLACKDAGGER_WING);
+		bindAttack(BLACKDAGGER_WING);
+		bindSeeCreature(BLACKDAGGER_WING);
+		bindSpellFinished(BLACKDAGGER_WING);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if (Util.calculateDistance(npc, npc.getSpawn(), false, false) > MAX_CHASE_DIST) {
 			npc.teleToLocation(npc.getSpawn().getX(), npc.getSpawn().getY(), npc.getSpawn().getZ());
 		}
@@ -66,11 +65,10 @@ public class BlackdaggerWing extends AbstractNpcAI {
 			npc.getVariables().set(MID_HP_FLAG, true);
 			startQuestTimer(DAMAGE_TIMER, 10000, npc, attacker);
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onSeeCreature(L2Npc npc, L2Character creature, boolean isSummon) {
+	public void onSeeCreature(L2Npc npc, L2Character creature) {
 		if (npc.getVariables().getBoolean(MID_HP_FLAG, false)) {
 			final L2Character mostHated = ((L2Attackable) npc).getMostHated();
 			if ((mostHated != null) && mostHated.isPlayer() && (mostHated != creature)) {
@@ -79,27 +77,26 @@ public class BlackdaggerWing extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onSeeCreature(npc, creature, isSummon);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		if (skill.getId() == POWER_STRIKE.getSkillId()) {
+	public void onSpellFinished(NpcSkillFinished event) {
+		if (event.skill().getId() == POWER_STRIKE.getSkillId()) {
+			final var npc = event.npc();
 			npc.getVariables().set(POWER_STRIKE_CAST_COUNT, npc.getVariables().getInt(POWER_STRIKE_CAST_COUNT) + 1);
 			if (npc.getVariables().getInt(POWER_STRIKE_CAST_COUNT) > 3) {
-				addSkillCastDesire(npc, player, RANGE_MAGIC_ATTACK, 9999900000000000L);
+				addSkillCastDesire(npc, event.player(), RANGE_MAGIC_ATTACK, 9999900000000000L);
 				npc.getVariables().set(POWER_STRIKE_CAST_COUNT, 0);
 			}
 		}
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (DAMAGE_TIMER.equals(event)) {
 			npc.getAI().setIntention(AI_INTENTION_ATTACK);
 			startQuestTimer(DAMAGE_TIMER, 30000, npc, player);
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 }

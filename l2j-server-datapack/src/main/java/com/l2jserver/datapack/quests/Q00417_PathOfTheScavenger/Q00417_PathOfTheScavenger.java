@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -77,16 +77,16 @@ public final class Q00417_PathOfTheScavenger extends Quest {
 	private static final String FLAG = "FLAG";
 	
 	public Q00417_PathOfTheScavenger() {
-		super(417, Q00417_PathOfTheScavenger.class.getSimpleName(), "Path Of The Scavenger");
-		addStartNpc(COLLECTOR_PIPI);
-		addTalkId(COLLECTOR_PIPI, WAREHOUSE_KEEPER_RAUT, TRADER_MION, TRADER_SHARI, HEAD_BLACKSMITH_BRONK, PRIEST_OF_THE_EARTH_ZIMENF, MASTER_TOMA, TORAI, WAREHOUSE_CHIEF_YASENI);
-		addAttackId(HUNTER_TARANTULA, PLUNDER_TARANTULA, HUNTER_BEAR, HONEY_BEAR);
-		addKillId(HUNTER_TARANTULA, PLUNDER_TARANTULA, HUNTER_BEAR, HONEY_BEAR);
+		super(417);
+		bindStartNpc(COLLECTOR_PIPI);
+		bindTalk(COLLECTOR_PIPI, WAREHOUSE_KEEPER_RAUT, TRADER_MION, TRADER_SHARI, HEAD_BLACKSMITH_BRONK, PRIEST_OF_THE_EARTH_ZIMENF, MASTER_TOMA, TORAI, WAREHOUSE_CHIEF_YASENI);
+		bindAttack(HUNTER_TARANTULA, PLUNDER_TARANTULA, HUNTER_BEAR, HONEY_BEAR);
+		bindKill(HUNTER_TARANTULA, PLUNDER_TARANTULA, HUNTER_BEAR, HONEY_BEAR);
 		registerQuestItems(PIPPIS_LETTER_OF_RECOMMENDATION, ROUTS_TELEPORT_SCROLL, SUCCUBUS_UNDIES, MIONS_LETTER, BRONKS_INGOT, SHARIS_AXE, ZIMENFS_POTION, BRONKS_PAY, SHARIS_PAY, ZIMENFS_PAY, BEAR_PICTURE, TARANTULA_PICTURE, HONEY_JAR.getId(), BEAD.getId(), BEAD_PARCEL, BEAD_PARCEL2);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		if (qs == null) {
 			return null;
@@ -277,7 +277,7 @@ public final class Q00417_PathOfTheScavenger extends Quest {
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill) {
 		final QuestState qs = getQuestState(attacker, false);
 		if ((qs != null) && qs.isStarted()) {
 			switch (npc.getId()) {
@@ -315,11 +315,10 @@ public final class Q00417_PathOfTheScavenger extends Quest {
 				}
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState qs = getQuestState(killer, false);
 		if ((qs != null) && qs.isStarted() && Util.checkIfInRange(1500, npc, killer, true) && npc.isAttackable()) {
 			final boolean firstAttacker = (killer.getObjectId() == npc.getVariables().getInt(FIRST_ATTACKER));
@@ -351,7 +350,6 @@ public final class Q00417_PathOfTheScavenger extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.model.events.EventType;
 import com.l2jserver.gameserver.model.events.ListenerRegisterType;
 import com.l2jserver.gameserver.model.events.annotations.RegisterEvent;
 import com.l2jserver.gameserver.model.events.annotations.RegisterType;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogout;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLogout;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
@@ -51,12 +51,11 @@ public final class BabyPets extends AbstractNpcAI {
 	private static final int GREATER_HEAL_TRICK = 4718;
 	
 	public BabyPets() {
-		super(BabyPets.class.getSimpleName(), "ai/npc/Summons/Pets");
-		addSummonSpawnId(BABY_PETS);
+		bindSummonSpawn(BABY_PETS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if (event.equals("CAST_HEAL") && (player != null)) {
 			final L2PetInstance pet = (L2PetInstance) player.getSummon();
 			
@@ -72,13 +71,13 @@ public final class BabyPets extends AbstractNpcAI {
 				cancelQuestTimer("CAST_HEAL", null, player);
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
-	@RegisterEvent(EventType.ON_PLAYER_LOGOUT)
+	@RegisterEvent(EventType.PLAYER_LOGOUT)
 	@RegisterType(ListenerRegisterType.GLOBAL)
-	public void OnPlayerLogout(OnPlayerLogout event) {
-		cancelQuestTimer("CAST_HEAL", null, event.getActiveChar());
+	public void OnPlayerLogout(PlayerLogout event) {
+		cancelQuestTimer("CAST_HEAL", null, event.player());
 	}
 	
 	@Override

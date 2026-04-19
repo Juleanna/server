@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -38,13 +38,13 @@ public class Q00112_WalkOfFate extends Quest {
 	private static final int MIN_LEVEL = 20;
 	
 	public Q00112_WalkOfFate() {
-		super(112, Q00112_WalkOfFate.class.getSimpleName(), "Walk of Fate");
-		addStartNpc(LIVINA);
-		addTalkId(LIVINA, KARUDA);
+		super(112);
+		bindStartNpc(LIVINA);
+		bindTalk(LIVINA, KARUDA);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st == null) || (player.getLevel() < MIN_LEVEL)) {
 			return null;

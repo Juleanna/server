@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -21,13 +21,17 @@ package com.l2jserver.datapack.quests.Q00105_SkirmishWithOrcs;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.l2jserver.datapack.quests.Q00281_HeadForTheHills.Q00281_HeadForTheHills;
+import com.l2jserver.datapack.ai.npc.Teleports.NewbieGuide.NewbieGuide;
 import com.l2jserver.gameserver.enums.Race;
+import com.l2jserver.gameserver.enums.audio.Voice;
+import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
+import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.gameserver.util.Util;
 
@@ -70,19 +74,40 @@ public final class Q00105_SkirmishWithOrcs extends Quest {
 		KENDELLS_7TH_ORDER,
 		KENDELLS_8TH_ORDER
 	};
+	
+	private static final ItemHolder[] REWARDS = {
+		new ItemHolder(1060, 100), // Lesser Healing Potion
+		new ItemHolder(4412, 10), // Echo Crystal - Theme of Battle
+		new ItemHolder(4413, 10), // Echo Crystal - Theme of Love
+		new ItemHolder(4414, 10), // Echo Crystal - Theme of Solitude
+		new ItemHolder(4415, 10), // Echo Crystal - Theme of Feast
+		new ItemHolder(4416, 10), // Echo Crystal - Theme of Celebration
+	};
+	
+	private static final ItemHolder SPIRITSHOTS_NO_GRADE_FOR_ROOKIES = new ItemHolder(5790, 3000);
+	private static final ItemHolder SOULSHOTS_NO_GRADE_FOR_ROOKIES = new ItemHolder(5789, 7000);
+	private static final ItemHolder SOULSHOTS_NO_GRADE = new ItemHolder(1835, 1000);
+	private static final ItemHolder SPIRITSHOTS_NO_GRADE = new ItemHolder(2509, 500);
+	
+	private static final ItemHolder RED_SUNSET_SWORD = new ItemHolder(981, 1);
+	private static final ItemHolder RED_SUNSET_STAFF = new ItemHolder(754, 1);
+	
+	
 	// Misc
 	private static final int MIN_LVL = 10;
 	
+	private static final int GUIDE_MISSION = 41;
+	
 	public Q00105_SkirmishWithOrcs() {
-		super(105, Q00105_SkirmishWithOrcs.class.getSimpleName(), "Skirmish with Orcs");
-		addStartNpc(KENDNELL);
-		addTalkId(KENDNELL);
-		addKillId(MONSTER_DROP.keySet());
+		super(105);
+		bindStartNpc(KENDNELL);
+		bindTalk(KENDNELL);
+		bindKill(MONSTER_DROP.keySet());
 		registerQuestItems(KENDNELLS_ORDERS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		String htmltext = null;
 		if (st == null) {
@@ -106,7 +131,7 @@ public final class Q00105_SkirmishWithOrcs extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && Util.checkIfInRange(1500, npc, killer, true)) {
 			switch (npc.getId()) {
@@ -132,7 +157,6 @@ public final class Q00105_SkirmishWithOrcs extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
@@ -165,8 +189,32 @@ public final class Q00105_SkirmishWithOrcs extends Quest {
 					htmltext = "30218-08.html";
 				}
 				if (st.isCond(4) && st.hasQuestItems(KABOO_CHIEFS_2ST_TORQUE)) {
-					Q00281_HeadForTheHills.giveNewbieReward(talker);
+					for (ItemHolder reward : REWARDS) {
+						st.giveItems(reward);
+					}
+					
+					giveNewbieReward(talker, st);
 					talker.sendPacket(new SocialAction(talker.getObjectId(), 3));
+					
+					// Newbie Guide
+					final var newbieGuide = QuestManager.getInstance().getQuest(NewbieGuide.class.getSimpleName());
+					if (newbieGuide != null) {
+						final var newbieGuideQs = newbieGuide.getQuestState(talker, true);
+						if (!newbieGuideQs.haveNRMemo(talker, GUIDE_MISSION)) {
+							newbieGuideQs.setNRMemo(talker, GUIDE_MISSION);
+							newbieGuideQs.setNRMemoState(talker, GUIDE_MISSION, 100000);
+							
+							showOnScreenMsg(talker, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+						} else {
+							if (((newbieGuideQs.getNRMemoState(talker, GUIDE_MISSION) % 1000000) / 100000) != 1) {
+								newbieGuideQs.setNRMemo(talker, GUIDE_MISSION);
+								newbieGuideQs.setNRMemoState(talker, GUIDE_MISSION, newbieGuideQs.getNRMemoState(talker, GUIDE_MISSION) + 100000);
+								
+								showOnScreenMsg(talker, NpcStringId.ACQUISITION_OF_RACE_SPECIFIC_WEAPON_COMPLETE_N_GO_FIND_THE_NEWBIE_GUIDE, 2, 5000);
+							}
+						}
+					}
+					
 					st.giveAdena(17599, true);
 					st.addExpAndSp(41478, 3555);
 					st.exitQuest(false, true);
@@ -180,5 +228,33 @@ public final class Q00105_SkirmishWithOrcs extends Quest {
 			}
 		}
 		return htmltext;
+	}
+	
+	/**
+	 * Give basic newbie reward.
+	 * @param player the player to reward
+	 */
+	private static void giveNewbieReward(L2PcInstance player, QuestState qs) {
+		if (!player.isMageClass()) {
+			giveItems(player, SOULSHOTS_NO_GRADE);
+		} else {
+			giveItems(player, SPIRITSHOTS_NO_GRADE);
+		}
+		if (!player.isMageClass() && !qs.isCompleted()) {
+			giveItems(player, RED_SUNSET_SWORD);
+		} else {
+			if (!qs.isCompleted()) {
+				giveItems(player, RED_SUNSET_STAFF);
+			}
+		}
+		if (player.getLevel() < 25) {
+			if (player.isMageClass()) {
+				giveItems(player, SPIRITSHOTS_NO_GRADE_FOR_ROOKIES);
+				playSound(player, Voice.TUTORIAL_VOICE_027_1000);
+			} else {
+				giveItems(player, SOULSHOTS_NO_GRADE_FOR_ROOKIES);
+				playSound(player, Voice.TUTORIAL_VOICE_026_1000);
+			}
+		}
 	}
 }

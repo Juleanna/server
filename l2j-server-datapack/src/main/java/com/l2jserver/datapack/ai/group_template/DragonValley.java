@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -117,14 +117,13 @@ public final class DragonValley extends AbstractNpcAI {
 	}
 	
 	public DragonValley() {
-		super(DragonValley.class.getSimpleName(), "ai/group_template");
-		addAttackId(SUMMON_NPC);
-		addKillId(SPOIL_REACT_MONSTER);
-		addSpawnId(SPOIL_REACT_MONSTER);
+		bindAttack(SUMMON_NPC);
+		bindKill(SPOIL_REACT_MONSTER);
+		bindSpawn(SPOIL_REACT_MONSTER);
 	}
 	
 	@Override
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
+	public void onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon) {
 		if ((npc.getCurrentHp() < (npc.getMaxHp() / 2)) && (getRandom(100) < 5) && npc.isScriptValue(0)) {
 			npc.setScriptValue(1);
 			final int rnd = getRandom(3, 5);
@@ -134,24 +133,21 @@ public final class DragonValley extends AbstractNpcAI {
 				addAttackDesire(minion, playable);
 			}
 		}
-		return super.onAttack(npc, attacker, damage, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (((L2Attackable) npc).isSpoiled()) {
 			npc.dropItem(killer, getRandom(GREATER_HERB_OF_MANA, SUPERIOR_HERB_OF_MANA), 1);
 			manageMoraleBoost(killer, npc);
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override
-	public String onSpawn(L2Npc npc) {
+	public void onSpawn(L2Npc npc) {
 		if (Util.contains(SPAWN_ANIMATION, npc.getId())) {
 			npc.setShowSummonAnimation(true);
 		}
-		return super.onSpawn(npc);
 	}
 	
 	private void manageMoraleBoost(L2PcInstance player, L2Npc npc) {

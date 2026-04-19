@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,14 +37,14 @@ public class Q00014_WhereaboutsOfTheArchaeologist extends Quest {
 	private static final int LETTER = 7253;
 	
 	public Q00014_WhereaboutsOfTheArchaeologist() {
-		super(14, Q00014_WhereaboutsOfTheArchaeologist.class.getSimpleName(), "Whereabouts of the Archaeologist");
-		addStartNpc(LIESEL);
-		addTalkId(LIESEL, GHOST_OF_ADVENTURER);
+		super(14);
+		bindStartNpc(LIESEL);
+		bindTalk(LIESEL, GHOST_OF_ADVENTURER);
 		registerQuestItems(LETTER);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

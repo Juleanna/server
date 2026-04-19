@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -35,13 +35,13 @@ public class Q00249_PoisonedPlainsOfTheLizardmen extends Quest {
 	private static final int JOHNNY = 32744;
 	
 	public Q00249_PoisonedPlainsOfTheLizardmen() {
-		super(249, Q00249_PoisonedPlainsOfTheLizardmen.class.getSimpleName(), "Poisoned Plains of the Lizardmen");
-		addStartNpc(MOUEN);
-		addTalkId(MOUEN, JOHNNY);
+		super(249);
+		bindStartNpc(MOUEN);
+		bindTalk(MOUEN, JOHNNY);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = event;
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {

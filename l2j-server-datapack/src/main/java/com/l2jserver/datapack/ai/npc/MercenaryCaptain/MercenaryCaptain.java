@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -73,11 +73,10 @@ public final class MercenaryCaptain extends AbstractNpcAI {
 	private static final int CLASS_LEVEL = 2;
 	
 	public MercenaryCaptain() {
-		super(MercenaryCaptain.class.getSimpleName(), "ai/npc");
 		for (int id : NPCS.keySet()) {
-			addStartNpc(id);
-			addFirstTalkId(id);
-			addTalkId(id);
+			bindStartNpc(id);
+			bindFirstTalk(id);
+			bindTalk(id);
 		}
 		
 		for (Territory terr : TerritoryWarManager.getInstance().getAllTerritories()) {
@@ -90,7 +89,7 @@ public final class MercenaryCaptain extends AbstractNpcAI {
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		String htmltext = null;
 		if (player != null) {
 			final StringTokenizer st = new StringTokenizer(event, " ");

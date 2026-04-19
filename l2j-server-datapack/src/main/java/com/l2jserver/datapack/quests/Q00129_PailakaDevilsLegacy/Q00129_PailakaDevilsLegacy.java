@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -63,16 +63,16 @@ public final class Q00129_PailakaDevilsLegacy extends Quest {
 	private static final int EXIT_TIME = 5;
 	
 	public Q00129_PailakaDevilsLegacy() {
-		super(129, Q00129_PailakaDevilsLegacy.class.getSimpleName(), "Pailaka - Devil's Legacy");
-		addStartNpc(SURVIVOR);
-		addFirstTalkId(SURVIVOR, SUPPORTER, ADVENTURER1, ADVENTURER2);
-		addTalkId(SURVIVOR, SUPPORTER, ADVENTURER1, ADVENTURER2);
-		addKillId(KAMS, ALKASO, LEMATAN);
+		super(129);
+		bindStartNpc(SURVIVOR);
+		bindFirstTalk(SURVIVOR, SUPPORTER, ADVENTURER1, ADVENTURER2);
+		bindTalk(SURVIVOR, SUPPORTER, ADVENTURER1, ADVENTURER2);
+		bindKill(KAMS, ALKASO, LEMATAN);
 		registerQuestItems(SWORD, ENH_SWORD1, ENH_SWORD2, SCROLL_1, SCROLL_2, SHIELD, HEALING_POTION, ANTIDOTE_POTION, DIVINE_POTION, DEFENCE_POTION, PAILAKA_KEY);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		
@@ -217,9 +217,8 @@ public final class Q00129_PailakaDevilsLegacy extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance player, boolean isSummon) {
 		final QuestState qs = getQuestState(player, false);
-		
 		if ((qs != null) && qs.isStarted()) {
 			switch (npc.getId()) {
 				case KAMS: {
@@ -244,6 +243,5 @@ public final class Q00129_PailakaDevilsLegacy extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, player, isSummon);
 	}
 }

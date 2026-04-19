@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -42,15 +42,15 @@ public class Q00553_OlympiadUndefeated extends Quest {
 	private static final int MEDAL_OF_GLORY = 21874;
 	
 	public Q00553_OlympiadUndefeated() {
-		super(553, Q00553_OlympiadUndefeated.class.getSimpleName(), "Olympiad Undefeated");
-		addStartNpc(MANAGER);
-		addTalkId(MANAGER);
+		super(553);
+		bindStartNpc(MANAGER);
+		bindTalk(MANAGER);
 		registerQuestItems(WIN_CONF_2, WIN_CONF_5, WIN_CONF_10);
-		addOlympiadMatchFinishId();
+		bindOlympiadMatchFinish();
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return getNoQuestMsg(player);

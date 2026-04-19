@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -37,13 +37,13 @@ public class Q00695_DefendTheHallOfSuffering extends Quest {
 	private static final int MAX_LEVEL = 82;
 	
 	public Q00695_DefendTheHallOfSuffering() {
-		super(695, Q00695_DefendTheHallOfSuffering.class.getSimpleName(), "Defend the Hall of Suffering");
-		addStartNpc(TEPIOS);
-		addTalkId(TEPIOS);
+		super(695);
+		bindStartNpc(TEPIOS);
+		bindTalk(TEPIOS);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if (st == null) {
 			return null;

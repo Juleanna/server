@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -76,26 +76,26 @@ public class Q00102_SeaOfSporesFever extends Quest {
 	}
 	
 	public Q00102_SeaOfSporesFever() {
-		super(102, Q00102_SeaOfSporesFever.class.getSimpleName(), "Sea of Spores Fever");
-		addStartNpc(ALBERIUS);
-		addTalkId(ALBERIUS, COBENDELL, GARTRANDELL, BERROS, VELTRESS, RAYEN);
-		addKillId(DRYAD, DRYAD_ELDER);
+		super(102);
+		bindStartNpc(ALBERIUS);
+		bindTalk(ALBERIUS, COBENDELL, GARTRANDELL, BERROS, VELTRESS, RAYEN);
+		bindKill(DRYAD, DRYAD_ELDER);
 		registerQuestItems(ALBERIUS_LIST, ALBERIUS_LETTER, EVERGREEN_AMULET, DRYADS_TEAR, COBENDELLS_MEDICINE1, COBENDELLS_MEDICINE2, COBENDELLS_MEDICINE3, COBENDELLS_MEDICINE4, COBENDELLS_MEDICINE5);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState st = getQuestState(player, false);
 		if ((st != null) && event.equals("30284-02.htm")) {
 			st.startQuest();
 			st.giveItems(ALBERIUS_LETTER, 1);
 			return event;
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		final QuestState st = getQuestState(killer, false);
 		if ((st != null) && st.isCond(2) && (getRandom(10) < 3)) {
 			st.giveItems(DRYADS_TEAR, 1);
@@ -105,7 +105,6 @@ public class Q00102_SeaOfSporesFever extends Quest {
 				st.setCond(3, true);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	@Override

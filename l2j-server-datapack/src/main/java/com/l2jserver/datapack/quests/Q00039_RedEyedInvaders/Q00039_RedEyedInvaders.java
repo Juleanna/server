@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -53,15 +53,15 @@ public final class Q00039_RedEyedInvaders extends Quest {
 	private static final int MIN_LVL = 20;
 	
 	public Q00039_RedEyedInvaders() {
-		super(39, Q00039_RedEyedInvaders.class.getSimpleName(), "Red-eyed Invaders");
-		addStartNpc(GUARD_BABENCO);
-		addTalkId(GUARD_BABENCO, CAPTAIN_BATHIA);
-		addKillId(MALE_LIZARDMAN_GUARD, MALE_LIZARDMAN_SCOUT, MALE_LIZARDMAN, GIANT_ARANE);
+		super(39);
+		bindStartNpc(GUARD_BABENCO);
+		bindTalk(GUARD_BABENCO, CAPTAIN_BATHIA);
+		bindKill(MALE_LIZARDMAN_GUARD, MALE_LIZARDMAN_SCOUT, MALE_LIZARDMAN, GIANT_ARANE);
 		registerQuestItems(LIZ_NECKLACE_A.getId(), LIZ_NECKLACE_B.getId(), LIZ_PERFUME.getId(), LIZ_GEM.getId());
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		final QuestState qs = getQuestState(player, false);
 		String htmltext = null;
 		if (qs == null) {
@@ -158,7 +158,7 @@ public final class Q00039_RedEyedInvaders extends Quest {
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		switch (npc.getId()) {
 			case MALE_LIZARDMAN -> {
 				final QuestState qs = getRandomPartyMemberState(killer, 2, 3, npc);
@@ -211,6 +211,5 @@ public final class Q00039_RedEyedInvaders extends Quest {
 				}
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 }

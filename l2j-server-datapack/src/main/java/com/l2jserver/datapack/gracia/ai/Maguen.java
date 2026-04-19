@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -27,6 +27,7 @@ import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
@@ -74,14 +75,13 @@ public final class Maguen extends AbstractNpcAI {
 	private static final SkillHolder R_PLASMA3 = new SkillHolder(6369, 3); // Maguen Plasma - Reptilikon
 	
 	public Maguen() {
-		super(Maguen.class.getSimpleName(), "gracia/AI");
-		addKillId(ELITES);
-		addSkillSeeId(MAGUEN);
-		addSpellFinishedId(MAGUEN);
+		bindKill(ELITES);
+		bindSkillSee(MAGUEN);
+		bindSpellFinished(MAGUEN);
 	}
 	
 	@Override
-	public String onAdvEvent(String event, L2Npc npc, L2PcInstance player) {
+	public String onEvent(String event, L2Npc npc, L2PcInstance player) {
 		if ((npc == null) || (player == null)) {
 			return null;
 		}
@@ -152,14 +152,17 @@ public final class Maguen extends AbstractNpcAI {
 				break;
 			}
 		}
-		return super.onAdvEvent(event, npc, player);
+		return super.onEvent(event, npc, player);
 	}
 	
 	@Override
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill) {
-		final BuffInfo b_info = player.getEffectList().getBuffInfoByAbnormalType(B_PLASMA1.getSkill().getAbnormalType());
-		final BuffInfo c_info = player.getEffectList().getBuffInfoByAbnormalType(C_PLASMA1.getSkill().getAbnormalType());
-		final BuffInfo r_info = player.getEffectList().getBuffInfoByAbnormalType(R_PLASMA1.getSkill().getAbnormalType());
+	public void onSpellFinished(NpcSkillFinished event) {
+		final var npc = event.npc();
+		final var player = event.player();
+		final var effectList = player.getEffectList();
+		final BuffInfo b_info = effectList.getBuffInfoByAbnormalType(B_PLASMA1.getSkill().getAbnormalType());
+		final BuffInfo c_info = effectList.getBuffInfoByAbnormalType(C_PLASMA1.getSkill().getAbnormalType());
+		final BuffInfo r_info = effectList.getBuffInfoByAbnormalType(R_PLASMA1.getSkill().getAbnormalType());
 		
 		final int b = b_info == null ? 0 : b_info.getSkill().getAbnormalLvl();
 		final int c = c_info == null ? 0 : c_info.getSkill().getAbnormalLvl();
@@ -167,30 +170,30 @@ public final class Maguen extends AbstractNpcAI {
 		
 		if ((b == 3) && (c == 0) && (r == 0)) {
 			showOnScreenMsg(player, NpcStringId.ENOUGH_MAGUEN_PLASMA_BISTAKON_HAVE_GATHERED, 2, 4000);
-			player.getEffectList().stopSkillEffects(true, B_PLASMA1.getSkill().getAbnormalType());
+			effectList.stopSkillEffects(true, B_PLASMA1.getSkill().getAbnormalType());
 			npc.setTarget(player);
 			npc.doCast((getRandom(100) < 70) ? B_BUFF_1 : B_BUFF_2);
 			maguenPetChance(player);
 			startQuestTimer("END_TIMER", 3000, npc, player);
 		} else if ((b == 0) && (c == 3) && (r == 0)) {
 			showOnScreenMsg(player, NpcStringId.ENOUGH_MAGUEN_PLASMA_COKRAKON_HAVE_GATHERED, 2, 4000);
-			player.getEffectList().stopSkillEffects(true, C_PLASMA1.getSkill().getAbnormalType());
+			effectList.stopSkillEffects(true, C_PLASMA1.getSkill().getAbnormalType());
 			npc.setTarget(player);
 			npc.doCast((getRandom(100) < 70) ? C_BUFF_1 : C_BUFF_2);
 			maguenPetChance(player);
 			startQuestTimer("END_TIMER", 3000, npc, player);
 		} else if ((b == 0) && (c == 0) && (r == 3)) {
 			showOnScreenMsg(player, NpcStringId.ENOUGH_MAGUEN_PLASMA_LEPTILIKON_HAVE_GATHERED, 2, 4000);
-			player.getEffectList().stopSkillEffects(true, R_PLASMA1.getSkill().getAbnormalType());
+			effectList.stopSkillEffects(true, R_PLASMA1.getSkill().getAbnormalType());
 			npc.setTarget(player);
 			npc.doCast((getRandom(100) < 70) ? R_BUFF_1 : R_BUFF_2);
 			maguenPetChance(player);
 			startQuestTimer("END_TIMER", 3000, npc, player);
 		} else if ((b + c + r) == 3) {
 			if ((b == 1) && (c == 1) && (r == 1)) {
-				player.getEffectList().stopSkillEffects(true, B_PLASMA1.getSkill().getAbnormalType());
-				player.getEffectList().stopSkillEffects(true, C_PLASMA1.getSkill().getAbnormalType());
-				player.getEffectList().stopSkillEffects(true, R_PLASMA1.getSkill().getAbnormalType());
+				effectList.stopSkillEffects(true, B_PLASMA1.getSkill().getAbnormalType());
+				effectList.stopSkillEffects(true, C_PLASMA1.getSkill().getAbnormalType());
+				effectList.stopSkillEffects(true, R_PLASMA1.getSkill().getAbnormalType());
 				showOnScreenMsg(player, NpcStringId.THE_PLASMAS_HAVE_FILLED_THE_AEROSCOPE_AND_ARE_HARMONIZED, 2, 4000);
 				SkillHolder skillToCast = null;
 				switch (getRandom(3)) {
@@ -213,19 +216,18 @@ public final class Maguen extends AbstractNpcAI {
 				startQuestTimer("END_TIMER", 3000, npc, player);
 			} else {
 				showOnScreenMsg(player, NpcStringId.THE_PLASMAS_HAVE_FILLED_THE_AEROSCOPE_BUT_THEY_ARE_RAMMING_INTO_EACH_OTHER_EXPLODING_AND_DYING, 2, 4000);
-				player.getEffectList().stopSkillEffects(true, B_PLASMA1.getSkill().getAbnormalType());
-				player.getEffectList().stopSkillEffects(true, C_PLASMA1.getSkill().getAbnormalType());
-				player.getEffectList().stopSkillEffects(true, R_PLASMA1.getSkill().getAbnormalType());
+				effectList.stopSkillEffects(true, B_PLASMA1.getSkill().getAbnormalType());
+				effectList.stopSkillEffects(true, C_PLASMA1.getSkill().getAbnormalType());
+				effectList.stopSkillEffects(true, R_PLASMA1.getSkill().getAbnormalType());
 			}
 		} else {
 			startQuestTimer("END_TIMER", 1000, npc, player);
 		}
 		npc.setDisplayEffect(4);
-		return super.onSpellFinished(npc, player, skill);
 	}
 	
 	@Override
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
+	public void onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, List<L2Object> targets, boolean isSummon) {
 		if ((skill == MACHINE.getSkill()) && (caster == npc.getVariables().getObject("SUMMON_PLAYER", L2PcInstance.class))) {
 			if ((npc.getVariables().getInt("NPC_EFFECT") != 0) && (npc.getVariables().getInt("BLOCKED_SKILLSEE") == 0)) {
 				final BuffInfo i1_info = caster.getEffectList().getBuffInfoByAbnormalType(B_PLASMA1.getSkill().getAbnormalType());
@@ -297,11 +299,10 @@ public final class Maguen extends AbstractNpcAI {
 				}
 			}
 		}
-		return super.onSkillSee(npc, caster, skill, targets, isSummon);
 	}
 	
 	@Override
-	public String onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
+	public void onKill(L2Npc npc, L2PcInstance killer, boolean isSummon) {
 		if (killer.isInParty()) {
 			final L2PcInstance partyMember = getRandomPartyMember(killer);
 			final int i0 = 10 + (10 * killer.getParty().getMemberCount());
@@ -310,7 +311,6 @@ public final class Maguen extends AbstractNpcAI {
 				notifyEvent("SPAWN_MAGUEN", npc, partyMember);
 			}
 		}
-		return super.onKill(npc, killer, isSummon);
 	}
 	
 	private void maguenPetChance(L2PcInstance player) {

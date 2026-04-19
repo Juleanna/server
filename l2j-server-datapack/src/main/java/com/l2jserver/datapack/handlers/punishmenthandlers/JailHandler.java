@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J DataPack
+ * Copyright © 2004-2026 L2J DataPack
  * 
  * This file is part of L2J DataPack.
  * 
@@ -28,7 +28,7 @@ import com.l2jserver.gameserver.model.actor.tasks.player.TeleportTask;
 import com.l2jserver.gameserver.model.entity.TvTEvent;
 import com.l2jserver.gameserver.model.events.Containers;
 import com.l2jserver.gameserver.model.events.EventType;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogin;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLogin;
 import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
 import com.l2jserver.gameserver.model.olympiad.OlympiadManager;
 import com.l2jserver.gameserver.model.punishment.PunishmentTask;
@@ -45,11 +45,11 @@ import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 public class JailHandler implements IPunishmentHandler {
 	public JailHandler() {
 		// Register global listener
-		Containers.Global().addListener(new ConsumerEventListener(Containers.Global(), EventType.ON_PLAYER_LOGIN, (OnPlayerLogin event) -> onPlayerLogin(event), this));
+		Containers.Global().addListener(new ConsumerEventListener(Containers.Global(), EventType.PLAYER_LOGIN, (PlayerLogin event) -> onPlayerLogin(event), this));
 	}
 	
-	public void onPlayerLogin(OnPlayerLogin event) {
-		final L2PcInstance activeChar = event.getActiveChar();
+	public void onPlayerLogin(PlayerLogin event) {
+		final L2PcInstance activeChar = event.player();
 		if (activeChar.isJailed() && !activeChar.isInsideZone(ZoneId.JAIL)) {
 			applyToPlayer(null, activeChar);
 		} else if (!activeChar.isJailed() && activeChar.isInsideZone(ZoneId.JAIL) && !activeChar.isGM()) {
