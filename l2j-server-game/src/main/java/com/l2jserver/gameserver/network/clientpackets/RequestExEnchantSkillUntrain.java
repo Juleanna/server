@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -45,7 +45,7 @@ import com.l2jserver.gameserver.network.serverpackets.UserInfo;
  * @author -Wooden-
  */
 public final class RequestExEnchantSkillUntrain extends L2GameClientPacket {
-	
+	private static final Logger LOG = LoggerFactory.getLogger(RequestExEnchantSkillUntrain.class);
 	private static final Logger LOG_ENCHANT_SKILL = LoggerFactory.getLogger("enchant_skill");
 	
 	private static final String _C__D0_33_REQUESTEXENCHANTSKILLUNTRAIN = "[C] D0:33 RequestExEnchantSkillUntrain";
@@ -149,7 +149,7 @@ public final class RequestExEnchantSkillUntrain extends L2GameClientPacket {
 		player.sendPacket(ExEnchantSkillResult.valueOf(true));
 		
 		if (general().debug()) {
-			_log.fine("Learned skill ID: " + _skillId + " Level: " + _skillLvl + " for " + requiredSp + " SP, " + requireditems + " Adena.");
+			LOG.debug("Learned skill ID: {} Level: {} for {} SP, {} Adena.", _skillId, _skillLvl, requiredSp, requireditems);
 		}
 		
 		player.sendPacket(new UserInfo(player));

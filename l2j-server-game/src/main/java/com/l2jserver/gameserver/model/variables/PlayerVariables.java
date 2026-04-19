@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,8 +19,9 @@
 package com.l2jserver.gameserver.model.variables;
 
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.model.L2World;
@@ -30,14 +31,11 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * @author UnAfraid
  */
 public class PlayerVariables extends AbstractVariables {
-	
-	private static final Logger _log = Logger.getLogger(PlayerVariables.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(PlayerVariables.class);
 	
 	// SQL Queries.
 	private static final String SELECT_QUERY = "SELECT * FROM character_variables WHERE charId = ?";
-	
 	private static final String DELETE_QUERY = "DELETE FROM character_variables WHERE charId = ?";
-	
 	private static final String INSERT_QUERY = "INSERT INTO character_variables (charId, var, val) VALUES (?, ?, ?)";
 	
 	private final int _objectId;
@@ -58,7 +56,7 @@ public class PlayerVariables extends AbstractVariables {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't restore variables for: " + getPlayer(), e);
+			LOG.warn("Couldn't restore variables for: {}", getPlayer(), e);
 			return false;
 		} finally {
 			compareAndSetChanges(true, false);
@@ -91,7 +89,7 @@ public class PlayerVariables extends AbstractVariables {
 				st.executeBatch();
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't update variables for: " + getPlayer(), e);
+			LOG.warn("Couldn't update variables for: {}", getPlayer(), e);
 			return false;
 		} finally {
 			compareAndSetChanges(true, false);

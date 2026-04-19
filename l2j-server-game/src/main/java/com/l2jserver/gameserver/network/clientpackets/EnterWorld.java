@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -41,6 +41,9 @@ import static com.l2jserver.gameserver.network.SystemMessageId.YOUR_BIRTHDAY_GIF
 import static com.l2jserver.gameserver.network.SystemMessageId.YOUR_SPONSOR_C1_HAS_LOGGED_IN;
 
 import java.util.Base64;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.LoginServerThread;
 import com.l2jserver.gameserver.SevenSigns;
@@ -111,6 +114,8 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * <p>
  */
 public class EnterWorld extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(EnterWorld.class);
+	
 	private static final String _C__11_ENTERWORLD = "[C] 11 EnterWorld";
 	
 	private static final double MIN_HP = 0.5;
@@ -139,7 +144,7 @@ public class EnterWorld extends L2GameClientPacket {
 	protected void runImpl() {
 		final L2PcInstance activeChar = getActiveChar();
 		if (activeChar == null) {
-			_log.warning("EnterWorld failed! activeChar returned 'null'.");
+			LOG.warn("EnterWorld failed! activeChar returned 'null'.");
 			getClient().closeNow();
 			return;
 		}
@@ -165,7 +170,7 @@ public class EnterWorld extends L2GameClientPacket {
 		
 		if (general().debug()) {
 			if (L2World.getInstance().findObject(activeChar.getObjectId()) != null) {
-				_log.warning("User already exists in Object ID map! User " + activeChar.getName() + " is a character clone.");
+				LOG.warn("User already exists in Object ID map! User {} is a character clone.", activeChar.getName());
 			}
 		}
 		
@@ -393,8 +398,8 @@ public class EnterWorld extends L2GameClientPacket {
 		
 		activeChar.sendMessage(getText("VGhpcyBzZXJ2ZXIgdXNlcyBMMkosIGEgcHJvamVjdCBmb3VuZGVkIGJ5IEwyQ2hlZg=="));
 		activeChar.sendMessage(getText("YW5kIGRldmVsb3BlZCBieSBMMkogVGVhbSBhdCB3d3cubDJqc2VydmVyLmNvbQ=="));
-		activeChar.sendMessage(getText("Q29weXJpZ2h0IDIwMDQtMjAyMg"));
-		activeChar.sendMessage(getText("VGhhbmsgeW91IGZvciAxOCB5ZWFycyE"));
+		activeChar.sendMessage(getText("Q29weXJpZ2h0IDIwMDQtMjAyNQ=="));
+		activeChar.sendMessage(getText("VGhhbmsgeW91IGZvciAyMSB5ZWFycyE="));
 		
 		SevenSigns.getInstance().sendCurrentPeriodMsg(activeChar);
 		AnnouncementsTable.getInstance().showAnnouncements(activeChar);
@@ -483,7 +488,7 @@ public class EnterWorld extends L2GameClientPacket {
 		AutoLootExtension.onLogin(activeChar);
 		
 		if (customs().screenWelcomeMessageEnable()) {
-			activeChar.sendPacket(new ExShowScreenMessage(customs().getScreenWelcomeMessageText(), customs().getScreenWelcomeMessageTime()));
+			activeChar.sendPacket(new ExShowScreenMessage(customs().getScreenWelcomeMessageText(), (int) customs().getScreenWelcomeMessageTime()));
 		}
 		
 		final int birthday = activeChar.checkBirthDay();
@@ -560,7 +565,7 @@ public class EnterWorld extends L2GameClientPacket {
 		}
 	}
 	
-	private String getText(String string) {
+	private static String getText(String string) {
 		return new String(Base64.getDecoder().decode(string));
 	}
 	

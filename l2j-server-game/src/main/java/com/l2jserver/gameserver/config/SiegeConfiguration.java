@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -46,25 +46,25 @@ import com.l2jserver.gameserver.model.TowerSpawn;
 public interface SiegeConfiguration extends Reloadable {
 	
 	@Key("SiegeLength")
-	Integer getSiegeLength();
+	int getSiegeLength();
 	
 	@Key("MaxFlags")
-	Integer getMaxFlags();
+	int getMaxFlags();
 	
 	@Key("ClanMinLevel")
-	Integer getClanMinLevel();
+	int getClanMinLevel();
 	
 	@Key("AttackerMaxClans")
-	Integer getAttackerMaxClans();
+	int getAttackerMaxClans();
 	
 	@Key("DefenderMaxClans")
-	Integer getDefenderMaxClans();
+	int getDefenderMaxClans();
 	
 	@Key("AttackerRespawn")
-	Integer getAttackerRespawn();
+	int getAttackerRespawn();
 	
 	@Key("BloodAllianceReward")
-	Integer getBloodAllianceReward();
+	int getBloodAllianceReward();
 	
 	@Key("GludioFlameTower1")
 	@ConverterClass(FlameTowerConverter.class)
@@ -87,7 +87,7 @@ public interface SiegeConfiguration extends Reloadable {
 	TowerSpawn getGludioControlTower3();
 	
 	@Key("GludioMaxMercenaries")
-	Integer getGludioMaxMercenaries();
+	int getGludioMaxMercenaries();
 	
 	@Key("GiranFlameTower1")
 	@ConverterClass(FlameTowerConverter.class)
@@ -110,7 +110,7 @@ public interface SiegeConfiguration extends Reloadable {
 	TowerSpawn getGiranControlTower3();
 	
 	@Key("GiranMaxMercenaries")
-	Integer getGiranMaxMercenaries();
+	int getGiranMaxMercenaries();
 	
 	@Key("DionFlameTower1")
 	@ConverterClass(FlameTowerConverter.class)
@@ -133,7 +133,7 @@ public interface SiegeConfiguration extends Reloadable {
 	TowerSpawn getDionControlTower3();
 	
 	@Key("DionMaxMercenaries")
-	Integer getDionMaxMercenaries();
+	int getDionMaxMercenaries();
 	
 	@Key("OrenFlameTower1")
 	@ConverterClass(FlameTowerConverter.class)
@@ -156,7 +156,7 @@ public interface SiegeConfiguration extends Reloadable {
 	TowerSpawn getOrenControlTower3();
 	
 	@Key("OrenMaxMercenaries")
-	Integer getOrenMaxMercenaries();
+	int getOrenMaxMercenaries();
 	
 	@Key("AdenFlameTower1")
 	@ConverterClass(FlameTowerConverter.class)
@@ -179,7 +179,7 @@ public interface SiegeConfiguration extends Reloadable {
 	TowerSpawn getAdenControlTower3();
 	
 	@Key("AdenMaxMercenaries")
-	Integer getAdenMaxMercenaries();
+	int getAdenMaxMercenaries();
 	
 	@Key("InnadrilFlameTower1")
 	@ConverterClass(FlameTowerConverter.class)
@@ -202,7 +202,7 @@ public interface SiegeConfiguration extends Reloadable {
 	TowerSpawn getInnadrilControlTower3();
 	
 	@Key("InnadrilMaxMercenaries")
-	Integer getInnadrilMaxMercenaries();
+	int getInnadrilMaxMercenaries();
 	
 	@Key("GoddardFlameTower1")
 	@ConverterClass(FlameTowerConverter.class)
@@ -225,7 +225,7 @@ public interface SiegeConfiguration extends Reloadable {
 	TowerSpawn getGoddardControlTower3();
 	
 	@Key("GoddardMaxMercenaries")
-	Integer getGoddardMaxMercenaries();
+	int getGoddardMaxMercenaries();
 	
 	@Key("RuneFlameTower1")
 	@ConverterClass(FlameTowerConverter.class)
@@ -248,7 +248,7 @@ public interface SiegeConfiguration extends Reloadable {
 	TowerSpawn getRuneControlTower3();
 	
 	@Key("RuneMaxMercenaries")
-	Integer getRuneMaxMercenaries();
+	int getRuneMaxMercenaries();
 	
 	@Key("SchuttgartFlameTower1")
 	@ConverterClass(FlameTowerConverter.class)
@@ -271,5 +271,5 @@ public interface SiegeConfiguration extends Reloadable {
 	TowerSpawn getSchuttgartControlTower3();
 	
 	@Key("SchuttgartMaxMercenaries")
-	Integer getSchuttgartMaxMercenaries();
+	int getSchuttgartMaxMercenaries();
 }

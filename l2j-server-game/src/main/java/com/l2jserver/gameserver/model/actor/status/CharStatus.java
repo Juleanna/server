@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -23,8 +23,9 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -33,7 +34,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.stats.Formulas;
 
 public class CharStatus {
-	protected static final Logger _log = Logger.getLogger(CharStatus.class.getName());
+	protected static final Logger LOG = LoggerFactory.getLogger(CharStatus.class);
 	
 	private final L2Character _activeChar;
 	
@@ -112,8 +113,6 @@ public class CharStatus {
 	
 	/**
 	 * Reduce the current HP of the L2Character and launch the doDie Task if necessary.
-	 * @param value
-	 * @param attacker
 	 */
 	public void reduceHp(double value, L2Character attacker) {
 		reduceHp(value, attacker, true, false, false);
@@ -157,7 +156,7 @@ public class CharStatus {
 			getActiveChar().abortCast();
 			
 			if (general().debug()) {
-				_log.fine("char is dead.");
+				LOG.debug("char is dead.");
 			}
 			
 			getActiveChar().doDie(attacker);
@@ -179,7 +178,7 @@ public class CharStatus {
 	public final synchronized void startHpMpRegeneration() {
 		if ((_regTask == null) && !getActiveChar().isDead()) {
 			if (general().debug()) {
-				_log.fine("HP/MP regen started");
+				LOG.debug("HP/MP regen started");
 			}
 			
 			// Get the Regeneration period
@@ -201,7 +200,7 @@ public class CharStatus {
 	public final synchronized void stopHpMpRegeneration() {
 		if (_regTask != null) {
 			if (general().debug()) {
-				_log.fine("HP/MP regen stop");
+				LOG.debug("HP/MP regen stop");
 			}
 			
 			// Stop the HP/MP/CP Regeneration task
@@ -363,7 +362,7 @@ public class CharStatus {
 			try {
 				doRegeneration();
 			} catch (Exception e) {
-				_log.log(Level.SEVERE, "", e);
+				LOG.error(e.getMessage(), e);
 			}
 		}
 	}

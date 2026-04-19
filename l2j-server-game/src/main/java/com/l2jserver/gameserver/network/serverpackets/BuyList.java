@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -74,9 +74,9 @@ public final class BuyList extends L2GameServerPacket {
 				writeH(0x00);
 				
 				if ((product.getItemId() >= 3960) && (product.getItemId() <= 4026)) {
-					writeQ((long) (product.getPrice() * rates().getRateSiegeGuardsPrice() * (1 + _taxRate)));
+					writeQ((long) (product.getPrice() * rates().getRateSiegeGuardsPrice() * (1 + (product.getBaseTax() + _taxRate))));
 				} else {
-					writeQ((long) (product.getPrice() * (1 + _taxRate)));
+					writeQ((long) (product.getPrice() * (1 + (product.getBaseTax() + _taxRate))));
 				}
 			}
 		}

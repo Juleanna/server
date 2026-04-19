@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,41 +18,22 @@
  */
 package com.l2jserver.gameserver.model.events.impl.character.trap;
 
+import static com.l2jserver.gameserver.model.events.EventType.TRAP_ACTION;
+
 import com.l2jserver.gameserver.enums.TrapAction;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2TrapInstance;
 import com.l2jserver.gameserver.model.events.EventType;
-import com.l2jserver.gameserver.model.events.impl.IBaseEvent;
+import com.l2jserver.gameserver.model.events.impl.BaseEvent;
 
 /**
+ * Trap Action event.
  * @author UnAfraid
+ * @author Zoey76
  */
-public class OnTrapAction implements IBaseEvent {
-	private final L2TrapInstance _trap;
-	private final L2Character _trigger;
-	private final TrapAction _action;
-	
-	public OnTrapAction(L2TrapInstance trap, L2Character trigger, TrapAction action) {
-		_trap = trap;
-		_trigger = trigger;
-		_action = action;
-	}
-	
-	public L2TrapInstance getTrap() {
-		return _trap;
-	}
-	
-	public L2Character getTrigger() {
-		return _trigger;
-	}
-	
-	public TrapAction getAction() {
-		return _action;
-	}
-	
+public record OnTrapAction(L2TrapInstance trap, L2Character trigger, TrapAction action) implements BaseEvent {
 	@Override
 	public EventType getType() {
-		return EventType.ON_TRAP_ACTION;
+		return TRAP_ACTION;
 	}
-	
 }

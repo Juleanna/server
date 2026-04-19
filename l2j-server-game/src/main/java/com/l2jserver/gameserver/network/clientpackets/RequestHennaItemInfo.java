@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.xml.impl.HennaData;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.items.L2Henna;
@@ -27,6 +30,8 @@ import com.l2jserver.gameserver.network.serverpackets.HennaItemDrawInfo;
  * @author Zoey76
  */
 public final class RequestHennaItemInfo extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestHennaItemInfo.class);
+	
 	private static final String _C__C4_REQUESTHENNAITEMINFO = "[C] C4 RequestHennaItemInfo";
 	
 	private int _symbolId;
@@ -46,7 +51,7 @@ public final class RequestHennaItemInfo extends L2GameClientPacket {
 		final L2Henna henna = HennaData.getInstance().getHenna(_symbolId);
 		if (henna == null) {
 			if (_symbolId != 0) {
-				_log.warning(getClass().getSimpleName() + ": Invalid Henna Id: " + _symbolId + " from player " + activeChar);
+				LOG.warn("Invalid Henna Id: {} from player {}", _symbolId, activeChar);
 			}
 			sendActionFailed();
 			return;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -23,8 +23,8 @@ import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableAttack;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableKill;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAttack;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableKill;
 import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
@@ -39,8 +39,8 @@ public final class L2QuestGuardInstance extends L2GuardInstance {
 	 * Creates a quest guard.
 	 * @param template the quest guard NPC template
 	 */
-	public L2QuestGuardInstance(L2NpcTemplate template) {
-		super(template);
+	public L2QuestGuardInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2QuestGuardInstance);
 	}
 	
@@ -49,7 +49,7 @@ public final class L2QuestGuardInstance extends L2GuardInstance {
 		super.addDamage(attacker, damage, skill);
 		
 		if (attacker instanceof L2Attackable) {
-			EventDispatcher.getInstance().notifyEventAsync(new OnAttackableAttack(null, this, damage, skill, false), this);
+			EventDispatcher.getInstance().notifyEventAsync(new AttackableAttack(null, this, damage, skill, false), this);
 		}
 	}
 	
@@ -62,7 +62,7 @@ public final class L2QuestGuardInstance extends L2GuardInstance {
 		
 		if (killer instanceof L2Attackable) {
 			// Delayed notification
-			EventDispatcher.getInstance().notifyEventAsyncDelayed(new OnAttackableKill(null, this, false), this, _onKillDelay);
+			EventDispatcher.getInstance().notifyEventAsyncDelayed(new AttackableKill(null, this, false), this, _onKillDelay);
 		}
 		return true;
 	}

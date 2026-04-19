@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,8 +24,8 @@ import com.l2jserver.gameserver.model.base.PlayerClass;
 
 public final class L2VillageMasterDElfInstance extends L2VillageMasterInstance {
 	
-	public L2VillageMasterDElfInstance(L2NpcTemplate template) {
-		super(template);
+	public L2VillageMasterDElfInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 	}
 	
 	@Override

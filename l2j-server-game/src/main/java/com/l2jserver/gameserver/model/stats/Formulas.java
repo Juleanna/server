@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -32,7 +32,9 @@ import static com.l2jserver.gameserver.model.stats.Stats.STAT_WIT;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.SevenSigns;
@@ -101,7 +103,7 @@ import com.l2jserver.gameserver.util.Util;
  * Global calculations.
  */
 public final class Formulas {
-	private static final Logger _log = Logger.getLogger(Formulas.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(Formulas.class);
 	
 	/** Regeneration Task period. */
 	private static final int HP_REGENERATE_PERIOD = 3000; // 3 secs
@@ -473,7 +475,7 @@ public final class Formulas {
 		double distToCenter = activeChar.calculateDistance(festivalCenter[0], festivalCenter[1], 0, false, false);
 		
 		if (general().debug()) {
-			_log.info("Distance: " + distToCenter + ", RegenMulti: " + ((distToCenter * 2.5) / 50));
+			LOG.info("Distance: {}, RegenMulti: {}", distToCenter, (distToCenter * 2.5) / 50);
 		}
 		
 		return 1.0 - (distToCenter * 0.0005); // Maximum Decreased Regen of ~ -65%;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 import com.l2jserver.gameserver.model.events.EventType;
 import com.l2jserver.gameserver.model.events.ListenersContainer;
-import com.l2jserver.gameserver.model.events.impl.IBaseEvent;
+import com.l2jserver.gameserver.model.events.impl.BaseEvent;
 import com.l2jserver.gameserver.model.events.returns.AbstractEventReturn;
 
 /**
@@ -30,16 +30,16 @@ import com.l2jserver.gameserver.model.events.returns.AbstractEventReturn;
  * @author UnAfraid
  */
 public class ConsumerEventListener extends AbstractEventListener {
-	private final Consumer<IBaseEvent> _callback;
+	private final Consumer<BaseEvent> _callback;
 	
 	@SuppressWarnings("unchecked")
-	public ConsumerEventListener(ListenersContainer container, EventType type, Consumer<? extends IBaseEvent> callback, Object owner) {
+	public ConsumerEventListener(ListenersContainer container, EventType type, Consumer<? extends BaseEvent> callback, Object owner) {
 		super(container, type, owner);
-		_callback = (Consumer<IBaseEvent>) callback;
+		_callback = (Consumer<BaseEvent>) callback;
 	}
 	
 	@Override
-	public <R extends AbstractEventReturn> R executeEvent(IBaseEvent event, Class<R> returnBackClass) {
+	public <R extends AbstractEventReturn> R executeEvent(BaseEvent event, Class<R> returnBackClass) {
 		_callback.accept(event);
 		return null;
 	}

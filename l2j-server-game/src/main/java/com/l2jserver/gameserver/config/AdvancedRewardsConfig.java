@@ -3,7 +3,11 @@ package com.l2jserver.gameserver.config;
 import org.aeonbits.owner.Config;
 import org.aeonbits.owner.Config.Sources;
 
-@Sources("file:config/custom/AdvancedRewards.properties")
+@Sources({
+	"file:${L2J_HOME}/custom/game/config/AdvancedRewards.properties",
+	"file:./config/custom/AdvancedRewards.properties",
+	"classpath:config/AdvancedRewards.properties"
+})
 public interface AdvancedRewardsConfig extends Config {
     
     @DefaultValue("true")

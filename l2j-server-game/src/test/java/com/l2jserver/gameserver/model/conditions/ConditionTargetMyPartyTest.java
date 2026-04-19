@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -37,7 +37,7 @@ import com.l2jserver.gameserver.model.skills.Skill;
  * @version 2.6.3.0
  */
 @ExtendWith(MockitoExtension.class)
-public class ConditionTargetMyPartyTest {
+class ConditionTargetMyPartyTest {
 	
 	@Mock
 	private Skill skill;
@@ -55,19 +55,19 @@ public class ConditionTargetMyPartyTest {
 	private static final ConditionTargetMyParty CONDITION_EXCEPT_ME = new ConditionTargetMyParty("EXCEPT_ME");
 	
 	@Test
-	public void test_null_player() {
+	void testNullPlayer() {
 		assertFalse(CONDITION_INCLUDE_ME.testImpl(effector, effected, skill, null));
 	}
 	
 	@Test
-	public void test_self_target_exclude_me() {
+	void testSelfTargetExcludeMe() {
 		when(effector.getActingPlayer()).thenReturn(player);
 		
 		assertFalse(CONDITION_EXCEPT_ME.testImpl(effector, player, skill, null));
 	}
 	
 	@Test
-	public void test_player_in_party_target_not_in_party() {
+	void testPlayerInPartyTargetNotInParty() {
 		when(effector.getActingPlayer()).thenReturn(player);
 		when(player.isInParty()).thenReturn(true);
 		when(player.isInPartyWith(effected)).thenReturn(false);
@@ -76,7 +76,7 @@ public class ConditionTargetMyPartyTest {
 	}
 	
 	@Test
-	public void test_player_in_party_with_target() {
+	void testPlayerInPartyWithTarget() {
 		when(effector.getActingPlayer()).thenReturn(player);
 		when(player.isInParty()).thenReturn(true);
 		when(player.isInPartyWith(effected)).thenReturn(true);
@@ -85,7 +85,7 @@ public class ConditionTargetMyPartyTest {
 	}
 	
 	@Test
-	public void test_player_not_in_party_target_not_player_or_player_summon() {
+	void testPlayerNotInPartyTargetNotPlayerOrPlayerSummon() {
 		when(effector.getActingPlayer()).thenReturn(player);
 		when(player.isInParty()).thenReturn(false);
 		when(effected.getActingPlayer()).thenReturn(otherPlayer);
@@ -94,7 +94,7 @@ public class ConditionTargetMyPartyTest {
 	}
 	
 	@Test
-	public void test_player_in_party_target_player_or_player_summon() {
+	void testPlayerInPartyTargetPlayerOrPlayerSummon() {
 		when(effector.getActingPlayer()).thenReturn(player);
 		when(player.isInParty()).thenReturn(false);
 		when(effected.getActingPlayer()).thenReturn(player);

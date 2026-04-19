@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -32,6 +35,8 @@ import com.l2jserver.gameserver.util.Util;
  * @author -Wooden-
  */
 public final class RequestExMagicSkillUseGround extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestExMagicSkillUseGround.class);
+	
 	private static final String _C__D0_44_REQUESTEXMAGICSKILLUSEGROUND = "[C] D0:44 RequestExMagicSkillUseGround";
 	
 	private int _x;
@@ -80,7 +85,7 @@ public final class RequestExMagicSkillUseGround extends L2GameClientPacket {
 			activeChar.useMagic(skill, _ctrlPressed, _shiftPressed);
 		} else {
 			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
-			_log.warning("No skill found with id " + _skillId + " and level " + level + " !!");
+			LOG.warn("No skill found with id {} and level {} !!", _skillId, level);
 		}
 	}
 	

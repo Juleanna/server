@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,12 +20,12 @@ package com.l2jserver.gameserver.model.actor.instance;
 
 import java.awt.Rectangle;
 
-import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.network.serverpackets.ExColosseumFenceInfo;
 
 /**
+ * Colosseum Fence.
  * @author HorridoJoho
  */
 public final class L2ColosseumFence extends L2Object {
@@ -48,22 +48,6 @@ public final class L2ColosseumFence extends L2Object {
 		_maxZ = maxZ;
 		_state = state;
 		_bounds = new Rectangle(x - (width / 2), y - (height / 2), width, height);
-	}
-	
-	/**
-	 * Creates a new fence with auto generated object id.
-	 * @param instanceId the instance
-	 * @param x the middle point x
-	 * @param y the middle point y
-	 * @param z the middle point z
-	 * @param minZ min z
-	 * @param maxZ max z
-	 * @param width the width along the x axis
-	 * @param height the height along the y axis
-	 * @param state the fence state
-	 */
-	public L2ColosseumFence(int instanceId, int x, int y, int z, int minZ, int maxZ, int width, int height, FenceState state) {
-		this(IdFactory.getInstance().getNextId(), instanceId, y, x, z, minZ, maxZ, width, height, state);
 	}
 	
 	@Override

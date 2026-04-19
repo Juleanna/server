@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.gameserver.model.itemcontainer;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.ItemLocation;
@@ -29,6 +30,8 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
  * @author DS
  */
 public class PcRefund extends ItemContainer {
+	private static final Logger LOG = LoggerFactory.getLogger(PcRefund.class);
+	
 	private final L2PcInstance _owner;
 	
 	public PcRefund(L2PcInstance owner) {
@@ -55,14 +58,14 @@ public class PcRefund extends ItemContainer {
 		super.addItem(item);
 		try {
 			if (getSize() > 12) {
-				L2ItemInstance removedItem = _items.remove(0);
+				L2ItemInstance removedItem = _items.removeFirst();
 				if (removedItem != null) {
 					ItemTable.getInstance().destroyItem("ClearRefund", removedItem, getOwner(), null);
 					removedItem.updateDatabase(true);
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "addItem()", e);
+			LOG.error("addItem()", e);
 		}
 	}
 	
@@ -80,7 +83,7 @@ public class PcRefund extends ItemContainer {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "deleteMe()", e);
+			LOG.error("deleteMe()", e);
 		}
 		_items.clear();
 	}

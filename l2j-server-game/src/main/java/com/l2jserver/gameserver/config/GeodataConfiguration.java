@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -55,7 +55,7 @@ public interface GeodataConfiguration extends Mutable, Reloadable {
 	 * @return
 	 */
 	@Key("PathFinding")
-	Integer getPathFinding();
+	int getPathFinding();
 	
 	@Key("PathnodePath")
 	File getPathnodePath();
@@ -64,37 +64,37 @@ public interface GeodataConfiguration extends Mutable, Reloadable {
 	String getPathFindBuffers();
 	
 	@Key("LowWeight")
-	Float getLowWeight();
+	float getLowWeight();
 	
 	@Key("MediumWeight")
-	Float getMediumWeight();
+	float getMediumWeight();
 	
 	@Key("HighWeight")
-	Float getHighWeight();
+	float getHighWeight();
 	
 	@Key("AdvancedDiagonalStrategy")
-	Boolean advancedDiagonalStrategy();
+	boolean advancedDiagonalStrategy();
 	
 	@Key("DiagonalWeight")
-	Float getDiagonalWeight();
+	float getDiagonalWeight();
 	
 	@Key("MaxPostfilterPasses")
-	Integer getMaxPostfilterPasses();
+	int getMaxPostfilterPasses();
 	
 	@Key("DebugPath")
-	Boolean debugPath();
+	boolean debugPath();
 	
 	@Key("ForceGeoData")
-	Boolean forceGeoData();
+	boolean forceGeoData();
 	
 	@Key("CoordSynchronize")
-	Integer getCoordSynchronize();
+	int getCoordSynchronize();
 	
 	@Key("GeoDataPath")
 	File getGeoDataPath();
 	
 	@Key("TryLoadUnspecifiedRegions")
-	Boolean tryLoadUnspecifiedRegions();
+	boolean tryLoadUnspecifiedRegions();
 	
 	@Separator(";")
 	@Key("IncludedRegions")

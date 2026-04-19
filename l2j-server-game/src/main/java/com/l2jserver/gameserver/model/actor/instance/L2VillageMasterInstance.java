@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,13 +20,15 @@ package com.l2jserver.gameserver.model.actor.instance;
 
 import static com.l2jserver.gameserver.config.Configuration.character;
 import static com.l2jserver.gameserver.config.Configuration.clan;
-import static java.util.concurrent.TimeUnit.DAYS;
+import static com.l2jserver.gameserver.model.base.AcquireSkillType.PLEDGE;
+import static com.l2jserver.gameserver.network.SystemMessageId.DO_NOT_HAVE_FURTHER_SKILLS_TO_LEARN_S1;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.sql.impl.ClanTable;
 import com.l2jserver.gameserver.data.xml.impl.ClassListData;
@@ -40,9 +42,7 @@ import com.l2jserver.gameserver.instancemanager.SiegeManager;
 import com.l2jserver.gameserver.model.L2Clan;
 import com.l2jserver.gameserver.model.L2Clan.SubPledge;
 import com.l2jserver.gameserver.model.L2ClanMember;
-import com.l2jserver.gameserver.model.L2SkillLearn;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
-import com.l2jserver.gameserver.model.base.AcquireSkillType;
 import com.l2jserver.gameserver.model.base.ClassId;
 import com.l2jserver.gameserver.model.base.PlayerClass;
 import com.l2jserver.gameserver.model.base.SubClass;
@@ -61,13 +61,14 @@ import com.l2jserver.gameserver.network.serverpackets.UserInfo;
 import com.l2jserver.gameserver.util.StringUtil;
 
 /**
+ * Village Master instance.
  * @since 2005/03/29 23:15:15
  */
 public class L2VillageMasterInstance extends L2NpcInstance {
-	private static final Logger _log = Logger.getLogger(L2VillageMasterInstance.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2VillageMasterInstance.class);
 	
-	public L2VillageMasterInstance(L2NpcTemplate template) {
-		super(template);
+	public L2VillageMasterInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2VillageMasterInstance);
 	}
 	
@@ -84,9 +85,7 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 	
 	@Override
 	public void onBypassFeedback(L2PcInstance player, String command) {
-		
-		final StringTokenizer st = new StringTokenizer(command, " ");
-		
+		final var st = new StringTokenizer(command, " ");
 		switch (st.nextToken()) {
 			case "create_clan" -> {
 				if (st.hasMoreTokens()) {
@@ -256,7 +255,7 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 						}
 					}
 				} catch (Exception NumberFormatException) {
-					_log.warning(L2VillageMasterInstance.class.getName() + ": Wrong numeric values for command " + command);
+					LOG.warn("Wrong numeric values for command {}", command);
 				}
 				
 				Set<PlayerClass> subsAvailable;
@@ -315,7 +314,7 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 								}
 							}
 							
-							if (content2.length() > 0) {
+							if (!content2.isEmpty()) {
 								html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_Change.htm");
 								html.replace("%list%", content2.toString());
 							} else {
@@ -366,15 +365,11 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 					case 4: // Add Subclass - Action (Subclass 4 x[x])
 						// If the character is less than level 75 on any of their previously chosen classes then disallow them to change to their most recently added sub-class choice.
 						if (!player.getFloodProtectors().getSubclass().tryPerformAction("add subclass")) {
-							_log.warning(L2VillageMasterInstance.class.getName() + ": Player " + player.getName() + " has performed a subclass change too fast");
+							LOG.warn("Player {} has performed a subclass change too fast", player.getName());
 							return;
 						}
 						
-						boolean allowAddition = true;
-						
-						if (player.getTotalSubClasses() >= character().getMaxSubclass()) {
-							allowAddition = false;
-						}
+						boolean allowAddition = player.getTotalSubClasses() < character().getMaxSubclass();
 						
 						if (player.getLevel() < 75) {
 							allowAddition = false;
@@ -417,7 +412,7 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 					case 5: // Change Class - Action
 						// If the character is less than level 75 on any of their previously chosen classes then disallow them to change to their most recently added sub-class choice. Note: paramOne = classIndex
 						if (!player.getFloodProtectors().getSubclass().tryPerformAction("change class")) {
-							_log.warning(L2VillageMasterInstance.class.getName() + ": Player " + player.getName() + " has performed a subclass change too fast");
+							LOG.warn("Player {} has performed a subclass change too fast", player.getName());
 							return;
 						}
 						
@@ -473,7 +468,7 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 					case 7: // Change Subclass - Action
 						// Warning: the information about this subclass will be removed from the subclass list even if false!
 						if (!player.getFloodProtectors().getSubclass().tryPerformAction("change class")) {
-							_log.warning(L2VillageMasterInstance.class.getName() + ": Player " + player.getName() + " has performed a subclass change too fast");
+							LOG.warn("Player {} has performed a subclass change too fast", player.getName());
 							return;
 						}
 						
@@ -527,8 +522,6 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 	
 	/**
 	 * Returns list of available subclasses Base class and already used subclasses removed
-	 * @param player
-	 * @return
 	 */
 	private Set<PlayerClass> getAvailableSubClasses(L2PcInstance player) {
 		// get player base class
@@ -585,9 +578,6 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 	
 	/**
 	 * Check new subclass classId for validity (villagemaster race/type, is not contains in previous subclasses, is contains in allowed subclasses) Base class not added into allowed subclasses.
-	 * @param player
-	 * @param classId
-	 * @return
 	 */
 	private boolean isValidNewSubClass(L2PcInstance player, int classId) {
 		if (!checkVillageMaster(classId)) {
@@ -643,8 +633,6 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 	
 	/**
 	 * Returns true if this classId allowed for master
-	 * @param classId
-	 * @return
 	 */
 	public final boolean checkVillageMaster(int classId) {
 		return checkVillageMaster(PlayerClass.values()[classId]);
@@ -652,10 +640,8 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 	
 	/**
 	 * Returns true if this PlayerClass is allowed for master
-	 * @param pclass
-	 * @return
 	 */
-	public final boolean checkVillageMaster(PlayerClass pclass) {
+	private boolean checkVillageMaster(PlayerClass pclass) {
 		if (character().subclassEverywhere()) {
 			return true;
 		}
@@ -709,7 +695,7 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 			return;
 		}
 		
-		clan.setDissolvingExpiryTime(System.currentTimeMillis() + DAYS.toMillis(character().getDaysToPassToDissolveAClan()));
+		clan.setDissolvingExpiryTime(System.currentTimeMillis() + character().getDaysToPassToDissolveAClan());
 		clan.updateClanInDB();
 		
 		// The clan leader should take the XP penalty of a full death.
@@ -890,9 +876,9 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 	
 	/**
 	 * this displays PledgeSkillList to the player.
-	 * @param player
 	 */
 	public static void showPledgeSkillList(L2PcInstance player) {
+		// TODO(Zoey76): Unhardcode in Clan script.
 		if (!player.isClanLeader()) {
 			final NpcHtmlMessage html = new NpcHtmlMessage();
 			html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/NotClanLeader.htm");
@@ -901,18 +887,10 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 			return;
 		}
 		
-		final List<L2SkillLearn> skills = SkillTreesData.getInstance().getAvailablePledgeSkills(player.getClan());
-		final AcquireSkillList asl = new AcquireSkillList(AcquireSkillType.PLEDGE);
-		int counts = 0;
-		
-		for (L2SkillLearn s : skills) {
-			asl.addSkill(s.getSkillId(), s.getSkillLevel(), s.getSkillLevel(), s.getLevelUpSp(), s.getSocialClass().ordinal());
-			counts++;
-		}
-		
-		if (counts == 0) {
+		final var skills = SkillTreesData.getInstance().getAvailablePledgeSkills(player.getClan());
+		if (skills.isEmpty()) {
 			if (player.getClan().getLevel() < 8) {
-				SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.DO_NOT_HAVE_FURTHER_SKILLS_TO_LEARN_S1);
+				final var sm = SystemMessage.getSystemMessage(DO_NOT_HAVE_FURTHER_SKILLS_TO_LEARN_S1);
 				if (player.getClan().getLevel() < 5) {
 					sm.addInt(5);
 				} else {
@@ -920,14 +898,13 @@ public class L2VillageMasterInstance extends L2NpcInstance {
 				}
 				player.sendPacket(sm);
 			} else {
-				final NpcHtmlMessage html = new NpcHtmlMessage();
+				final var html = new NpcHtmlMessage();
 				html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/NoMoreSkills.htm");
 				player.sendPacket(html);
 			}
 		} else {
-			player.sendPacket(asl);
+			player.sendPacket(new AcquireSkillList(PLEDGE, skills));
 		}
-		player.sendPacket(ActionFailed.STATIC_PACKET);
 	}
 	
 	private static boolean isValidName(String name) {

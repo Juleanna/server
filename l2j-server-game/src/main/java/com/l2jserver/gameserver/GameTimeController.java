@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -151,7 +151,10 @@ public final class GameTimeController extends Thread {
 				try {
 					Thread.sleep(sleepTime);
 				} catch (final InterruptedException e) {
-					
+					// Сохраняем interrupt-flag: без этого прерывание потока
+					// проглатывается и вышестоящий код не узнает о запросе на стоп.
+					Thread.currentThread().interrupt();
+					return;
 				}
 			}
 			

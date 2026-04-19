@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -479,22 +479,32 @@ public class ThreadPoolManager {
 	
 	public void shutdown() {
 		_shutdown = true;
+
+		// Правильный порядок: сначала shutdown(), потом awaitTermination.
+		// Прежняя реализация делала awaitTermination ДО shutdown — пулы ещё
+		// работали и awaitTermination возвращался мгновенно с false, после чего
+		// пулы останавливались без ожидания завершения задач (потеря работы).
+		_effectsScheduledThreadPool.shutdown();
+		_generalScheduledThreadPool.shutdown();
+		_aiScheduledThreadPool.shutdown();
+		_eventScheduledThreadPool.shutdown();
+		_generalPacketsThreadPool.shutdown();
+		_ioPacketsThreadPool.shutdown();
+		_generalThreadPool.shutdown();
+		_eventThreadPool.shutdown();
+
 		try {
 			_effectsScheduledThreadPool.awaitTermination(1, TimeUnit.SECONDS);
 			_generalScheduledThreadPool.awaitTermination(1, TimeUnit.SECONDS);
+			_aiScheduledThreadPool.awaitTermination(1, TimeUnit.SECONDS);
+			_eventScheduledThreadPool.awaitTermination(1, TimeUnit.SECONDS);
 			_generalPacketsThreadPool.awaitTermination(1, TimeUnit.SECONDS);
 			_ioPacketsThreadPool.awaitTermination(1, TimeUnit.SECONDS);
 			_generalThreadPool.awaitTermination(1, TimeUnit.SECONDS);
 			_eventThreadPool.awaitTermination(1, TimeUnit.SECONDS);
-			_effectsScheduledThreadPool.shutdown();
-			_generalScheduledThreadPool.shutdown();
-			_generalPacketsThreadPool.shutdown();
-			_ioPacketsThreadPool.shutdown();
-			_generalThreadPool.shutdown();
-			_eventThreadPool.shutdown();
 			LOG.info("All ThreadPools are now stopped");
-			
 		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 			LOG.warn("There has been a problem shutting down the thread pool manager!", e);
 		}
 	}

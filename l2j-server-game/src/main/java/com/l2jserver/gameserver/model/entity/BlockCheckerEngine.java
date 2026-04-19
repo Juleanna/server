@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -26,8 +26,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -58,26 +59,27 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @author BiggBoss
  */
 public final class BlockCheckerEngine {
-	protected static final Logger _log = Logger.getLogger(BlockCheckerEngine.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(BlockCheckerEngine.class);
+	
 	// The object which holds all basic members info
-	protected ArenaParticipantsHolder _holder;
+	private ArenaParticipantsHolder _holder;
 	// Maps to hold player of each team and his points
-	protected Map<L2PcInstance, Integer> _redTeamPoints = new ConcurrentHashMap<>();
-	protected Map<L2PcInstance, Integer> _blueTeamPoints = new ConcurrentHashMap<>();
+	private final Map<L2PcInstance, Integer> _redTeamPoints = new ConcurrentHashMap<>();
+	private final Map<L2PcInstance, Integer> _blueTeamPoints = new ConcurrentHashMap<>();
 	// The initial points of the event
-	protected int _redPoints = 15;
-	protected int _bluePoints = 15;
+	private int _redPoints = 15;
+	private int _bluePoints = 15;
 	// Current used arena
-	protected int _arena = -1;
+	private int _arena = -1;
 	// All blocks
-	protected List<L2Spawn> _spawns = new CopyOnWriteArrayList<>();
+	private final List<L2Spawn> _spawns = new CopyOnWriteArrayList<>();
 	// Sets if the red team won the event at the end of this (used for packets)
-	protected boolean _isRedWinner;
+	private boolean _isRedWinner;
 	// Time when the event starts. Used on packet sending
-	protected long _startedTime;
+	private long _startedTime;
 	// The needed arena coordinates
 	// Arena X: team1X, team1Y, team2X, team2Y, ArenaCenterX, ArenaCenterY
-	protected static final int[][] _arenaCoordinates = {
+	private static final int[][] _arenaCoordinates = {
 		// Arena 0 - Team 1 XY, Team 2 XY - CENTER XY
 		{
 			-58368,
@@ -118,15 +120,15 @@ public final class BlockCheckerEngine {
 	// Common z coordinate
 	private static final int _zCoord = -2405;
 	// List of dropped items in event (for later deletion)
-	protected List<L2ItemInstance> _drops = new CopyOnWriteArrayList<>();
+	private final List<L2ItemInstance> _drops = new CopyOnWriteArrayList<>();
 	// Default arena
 	private static final byte DEFAULT_ARENA = -1;
 	// Event is started
-	protected boolean _isStarted = false;
+	private boolean _isStarted = false;
 	// Event end
-	protected ScheduledFuture<?> _task;
+	private ScheduledFuture<?> _task;
 	// Preserve from exploit reward by logging out
-	protected boolean _abnormalEnd = false;
+	private boolean _abnormalEnd = false;
 	
 	public BlockCheckerEngine(ArenaParticipantsHolder holder, int arena) {
 		_holder = holder;
@@ -144,7 +146,6 @@ public final class BlockCheckerEngine {
 	
 	/**
 	 * Updates the player holder before the event starts to synchronize all info
-	 * @param holder
 	 */
 	public void updatePlayersOnStart(ArenaParticipantsHolder holder) {
 		_holder = holder;
@@ -196,9 +197,6 @@ public final class BlockCheckerEngine {
 	
 	/**
 	 * Returns the player points
-	 * @param player
-	 * @param isRed
-	 * @return int
 	 */
 	public int getPlayerPoints(L2PcInstance player, boolean isRed) {
 		if (!_redTeamPoints.containsKey(player) && !_blueTeamPoints.containsKey(player)) {
@@ -213,8 +211,6 @@ public final class BlockCheckerEngine {
 	
 	/**
 	 * Increases player points for his teams
-	 * @param player
-	 * @param team
 	 */
 	public synchronized void increasePlayerPoints(L2PcInstance player, int team) {
 		if (player == null) {
@@ -236,7 +232,6 @@ public final class BlockCheckerEngine {
 	
 	/**
 	 * Will add a new drop into the list of dropped items
-	 * @param item
 	 */
 	public void addNewDrop(L2ItemInstance item) {
 		if (item != null) {
@@ -246,7 +241,6 @@ public final class BlockCheckerEngine {
 	
 	/**
 	 * Will return true if the event is already started
-	 * @return boolean
 	 */
 	public boolean isStarted() {
 		return _isStarted;
@@ -254,9 +248,8 @@ public final class BlockCheckerEngine {
 	
 	/**
 	 * Will send all packets for the event members with the relation info
-	 * @param plr
 	 */
-	protected void broadcastRelationChanged(L2PcInstance plr) {
+	private void broadcastRelationChanged(L2PcInstance plr) {
 		for (L2PcInstance p : _holder.getAllPlayers()) {
 			p.sendPacket(new RelationChanged(plr, plr.getRelation(p), plr.isAutoAttackable(p)));
 		}
@@ -279,16 +272,16 @@ public final class BlockCheckerEngine {
 				ThreadPoolManager.getInstance().executeGeneral(new EndEvent());
 				
 				if (general().debug()) {
-					_log.config("Handys Block Checker Event at arena " + _arena + " ended due lack of players!");
+					LOG.info("Handys Block Checker Event at arena {} ended due lack of players!", _arena);
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Couldn't end Block Checker event at " + _arena, e);
+			LOG.error("Couldn't end Block Checker event at {}", _arena, e);
 		}
 	}
 	
 	/**
-	 * This inner class set ups all player and arena parameters to start the event
+	 * This inner class set-ups all player and arena parameters to start the event
 	 */
 	public class StartEvent implements Runnable {
 		// In event used skills
@@ -376,7 +369,7 @@ public final class BlockCheckerEngine {
 		public void run() {
 			// Wrong arena passed, stop event
 			if (_arena == -1) {
-				_log.severe("Couldn't set up the arena Id for the Block Checker event, cancelling event...");
+				LOG.error("Couldn't set up the arena Id for the Block Checker event, cancelling event...");
 				return;
 			}
 			_isStarted = true;
@@ -440,7 +433,7 @@ public final class BlockCheckerEngine {
 					random++;
 				}
 			} catch (Exception e) {
-				_log.warning(getClass().getSimpleName() + ": " + e.getMessage());
+				LOG.warn(e.getMessage(), e);
 			}
 			
 			// Spawn the block carrying girl
@@ -458,8 +451,7 @@ public final class BlockCheckerEngine {
 					// Schedule his deletion after 9 secs of spawn
 					ThreadPoolManager.getInstance().scheduleGeneral(new CarryingGirlUnspawn(girlSpawn), 9000);
 				} catch (Exception e) {
-					_log.warning("Couldn't Spawn Block Checker NPCs! Wrong instance type at npc table?");
-					_log.warning(getClass().getSimpleName() + ": " + e.getMessage());
+					LOG.warn("Couldn't Spawn Block Checker NPCs! Wrong instance type at npc table?", e);
 				}
 			}
 			
@@ -482,7 +474,7 @@ public final class BlockCheckerEngine {
 		@Override
 		public void run() {
 			if (_spawn == null) {
-				_log.warning("HBCE: Block Carrying Girl is null");
+				LOG.warn("HBCE: Block Carrying Girl is null");
 				return;
 			}
 			SpawnTable.getInstance().deleteSpawn(_spawn, false);
@@ -554,7 +546,6 @@ public final class BlockCheckerEngine {
 		
 		/**
 		 * Reward the specified team as a winner team 1) Higher score - 8 extra 2) Higher score - 5 extra
-		 * @param isRed
 		 */
 		private void rewardAsWinner(boolean isRed) {
 			Map<L2PcInstance, Integer> tempPoints = isRed ? _redTeamPoints : _blueTeamPoints;
@@ -599,7 +590,6 @@ public final class BlockCheckerEngine {
 		
 		/**
 		 * Will reward the looser team with the predefined rewards Player got >= 10 points: 2 coins Player got < 10 points: 0 coins
-		 * @param isRed
 		 */
 		private void rewardAsLooser(boolean isRed) {
 			Map<L2PcInstance, Integer> tempPoints = isRed ? _redTeamPoints : _blueTeamPoints;

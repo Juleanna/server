@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -48,43 +48,46 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
 public interface OlympiadConfiguration extends Reloadable {
 	
 	@Key("StartHour")
-	Integer getStartHour();
+	int getStartHour();
 	
 	@Key("StartMinute")
-	Integer getStartMinute();
+	int getStartMinute();
 	
 	@Key("MaxBuffs")
-	Integer getMaxBuffs();
+	int getMaxBuffs();
 	
+	// TODO(Zoey76): Check if this should be in minutes or other time unit.
 	@Key("CompetitionPeriod")
-	Integer getCompetitionPeriod();
+	int getCompetitionPeriod();
 	
 	@Key("BattlePeriod")
-	Integer getBattlePeriod();
+	int getBattlePeriod();
 	
+	// TODO(Zoey76): Check if this should be in minutes or other time unit.
 	@Key("WeeklyPeriod")
-	Integer getWeeklyPeriod();
+	int getWeeklyPeriod();
 	
+	// TODO(Zoey76): Check if this should be in minutes or other time unit.
 	@Key("ValidationPeriod")
-	Integer getValidationPeriod();
+	int getValidationPeriod();
 	
 	@Key("StartPoints")
-	Integer getStartPoints();
+	int getStartPoints();
 	
 	@Key("WeeklyPoints")
-	Integer getWeeklyPoints();
+	int getWeeklyPoints();
 	
 	@Key("ClassedParticipants")
-	Integer getClassedParticipants();
+	int getClassedParticipants();
 	
 	@Key("NonClassedParticipants")
-	Integer getNonClassedParticipants();
+	int getNonClassedParticipants();
 	
 	@Key("TeamsParticipants")
-	Integer getTeamsParticipants();
+	int getTeamsParticipants();
 	
 	@Key("RegistrationDisplayNumber")
-	Integer getRegistrationDisplayNumber();
+	int getRegistrationDisplayNumber();
 	
 	@Separator(";")
 	@Key("ClassedReward")
@@ -102,83 +105,85 @@ public interface OlympiadConfiguration extends Reloadable {
 	List<ItemHolder> getTeamReward();
 	
 	@Key("CompetitionRewardItem")
-	Integer getCompetitionRewardItem();
+	int getCompetitionRewardItem();
 	
 	@Key("MinMatchesForPoints")
-	Integer getMinMatchesForPoints();
+	int getMinMatchesForPoints();
 	
 	@Key("GPPerPoint")
-	Integer getGPPerPoint();
+	int getGPPerPoint();
 	
 	@Key("HeroPoints")
-	Integer getHeroPoints();
+	int getHeroPoints();
 	
 	@Key("Rank1Points")
-	Integer getRank1Points();
+	int getRank1Points();
 	
 	@Key("Rank2Points")
-	Integer getRank2Points();
+	int getRank2Points();
 	
 	@Key("Rank3Points")
-	Integer getRank3Points();
+	int getRank3Points();
 	
 	@Key("Rank4Points")
-	Integer getRank4Points();
+	int getRank4Points();
 	
 	@Key("Rank5Points")
-	Integer getRank5Points();
+	int getRank5Points();
 	
 	@Key("MaxPoints")
-	Integer getMaxPoints();
+	int getMaxPoints();
 	
 	@Key("ShowMonthlyWinners")
-	Boolean showMonthlyWinners();
+	boolean showMonthlyWinners();
 	
 	@Key("AnnounceGames")
-	Boolean announceGames();
+	boolean announceGames();
 	
 	@Key("RestrictedItems")
 	Set<Integer> getRestrictedItems();
 	
 	@Key("EnchantLimit")
-	Integer getEnchantLimit();
+	int getEnchantLimit();
 	
 	@Key("LogFights")
-	Boolean logFights();
+	boolean logFights();
 	
 	@Key("WaitTime")
-	Integer getWaitTime();
+	int getWaitTime();
 	
 	@Key("DividerClassed")
-	Integer getDividerClassed();
+	int getDividerClassed();
 	
 	@Key("DividerNonClassed")
-	Integer getDividerNonClassed();
+	int getDividerNonClassed();
 	
 	@Key("MaxWeeklyMatches")
-	Integer getMaxWeeklyMatches();
+	int getMaxWeeklyMatches();
 	
 	@Key("MaxWeeklyMatchesNonClassed")
-	Integer getMaxWeeklyMatchesNonClassed();
+	int getMaxWeeklyMatchesNonClassed();
 	
 	@Key("MaxWeeklyMatchesClassed")
-	Integer getMaxWeeklyMatchesClassed();
+	int getMaxWeeklyMatchesClassed();
 	
 	@Key("MaxWeeklyMatchesTeam")
-	Integer getMaxWeeklyMatchesTeam();
+	int getMaxWeeklyMatchesTeam();
 	
+	// TODO(Zoey76): Change this so the check doesn't depend on a null value.
 	@Key("CurrentCycle")
 	Integer getCurrentCycle();
 	
 	@Key("Period")
-	Integer getPeriod();
+	int getPeriod();
 	
+	// TODO(Zoey76): Check if this should be in minutes or other time unit.
 	@Key("OlympiadEnd")
-	Long getOlympiadEnd();
+	long getOlympiadEnd();
 	
 	@Key("ValidationEnd")
-	Long getValidationEnd();
+	long getValidationEnd();
 	
 	@Key("NextWeeklyChange")
-	Long getNextWeeklyChange();
+	long getNextWeeklyChange();
 }

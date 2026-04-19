@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,8 +20,9 @@ package com.l2jserver.gameserver.model;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.data.sql.impl.CharNameTable;
@@ -38,17 +39,14 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @author mrTJO
  */
 public class L2ContactList {
-	
-	private static final Logger _log = Logger.getLogger(L2ContactList.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2ContactList.class);
 	
 	private final L2PcInstance activeChar;
 	
 	private final List<String> _contacts = new CopyOnWriteArrayList<>();
 	
 	private static final String QUERY_ADD = "INSERT INTO character_contacts (charId, contactId) VALUES (?, ?)";
-	
 	private static final String QUERY_REMOVE = "DELETE FROM character_contacts WHERE charId = ? and contactId = ?";
-	
 	private static final String QUERY_LOAD = "SELECT contactId FROM character_contacts WHERE charId = ?";
 	
 	public L2ContactList(L2PcInstance player) {
@@ -76,7 +74,7 @@ public class L2ContactList {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Error found in " + activeChar.getName() + "'s ContactsList: " + e.getMessage(), e);
+			LOG.warn("Error found in {}'s ContactsList: {}", activeChar.getName(), e.getMessage(), e);
 		}
 	}
 	
@@ -117,7 +115,7 @@ public class L2ContactList {
 			sm.addString(name);
 			activeChar.sendPacket(sm);
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Error found in " + activeChar.getName() + "'s ContactsList: " + e.getMessage(), e);
+			LOG.warn("Error found in {}'s ContactsList: {}", activeChar.getName(), e.getMessage(), e);
 		}
 		return true;
 	}
@@ -145,7 +143,7 @@ public class L2ContactList {
 			sm.addString(name);
 			activeChar.sendPacket(sm);
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Error found in " + activeChar.getName() + "'s ContactsList: " + e.getMessage(), e);
+			LOG.warn("Error found in {}'s ContactsList: {}", activeChar.getName(), e.getMessage(), e);
 		}
 	}
 	

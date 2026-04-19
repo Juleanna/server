@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,9 @@ package com.l2jserver.gameserver.model.items.enchant;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.data.xml.impl.EnchantItemGroupsData;
@@ -36,6 +38,8 @@ import com.l2jserver.gameserver.util.Util;
  * @author UnAfraid
  */
 public final class EnchantScroll extends AbstractEnchantItem {
+	private static final Logger LOG = LoggerFactory.getLogger(EnchantScroll.class);
+	
 	private final boolean _isWeapon;
 	private final boolean _isBlessed;
 	private final boolean _isSafe;
@@ -117,13 +121,13 @@ public final class EnchantScroll extends AbstractEnchantItem {
 	 */
 	public double getChance(L2PcInstance player, L2ItemInstance enchantItem) {
 		if (EnchantItemGroupsData.getInstance().getScrollGroup(_scrollGroupId) == null) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Nonexistent enchant scroll group specified for enchant scroll: " + getId());
+			LOG.warn("Nonexistent enchant scroll group specified for enchant scroll: {}", getId());
 			return -1;
 		}
 		
 		final EnchantItemGroup group = EnchantItemGroupsData.getInstance().getItemGroup(enchantItem.getItem(), _scrollGroupId);
 		if (group == null) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't find enchant item group for scroll: " + getId() + " requested by: " + player);
+			LOG.warn("Couldn't find enchant item group for scroll: {} requested by: {}", getId(), player);
 			return -1;
 		}
 		return group.getChance(enchantItem.getEnchantLevel());

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.entity.Message;
 import com.l2jserver.gameserver.model.itemcontainer.ItemContainer;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -27,6 +30,8 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
  * @author DS
  */
 public class ExReplyReceivedPost extends AbstractItemPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(ExReplyReceivedPost.class);
+	
 	private final Message _msg;
 	private L2ItemInstance[] _items = null;
 	
@@ -37,7 +42,7 @@ public class ExReplyReceivedPost extends AbstractItemPacket {
 			if ((attachments != null) && (attachments.getSize() > 0)) {
 				_items = attachments.getItems();
 			} else {
-				_log.warning("Message " + msg.getId() + " has attachments but itemcontainer is empty.");
+				LOG.warn("Message {} has attachments but itemcontainer is empty.", msg.getId());
 			}
 		}
 	}

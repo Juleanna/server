@@ -8,7 +8,11 @@ import org.aeonbits.owner.ConfigFactory;
  * Улучшенная конфигурация для системы онлайн наград с кешированием
  * @author Dafna
  */
-@Sources("file:config/RewardsOnline.properties")
+@Sources({
+	"file:${L2J_HOME}/custom/game/config/RewardsOnline.properties",
+	"file:./config/RewardsOnline.properties",
+	"classpath:config/RewardsOnline.properties"
+})
 public interface EnhancedRewardsOnlineConfig extends Config {
     
     EnhancedRewardsOnlineConfig INSTANCE = ConfigFactory.create(EnhancedRewardsOnlineConfig.class);

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.handler.IItemHandler;
 import com.l2jserver.gameserver.handler.ItemHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -28,6 +31,8 @@ import com.l2jserver.gameserver.network.serverpackets.PetItemList;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 public final class RequestPetUseItem extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestPetUseItem.class);
+	
 	private static final String _C__8A_REQUESTPETUSEITEM = "[C] 8A RequestPetUseItem";
 	
 	private int _objectId;
@@ -113,7 +118,7 @@ public final class RequestPetUseItem extends L2GameClientPacket {
 				}
 			} else {
 				activeChar.sendPacket(SystemMessageId.PET_CANNOT_USE_ITEM);
-				_log.warning("No item handler registered for itemId: " + item.getId());
+				LOG.warn("No item handler registered for itemId: {}", item.getId());
 			}
 		}
 	}

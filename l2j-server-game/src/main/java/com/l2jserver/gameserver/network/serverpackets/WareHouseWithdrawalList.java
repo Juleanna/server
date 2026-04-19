@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,10 +18,15 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 
 public final class WareHouseWithdrawalList extends AbstractItemPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(WareHouseWithdrawalList.class);
+	
 	public static final int PRIVATE = 1;
 	public static final int CLAN = 4;
 	public static final int CASTLE = 3; // not sure
@@ -40,7 +45,7 @@ public final class WareHouseWithdrawalList extends AbstractItemPacket {
 	
 	public WareHouseWithdrawalList(L2PcInstance player, int type) {
 		if (player.getActiveWarehouse() == null) {
-			_log.warning("error while sending withdraw request to: " + player.getName());
+			LOG.warn("Error while sending withdraw request to: {}", player.getName());
 			return;
 		}
 		

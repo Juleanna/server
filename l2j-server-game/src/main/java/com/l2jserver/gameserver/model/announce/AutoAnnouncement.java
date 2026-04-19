@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,7 +21,9 @@ package com.l2jserver.gameserver.model.announce;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 import java.util.concurrent.ScheduledFuture;
-import java.util.logging.Level;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -33,17 +35,14 @@ import com.l2jserver.gameserver.util.Broadcast;
  * @author UnAfraid
  */
 public final class AutoAnnouncement extends Announcement implements Runnable {
+	private static final Logger LOG = LoggerFactory.getLogger(AutoAnnouncement.class);
 	
 	private static final String INSERT_QUERY = "INSERT INTO announcements (`type`, `content`, `author`, `initial`, `delay`, `repeat`) VALUES (?, ?, ?, ?, ?, ?)";
-	
 	private static final String UPDATE_QUERY = "UPDATE announcements SET `type` = ?, `content` = ?, `author` = ?, `initial` = ?, `delay` = ?, `repeat` = ? WHERE id = ?";
 	
 	private long _initial;
-	
 	private long _delay;
-	
 	private int _repeat;
-	
 	private int _currentState;
 	
 	private ScheduledFuture<?> _task;
@@ -97,7 +96,7 @@ public final class AutoAnnouncement extends Announcement implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't store announcement: ", e);
+			LOG.warn("Couldn't store announcement: ", e);
 			return false;
 		}
 		return true;
@@ -116,7 +115,7 @@ public final class AutoAnnouncement extends Announcement implements Runnable {
 			ps.setLong(7, getId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't update announcement: ", e);
+			LOG.warn("Couldn't update announcement: ", e);
 			return false;
 		}
 		return true;

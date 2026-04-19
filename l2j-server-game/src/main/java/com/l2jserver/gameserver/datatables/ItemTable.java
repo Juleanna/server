@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -43,7 +43,7 @@ import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.instance.L2EventMonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.item.OnItemCreate;
+import com.l2jserver.gameserver.model.events.impl.item.ItemCreate;
 import com.l2jserver.gameserver.model.items.L2Armor;
 import com.l2jserver.gameserver.model.items.L2EtcItem;
 import com.l2jserver.gameserver.model.items.L2Item;
@@ -118,6 +118,8 @@ public class ItemTable {
 	}
 	
 	private void load() {
+		final var start = System.currentTimeMillis();
+		
 		int highest = 0;
 		_armors.clear();
 		_etcItems.clear();
@@ -140,7 +142,7 @@ public class ItemTable {
 		LOG.info("Loaded {} Etc items.", _etcItems.size());
 		LOG.info("Loaded {} Armor items.", _armors.size());
 		LOG.info("Loaded {} Weapon items.", _weapons.size());
-		LOG.info("Loaded {} items in total.", (_etcItems.size() + _armors.size() + _weapons.size()));
+		LOG.info("Loaded {} items total in {}ms.", (_etcItems.size() + _armors.size() + _weapons.size()), System.currentTimeMillis() - start);
 	}
 	
 	/**
@@ -195,7 +197,8 @@ public class ItemTable {
 	 */
 	public L2ItemInstance createItem(String process, int itemId, long count, L2PcInstance actor, Object reference) {
 		// Create and Init the L2ItemInstance corresponding to the Item Identifier
-		L2ItemInstance item = new L2ItemInstance(IdFactory.getInstance().getNextId(), itemId);
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var item = new L2ItemInstance(objectId, itemId);
 		
 		if (process.equalsIgnoreCase("loot")) {
 			// loot privilege for raids
@@ -249,7 +252,7 @@ public class ItemTable {
 		}
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnItemCreate(process, item, actor, reference), item.getItem());
+		EventDispatcher.getInstance().notifyEventAsync(new ItemCreate(process, item, actor, reference), item.getItem());
 		return item;
 	}
 	

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -27,33 +27,33 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Quest test.
- * @author Noé Caratini aka Kita
+ * @author Kita (Noé Caratini)
  */
-public class QuestTest {
+class QuestTest {
 	
 	private Quest quest;
 	
 	@BeforeEach
 	void setUp() {
-		quest = new Quest(1, "Test quest", "A test quest");
+		quest = new Quest(1);
 	}
 	
 	@Test
-	public void shouldRegisterQuestItems() {
+	void shouldRegisterQuestItems() {
 		quest.registerQuestItems(1, 2);
 		
 		assertThat(quest.getRegisteredItemIds()).containsExactlyInAnyOrder(1, 2);
 	}
 	
 	@Test
-	public void shouldRegisterQuestItemsWithSet() {
+	void shouldRegisterQuestItemsWithSet() {
 		quest.registerQuestItems(Set.of(1, 2));
 		
 		assertThat(quest.getRegisteredItemIds()).containsExactlyInAnyOrder(1, 2);
 	}
 	
 	@Test
-	public void shouldAddToRegisteredQuestItemsIfCalledMultipleTimes() {
+	void shouldAddToRegisteredQuestItemsIfCalledMultipleTimes() {
 		quest.registerQuestItems(1, 2);
 		quest.registerQuestItems(3, 4);
 		quest.registerQuestItems(Set.of(5, 6));

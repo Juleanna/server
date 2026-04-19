@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -50,267 +50,271 @@ import com.l2jserver.gameserver.enums.IllegalActionPunishmentType;
 public interface GeneralConfiguration extends Mutable, Reloadable {
 	
 	@Key("EverybodyHasAdminRights")
-	Boolean everybodyHasAdminRights();
+	boolean everybodyHasAdminRights();
 	
 	@Key("ServerListBrackets")
-	Boolean getServerListBrackets();
+	boolean getServerListBrackets();
 	
 	@Key("ServerListType")
 	@ConverterClass(ServerListTypeConverter.class)
-	Integer getServerListType();
+	int getServerListType();
 	
 	@Key("ServerListAge")
-	Integer getServerListAge();
+	int getServerListAge();
 	
 	@Key("ServerGMOnly")
-	Boolean serverGMOnly();
+	boolean serverGMOnly();
 	
 	@Key("GMHeroAura")
-	Boolean gmHeroAura();
+	boolean gmHeroAura();
 	
 	@Key("GMStartupInvulnerable")
-	Boolean gmStartupInvulnerable();
+	boolean gmStartupInvulnerable();
 	
 	@Key("GMStartupInvisible")
-	Boolean gmStartupInvisible();
+	boolean gmStartupInvisible();
 	
 	@Key("GMStartupSilence")
-	Boolean gmStartupSilence();
+	boolean gmStartupSilence();
 	
 	@Key("GMStartupAutoList")
-	Boolean gmStartupAutoList();
+	boolean gmStartupAutoList();
 	
 	@Key("GMStartupDietMode")
-	Boolean gmStartupDietMode();
+	boolean gmStartupDietMode();
 	
 	@Key("GMItemRestriction")
-	Boolean gmItemRestriction();
+	boolean gmItemRestriction();
 	
 	@Key("GMSkillRestriction")
-	Boolean gmSkillRestriction();
+	boolean gmSkillRestriction();
 	
 	@Key("GMTradeRestrictedItems")
-	Boolean gmTradeRestrictedItems();
+	boolean gmTradeRestrictedItems();
 	
 	@Key("GMRestartFighting")
-	Boolean gmRestartFighting();
+	boolean gmRestartFighting();
 	
 	@Key("GMShowAnnouncerName")
-	Boolean gmShowAnnouncerName();
+	boolean gmShowAnnouncerName();
 	
+	// TODO(Zoey76): Implement GMShowCritAnnouncerName configuration.
 	@Key("GMShowCritAnnouncerName")
-	Boolean gmShowCritAnnouncerName();
+	boolean gmShowCritAnnouncerName();
 	
 	@Key("GMGiveSpecialSkills")
-	Boolean gmGiveSpecialSkills();
+	boolean gmGiveSpecialSkills();
 	
 	@Key("GMGiveSpecialAuraSkills")
-	Boolean gmGiveSpecialAuraSkills();
+	boolean gmGiveSpecialAuraSkills();
 	
 	@Key("GameGuardEnforce")
-	Boolean gameGuardEnforce();
+	boolean gameGuardEnforce();
 	
+	// TODO(Zoey76): Implement GameGuardProhibitAction configuration.
 	@Key("GameGuardProhibitAction")
-	Boolean gameGuardProhibitAction();
+	boolean gameGuardProhibitAction();
 	
 	@Key("LogChat")
-	Boolean logChat();
+	boolean logChat();
 	
+	// TODO(Zoey76): Implement LogAutoAnnouncements configuration.
 	@Key("LogAutoAnnouncements")
-	Boolean logAutoAnnouncements();
+	boolean logAutoAnnouncements();
 	
 	@Key("LogItems")
-	Boolean logItems();
+	boolean logItems();
 	
 	@Key("LogItemsSmallLog")
-	Boolean logItemsSmallLog();
+	boolean logItemsSmallLog();
 	
 	@Key("LogItemEnchants")
-	Boolean logItemEnchants();
+	boolean logItemEnchants();
 	
 	@Key("LogSkillEnchants")
-	Boolean logSkillEnchants();
+	boolean logSkillEnchants();
 	
 	@Key("GMAudit")
-	Boolean gmAudit();
+	boolean gmAudit();
 	
 	@Key("SkillCheckEnable")
-	Boolean skillCheckEnable();
+	boolean skillCheckEnable();
 	
 	@Key("SkillCheckRemove")
-	Boolean skillCheckRemove();
+	boolean skillCheckRemove();
 	
 	@Key("SkillCheckGM")
-	Boolean skillCheckGM();
+	boolean skillCheckGM();
 	
 	@Key("ThreadPoolSizeEffects")
-	Integer getThreadPoolSizeEffects();
+	int getThreadPoolSizeEffects();
 	
 	@Key("ThreadPoolSizeGeneral")
-	Integer getThreadPoolSizeGeneral();
+	int getThreadPoolSizeGeneral();
 	
 	@Key("ThreadPoolSizeEvents")
-	Integer getThreadPoolSizeEvents();
+	int getThreadPoolSizeEvents();
 	
 	@Key("UrgentPacketThreadCoreSize")
-	Integer getUrgentPacketThreadCoreSize();
+	int getUrgentPacketThreadCoreSize();
 	
 	@Key("GeneralPacketThreadCoreSize")
-	Integer getGeneralPacketThreadCoreSize();
+	int getGeneralPacketThreadCoreSize();
 	
 	@Key("GeneralThreadCoreSize")
-	Integer getGeneralThreadCoreSize();
+	int getGeneralThreadCoreSize();
 	
 	@Key("AiMaxThread")
-	Integer getAiMaxThread();
+	int getAiMaxThread();
 	
 	@Key("EventsMaxThread")
-	Integer getEventsMaxThread();
+	int getEventsMaxThread();
 	
 	@Key("DeadLockDetector")
-	Boolean deadLockDetector();
+	boolean deadLockDetector();
 	
 	@Key("DeadLockCheckInterval")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getDeadLockCheckInterval();
+	long getDeadLockCheckInterval();
 	
 	@Key("RestartOnDeadlock")
-	Boolean restartOnDeadlock();
+	boolean restartOnDeadlock();
 	
 	@Key("ClientPacketQueueSize")
-	Integer getClientPacketQueueSize();
+	int getClientPacketQueueSize();
 	
 	@Key("ClientPacketQueueMaxBurstSize")
-	Integer getClientPacketQueueMaxBurstSize();
+	int getClientPacketQueueMaxBurstSize();
 	
 	@Key("ClientPacketQueueMaxPacketsPerSecond")
-	Integer getClientPacketQueueMaxPacketsPerSecond();
+	int getClientPacketQueueMaxPacketsPerSecond();
 	
 	@Key("ClientPacketQueueMeasureInterval")
-	Integer getClientPacketQueueMeasureInterval();
+	int getClientPacketQueueMeasureInterval();
 	
 	@Key("ClientPacketQueueMaxAveragePacketsPerSecond")
-	Integer getClientPacketQueueMaxAveragePacketsPerSecond();
+	int getClientPacketQueueMaxAveragePacketsPerSecond();
 	
 	@Key("ClientPacketQueueMaxFloodsPerMin")
-	Integer getClientPacketQueueMaxFloodsPerMin();
+	int getClientPacketQueueMaxFloodsPerMin();
 	
 	@Key("ClientPacketQueueMaxOverflowsPerMin")
-	Integer getClientPacketQueueMaxOverflowsPerMin();
+	int getClientPacketQueueMaxOverflowsPerMin();
 	
 	@Key("ClientPacketQueueMaxUnderflowsPerMin")
-	Integer getClientPacketQueueMaxUnderflowsPerMin();
+	int getClientPacketQueueMaxUnderflowsPerMin();
 	
 	@Key("ClientPacketQueueMaxUnknownPerMin")
-	Integer getClientPacketQueueMaxUnknownPerMin();
+	int getClientPacketQueueMaxUnknownPerMin();
 	
 	@Key("AllowDiscardItem")
-	Boolean allowDiscardItem();
+	boolean allowDiscardItem();
 	
 	@Key("AutoDestroyDroppedItemAfter")
-	Integer getAutoDestroyDroppedItemAfter();
+	int getAutoDestroyDroppedItemAfter();
 	
 	@Key("AutoDestroyHerbTime")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getAutoDestroyHerbTime();
+	long getAutoDestroyHerbTime();
 	
 	@Key("ProtectedItems")
 	Set<Integer> getProtectedItems();
 	
 	@Key("DatabaseCleanUp")
-	Boolean databaseCleanUp();
+	boolean databaseCleanUp();
 	
+	// TODO(Zoey76): Implement ConnectionCloseTime configuration.
 	@Key("ConnectionCloseTime")
-	Long getConnectionCloseTime();
+	long getConnectionCloseTime();
 	
 	@Key("CharacterDataStoreInterval")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getCharacterDataStoreInterval();
+	long getCharacterDataStoreInterval();
 	
 	@Key("LazyItemsUpdate")
-	Boolean lazyItemsUpdate();
+	boolean lazyItemsUpdate();
 	
 	@Key("UpdateItemsOnCharStore")
-	Boolean updateItemsOnCharStore();
+	boolean updateItemsOnCharStore();
 	
 	@Key("DestroyPlayerDroppedItem")
-	Boolean destroyPlayerDroppedItem();
+	boolean destroyPlayerDroppedItem();
 	
 	@Key("DestroyEquipableItem")
-	Boolean destroyEquipableItem();
+	boolean destroyEquipableItem();
 	
 	@Key("SaveDroppedItem")
-	Boolean saveDroppedItem();
+	boolean saveDroppedItem();
 	
 	@Key("EmptyDroppedItemTableAfterLoad")
-	Boolean emptyDroppedItemTableAfterLoad();
+	boolean emptyDroppedItemTableAfterLoad();
 	
 	@Key("SaveDroppedItemInterval")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getSaveDroppedItemInterval();
+	long getSaveDroppedItemInterval();
 	
 	@Key("ClearDroppedItemTable")
-	Boolean clearDroppedItemTable();
+	boolean clearDroppedItemTable();
 	
 	@Key("AutoDeleteInvalidQuestData")
-	Boolean autoDeleteInvalidQuestData();
+	boolean autoDeleteInvalidQuestData();
 	
 	@Key("PreciseDropCalculation")
-	Boolean preciseDropCalculation();
+	boolean preciseDropCalculation();
 	
 	@Key("PreciseDropMultipleGroupRolls")
-	Boolean preciseDropMultipleGroupRolls();
+	boolean preciseDropMultipleGroupRolls();
 	
 	@Key("PreciseDropMultipleRollsAggregateDrops")
-	Boolean preciseDropMultipleRollsAggregateDrops();
+	boolean preciseDropMultipleRollsAggregateDrops();
 	
 	@Key("MultipleItemDrop")
-	Boolean multipleItemDrop();
+	boolean multipleItemDrop();
 	
 	@Key("ForceInventoryUpdate")
-	Boolean forceInventoryUpdate();
+	boolean forceInventoryUpdate();
 	
 	@Key("LazyCache")
-	Boolean lazyCache();
+	boolean lazyCache();
 	
 	@Key("CacheCharNames")
-	Boolean cacheCharNames();
+	boolean cacheCharNames();
 	
 	@Key("MinNPCAnimation")
-	Integer getMinNPCAnimation();
+	int getMinNPCAnimation();
 	
 	@Key("MaxNPCAnimation")
-	Integer getMaxNPCAnimation();
+	int getMaxNPCAnimation();
 	
 	@Key("MinMonsterAnimation")
-	Integer getMinMonsterAnimation();
+	int getMinMonsterAnimation();
 	
 	@Key("MaxMonsterAnimation")
-	Integer getMaxMonsterAnimation();
+	int getMaxMonsterAnimation();
 	
 	@Key("MoveBasedKnownList")
-	Boolean moveBasedKnownList();
+	boolean moveBasedKnownList();
 	
 	@Key("KnownListUpdateInterval")
-	Long getKnownListUpdateInterval();
+	long getKnownListUpdateInterval();
 	
 	@Key("CheckKnownList")
-	Boolean checkKnownList();
+	boolean checkKnownList();
 	
 	@Key("GridsAlwaysOn")
-	Boolean gridsAlwaysOn();
+	boolean gridsAlwaysOn();
 	
 	@Key("GridNeighborTurnOnTime")
-	Integer getGridNeighborTurnOnTime();
+	int getGridNeighborTurnOnTime();
 	
 	@Key("GridNeighborTurnOffTime")
-	Integer getGridNeighborTurnOffTime();
+	int getGridNeighborTurnOffTime();
 	
 	@Key("EnableFallingDamage")
-	Boolean enableFallingDamage();
+	boolean enableFallingDamage();
 	
 	@Key("PeaceZoneMode")
-	Integer getPeaceZoneMode();
+	int getPeaceZoneMode();
 	
 	@Key("GlobalChat")
 	String getGlobalChat();
@@ -319,82 +323,83 @@ public interface GeneralConfiguration extends Mutable, Reloadable {
 	String getTradeChat();
 	
 	@Key("AllowWarehouse")
-	Boolean allowWarehouse();
+	boolean allowWarehouse();
 	
 	@Key("WarehouseCache")
-	Boolean warehouseCache();
+	boolean warehouseCache();
 	
 	@Key("WarehouseCacheTime")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getWarehouseCacheTime();
+	long getWarehouseCacheTime();
 	
 	@Key("AllowRefund")
-	Boolean allowRefund();
+	boolean allowRefund();
 	
 	@Key("AllowMail")
-	Boolean allowMail();
+	boolean allowMail();
 	
 	@Key("AllowAttachments")
-	Boolean allowAttachments();
+	boolean allowAttachments();
 	
 	@Key("AllowWear")
-	Boolean allowWear();
+	boolean allowWear();
 	
 	@Key("WearDelay")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getWearDelay();
+	long getWearDelay();
 	
 	@Key("WearPrice")
-	Integer getWearPrice();
+	int getWearPrice();
 	
 	@Key("RestorePlayerInstance")
-	Boolean restorePlayerInstance();
+	boolean restorePlayerInstance();
 	
 	@Key("AllowSummonInInstance")
-	Boolean allowSummonInInstance();
+	boolean allowSummonInInstance();
 	
 	@Key("EjectDeadPlayerTime")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getEjectDeadPlayerTime();
+	long getEjectDeadPlayerTime();
 	
 	@Key("InstanceFinishTime")
-	Integer getInstanceFinishTime();
+	int getInstanceFinishTime();
 	
+	// TODO(Zoey76): Implement AllowRace configuration.
 	@Key("AllowRace")
-	Boolean allowRace();
+	boolean allowRace();
 	
 	@Key("AllowWater")
-	Boolean allowWater();
+	boolean allowWater();
 	
 	@Key("AllowRentPet")
-	Boolean allowRentPet();
+	boolean allowRentPet();
 	
 	@Key("AllowFishing")
-	Boolean allowFishing();
+	boolean allowFishing();
 	
 	@Key("AllowBoat")
-	Boolean allowBoat();
+	boolean allowBoat();
 	
 	@Key("BoatBroadcastRadius")
-	Integer getBoatBroadcastRadius();
+	int getBoatBroadcastRadius();
 	
 	@Key("AllowCursedWeapons")
-	Boolean allowCursedWeapons();
+	boolean allowCursedWeapons();
 	
 	@Key("AllowPetWalkers")
-	Boolean allowPetWalkers();
+	boolean allowPetWalkers();
 	
 	@Key("ShowServerNews")
-	Boolean showServerNews();
+	boolean showServerNews();
 	
 	@Key("EnableCommunityBoard")
-	Boolean enableCommunityBoard();
+	boolean enableCommunityBoard();
 	
 	@Key("BBSDefault")
 	String getBBSDefault();
 	
 	@Key("UseChatFilter")
-	Boolean useChatFilter();
+	boolean useChatFilter();
 	
 	@Key("ChatFilterChars")
 	String getChatFilterChars();
@@ -406,172 +411,180 @@ public interface GeneralConfiguration extends Mutable, Reloadable {
 	Set<Integer> getBanChatChannels();
 	
 	@Key("AllowManor")
-	Boolean allowManor();
+	boolean allowManor();
 	
 	@Key("ManorRefreshTime")
-	Integer getManorRefreshTime();
+	int getManorRefreshTime();
 	
 	@Key("ManorRefreshMin")
-	Integer getManorRefreshMin();
+	int getManorRefreshMin();
 	
 	@Key("ManorApproveTime")
-	Integer getManorApproveTime();
+	int getManorApproveTime();
 	
 	@Key("ManorApproveMin")
-	Integer getManorApproveMin();
+	int getManorApproveMin();
 	
 	@Key("ManorMaintenanceMin")
-	Integer getManorMaintenanceMin();
+	int getManorMaintenanceMin();
 	
 	@Key("ManorSaveAllActions")
-	Boolean manorSaveAllActions();
+	boolean manorSaveAllActions();
 	
 	@Key("ManorSavePeriodRate")
-	Integer getManorSavePeriodRate();
+	int getManorSavePeriodRate();
 	
 	@Key("AllowLottery")
-	Boolean allowLottery();
+	boolean allowLottery();
 	
 	@Key("LotteryPrize")
-	Long getLotteryPrize();
+	long getLotteryPrize();
 	
 	@Key("LotteryTicketPrice")
-	Long getLotteryTicketPrice();
+	long getLotteryTicketPrice();
 	
 	@Key("Lottery5NumberRate")
-	Float getLottery5NumberRate();
+	float getLottery5NumberRate();
 	
 	@Key("Lottery4NumberRate")
-	Float getLottery4NumberRate();
+	float getLottery4NumberRate();
 	
 	@Key("Lottery3NumberRate")
-	Float getLottery3NumberRate();
+	float getLottery3NumberRate();
 	
 	@Key("Lottery2and1NumberPrize")
-	Long getLottery2and1NumberPrize();
+	long getLottery2and1NumberPrize();
 	
 	@Key("ItemAuctionEnabled")
-	Boolean itemAuctionEnabled();
+	boolean itemAuctionEnabled();
 	
 	@Key("ItemAuctionExpiredAfter")
-	Integer getItemAuctionExpiredAfter();
+	int getItemAuctionExpiredAfter();
 	
 	@Key("ItemAuctionTimeExtendsOnBid")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getItemAuctionTimeExtendsOnBid();
+	long getItemAuctionTimeExtendsOnBid();
 	
+	// TODO(Zoey76): Implement RiftMinPartySize configuration.
 	@Key("RiftMinPartySize")
-	Integer getRiftMinPartySize();
+	int getRiftMinPartySize();
 	
 	@Key("MaxRiftJumps")
-	Integer getMaxRiftJumps();
+	int getMaxRiftJumps();
 	
 	@Key("RiftSpawnDelay")
-	Integer getRiftSpawnDelay();
+	int getRiftSpawnDelay();
 	
 	@Key("AutoJumpsDelayMin")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getAutoJumpsDelayMin();
+	long getAutoJumpsDelayMin();
 	
 	@Key("AutoJumpsDelayMax")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getAutoJumpsDelayMax();
+	long getAutoJumpsDelayMax();
 	
 	@Key("BossRoomTimeMultiply")
-	Float getBossRoomTimeMultiply();
+	float getBossRoomTimeMultiply();
 	
+	// TODO(Zoey76): Implement RecruitCost configuration.
 	@Key("RecruitCost")
-	Integer getRecruitCost();
+	int getRecruitCost();
 	
+	// TODO(Zoey76): Implement SoldierCost configuration.
 	@Key("SoldierCost")
-	Integer getSoldierCost();
+	int getSoldierCost();
 	
+	// TODO(Zoey76): Implement OfficerCost configuration.
 	@Key("OfficerCost")
-	Integer getOfficerCost();
+	int getOfficerCost();
 	
+	// TODO(Zoey76): Implement CaptainCost configuration.
 	@Key("CaptainCost")
-	Integer getCaptainCost();
+	int getCaptainCost();
 	
+	// TODO(Zoey76): Implement CommanderCost configuration.
 	@Key("CommanderCost")
-	Integer getCommanderCost();
+	int getCommanderCost();
 	
+	// TODO(Zoey76): Implement HeroCost configuration.
 	@Key("HeroCost")
-	Integer getHeroCost();
+	int getHeroCost();
 	
 	@Key("TimeOfAttack")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getTimeOfAttack();
+	long getTimeOfAttack();
 	
+	// TODO(Zoey76): Implement TimeOfCoolDown configuration.
 	@Key("TimeOfCoolDown")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getTimeOfCoolDown();
+	long getTimeOfCoolDown();
 	
 	@Key("TimeOfEntry")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getTimeOfEntry();
+	long getTimeOfEntry();
 	
 	@Key("TimeOfWarmUp")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getTimeOfWarmUp();
+	long getTimeOfWarmUp();
 	
 	// TODO(Zoey76): Move this four sepulchers to own configuration file.
 	@Key("NumberOfNecessaryPartyMembers")
-	Integer getNumberOfNecessaryPartyMembers();
+	int getNumberOfNecessaryPartyMembers();
 	
 	@Key("DefaultPunish")
 	IllegalActionPunishmentType getDefaultPunish();
 	
 	@Key("DefaultPunishParam")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getDefaultPunishParam();
+	long getDefaultPunishParam();
 	
 	@Key("OnlyGMItemsFree")
-	Boolean onlyGMItemsFree();
+	boolean onlyGMItemsFree();
 	
 	@Key("JailIsPvp")
-	Boolean jailIsPvp();
+	boolean jailIsPvp();
 	
 	@Key("JailDisableChat")
-	Boolean jailDisableChat();
+	boolean jailDisableChat();
 	
 	@Key("JailDisableTransaction")
-	Boolean jailDisableTransaction();
+	boolean jailDisableTransaction();
 	
 	@Key("NormalEnchantCostMultipiler")
-	Integer getNormalEnchantCostMultipiler();
+	int getNormalEnchantCostMultipiler();
 	
 	@Key("SafeEnchantCostMultipiler")
-	Integer getSafeEnchantCostMultipiler();
+	int getSafeEnchantCostMultipiler();
 	
 	@Key("CustomSpawnlistTable")
-	Boolean customSpawnlistTable();
+	boolean customSpawnlistTable();
 	
 	@Key("SaveGmSpawnOnCustom")
-	Boolean saveGmSpawnOnCustom();
+	boolean saveGmSpawnOnCustom();
 	
 	@Key("CustomNpcData")
-	Boolean customNpcData();
+	boolean customNpcData();
 	
 	@Key("CustomTeleportTable")
-	Boolean customTeleportTable();
+	boolean customTeleportTable();
 	
 	@Key("CustomNpcBufferTables")
-	Boolean customNpcBufferTables();
+	boolean customNpcBufferTables();
 	
 	@Key("CustomSkillsLoad")
-	Boolean customSkillsLoad();
+	boolean customSkillsLoad();
 	
 	@Key("CustomItemsLoad")
-	Boolean customItemsLoad();
+	boolean customItemsLoad();
 	
 	@Key("CustomMultisellLoad")
-	Boolean customMultisellLoad();
+	boolean customMultisellLoad();
 	
 	@Key("CustomBuyListLoad")
-	Boolean customBuyListLoad();
+	boolean customBuyListLoad();
 	
 	@Key("BirthdayGift")
-	Integer getBirthdayGift();
+	int getBirthdayGift();
 	
 	@Key("BirthdayMailSubject")
 	String getBirthdayMailSubject();
@@ -580,57 +593,58 @@ public interface GeneralConfiguration extends Mutable, Reloadable {
 	String getBirthdayMailText();
 	
 	@Key("EnableBlockCheckerEvent")
-	Boolean enableBlockCheckerEvent();
+	boolean enableBlockCheckerEvent();
 	
 	@Key("BlockCheckerMinTeamMembers")
-	Integer getBlockCheckerMinTeamMembers();
+	int getBlockCheckerMinTeamMembers();
 	
 	@Key("HBCEFairPlay")
-	Boolean isHBCEFairPlay();
+	boolean isHBCEFairPlay();
 	
 	@Key("HellboundWithoutQuest")
-	Boolean hellboundWithoutQuest();
+	boolean hellboundWithoutQuest();
 	
 	@Key("EnableBotReportButton")
-	Boolean enableBotReportButton();
+	boolean enableBotReportButton();
 	
 	@Key("BotReportPointsResetHour")
 	String getBotReportPointsResetHour();
 	
 	@Key("BotReportDelay")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getBotReportDelay();
+	long getBotReportDelay();
 	
 	@Key("AllowReportsFromSameClanMembers")
-	Boolean allowReportsFromSameClanMembers();
+	boolean allowReportsFromSameClanMembers();
 	
 	@Key("Debug")
-	Boolean debug();
+	boolean debug();
 	
 	@Key("InstanceDebug")
-	Boolean instanceDebug();
+	boolean instanceDebug();
 	
 	@Key("HtmlActionCacheDebug")
-	Boolean htmlActionCacheDebug();
+	boolean htmlActionCacheDebug();
 	
 	@Key("PacketHandlerDebug")
-	Boolean packetHandlerDebug();
+	boolean packetHandlerDebug();
 	
 	@Key("Developer")
-	Boolean developer();
+	boolean developer();
 	
 	@Key("NoHandlers")
-	Boolean noHandlers();
+	boolean noHandlers();
 	
 	@Key("NoQuests")
-	Boolean noQuests();
+	boolean noQuests();
 	
 	@Key("NoSpawns")
-	Boolean noSpawns();
+	boolean noSpawns();
 	
 	@Key("ShowQuestsLoadInLogs")
-	Boolean showQuestsLoadInLogs();
+	boolean showQuestsLoadInLogs();
 	
+	// TODO(Zoey76): Implement ShowScriptsLoadInLogs configuration.
 	@Key("ShowScriptsLoadInLogs")
-	Boolean showScriptsLoadInLogs();
+	boolean showScriptsLoadInLogs();
 }

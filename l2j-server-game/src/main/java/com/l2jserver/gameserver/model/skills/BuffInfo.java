@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,6 +19,7 @@
 package com.l2jserver.gameserver.model.skills;
 
 import static com.l2jserver.gameserver.config.Configuration.character;
+import static com.l2jserver.gameserver.network.SystemMessageId.YOU_FEEL_S1_EFFECT;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public final class BuffInfo {
 	private final L2Character _effector;
 	private final L2Character _effected;
 	private final Skill _skill;
+	private final int index;
 	/** The effects. */
 	private final List<AbstractEffect> _effects = new ArrayList<>(1);
 	// Tasks
@@ -73,14 +75,20 @@ public final class BuffInfo {
 	 * Buff Info constructor.
 	 * @param effector
 	 * @param effected
+	 * @param index
 	 * @param skill
 	 */
-	public BuffInfo(L2Character effector, L2Character effected, Skill skill) {
+	public BuffInfo(L2Character effector, L2Character effected, int index, Skill skill) {
 		_effector = effector;
 		_effected = effected;
+		this.index = index;
 		_skill = skill;
 		_abnormalTime = Formulas.calcEffectAbnormalTime(effector, effected, skill);
 		_periodStartTicks = GameTimeController.getInstance().getGameTicks();
+	}
+	
+	public BuffInfo(L2Character effector, L2Character effected, Skill skill) {
+		this(effector, effected, -1, skill);
 	}
 	
 	/**
@@ -214,6 +222,14 @@ public final class BuffInfo {
 	}
 	
 	/**
+	 * Gets the target's index.
+	 * @return the index
+	 */
+	public int getIndex() {
+		return index;
+	}
+	
+	/**
 	 * Stops all the effects for this buff info.<br>
 	 * Removes effects stats.<br>
 	 * <b>It will not remove the buff info from the effect list</b>.<br>
@@ -236,12 +252,12 @@ public final class BuffInfo {
 		
 		// When effects are initialized, the successfully landed.
 		if (_effected.isPlayer() && !_skill.isPassive()) {
-			final SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.YOU_FEEL_S1_EFFECT);
+			final var sm = SystemMessage.getSystemMessage(YOU_FEEL_S1_EFFECT);
 			sm.addSkillName(_skill);
 			_effected.sendPacket(sm);
 		}
 		
-		for (AbstractEffect effect : _effects) {
+		for (var effect : _effects) {
 			if (effect.isInstant() || (_effected.isDead() && !_skill.isPassive())) {
 				continue;
 			}
@@ -252,8 +268,8 @@ public final class BuffInfo {
 			// If it's a continuous effect, if has ticks schedule a task with period, otherwise schedule a simple task to end it.
 			if (effect.getTicks() > 0) {
 				// The task for the effect ticks.
-				final EffectTickTask effectTask = new EffectTickTask(this, effect);
-				final ScheduledFuture<?> scheduledFuture = ThreadPoolManager.getInstance().scheduleEffectAtFixedRate(effectTask, effect.getTicks() * character().getEffectTickRatio(), effect.getTicks() * character().getEffectTickRatio());
+				final var effectTask = new EffectTickTask(this, effect);
+				final var scheduledFuture = ThreadPoolManager.getInstance().scheduleEffectAtFixedRate(effectTask, effect.getTicks() * character().getEffectTickRatio(), effect.getTicks() * character().getEffectTickRatio());
 				// Adds the task for ticking.
 				addTask(effect, new EffectTaskInfo(effectTask, scheduledFuture));
 			}
@@ -285,7 +301,7 @@ public final class BuffInfo {
 		}
 		
 		if (!continueForever && _skill.isToggle()) {
-			final EffectTaskInfo task = getEffectTask(effect);
+			final var task = getEffectTask(effect);
 			if (task != null) {
 				task.getScheduledFuture().cancel(true); // Don't allow to finish current run.
 				_effected.getEffectList().stopSkillEffects(true, getSkill()); // Remove the buff from the effect list.
@@ -323,7 +339,7 @@ public final class BuffInfo {
 			}
 			
 			if (smId != null) {
-				final SystemMessage sm = SystemMessage.getSystemMessage(smId);
+				final var sm = SystemMessage.getSystemMessage(smId);
 				sm.addSkillName(_skill);
 				_effected.sendPacket(sm);
 			}

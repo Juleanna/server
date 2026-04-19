@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -42,35 +42,35 @@ import org.aeonbits.owner.Reloadable;
 public interface VitalityConfiguration extends Reloadable {
 	
 	@Key("Enabled")
-	Boolean enabled();
+	boolean enabled();
 	
 	@Key("RecoverVitalityOnReconnect")
-	Boolean recoverVitalityOnReconnect();
+	boolean recoverVitalityOnReconnect();
 	
 	@Key("StartingVitalityPoints")
-	Integer getStartingVitalityPoints();
+	int getStartingVitalityPoints();
 	
 	@Key("RateVitalityLevel1")
-	Float getRateVitalityLevel1();
+	float getRateVitalityLevel1();
 	
 	@Key("RateVitalityLevel2")
-	Float getRateVitalityLevel2();
+	float getRateVitalityLevel2();
 	
 	@Key("RateVitalityLevel3")
-	Float getRateVitalityLevel3();
+	float getRateVitalityLevel3();
 	
 	@Key("RateVitalityLevel4")
-	Float getRateVitalityLevel4();
+	float getRateVitalityLevel4();
 	
 	@Key("RateVitalityGain")
-	Float getRateVitalityGain();
+	float getRateVitalityGain();
 	
 	@Key("RateVitalityLost")
-	Float getRateVitalityLost();
+	float getRateVitalityLost();
 	
 	@Key("RateRecoveryPeaceZone")
-	Float getRateRecoveryPeaceZone();
+	float getRateRecoveryPeaceZone();
 	
 	@Key("RateRecoveryOnReconnect")
-	Float getRateRecoveryOnReconnect();
+	float getRateRecoveryOnReconnect();
 }

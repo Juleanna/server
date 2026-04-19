@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.model.zone.form;
+
+import java.awt.Rectangle;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.GeoData;
@@ -37,6 +39,12 @@ public class ZoneCylinder extends L2ZoneForm {
 		_z2 = z2;
 		_rad = rad;
 		_radS = rad * rad;
+	}
+	
+	@Override
+	public Rectangle getBoundingBox() {
+		final var diameter = _rad * 2;
+		return new Rectangle(_x - _rad, _y - _rad, diameter, diameter);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -25,8 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.model.CombatFlag;
@@ -43,14 +44,14 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 public final class FortSiegeManager {
 	
-	private static final Logger _log = Logger.getLogger(FortSiegeManager.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(FortSiegeManager.class);
 	
 	// Fort Siege settings
 	private Map<Integer, List<FortSiegeSpawn>> _commanderSpawnList;
 	private Map<Integer, List<CombatFlag>> _flagList;
 	private final List<FortSiege> _sieges = new ArrayList<>();
 	
-	protected FortSiegeManager() {
+	private FortSiegeManager() {
 		load();
 	}
 	
@@ -61,7 +62,7 @@ public final class FortSiegeManager {
 	
 	/**
 	 * @param clan The L2Clan of the player
-	 * @param fortid
+	 * @param fortid id of the fort to check against
 	 * @return true if the clan is registered or owner of a fort
 	 */
 	public boolean checkIsRegistered(L2Clan clan, int fortid) {
@@ -80,7 +81,7 @@ public final class FortSiegeManager {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: checkIsRegistered(): " + e.getMessage(), e);
+			LOG.warn("Exception: checkIsRegistered(): {}", e.getMessage(), e);
 		}
 		return register;
 	}
@@ -113,7 +114,7 @@ public final class FortSiegeManager {
 					int npc_id = Integer.parseInt(st.nextToken());
 					commanderSpawns.add(new FortSiegeSpawn(fort.getResidenceId(), x, y, z, heading, npc_id, i));
 				} catch (Exception e) {
-					_log.warning("Error while loading commander(s) for " + fort.getName() + " fort.");
+					LOG.warn("Error while loading commander(s) for {} fort.", fort.getName());
 				}
 			}
 			
@@ -134,7 +135,7 @@ public final class FortSiegeManager {
 					
 					flagSpawns.add(new CombatFlag(fort.getResidenceId(), x, y, z, 0, flag_id));
 				} catch (Exception e) {
-					_log.warning("Error while loading flag(s) for " + fort.getName() + " fort.");
+					LOG.warn("Error while loading flag(s) for {} fort.", fort.getName());
 				}
 			}
 			_flagList.put(fort.getResidenceId(), flagSpawns);

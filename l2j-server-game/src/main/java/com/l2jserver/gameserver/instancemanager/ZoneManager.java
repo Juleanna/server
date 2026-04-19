@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -291,10 +291,13 @@ public final class ZoneManager implements IXmlReader {
 						addZone(zoneId, temp);
 						
 						// Register the zone into any world region it intersects with...
-						// currently 11136 test for each zone :>
+						final var boundingBox = temp.getZone().getBoundingBox();
+						final var bottomLeftRegion = L2World.getInstance().getRegion((int) boundingBox.getMinX(), (int) boundingBox.getMinY());
+						final var topRightRegion = L2World.getInstance().getRegion((int) boundingBox.getMaxX(), (int) boundingBox.getMaxY());
+						
 						int ax, ay, bx, by;
-						for (int x = 0; x < worldRegions.length; x++) {
-							for (int y = 0; y < worldRegions[x].length; y++) {
+						for (int x = bottomLeftRegion.getTileX(); x <= topRightRegion.getTileX(); x++) {
+							for (int y = bottomLeftRegion.getTileY(); y <= topRightRegion.getTileY(); y++) {
 								ax = (x - L2World.OFFSET_X) << L2World.SHIFT_BY;
 								bx = ((x + 1) - L2World.OFFSET_X) << L2World.SHIFT_BY;
 								ay = (y - L2World.OFFSET_Y) << L2World.SHIFT_BY;
@@ -313,12 +316,14 @@ public final class ZoneManager implements IXmlReader {
 	
 	@Override
 	public void load() {
+		final var start = System.currentTimeMillis();
 		_classZones.clear();
 		_spawnTerritories.clear();
 		parseDatapackDirectory("data/zones", false);
+		final var endZones = System.currentTimeMillis();
+		LOG.info("Loaded {} zone classes and {} zones in {}ms.", _classZones.size(), getSize(), endZones - start);
 		parseDatapackDirectory("data/zones/npcSpawnTerritories", false);
-		LOG.info("Loaded {} zone classes and {} zones.", _classZones.size(), getSize());
-		LOG.info("Loaded {} NPC spawn territoriers.", _spawnTerritories.size());
+		LOG.info("Loaded {} NPC spawn territories in {}ms.", _spawnTerritories.size(), System.currentTimeMillis() - endZones);
 	}
 	
 	/**

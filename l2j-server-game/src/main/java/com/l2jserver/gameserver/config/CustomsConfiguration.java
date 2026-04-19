@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -22,9 +22,6 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.aeonbits.owner.Config.HotReloadType.ASYNC;
 import static org.aeonbits.owner.Config.LoadType.MERGE;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +33,6 @@ import org.aeonbits.owner.Reloadable;
 import com.l2jserver.gameserver.config.converter.ColorConverter;
 import com.l2jserver.gameserver.config.converter.IPLimitConverter;
 import com.l2jserver.gameserver.config.converter.Seconds2MillisecondsConverter;
-import com.l2jserver.gameserver.model.skills.AbnormalVisualEffect;
 
 /**
  * Customs Configuration.
@@ -51,181 +47,178 @@ import com.l2jserver.gameserver.model.skills.AbnormalVisualEffect;
 @LoadPolicy(MERGE)
 @HotReload(value = 20, unit = MINUTES, type = ASYNC)
 public interface CustomsConfiguration extends Reloadable {
-
 	
 	@Key("ChampionEnable")
-	Boolean championEnable();
+	boolean championEnable();
 	
 	@Key("ChampionPassive")
-	Boolean championPassive();
+	boolean championPassive();
 	
 	@Key("ChampionFrequency")
-	Integer getChampionFrequency();
+	int getChampionFrequency();
 	
 	@Key("ChampionTitle")
 	String getChampionTitle();
-
-	@Key("ChampionAura")
-	Boolean ChampionAura();
-		
+	
 	@Key("ChampionMinLevel")
-	Integer getChampionMinLevel();
+	int getChampionMinLevel();
 	
 	@Key("ChampionMaxLevel")
-	Integer getChampionMaxLevel();
+	int getChampionMaxLevel();
 	
 	@Key("ChampionHp")
-	Integer getChampionHp();
+	int getChampionHp();
 	
 	@Key("ChampionHpRegen")
-	Double getChampionHpRegen();
+	double getChampionHpRegen();
 	
 	@Key("ChampionRewardsExpSp")
-	Double getChampionRewardsExpSp();
+	double getChampionRewardsExpSp();
 	
 	@Key("ChampionRewardsChance")
-	Double getChampionRewardsChance();
+	double getChampionRewardsChance();
 	
 	@Key("ChampionRewardsAmount")
-	Double getChampionRewardsAmount();
+	double getChampionRewardsAmount();
 	
 	@Key("ChampionAdenasRewardsChance")
-	Double getChampionAdenasRewardsChance();
+	double getChampionAdenasRewardsChance();
 	
 	@Key("ChampionAdenasRewardsAmount")
-	Double getChampionAdenasRewardsAmount();
+	double getChampionAdenasRewardsAmount();
 	
 	@Key("ChampionAtk")
-	Float getChampionAtk();
+	float getChampionAtk();
 	
 	@Key("ChampionSpdAtk")
-	Float getChampionSpdAtk();
+	float getChampionSpdAtk();
 	
 	@Key("ChampionRewardItemID")
-	Integer getChampionRewardItemID();
+	int getChampionRewardItemID();
 	
 	@Key("ChampionRewardItemQty")
-	Integer getChampionRewardItemQty();
+	int getChampionRewardItemQty();
 	
 	@Key("ChampionRewardLowerLvlItemChance")
-	Integer getChampionRewardLowerLvlItemChance();
+	int getChampionRewardLowerLvlItemChance();
 	
 	@Key("ChampionRewardHigherLvlItemChance")
-	Integer getChampionRewardHigherLvlItemChance();
+	int getChampionRewardHigherLvlItemChance();
 	
 	@Key("ChampionEnableVitality")
-	Boolean championEnableVitality();
+	boolean championEnableVitality();
 	
 	@Key("ChampionEnableInInstances")
-	Boolean championEnableInInstances();
+	boolean championEnableInInstances();
 	
 	@Key("AllowWedding")
-	Boolean allowWedding();
+	boolean allowWedding();
 	
 	@Key("WeddingPrice")
-	Integer getWeddingPrice();
+	int getWeddingPrice();
 	
 	@Key("WeddingPunishInfidelity")
-	Boolean weddingPunishInfidelity();
+	boolean weddingPunishInfidelity();
 	
+	// TODO(Zoey76): Implement WeddingTeleport configuration.
 	@Key("WeddingTeleport")
-	Boolean weddingTeleport();
+	boolean weddingTeleport();
 	
 	@Key("WeddingTeleportPrice")
-	Integer getWeddingTeleportPrice();
+	int getWeddingTeleportPrice();
 	
 	@Key("WeddingTeleportDuration")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getWeddingTeleportDuration();
+	long getWeddingTeleportDuration();
 	
 	@Key("WeddingAllowSameSex")
-	Boolean weddingAllowSameSex();
+	boolean weddingAllowSameSex();
 	
 	@Key("WeddingFormalWear")
-	Boolean weddingFormalWear();
+	boolean weddingFormalWear();
 	
 	@Key("WeddingDivorceCosts")
-	Integer getWeddingDivorceCosts();
+	int getWeddingDivorceCosts();
 	
 	@Key("BankingEnabled")
-	Boolean bankingEnabled();
+	boolean bankingEnabled();
 	
 	@Key("BankingGoldbarCount")
-	Integer getBankingGoldbarCount();
+	int getBankingGoldbarCount();
 	
 	@Key("BankingAdenaCount")
-	Integer getBankingAdenaCount();
+	int getBankingAdenaCount();
 	
 	@Key("EnableWarehouseSortingClan")
-	Boolean enableWarehouseSortingClan();
+	boolean enableWarehouseSortingClan();
 	
 	@Key("EnableWarehouseSortingPrivate")
-	Boolean enableWarehouseSortingPrivate();
+	boolean enableWarehouseSortingPrivate();
 	
 	@Key("OfflineTradeEnable")
-	Boolean offlineTradeEnable();
+	boolean offlineTradeEnable();
 	
 	@Key("OfflineCraftEnable")
-	Boolean offlineCraftEnable();
+	boolean offlineCraftEnable();
 	
 	@Key("OfflineModeInPeaceZone")
-	Boolean offlineModeInPeaceZone();
+	boolean offlineModeInPeaceZone();
 	
 	@Key("OfflineModeNoDamage")
-	Boolean offlineModeNoDamage();
+	boolean offlineModeNoDamage();
 	
 	@Key("OfflineSetNameColor")
-	Boolean offlineSetNameColor();
+	boolean offlineSetNameColor();
 	
 	@Key("OfflineNameColor")
 	@ConverterClass(ColorConverter.class)
-	Integer getOfflineNameColor();
+	int getOfflineNameColor();
 	
 	@Key("OfflineFame")
-	Boolean offlineFame();
+	boolean offlineFame();
 	
 	@Key("RestoreOffliners")
-	Boolean restoreOffliners();
+	boolean restoreOffliners();
 	
 	@Key("OfflineMaxDays")
-	Integer getOfflineMaxDays();
+	int getOfflineMaxDays();
 	
 	@Key("OfflineDisconnectFinished")
-	Boolean offlineDisconnectFinished();
+	boolean offlineDisconnectFinished();
 	
 	@Key("EnableManaPotionSupport")
-	Boolean enableManaPotionSupport();
+	boolean enableManaPotionSupport();
 	
 	@Key("DisplayServerTime")
-	Boolean displayServerTime();
+	boolean displayServerTime();
 	
 	@Key("ScreenWelcomeMessageEnable")
-	Boolean screenWelcomeMessageEnable();
+	boolean screenWelcomeMessageEnable();
 	
 	@Key("ScreenWelcomeMessageText")
 	String getScreenWelcomeMessageText();
 	
 	@Key("ScreenWelcomeMessageTime")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getScreenWelcomeMessageTime();
+	long getScreenWelcomeMessageTime();
 	
 	@Key("AntiFeedEnable")
-	Boolean antiFeedEnable();
+	boolean antiFeedEnable();
 	
 	@Key("AntiFeedDualbox")
-	Boolean antiFeedDualbox();
+	boolean antiFeedDualbox();
 	
 	@Key("AntiFeedDisconnectedAsDualbox")
-	Boolean antiFeedDisconnectedAsDualbox();
+	boolean antiFeedDisconnectedAsDualbox();
 	
 	@Key("AntiFeedInterval")
-	Integer getAntiFeedInterval();
+	int getAntiFeedInterval();
 	
 	@Key("AnnouncePkPvP")
-	Boolean announcePkPvP();
+	boolean announcePkPvP();
 	
 	@Key("AnnouncePkPvPNormalMessage")
-	Boolean announcePkPvPNormalMessage();
+	boolean announcePkPvPNormalMessage();
 	
 	@Key("AnnouncePkMsg")
 	String getAnnouncePkMsg();
@@ -234,22 +227,22 @@ public interface CustomsConfiguration extends Reloadable {
 	String getAnnouncePvpMsg();
 	
 	@Key("ChatAdmin")
-	Boolean chatAdmin();
+	boolean chatAdmin();
 	
 	@Key("HellboundStatus")
-	Boolean hellboundStatus();
+	boolean hellboundStatus();
 	
 	@Key("AutoLootVoiceEnable")
-	Boolean autoLootVoiceCommand();
+	boolean autoLootVoiceCommand();
 	
 	@Key("AutoLootVoiceRestore")
-	Boolean autoLootVoiceRestore();
+	boolean autoLootVoiceRestore();
 	
 	@Key("AutoLootItemsVoiceRestore")
-	Boolean autoLootItemsVoiceRestore();
+	boolean autoLootItemsVoiceRestore();
 	
 	@Key("AutoLootHerbsVoiceRestore")
-	Boolean autoLootHerbsVoiceRestore();
+	boolean autoLootHerbsVoiceRestore();
 	
 	@Key("AutoLootHerbsList")
 	Set<Integer> getAutoLootHerbsList();
@@ -258,7 +251,7 @@ public interface CustomsConfiguration extends Reloadable {
 	Set<Integer> getAutoLootItemsList();
 	
 	@Key("MultiLangEnable")
-	Boolean multiLangEnable();
+	boolean multiLangEnable();
 	
 	@Key("MultiLangDefault")
 	String getMultiLangDefault();
@@ -266,149 +259,52 @@ public interface CustomsConfiguration extends Reloadable {
 	@Key("MultiLangAllowed")
 	Set<String> getMultiLangAllowed();
 	
-	@Key("MultiLangVoiceCommand")
-	Boolean multiLangVoiceCommand();
+	@Key("MultiLangHandler")
+	boolean multiLangHandler();
 	
 	@Key("MultiLangSystemMessageEnable")
-	Boolean multiLangSystemMessageEnable();
+	boolean multiLangSystemMessageEnable();
 	
 	@Key("MultiLangSystemMessageAllowed")
-	List<String> getMultiLangSystemMessageAllowed();
+	Set<String> getMultiLangSystemMessageAllowed();
 	
 	@Key("MultiLangNpcStringEnable")
-	Boolean multiLangNpcStringEnable();
+	boolean multiLangNpcStringEnable();
 	
 	@Key("MultiLangNpcStringAllowed")
-	List<String> getMultiLangNpcStringAllowed();
+	Set<String> getMultiLangNpcStringAllowed();
 	
 	@Key("L2WalkerProtection")
-	Boolean l2WalkerProtection();
+	boolean l2WalkerProtection();
 	
-	@Key("DebugVoiceCommand")
-	Boolean debugVoiceCommand();
+	@Key("DebugHandler")
+	boolean debugHandler();
 	
 	@Key("DualboxCheckMaxPlayersPerIP")
-	Integer getDualboxCheckMaxPlayersPerIP();
+	int getDualboxCheckMaxPlayersPerIP();
 	
 	@Key("DualboxCheckMaxOlympiadParticipantsPerIP")
-	Integer getDualboxCheckMaxOlympiadParticipantsPerIP();
+	int getDualboxCheckMaxOlympiadParticipantsPerIP();
 	
 	@Key("DualboxCheckMaxL2EventParticipantsPerIP")
-	Integer getDualboxCheckMaxL2EventParticipantsPerIP();
+	int getDualboxCheckMaxL2EventParticipantsPerIP();
 	
 	@Key("DualboxCheckWhitelist")
 	@ConverterClass(IPLimitConverter.class)
 	Map<Integer, Integer> getDualboxCheckWhitelist();
 	
 	@Key("AllowChangePassword")
-	Boolean allowChangePassword();
-
-	@Key("AutoPotionsEnabled")
-	Boolean AutoPotionsEnabled();
-
-	@Key("AutoPotionsInOlympiad")
-	Boolean AutoPotionsInOlympiad();
-
-	@Key("AutoPotionMinimumLevel")
-	Integer getAutoPotionMinimumLevel();
-
-	@Key("AutoCpEnabled")
-	Boolean AutoCpEnabled();
-
-	@Key("AutoCpPercentage")
-	Integer getAutoCpPercentage();
-
-	@Key("AutoCpItemIds")
-	Set<Integer> getAutoCpItemIdsList();
-
-	@Key("AutoHpEnabled")
-	Boolean AutoHpEnabled();
-
-	@Key("AutoHpPercentage")
-	Integer getAutoHpPercentage();
-
-	@Key("AutoHpItemIds")
-	Set<Integer> getAutoHpItemIdsList();
-
-	@Key("AutoMpEnabled")
-	Boolean AutoMpEnabled();
-
-	@Key("AutoMpPercentage")
-	Integer getAutoMpPercentage();
-
-	@Key("AutoHpItemIds")
-	Set<Integer> getAutoMpItemIdsList();
-
-	@Key("EnableOfflinePlayCommand")
-	Boolean EnableOfflinePlayCommand();
-
-	@Key("OfflinePlayPremium")
-	Boolean isOfflinePlayPremium();
-
-	@Key("OfflinePlayLogoutOnDeath")
-	Boolean isOfflinePlayLogoutOnDeath();
-
-	@Key("OfflinePlayLoginMessage")
-    String getOfflinePlayLoginMessage();
-
-    @Key("OfflinePlaySetNameColor")
-    boolean isOfflinePlaySetNameColor();
-
-	@Key("OfflineNameColor")
-	@ConverterClass(ColorConverter.class)
-	Integer getAutoPlayOfflineNameColor();
-
-
-	@Key("OfflinePlayAbnormalEffect")
-	Set<String> getOfflinePlayAbnormalEffects();
+	boolean allowChangePassword();
 	
-	default List<AbnormalVisualEffect> readAbnormalEffectsFromConfig() {
-		Set<String> effectsSet = getOfflinePlayAbnormalEffects();
-		List<AbnormalVisualEffect> abnormalEffects = new ArrayList<>();
-		if (effectsSet != null && !effectsSet.isEmpty()) {
-			for (String effect : effectsSet) {
-				try {
-					AbnormalVisualEffect abnormalEffect = AbnormalVisualEffect.valueOf(effect.trim());
-					abnormalEffects.add(abnormalEffect);
-				} catch (IllegalArgumentException e) {
-					System.out.println("Недопустимый аномальный эффект: " + effect);
-				}
-			}
-		}
-		return abnormalEffects;
-	}
-
-	@Key("EnableAutoPlay")
-	Boolean isAutoPlayEnabled();
-
-	@Key("EnableAutoPotion")
-	Boolean isAutoPotionEnabled();
-
-	@Key("EnableAutoSkill")
-	Boolean isAutoSkillEnabled();
-
-	@Key("EnableAutoItem")
-	Boolean isAutoItemEnabled();
-
-	@Key("ResumeAutoPlay")
-	Boolean isAutoPlayResumedOnLogin();
-
-	@Key("AssistLeader")
-	Boolean isAssistLeaderEnabled();
-
-	@Key("AutoPlayPremium")
-	Boolean isAutoPlayPremiumEnabled();
-
-	@Key("DisabledSkillIds")
-	String getDisabledSkillIds();
-
-	@Key("DisabledItemIds")
-	String getDisabledItemIds();
-
-	@Key("AutoPlayLoginMessage")
-	String getAutoPlayLoginMessage();
-
+	@Key("AllowXpHandler")
+	boolean allowXpHandler();
+	
+	@Key("AllowCastleHandler")
+	boolean allowCastleHandler();
+	
+	@Key("AllowClanHandler")
+	boolean allowClanHandler();
+	
+	@Key("AllowStatHandler")
+	boolean allowStatHandler();
 }
-
-
-   

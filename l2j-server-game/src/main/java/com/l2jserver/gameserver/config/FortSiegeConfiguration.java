@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -28,6 +28,8 @@ import org.aeonbits.owner.Config.LoadPolicy;
 import org.aeonbits.owner.Config.Sources;
 import org.aeonbits.owner.Reloadable;
 
+import com.l2jserver.gameserver.config.converter.Minutes2MillisecondsConverter;
+
 /**
  * Fort Siege Configuration.
  * @author Zoey76
@@ -43,25 +45,28 @@ import org.aeonbits.owner.Reloadable;
 public interface FortSiegeConfiguration extends Accessible, Reloadable {
 	
 	@Key("SiegeLength")
-	Long getSiegeLength();
+	@ConverterClass(Minutes2MillisecondsConverter.class)
+	long getSiegeLength();
 	
 	@Key("SuspiciousMerchantRespawnDelay")
-	Integer getSuspiciousMerchantRespawnDelay();
+	int getSuspiciousMerchantRespawnDelay();
 	
 	@Key("CountDownLength")
-	Integer getCountDownLength();
+	int getCountDownLength();
 	
 	@Key("MaxFlags")
-	Integer getMaxFlags();
+	int getMaxFlags();
 	
 	@Key("SiegeClanMinLevel")
-	Integer getSiegeClanMinLevel();
+	int getSiegeClanMinLevel();
 	
 	@Key("AttackerMaxClans")
-	Integer getAttackerMaxClans();
+	int getAttackerMaxClans();
 	
 	@Key("JustToTerritory")
-	Boolean justToTerritory();
+	boolean justToTerritory();
+	
+	// TODO(Zoey76): Most, if not all, of this configurations are not used.
 	
 	@Key("ShantyCommander1")
 	String getShantyCommander1();

@@ -1,18 +1,18 @@
 /*
- * Copyright © 2004-2023 L2J Server
- * 
+ * Copyright © 2004-2026 L2J Server
+ *
  * This file is part of L2J Server.
- * 
+ *
  * L2J Server is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * L2J Server is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,8 +25,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.enums.MacroType;
@@ -37,8 +38,7 @@ import com.l2jserver.gameserver.network.serverpackets.SendMacroList;
 import com.l2jserver.gameserver.util.StringUtil;
 
 public class MacroList implements IRestorable {
-	
-	private static final Logger _log = Logger.getLogger(MacroList.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(MacroList.class);
 	
 	private final L2PcInstance _owner;
 	
@@ -64,10 +64,10 @@ public class MacroList implements IRestorable {
 	
 	public void registerMacro(Macro macro) {
 		if (macro.getId() == 0) {
-			macro.setId(_macroId++);
-			while (_macros.containsKey(macro.getId())) {
+			do {
 				macro.setId(_macroId++);
 			}
+			while (_macros.containsKey(macro.getId()));
 			_macros.put(macro.getId(), macro);
 			registerMacroInDb(macro);
 		} else {
@@ -122,7 +122,7 @@ public class MacroList implements IRestorable {
 			final StringBuilder sb = new StringBuilder(300);
 			for (MacroCmd cmd : macro.getCommands()) {
 				StringUtil.append(sb, String.valueOf(cmd.getType().ordinal()), ",", String.valueOf(cmd.getD1()), ",", String.valueOf(cmd.getD2()));
-				if ((cmd.getCmd() != null) && (cmd.getCmd().length() > 0)) {
+				if ((cmd.getCmd() != null) && (!cmd.getCmd().isEmpty())) {
 					StringUtil.append(sb, ",", cmd.getCmd());
 				}
 				sb.append(';');
@@ -135,7 +135,7 @@ public class MacroList implements IRestorable {
 			ps.setString(7, sb.toString());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "could not store macro:", e);
+			LOG.warn("Could not store macro:", e);
 		}
 	}
 	
@@ -146,7 +146,7 @@ public class MacroList implements IRestorable {
 			ps.setInt(2, macro.getId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "could not delete macro:", e);
+			LOG.warn("Could not delete macro:", e);
 		}
 	}
 	
@@ -183,7 +183,7 @@ public class MacroList implements IRestorable {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "could not store shortcuts:", e);
+			LOG.warn("Could not store shortcuts:", e);
 			return false;
 		}
 		return true;

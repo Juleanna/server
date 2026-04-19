@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,7 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import com.l2jserver.gameserver.model.CharSelectInfoPackage;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerRestore;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerRestore;
 import com.l2jserver.gameserver.network.serverpackets.CharSelectionInfo;
 
 /**
@@ -47,7 +47,7 @@ public final class CharacterRestore extends L2GameClientPacket {
 		sendPacket(cl);
 		getClient().setCharSelection(cl.getCharInfo());
 		final CharSelectInfoPackage charInfo = getClient().getCharSelection(_charSlot);
-		EventDispatcher.getInstance().notifyEvent(new OnPlayerRestore(charInfo.getObjectId(), charInfo.getName(), getClient()));
+		EventDispatcher.getInstance().notifyEvent(new PlayerRestore(charInfo.getObjectId(), charInfo.getName(), getClient()));
 	}
 	
 	@Override

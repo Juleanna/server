@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -43,7 +43,7 @@ import org.aeonbits.owner.Reloadable;
 public interface DiscordConfiguration extends Mutable, Reloadable {
 	
 	@Key("BotEnable")
-	Boolean enableBot();
+	boolean enableBot();
 	
 	@Key("BotPrefix")
 	String getPrefix();

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -30,17 +30,17 @@ import org.junit.jupiter.params.provider.MethodSource;
  * @author Zoey76
  * @version 2.6.3.0
  */
-public class MapIntegerIntegerConverterTest {
+class MapIntegerIntegerConverterTest {
 	
 	private static final MapIntegerIntegerConverter CONVERTER = new MapIntegerIntegerConverter();
 	
 	@ParameterizedTest
 	@MethodSource("provideKeyValues")
-	public void convertTest(String keyValues, Map<Integer, Integer> expected) {
+	void convertTest(String keyValues, Map<Integer, Integer> expected) {
 		assertEquals(CONVERTER.convert(null, keyValues), expected);
 	}
 	
-	public static Object[][] provideKeyValues() {
+	private static Object[][] provideKeyValues() {
 		return new Object[][] {
 			{
 				"264,3600;265,3600;266,3600;267,3600",

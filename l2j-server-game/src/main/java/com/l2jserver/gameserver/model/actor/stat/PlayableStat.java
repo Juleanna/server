@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,20 +22,23 @@ import static com.l2jserver.gameserver.config.Configuration.character;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.json.ExperienceData;
 import com.l2jserver.gameserver.instancemanager.ZoneManager;
 import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.playable.OnPlayableExpChanged;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLevelChanged;
+import com.l2jserver.gameserver.model.events.impl.character.playable.PlayableExpChanged;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLevelChanged;
 import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.model.zone.type.L2SwampZone;
 
 public class PlayableStat extends CharStat {
-	protected static final Logger _log = Logger.getLogger(PlayableStat.class.getName());
+	protected static final Logger LOG = LoggerFactory.getLogger(PlayableStat.class);
+	
 	private final AtomicLong _exp = new AtomicLong();
 	private final AtomicInteger _sp = new AtomicInteger();
 	
@@ -61,8 +64,6 @@ public class PlayableStat extends CharStat {
 	
 	/**
 	 * Contains only under zero check
-	 * @param exp
-	 * @return
 	 */
 	public boolean removeExp(long exp) {
 		final long currentExp = getExp();
@@ -77,8 +78,6 @@ public class PlayableStat extends CharStat {
 	
 	/**
 	 * Contains only under zero check
-	 * @param sp
-	 * @return
 	 */
 	public boolean removeSp(int sp) {
 		final int currentSp = getSp();
@@ -93,7 +92,7 @@ public class PlayableStat extends CharStat {
 	public boolean addExp(long value) {
 		final long currentExp = getExp();
 		final long totalExp = currentExp + value;
-		final TerminateReturn term = EventDispatcher.getInstance().notifyEvent(new OnPlayableExpChanged(getActiveChar(), currentExp, totalExp), getActiveChar(), TerminateReturn.class);
+		final var term = EventDispatcher.getInstance().notifyEvent(new PlayableExpChanged(getActiveChar(), currentExp, totalExp), getActiveChar(), TerminateReturn.class);
 		if ((term != null) && term.terminate()) {
 			return false;
 		}
@@ -117,7 +116,7 @@ public class PlayableStat extends CharStat {
 	 * Check if level need to be increased / decreased
 	 * @param isExpIncreased
 	 */
-	public void syncExpLevel(boolean isExpIncreased) {
+	private void syncExpLevel(boolean isExpIncreased) {
 		int minimumLevel = getActiveChar().getMinLevel();
 		long currentExp = getExp();
 		int maxLevel = getMaxLevel();
@@ -135,7 +134,7 @@ public class PlayableStat extends CharStat {
 					
 					if (tmp != currentLevel) {
 						int newLevel = tmp - currentLevel;
-						EventDispatcher.getInstance().notifyEventAsync(new OnPlayerLevelChanged(getActiveChar().getActingPlayer(), currentLevel, newLevel), getActiveChar());
+						EventDispatcher.getInstance().notifyEventAsync(new PlayerLevelChanged(getActiveChar().getActingPlayer(), currentLevel, newLevel), getActiveChar());
 						getActiveChar().addLevel(newLevel);
 					}
 					break;
@@ -154,7 +153,7 @@ public class PlayableStat extends CharStat {
 					
 					if (tmp != currentLevel) {
 						int newLevel = tmp - currentLevel;
-						EventDispatcher.getInstance().notifyEventAsync(new OnPlayerLevelChanged(getActiveChar().getActingPlayer(), currentLevel, newLevel), getActiveChar());
+						EventDispatcher.getInstance().notifyEventAsync(new PlayerLevelChanged(getActiveChar().getActingPlayer(), currentLevel, newLevel), getActiveChar());
 						getActiveChar().addLevel(newLevel);
 					}
 					break;
@@ -165,7 +164,7 @@ public class PlayableStat extends CharStat {
 	
 	public boolean addSp(int sp) {
 		if (sp < 0) {
-			_log.warning("addSp accepts only positive numbers!");
+			LOG.warn("addSp accepts only positive numbers!");
 			return false;
 		}
 		int currentSp = getSp();
@@ -212,8 +211,6 @@ public class PlayableStat extends CharStat {
 	
 	/**
 	 * Get required exp for specific level
-	 * @param level
-	 * @return
 	 */
 	public long getExpForLevel(int level) {
 		return ExperienceData.getInstance().getExpForLevel(level);

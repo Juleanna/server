@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -54,9 +54,9 @@ import com.l2jserver.gameserver.model.actor.instance.L2ControlTowerInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2FlameTowerInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.sieges.castle.OnCastleSiegeFinish;
-import com.l2jserver.gameserver.model.events.impl.sieges.castle.OnCastleSiegeOwnerChange;
-import com.l2jserver.gameserver.model.events.impl.sieges.castle.OnCastleSiegeStart;
+import com.l2jserver.gameserver.model.events.impl.sieges.castle.CastleSiegeFinish;
+import com.l2jserver.gameserver.model.events.impl.sieges.castle.CastleSiegeOwnerChange;
+import com.l2jserver.gameserver.model.events.impl.sieges.castle.CastleSiegeStart;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
 import com.l2jserver.gameserver.network.serverpackets.RelationChanged;
@@ -264,7 +264,7 @@ public class Siege implements Siegable {
 			getCastle().getZone().setSiegeInstance(null);
 			
 			// Notify to scripts.
-			EventDispatcher.getInstance().notifyEventAsync(new OnCastleSiegeFinish(this), getCastle());
+			EventDispatcher.getInstance().notifyEventAsync(new CastleSiegeFinish(this), getCastle());
 		}
 	}
 	
@@ -370,7 +370,7 @@ public class Siege implements Siegable {
 				updatePlayerSiegeStateFlags(false);
 				
 				// Notify to scripts.
-				EventDispatcher.getInstance().notifyEventAsync(new OnCastleSiegeOwnerChange(this), getCastle());
+				EventDispatcher.getInstance().notifyEventAsync(new CastleSiegeOwnerChange(this), getCastle());
 			}
 		}
 	}
@@ -421,7 +421,7 @@ public class Siege implements Siegable {
 			Broadcast.toAllOnlinePlayers(sm);
 			
 			// Notify to scripts.
-			EventDispatcher.getInstance().notifyEventAsync(new OnCastleSiegeStart(this), getCastle());
+			EventDispatcher.getInstance().notifyEventAsync(new CastleSiegeStart(this), getCastle());
 		}
 	}
 	
@@ -1358,7 +1358,7 @@ public class Siege implements Siegable {
 	
 	@Override
 	public int getFameFrequency() {
-		return character().getCastleZoneFameTaskFrequency();
+		return (int) character().getCastleZoneFameTaskFrequency();
 	}
 	
 	@Override

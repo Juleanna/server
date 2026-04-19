@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,8 +21,9 @@ package com.l2jserver.gameserver.model;
 import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.concurrent.ScheduledFuture;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.commons.util.Rnd;
@@ -50,8 +51,7 @@ import com.l2jserver.gameserver.network.serverpackets.UserInfo;
 import com.l2jserver.gameserver.util.Broadcast;
 
 public class CursedWeapon implements INamable {
-	
-	private static final Logger _log = Logger.getLogger(CursedWeapon.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(CursedWeapon.class);
 	
 	// _name is the name of the cursed weapon associated with its ID.
 	private final String _name;
@@ -80,7 +80,7 @@ public class CursedWeapon implements INamable {
 	private L2ItemInstance _item = null;
 	private int _playerKarma = 0;
 	private int _playerPkKills = 0;
-	protected int transformationId = 0;
+	private int transformationId = 0;
 	
 	public CursedWeapon(int itemId, int skillId, String name) {
 		_name = name;
@@ -93,7 +93,7 @@ public class CursedWeapon implements INamable {
 		if (_isActivated) {
 			if ((_player != null) && _player.isOnline()) {
 				// Remove from player
-				_log.info(_name + " being removed online.");
+				LOG.info("{} being removed online.", _name);
 				
 				_player.abortAttack();
 				
@@ -124,7 +124,7 @@ public class CursedWeapon implements INamable {
 				_player.broadcastUserInfo();
 			} else {
 				// Remove from Db
-				_log.info(_name + " being removed offline.");
+				LOG.info("{} being removed offline.", _name);
 				
 				try (var con = ConnectionFactory.getInstance().getConnection();
 					var del = con.prepareStatement("DELETE FROM items WHERE owner_id=? AND item_id=?");
@@ -133,7 +133,7 @@ public class CursedWeapon implements INamable {
 					del.setInt(1, _playerId);
 					del.setInt(2, _itemId);
 					if (del.executeUpdate() != 1) {
-						_log.warning("Error while deleting itemId " + _itemId + " from userId " + _playerId);
+						LOG.warn("Error while deleting itemId {} from userId {}", _itemId, _playerId);
 					}
 					
 					// Restore the karma
@@ -141,10 +141,10 @@ public class CursedWeapon implements INamable {
 					ps.setInt(2, _playerPkKills);
 					ps.setInt(3, _playerId);
 					if (ps.executeUpdate() != 1) {
-						_log.warning("Error while updating karma & pkkills for userId " + _playerId);
+						LOG.warn("Error while updating karma & pkkills for userId {}", _playerId);
 					}
 				} catch (Exception e) {
-					_log.log(Level.WARNING, "Could not delete : " + e.getMessage(), e);
+					LOG.warn("Could not delete : {}", e.getMessage(), e);
 				}
 			}
 		} else {
@@ -172,7 +172,7 @@ public class CursedWeapon implements INamable {
 			else if (_item != null) {
 				_item.decayMe();
 				L2World.getInstance().removeObject(_item);
-				_log.info(_name + " item has been removed from World.");
+				LOG.info("{} item has been removed from World.", _name);
 			}
 		}
 		
@@ -413,7 +413,7 @@ public class CursedWeapon implements INamable {
 	
 	public void saveData() {
 		if (general().debug()) {
-			_log.info("CursedWeapon: Saving data to disk.");
+			LOG.info("CursedWeapon: Saving data to disk.");
 		}
 		
 		try (var con = ConnectionFactory.getInstance().getConnection();
@@ -433,7 +433,7 @@ public class CursedWeapon implements INamable {
 				ps.executeUpdate();
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "CursedWeapon: Failed to save data.", e);
+			LOG.error("Failed to save data.", e);
 		}
 	}
 	

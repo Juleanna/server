@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,7 +21,9 @@ package com.l2jserver.gameserver.instancemanager;
 import static com.l2jserver.gameserver.config.Configuration.graciaSeeds;
 
 import java.util.Calendar;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.instancemanager.tasks.UpdateSoDStateTask;
@@ -32,10 +34,10 @@ import com.l2jserver.gameserver.model.quest.Quest;
 
 public final class GraciaSeedsManager {
 	
-	private static final Logger _log = Logger.getLogger(GraciaSeedsManager.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(GraciaSeedsManager.class);
 	
-	public static String ENERGY_SEEDS = "EnergySeeds";
-	public static String SOD_DEFENCE = "Defence";
+	private static final String ENERGY_SEEDS = "EnergySeeds";
+	private static final String SOD_DEFENCE = "Defence";
 	
 	private static final byte SOITYPE = 2;
 	
@@ -50,13 +52,13 @@ public final class GraciaSeedsManager {
 	private int _SoDState = 1;
 	private final Calendar _SoDLastStateChangeDate;
 	
-	protected GraciaSeedsManager() {
+	private GraciaSeedsManager() {
 		_SoDLastStateChangeDate = Calendar.getInstance();
 		loadData();
 		handleSodStages();
 	}
 	
-	public void saveData(byte seedType) {
+	private void saveData(byte seedType) {
 		switch (seedType) {
 			case SODTYPE:
 				// Seed of Destruction
@@ -71,12 +73,12 @@ public final class GraciaSeedsManager {
 				// Seed of Annihilation
 				break;
 			default:
-				_log.warning(getClass().getSimpleName() + ": Unknown SeedType in SaveData: " + seedType);
+				LOG.warn("Unknown SeedType in SaveData: {}", seedType);
 				break;
 		}
 	}
 	
-	public void loadData() {
+	private void loadData() {
 		// Seed of Destruction variables
 		if (GlobalVariablesManager.getInstance().hasVariable("SoDState")) {
 			_SoDState = GlobalVariablesManager.getInstance().getInt("SoDState");
@@ -112,27 +114,27 @@ public final class GraciaSeedsManager {
 				spawnSoDRemnantManager();
 				break;
 			default:
-				_log.warning(getClass().getSimpleName() + ": Unknown Seed of Destruction state(" + _SoDState + ")! ");
+				LOG.warn("Unknown Seed of Destruction state({})! ", _SoDState);
 		}
 	}
 	
-	public void updateSoDDefence(int state) {
+	private void updateSoDDefence(int state) {
 		if ((state >= 3) && (state <= 5)) {
 			final Quest quest = QuestManager.getInstance().getQuest(SOD_DEFENCE);
 			if (quest == null) {
-				_log.warning(getClass().getSimpleName() + ": missing Defence Quest!");
+				LOG.warn(": missing Defence Quest!");
 			} else {
 				quest.notifyEvent("start", null, null);
 			}
 		} else {
-			_log.warning("Invalid Seed of Destruction defence state(" + state + "), should be 3, 4 or 5");
+			LOG.warn("Invalid Seed of Destruction defence state({}), should be 3, 4 or 5", state);
 		}
 	}
 	
-	public void stopSoDInvasion() {
+	private void stopSoDInvasion() {
 		final Quest defQuest = QuestManager.getInstance().getQuest(SOD_DEFENCE);
 		if (defQuest == null) {
-			_log.warning(getClass().getSimpleName() + ": missing Defence Quest!");
+			LOG.warn("Missing Defence Quest!");
 		} else {
 			defQuest.notifyEvent("stop", null, null);
 		}
@@ -141,7 +143,7 @@ public final class GraciaSeedsManager {
 	public void updateSodState() {
 		final Quest esQuest = QuestManager.getInstance().getQuest(ENERGY_SEEDS);
 		if (esQuest == null) {
-			_log.warning(getClass().getSimpleName() + ": missing EnergySeeds Quest!");
+			LOG.warn("Missing EnergySeeds Quest!");
 		} else {
 			esQuest.notifyEvent("StopSoDAi", null, null);
 			stopSoDInvasion();
@@ -158,32 +160,31 @@ public final class GraciaSeedsManager {
 		}
 	}
 	
-	public void setSoDOpenState() {
+	private void setSoDOpenState() {
 		Quest esQuest = QuestManager.getInstance().getQuest(ENERGY_SEEDS);
 		if (esQuest == null) {
-			_log.warning(getClass().getSimpleName() + ": missing EnergySeeds Quest!");
+			LOG.warn(getClass().getSimpleName() + ": missing EnergySeeds Quest!");
 		} else {
 			esQuest.notifyEvent("StartSoDAi", null, null);
 			stopSoDInvasion();
 		}
 	}
 	
-	public void spawnSoDRemnantManager() {
+	private void spawnSoDRemnantManager() {
 		try {
 			if ((edricSpawn == null) || edricSpawn.isDecayed()) {
 				final L2Spawn spawn = new L2Spawn(EDRIC);
 				spawn.setInstanceId(0);
 				spawn.setLocation(EDRIC_SPAWN_LOCATION);
 				spawn.stopRespawn();
-				final L2Npc npc = spawn.spawnOne(false);
-				edricSpawn = npc;
+				edricSpawn = spawn.spawnOne(false);
 			}
 		} catch (Exception e) {
-			_log.warning("Could not spawn NPC Edric #" + EDRIC + "; error: " + e.getMessage());
+			LOG.warn("Could not spawn NPC Edric #" + EDRIC + "; error: {}", e.getMessage());
 		}
 	}
 	
-	public void despawnSoDRemnantManager() {
+	private void despawnSoDRemnantManager() {
 		if (edricSpawn != null) {
 			edricSpawn.deleteMe();
 		}
@@ -194,7 +195,7 @@ public final class GraciaSeedsManager {
 	}
 	
 	public void setSoDState(int value, boolean doSave, boolean updateDate) {
-		_log.info(getClass().getSimpleName() + ": New Seed of Destruction state -> " + value + ".");
+		LOG.info("New Seed of Destruction state -> {}.", value);
 		if (updateDate) {
 			_SoDLastStateChangeDate.setTimeInMillis(System.currentTimeMillis());
 		}

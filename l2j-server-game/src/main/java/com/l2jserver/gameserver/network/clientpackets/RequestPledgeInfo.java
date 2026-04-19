@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,8 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.sql.impl.ClanTable;
 import com.l2jserver.gameserver.model.L2Clan;
@@ -28,6 +29,8 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.PledgeInfo;
 
 public final class RequestPledgeInfo extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestPledgeInfo.class);
+	
 	private static final String _C__65_REQUESTPLEDGEINFO = "[C] 65 RequestPledgeInfo";
 	
 	private int _clanId;
@@ -40,7 +43,7 @@ public final class RequestPledgeInfo extends L2GameClientPacket {
 	@Override
 	protected void runImpl() {
 		if (general().debug()) {
-			_log.log(Level.FINE, "Info for clan " + _clanId + " requested");
+			LOG.debug("Info for clan {} requested", _clanId);
 		}
 		
 		final L2PcInstance activeChar = getClient().getActiveChar();
@@ -51,7 +54,7 @@ public final class RequestPledgeInfo extends L2GameClientPacket {
 		final L2Clan clan = ClanTable.getInstance().getClan(_clanId);
 		if (clan == null) {
 			if (general().debug()) {
-				_log.warning(getType() + ": Clan data for clanId " + _clanId + " is missing for player " + activeChar);
+				LOG.warn("Clan data for clanId {} is missing for player {}", _clanId, activeChar);
 			}
 			return; // we have no clan data ?!? should not happen
 		}

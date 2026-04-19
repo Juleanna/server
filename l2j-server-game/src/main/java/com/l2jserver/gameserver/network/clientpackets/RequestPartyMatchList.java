@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.PartyMatchRoom;
 import com.l2jserver.gameserver.model.PartyMatchRoomList;
 import com.l2jserver.gameserver.model.PartyMatchWaitingList;
@@ -30,6 +33,8 @@ import com.l2jserver.gameserver.network.serverpackets.PartyMatchDetail;
  * @author Gnacik
  */
 public class RequestPartyMatchList extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestPartyMatchList.class);
+	
 	private static final String _C__80_REQUESTPARTYMATCHLIST = "[C] 80 RequestPartyMatchList";
 	
 	private int _roomid;
@@ -60,7 +65,7 @@ public class RequestPartyMatchList extends L2GameClientPacket {
 		if (_roomid > 0) {
 			PartyMatchRoom _room = PartyMatchRoomList.getInstance().getRoom(_roomid);
 			if (_room != null) {
-				_log.info("PartyMatchRoom #" + _room.getId() + " changed by " + _activeChar.getName());
+				LOG.info("PartyMatchRoom #{} changed by {}", _room.getId(), _activeChar.getName());
 				_room.setMaxMembers(_membersmax);
 				_room.setMinLvl(_lvlmin);
 				_room.setMaxLvl(_lvlmax);
@@ -81,7 +86,7 @@ public class RequestPartyMatchList extends L2GameClientPacket {
 			
 			PartyMatchRoom _room = new PartyMatchRoom(_maxid, _roomtitle, _loot, _lvlmin, _lvlmax, _membersmax, _activeChar);
 			
-			_log.info("PartyMatchRoom #" + _maxid + " created by " + _activeChar.getName());
+			LOG.info("PartyMatchRoom #{} created by {}", _maxid, _activeChar.getName());
 			// Remove from waiting list
 			PartyMatchWaitingList.getInstance().removePlayer(_activeChar);
 			

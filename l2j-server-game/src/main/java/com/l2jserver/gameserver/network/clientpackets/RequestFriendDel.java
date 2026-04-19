@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.data.sql.impl.CharNameTable;
@@ -32,6 +33,7 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @since 2005/03/27 15:29:30
  */
 public final class RequestFriendDel extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestFriendDel.class);
 	
 	private static final String _C__7A_REQUESTFRIENDDEL = "[C] 7A RequestFriendDel";
 	
@@ -89,7 +91,7 @@ public final class RequestFriendDel extends L2GameClientPacket {
 				friend.sendPacket(new FriendPacket(false, activeChar.getObjectId()));
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "could not del friend objectid: ", e);
+			LOG.warn("Could not del friend objectid: ", e);
 		}
 	}
 	

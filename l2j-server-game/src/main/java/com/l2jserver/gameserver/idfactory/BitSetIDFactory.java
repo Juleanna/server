@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -109,7 +109,9 @@ public class BitSetIDFactory extends IdFactory {
 			if (_freeIds.size() < FREE_OBJECT_ID_SIZE) {
 				increaseBitSetCapacity();
 			} else {
-				throw new NullPointerException("Ran out of valid Id's.");
+				// Раньше бросали NullPointerException — это маскировало root cause
+				// и иначе обрабатывалось вызывающими, чем нормальная ошибка состояния.
+				throw new IllegalStateException("Ran out of valid object IDs (max = " + FREE_OBJECT_ID_SIZE + ").");
 			}
 		}
 		

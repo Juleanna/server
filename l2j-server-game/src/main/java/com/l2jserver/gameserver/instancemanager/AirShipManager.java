@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.model.AirShipTeleportList;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.VehiclePathPoint;
@@ -97,8 +98,8 @@ public class AirShipManager {
 	}
 	
 	public L2AirShipInstance getNewAirShip(int x, int y, int z, int heading) {
-		final L2AirShipInstance airShip = new L2AirShipInstance(_airShipTemplate);
-		
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var airShip = new L2AirShipInstance(objectId, _airShipTemplate);
 		airShip.setHeading(heading);
 		airShip.setXYZInvisible(x, y, z);
 		airShip.spawnMe();
@@ -118,7 +119,8 @@ public class AirShipManager {
 			airShip = _airShips.get(ownerId);
 			airShip.refreshID();
 		} else {
-			airShip = new L2ControllableAirShipInstance(_airShipTemplate, ownerId);
+			final var objectId = IdFactory.getInstance().getNextId();
+			airShip = new L2ControllableAirShipInstance(objectId, _airShipTemplate, ownerId);
 			_airShips.put(ownerId, airShip);
 			
 			airShip.setMaxFuel(600);

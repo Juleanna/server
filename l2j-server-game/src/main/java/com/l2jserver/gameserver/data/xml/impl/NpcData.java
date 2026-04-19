@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -42,7 +42,6 @@ import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.enums.AISkillScope;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
-import com.l2jserver.gameserver.model.base.ClassId;
 import com.l2jserver.gameserver.model.drops.DropListScope;
 import com.l2jserver.gameserver.model.drops.GeneralDropItem;
 import com.l2jserver.gameserver.model.drops.GroupedGeneralDropItem;
@@ -86,7 +85,6 @@ public class NpcData implements IXmlReader {
 		}
 		
 		_minionData = null;
-		loadNpcsSkillLearn();
 	}
 	
 	@Override
@@ -429,7 +427,7 @@ public class NpcData implements IXmlReader {
 								}
 								
 								for (AISkillScope aiSkillScope : aiSkillScopes) {
-									List<Skill> aiSkills = aiSkillLists.computeIfAbsent(aiSkillScope, k -> new ArrayList<>());
+									List<Skill> aiSkills = aiSkillLists.computeIfAbsent(aiSkillScope, _ -> new ArrayList<>());
 									aiSkills.add(skill);
 								}
 							}
@@ -581,15 +579,6 @@ public class NpcData implements IXmlReader {
 	 */
 	public List<L2NpcTemplate> getAllNpcOfClassType(String... classTypes) {
 		return getTemplates(template -> Util.contains(classTypes, template.getType(), true));
-	}
-	
-	public void loadNpcsSkillLearn() {
-		_npcs.values().forEach(template -> {
-			final List<ClassId> teachInfo = SkillLearnData.getInstance().getSkillLearnData(template.getId());
-			if (teachInfo != null) {
-				template.addTeachInfo(teachInfo);
-			}
-		});
 	}
 	
 	/**

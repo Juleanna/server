@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,12 +19,13 @@
 package com.l2jserver.gameserver.model.events.listeners;
 
 import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.events.EventType;
 import com.l2jserver.gameserver.model.events.ListenersContainer;
-import com.l2jserver.gameserver.model.events.impl.IBaseEvent;
+import com.l2jserver.gameserver.model.events.impl.BaseEvent;
 import com.l2jserver.gameserver.model.events.returns.AbstractEventReturn;
 
 /**
@@ -32,7 +33,8 @@ import com.l2jserver.gameserver.model.events.returns.AbstractEventReturn;
  * @author UnAfraid
  */
 public class AnnotationEventListener extends AbstractEventListener {
-	private static final Logger _log = Logger.getLogger(AnnotationEventListener.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AnnotationEventListener.class);
+	
 	private final Method _callback;
 	
 	public AnnotationEventListener(ListenersContainer container, EventType type, Method callback, Object owner, int priority) {
@@ -42,14 +44,14 @@ public class AnnotationEventListener extends AbstractEventListener {
 	}
 	
 	@Override
-	public <R extends AbstractEventReturn> R executeEvent(IBaseEvent event, Class<R> returnBackClass) {
+	public <R extends AbstractEventReturn> R executeEvent(BaseEvent event, Class<R> returnBackClass) {
 		try {
 			final Object result = _callback.invoke(getOwner(), event);
 			if (_callback.getReturnType() == returnBackClass) {
 				return returnBackClass.cast(result);
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Error while invoking " + _callback.getName() + " on " + getOwner(), e);
+			LOG.warn("Error while invoking {} on {}", _callback.getName(), getOwner(), e);
 		}
 		return null;
 	}

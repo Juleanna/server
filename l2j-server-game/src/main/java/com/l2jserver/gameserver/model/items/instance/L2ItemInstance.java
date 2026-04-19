@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -45,7 +45,6 @@ import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.enums.ItemLocation;
 import com.l2jserver.gameserver.enums.ShotType;
-import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.ItemsOnGroundManager;
 import com.l2jserver.gameserver.instancemanager.MercTicketManager;
 import com.l2jserver.gameserver.model.DropProtection;
@@ -59,11 +58,11 @@ import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.knownlist.NullKnownList;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerAugment;
-import com.l2jserver.gameserver.model.events.impl.character.player.inventory.OnPlayerItemDrop;
-import com.l2jserver.gameserver.model.events.impl.character.player.inventory.OnPlayerItemPickup;
-import com.l2jserver.gameserver.model.events.impl.item.OnItemBypassEvent;
-import com.l2jserver.gameserver.model.events.impl.item.OnItemTalk;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerAugment;
+import com.l2jserver.gameserver.model.events.impl.character.player.inventory.PlayerItemDrop;
+import com.l2jserver.gameserver.model.events.impl.character.player.inventory.PlayerItemPickup;
+import com.l2jserver.gameserver.model.events.impl.item.ItemBypass;
+import com.l2jserver.gameserver.model.events.impl.item.ItemTalk;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.itemcontainer.Inventory;
 import com.l2jserver.gameserver.model.items.L2Armor;
@@ -208,7 +207,7 @@ public final class L2ItemInstance extends L2Object {
 		_time = _item.getTime() == -1 ? -1 : System.currentTimeMillis() + ((long) _item.getTime() * 60 * 1000);
 		scheduleLifeTimeTask();
 		final var agathionInfo = AgathionRepository.getInstance().getByItemId(itemId);
-		agathionEnergy = agathionInfo == null ? 0 : agathionInfo.getMaxEnergy();
+		agathionEnergy = agathionInfo == null ? 0 : agathionInfo.maxEnergy();
 	}
 	
 	/**
@@ -231,16 +230,7 @@ public final class L2ItemInstance extends L2Object {
 		_time = _item.getTime() == -1 ? -1 : System.currentTimeMillis() + ((long) _item.getTime() * 60 * 1000);
 		scheduleLifeTimeTask();
 		final var agathionInfo = AgathionRepository.getInstance().getByItemId(item.getId());
-		agathionEnergy = agathionInfo == null ? 0 : agathionInfo.getMaxEnergy();
-	}
-	
-	/**
-	 * Constructor overload.<br>
-	 * Sets the next free object ID in the ID factory.
-	 * @param itemId the item template ID
-	 */
-	public L2ItemInstance(int itemId) {
-		this(IdFactory.getInstance().getNextId(), itemId);
+		agathionEnergy = agathionInfo == null ? 0 : agathionInfo.maxEnergy();
 	}
 	
 	@Override
@@ -296,7 +286,7 @@ public final class L2ItemInstance extends L2Object {
 		
 		if (player.isPlayer()) {
 			// Notify to scripts
-			EventDispatcher.getInstance().notifyEventAsync(new OnPlayerItemPickup(player.getActingPlayer(), this), player, getItem());
+			EventDispatcher.getInstance().notifyEventAsync(new PlayerItemPickup(player.getActingPlayer(), this), player, getItem());
 		}
 	}
 	
@@ -827,7 +817,7 @@ public final class L2ItemInstance extends L2Object {
 			LOG.warn("Could not update atributes for item {} from database!", this, ex);
 		}
 		
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerAugment(getActingPlayer(), this, augmentation, true), getItem());
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerAugment(getActingPlayer(), this, augmentation, true), getItem());
 		return true;
 	}
 	
@@ -849,7 +839,7 @@ public final class L2ItemInstance extends L2Object {
 		}
 		
 		// Notify to scripts.
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerAugment(getActingPlayer(), this, augment, false), getItem());
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerAugment(getActingPlayer(), this, augment, false), getItem());
 	}
 	
 	public void restoreAttributes() {
@@ -1363,7 +1353,7 @@ public final class L2ItemInstance extends L2Object {
 		ThreadPoolManager.getInstance().executeGeneral(new ItemDropTask(this, dropper, x, y, z));
 		if ((dropper != null) && dropper.isPlayer()) {
 			// Notify to scripts
-			EventDispatcher.getInstance().notifyEventAsync(new OnPlayerItemDrop(dropper.getActingPlayer(), this, new Location(x, y, z)), getItem());
+			EventDispatcher.getInstance().notifyEventAsync(new PlayerItemDrop(dropper.getActingPlayer(), this, new Location(x, y, z)), getItem());
 		}
 	}
 	
@@ -1763,9 +1753,9 @@ public final class L2ItemInstance extends L2Object {
 			}
 			
 			if (event != null) {
-				EventDispatcher.getInstance().notifyEventAsync(new OnItemBypassEvent(this, activeChar, event), getItem());
+				EventDispatcher.getInstance().notifyEventAsync(new ItemBypass(this, activeChar, event), getItem());
 			} else {
-				EventDispatcher.getInstance().notifyEventAsync(new OnItemTalk(this, activeChar), getItem());
+				EventDispatcher.getInstance().notifyEventAsync(new ItemTalk(this, activeChar), getItem());
 			}
 		}
 	}

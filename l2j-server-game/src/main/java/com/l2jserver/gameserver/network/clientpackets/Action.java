@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,6 +21,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 import static com.l2jserver.gameserver.config.Configuration.general;
 import static com.l2jserver.gameserver.config.Configuration.npc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.enums.DuelState;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2World;
@@ -34,6 +37,8 @@ import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 public final class Action extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(Action.class);
+	
 	private static final String __C__1F_ACTION = "[C] 1F Action";
 	
 	private int _objectId;
@@ -54,7 +59,7 @@ public final class Action extends L2GameClientPacket {
 	@Override
 	protected void runImpl() {
 		if (general().debug()) {
-			_log.info(getType() + ": " + (_actionId == 0 ? "Simple-click" : "Shift-click") + " Target object ID: " + _objectId + " originX: " + _originX + " originY: " + _originY + " originZ: " + _originZ);
+			LOG.info("{} Target object ID: {} originX: {} originY: {} originZ: {}", _actionId == 0 ? "Simple-click" : "Shift-click", _objectId, _originX, _originY, _originZ);
 		}
 		
 		// Get the current L2PcInstance of the player
@@ -136,7 +141,7 @@ public final class Action extends L2GameClientPacket {
 			}
 			default -> {
 				// Invalid action detected (probably client cheating), log this
-				_log.warning(getType() + ": Character: " + activeChar.getName() + " requested invalid action: " + _actionId);
+				LOG.warn("Character: {} requested invalid action: {}", activeChar.getName(), _actionId);
 				sendPacket(ActionFailed.STATIC_PACKET);
 			}
 		}

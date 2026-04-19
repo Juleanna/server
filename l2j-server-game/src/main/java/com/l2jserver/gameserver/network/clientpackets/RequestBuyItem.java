@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -26,8 +26,10 @@ import static com.l2jserver.gameserver.model.actor.L2Npc.INTERACTION_DISTANCE;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.xml.impl.BuyListData;
-import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2MerchantInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -42,6 +44,8 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.util.Util;
 
 public final class RequestBuyItem extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestBuyItem.class);
+	
 	private static final String _C__40_REQUESTBUYITEM = "[C] 40 RequestBuyItem";
 	
 	private static final int BATCH_LENGTH = 12;
@@ -91,14 +95,12 @@ public final class RequestBuyItem extends L2GameClientPacket {
 			return;
 		}
 		
-		L2Object target = player.getTarget();
-		L2Character merchant = null;
+		L2Character merchant = player.getLastFolkNPC();
 		if (!player.isGM()) {
-			if (!(target instanceof L2MerchantInstance) || (!player.isInsideRadius(target, INTERACTION_DISTANCE, true, false)) || (player.getInstanceId() != target.getInstanceId())) {
+			if (!(merchant instanceof L2MerchantInstance) || (!player.isInsideRadius(merchant, INTERACTION_DISTANCE, true, false)) || (player.getInstanceId() != merchant.getInstanceId())) {
 				sendPacket(ActionFailed.STATIC_PACKET);
 				return;
 			}
-			merchant = (L2Character) target;
 		}
 		
 		double castleTaxRate = 0;
@@ -116,16 +118,13 @@ public final class RequestBuyItem extends L2GameClientPacket {
 		}
 		
 		if (merchant != null) {
-			if (!buyList.isNpcAllowed(merchant.getId())) {
+			if (!buyList.isNpcAllowed(merchant.getId()) && !player.isGM()) {
 				sendPacket(ActionFailed.STATIC_PACKET);
 				return;
 			}
 			
 			if (merchant instanceof L2MerchantInstance) {
-				castleTaxRate = ((L2MerchantInstance) merchant).getMpc().getCastleTaxRate();
-				baseTaxRate = ((L2MerchantInstance) merchant).getMpc().getBaseTaxRate();
-			} else {
-				baseTaxRate = 0.5;
+				castleTaxRate = ((L2MerchantInstance) merchant).getCastle().getTaxRate();
 			}
 		}
 		
@@ -155,7 +154,7 @@ public final class RequestBuyItem extends L2GameClientPacket {
 			}
 			
 			if (price < 0) {
-				_log.warning("ERROR, no price found .. wrong buylist ??");
+				LOG.warn("ERROR, no price found .. wrong buylist ??");
 				sendPacket(ActionFailed.STATIC_PACKET);
 				return;
 			}
@@ -179,8 +178,10 @@ public final class RequestBuyItem extends L2GameClientPacket {
 				return;
 			}
 			// first calculate price per item with tax, then multiply by count
-			price = (long) (price * (1 + castleTaxRate + baseTaxRate));
+			baseTaxRate = product.getBaseTax();
+			price = (long) (price * (1 + (baseTaxRate + castleTaxRate)));
 			subTotal += i.getCount() * price;
+			
 			if (subTotal > character().getMaxAdena()) {
 				Util.handleIllegalPlayerAction(player, "Warning!! Character " + player.getName() + " of account " + player.getAccountName() + " tried to purchase over " + character().getMaxAdena() + " adena worth of goods.");
 				return;

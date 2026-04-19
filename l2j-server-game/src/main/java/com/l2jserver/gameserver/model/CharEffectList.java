@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -32,7 +32,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Summon;
@@ -61,7 +63,8 @@ import com.l2jserver.gameserver.network.serverpackets.ShortBuffStatusUpdate;
  * @author Zoey76
  */
 public final class CharEffectList {
-	private static final Logger _log = Logger.getLogger(CharEffectList.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(CharEffectList.class);
+	
 	/** Queue containing all effects from buffs for this effect list. */
 	private volatile Queue<BuffInfo> _buffs;
 	/** Queue containing all triggered skills for this effect list. */
@@ -1027,7 +1030,7 @@ public final class CharEffectList {
 		if (skill.isPassive()) {
 			// Passive effects don't need stack type!
 			if (!skill.getAbnormalType().isNone()) {
-				_log.warning("Passive " + skill + " with abnormal type: " + skill.getAbnormalType() + "!");
+				LOG.warn("Passive {} with abnormal type: {}!", skill, skill.getAbnormalType());
 			}
 			
 			// Check for passive skill conditions.

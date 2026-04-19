@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -50,125 +50,126 @@ public interface ClanConfiguration extends Reloadable {
 	Pattern getClanNameTemplate();
 	
 	@Key("TakeFortPoints")
-	Integer getTakeFortPoints();
+	int getTakeFortPoints();
 	
 	@Key("TakeCastlePoints")
-	Integer getTakeCastlePoints();
+	int getTakeCastlePoints();
 	
 	@Key("CastleDefendedPoints")
-	Integer getCastleDefendedPoints();
+	int getCastleDefendedPoints();
 	
 	@Key("FestivalOfDarknessWin")
-	Integer getFestivalOfDarknessWin();
+	int getFestivalOfDarknessWin();
 	
 	@Key("HeroPoints")
-	Integer getHeroPoints();
+	int getHeroPoints();
 	
 	@Key("CompleteAcademyMinPoints")
-	Integer getCompleteAcademyMinPoints();
+	int getCompleteAcademyMinPoints();
 	
 	@Key("CompleteAcademyMaxPoints")
-	Integer getCompleteAcademyMaxPoints();
+	int getCompleteAcademyMaxPoints();
 	
 	@Key("KillBallistaPoints")
-	Integer getKillBallistaPoints();
+	int getKillBallistaPoints();
 	
 	@Key("BloodAlliancePoints")
-	Integer getBloodAlliancePoints();
+	int getBloodAlliancePoints();
 	
 	@Key("BloodOathPoints")
-	Integer getBloodOathPoints();
+	int getBloodOathPoints();
 	
 	@Key("KnightsEpaulettePoints")
-	Integer getKnightsEpaulettePoints();
+	int getKnightsEpaulettePoints();
 	
 	@Key("1stRaidRankingPoints")
-	Integer get1stRaidRankingPoints();
+	int get1stRaidRankingPoints();
 	
 	@Key("2ndRaidRankingPoints")
-	Integer get2ndRaidRankingPoints();
+	int get2ndRaidRankingPoints();
 	
 	@Key("3rdRaidRankingPoints")
-	Integer get3rdRaidRankingPoints();
+	int get3rdRaidRankingPoints();
 	
 	@Key("4thRaidRankingPoints")
-	Integer get4thRaidRankingPoints();
+	int get4thRaidRankingPoints();
 	
 	@Key("5thRaidRankingPoints")
-	Integer get5thRaidRankingPoints();
+	int get5thRaidRankingPoints();
 	
 	@Key("6thRaidRankingPoints")
-	Integer get6thRaidRankingPoints();
+	int get6thRaidRankingPoints();
 	
 	@Key("7thRaidRankingPoints")
-	Integer get7thRaidRankingPoints();
+	int get7thRaidRankingPoints();
 	
 	@Key("8thRaidRankingPoints")
-	Integer get8thRaidRankingPoints();
+	int get8thRaidRankingPoints();
 	
 	@Key("9thRaidRankingPoints")
-	Integer get9thRaidRankingPoints();
+	int get9thRaidRankingPoints();
 	
 	@Key("10thRaidRankingPoints")
-	Integer get10thRaidRankingPoints();
+	int get10thRaidRankingPoints();
 	
 	@Key("UpTo50thRaidRankingPoints")
-	Integer getUpTo50thRaidRankingPoints();
+	int getUpTo50thRaidRankingPoints();
 	
 	@Key("UpTo100thRaidRankingPoints")
-	Integer getUpTo100thRaidRankingPoints();
+	int getUpTo100thRaidRankingPoints();
 	
 	@Key("ReputationScorePerKill")
-	Integer getReputationScorePerKill();
+	int getReputationScorePerKill();
 	
 	@Key("LoseFortPoints")
-	Integer getLoseFortPoints();
+	int getLoseFortPoints();
 	
 	@Key("LoseCastlePoints")
-	Integer getLoseCastlePoints();
+	int getLoseCastlePoints();
 	
 	@Key("CreateRoyalGuardCost")
-	Integer getCreateRoyalGuardCost();
+	int getCreateRoyalGuardCost();
 	
 	@Key("CreateKnightUnitCost")
-	Integer getCreateKnightUnitCost();
+	int getCreateKnightUnitCost();
 	
+	// TODO(Zoey76): Implement ReinforceKnightUnitCost configuration.
 	@Key("ReinforceKnightUnitCost")
-	Integer getReinforceKnightUnitCost();
+	int getReinforceKnightUnitCost();
 	
 	@Key("ClanLevel6Cost")
-	Integer getClanLevel6Cost();
+	int getClanLevel6Cost();
 	
 	@Key("ClanLevel7Cost")
-	Integer getClanLevel7Cost();
+	int getClanLevel7Cost();
 	
 	@Key("ClanLevel8Cost")
-	Integer getClanLevel8Cost();
+	int getClanLevel8Cost();
 	
 	@Key("ClanLevel9Cost")
-	Integer getClanLevel9Cost();
+	int getClanLevel9Cost();
 	
 	@Key("ClanLevel10Cost")
-	Integer getClanLevel10Cost();
+	int getClanLevel10Cost();
 	
 	@Key("ClanLevel11Cost")
-	Integer getClanLevel11Cost();
+	int getClanLevel11Cost();
 	
 	@Key("ClanLevel6Requirement")
-	Integer getClanLevel6Requirement();
+	int getClanLevel6Requirement();
 	
 	@Key("ClanLevel7Requirement")
-	Integer getClanLevel7Requirement();
+	int getClanLevel7Requirement();
 	
 	@Key("ClanLevel8Requirement")
-	Integer getClanLevel8Requirement();
+	int getClanLevel8Requirement();
 	
 	@Key("ClanLevel9Requirement")
-	Integer getClanLevel9Requirement();
+	int getClanLevel9Requirement();
 	
 	@Key("ClanLevel10Requirement")
-	Integer getClanLevel10Requirement();
+	int getClanLevel10Requirement();
 	
 	@Key("ClanLevel11Requirement")
-	Integer getClanLevel11Requirement();
+	int getClanLevel11Requirement();
 }

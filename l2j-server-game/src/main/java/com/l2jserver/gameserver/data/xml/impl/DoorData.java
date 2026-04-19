@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.instancemanager.MapRegionManager;
 import com.l2jserver.gameserver.model.StatsSet;
@@ -54,6 +55,8 @@ public class DoorData implements IXmlReader {
 	
 	private final Map<Integer, L2DoorInstance> _doors = new HashMap<>();
 	
+	private final Map<String, L2DoorInstance> _doorsName = new HashMap<>();
+	
 	private final Map<Integer, StatsSet> _templates = new HashMap<>();
 	
 	private final Map<Integer, List<L2DoorInstance>> _regions = new HashMap<>();
@@ -65,6 +68,7 @@ public class DoorData implements IXmlReader {
 	@Override
 	public void load() {
 		_doors.clear();
+		_doorsName.clear();
 		GROUPS.clear();
 		_regions.clear();
 		parseDatapackFile("data/doors.xml");
@@ -113,8 +117,9 @@ public class DoorData implements IXmlReader {
 	
 	private void makeDoor(StatsSet set) {
 		insertCollisionData(set);
-		L2DoorTemplate template = new L2DoorTemplate(set);
-		L2DoorInstance door = new L2DoorInstance(template);
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var template = new L2DoorTemplate(set);
+		final var door = new L2DoorInstance(objectId, template);
 		door.setCurrentHp(door.getMaxHp());
 		door.spawnMe(template.getX(), template.getY(), template.getZ());
 		putDoor(door, MapRegionManager.getInstance().getMapRegionLocId(door));
@@ -128,17 +133,18 @@ public class DoorData implements IXmlReader {
 		return _doors.get(doorId);
 	}
 	
+	public L2DoorInstance getDoorByName(String name) {
+		return _doorsName.get(name);
+	}
+	
 	public void putDoor(L2DoorInstance door, int region) {
 		_doors.put(door.getId(), door);
-		
-		if (!_regions.containsKey(region)) {
-			_regions.put(region, new ArrayList<>());
-		}
-		_regions.get(region).add(door);
+		_doorsName.put(door.getDoorName(), door);
+		_regions.computeIfAbsent(region, _ -> new ArrayList<>()).add(door);
 	}
 	
 	public static void addDoorGroup(String groupName, int doorId) {
-		GROUPS.computeIfAbsent(groupName, k -> new HashSet<>()).add(doorId);
+		GROUPS.computeIfAbsent(groupName, _ -> new HashSet<>()).add(doorId);
 	}
 	
 	public static Set<Integer> getDoorsByGroup(String groupName) {

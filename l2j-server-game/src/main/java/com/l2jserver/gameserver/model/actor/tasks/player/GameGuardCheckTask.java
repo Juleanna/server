@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.gameserver.model.actor.tasks.player;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.xml.impl.AdminData;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -30,7 +31,7 @@ import com.l2jserver.gameserver.network.serverpackets.LeaveWorld;
  * @author UnAfraid
  */
 public class GameGuardCheckTask implements Runnable {
-	private static final Logger _log = Logger.getLogger(GameGuardCheckTask.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(GameGuardCheckTask.class);
 	
 	private final L2PcInstance _player;
 	
@@ -44,7 +45,7 @@ public class GameGuardCheckTask implements Runnable {
 			L2GameClient client = _player.getClient();
 			if ((client != null) && !client.isAuthedGG() && _player.isOnline()) {
 				AdminData.getInstance().broadcastMessageToGMs("Client " + client + " failed to reply GameGuard query and is being kicked!");
-				_log.info("Client " + client + " failed to reply GameGuard query and is being kicked!");
+				LOG.info("Client {} failed to reply GameGuard query and is being kicked!", client);
 				
 				client.close(LeaveWorld.STATIC_PACKET);
 			}

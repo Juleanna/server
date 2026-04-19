@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,8 +20,9 @@ package com.l2jserver.gameserver.model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.instancemanager.SiegeManager;
@@ -31,8 +32,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * This class holds the clan members data.
  */
 public class L2ClanMember {
-	
-	private static final Logger _log = Logger.getLogger(L2ClanMember.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2ClanMember.class);
 	
 	private final L2Clan _clan;
 	private int _objectId;
@@ -237,7 +237,7 @@ public class L2ClanMember {
 			ps.setInt(2, getObjectId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not update pledge type: " + e.getMessage(), e);
+			LOG.warn("Could not update pledge type: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -276,7 +276,7 @@ public class L2ClanMember {
 			ps.setInt(2, getObjectId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not update power _grade: " + e.getMessage(), e);
+			LOG.warn("Could not update power grade: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -585,7 +585,7 @@ public class L2ClanMember {
 			ps.setInt(3, getObjectId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not save apprentice/sponsor: " + e.getMessage(), e);
+			LOG.warn("Could not save apprentice/sponsor: {}", e.getMessage(), e);
 		}
 	}
 }

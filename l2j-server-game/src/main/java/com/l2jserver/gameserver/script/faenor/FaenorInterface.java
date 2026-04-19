@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,7 +19,6 @@
 package com.l2jserver.gameserver.script.faenor;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.l2jserver.gameserver.data.sql.impl.AnnouncementsTable;
 import com.l2jserver.gameserver.datatables.EventDroplist;
@@ -31,8 +30,6 @@ import com.l2jserver.gameserver.script.EngineInterface;
  * @author Luis Arias
  */
 public class FaenorInterface implements EngineInterface {
-	protected static final Logger _log = Logger.getLogger(FaenorInterface.class.getName());
-	
 	public static FaenorInterface getInstance() {
 		return SingletonHolder._instance;
 	}

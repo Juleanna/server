@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,8 +19,9 @@
 package com.l2jserver.gameserver.model.entity;
 
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.idfactory.IdFactory;
@@ -30,8 +31,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * @author evill33t
  */
 public class Couple {
-	
-	private static final Logger _log = Logger.getLogger(Couple.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(Couple.class);
 	
 	private int _Id = 0;
 	private int _player1Id = 0;
@@ -60,7 +60,7 @@ public class Couple {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: Couple.load(): " + e.getMessage(), e);
+			LOG.error("Exception: Couple.load(): {}", e.getMessage(), e);
 		}
 	}
 	
@@ -88,7 +88,7 @@ public class Couple {
 			ps.setLong(6, _weddingDate.getTimeInMillis());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Could not create couple: " + e.getMessage(), e);
+			LOG.error("Could not create couple: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -102,7 +102,7 @@ public class Couple {
 			ps.execute();
 			_married = true;
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Could not marry: " + e.getMessage(), e);
+			LOG.error("Could not marry: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -112,7 +112,7 @@ public class Couple {
 			ps.setInt(1, _Id);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: Couple.divorce(): " + e.getMessage(), e);
+			LOG.error("Exception: Couple.divorce(): {}", e.getMessage(), e);
 		}
 	}
 	

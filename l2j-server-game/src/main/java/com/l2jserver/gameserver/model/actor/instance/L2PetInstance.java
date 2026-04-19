@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -74,6 +74,9 @@ import com.l2jserver.gameserver.network.serverpackets.StopMove;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 
+/**
+ * Pet.
+ */
 public class L2PetInstance extends L2Summon {
 	private static final Logger LOG = LoggerFactory.getLogger(L2PetInstance.class);
 	
@@ -98,8 +101,8 @@ public class L2PetInstance extends L2Summon {
 	 * @param owner the owner
 	 * @param control the summoning item
 	 */
-	public L2PetInstance(L2NpcTemplate template, L2PcInstance owner, L2ItemInstance control) {
-		this(template, owner, control, (byte) (template.getDisplayId() == 12564 ? owner.getLevel() : template.getLevel()));
+	public L2PetInstance(int objectId, L2NpcTemplate template, L2PcInstance owner, L2ItemInstance control) {
+		this(objectId, template, owner, control, (byte) (template.getDisplayId() == 12564 ? owner.getLevel() : template.getLevel()));
 	}
 	
 	/**
@@ -109,8 +112,8 @@ public class L2PetInstance extends L2Summon {
 	 * @param control the summoning item
 	 * @param level the level
 	 */
-	public L2PetInstance(L2NpcTemplate template, L2PcInstance owner, L2ItemInstance control, byte level) {
-		super(template, owner);
+	public L2PetInstance(int objectId, L2NpcTemplate template, L2PcInstance owner, L2ItemInstance control, byte level) {
+		super(objectId, template, owner);
 		setInstanceType(InstanceType.L2PetInstance);
 		
 		_controlObjectId = control.getObjectId();
@@ -223,9 +226,9 @@ public class L2PetInstance extends L2Summon {
 		if (L2World.getInstance().getPet(owner.getObjectId()) != null) {
 			return null; // owner has a pet listed in world
 		}
-		final L2PetData data = PetDataTable.getInstance().getPetData(template.getId());
 		
-		final L2PetInstance pet = DAOFactory.getInstance().getPetDAO().load(control, template, owner);
+		final var data = PetDataTable.getInstance().getPetData(template.getId());
+		final var pet = DAOFactory.getInstance().getPetDAO().load(control, template, owner);
 		if (pet != null) {
 			pet.setTitle(owner.getName());
 			if (data.isSyncLevel() && (pet.getLevel() != owner.getLevel())) {

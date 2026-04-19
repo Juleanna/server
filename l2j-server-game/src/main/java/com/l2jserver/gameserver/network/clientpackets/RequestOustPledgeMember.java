@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,7 +19,9 @@
 package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.character;
-import static java.util.concurrent.TimeUnit.DAYS;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.ClanPrivilege;
 import com.l2jserver.gameserver.model.L2Clan;
@@ -30,9 +32,17 @@ import com.l2jserver.gameserver.network.serverpackets.PledgeShowMemberListDelete
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 /**
+ * Request Oust Pledge Member client packet.
+ * @author JIV
+ * @author MELERIX
+ * @author Zoey76
+ * @author UnAfraid
+ * @author Kita
  * @since 2005/03/27 15:29:30
  */
 public final class RequestOustPledgeMember extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestOustPledgeMember.class);
+	
 	private static final String _C__29_REQUESTOUSTPLEDGEMEMBER = "[C] 29 RequestOustPledgeMember";
 	
 	private String _target;
@@ -65,7 +75,7 @@ public final class RequestOustPledgeMember extends L2GameClientPacket {
 		
 		L2ClanMember member = clan.getClanMember(_target);
 		if (member == null) {
-			_log.warning("Target (" + _target + ") is not member of the clan");
+			LOG.warn("Target ({}) is not member of the clan", _target);
 			return;
 		}
 		if (member.isOnline() && member.getPlayerInstance().isInCombat()) {
@@ -74,8 +84,8 @@ public final class RequestOustPledgeMember extends L2GameClientPacket {
 		}
 		
 		// this also updates the database
-		clan.removeClanMember(member.getObjectId(), System.currentTimeMillis() + DAYS.toMillis(character().getDaysBeforeJoinAClan()));
-		clan.setCharPenaltyExpiryTime(System.currentTimeMillis() + DAYS.toMillis(character().getDaysBeforeJoinAClan()));
+		clan.removeClanMember(member.getObjectId(), System.currentTimeMillis() + character().getDaysBeforeJoinAClan());
+		clan.setCharPenaltyExpiryTime(System.currentTimeMillis() + character().getDaysBeforeJoinAClan());
 		clan.updateClanInDB();
 		
 		SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.CLAN_MEMBER_S1_EXPELLED);

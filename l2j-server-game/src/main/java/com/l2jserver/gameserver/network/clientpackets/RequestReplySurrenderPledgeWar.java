@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,10 +18,15 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.sql.impl.ClanTable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 public final class RequestReplySurrenderPledgeWar extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestReplySurrenderPledgeWar.class);
+	
 	private static final String _C__08_REQUESTREPLYSURRENDERPLEDGEWAR = "[C] 08 RequestReplySurrenderPledgeWar";
 	
 	private String _reqName;
@@ -47,7 +52,7 @@ public final class RequestReplySurrenderPledgeWar extends L2GameClientPacket {
 		if (_answer == 1) {
 			ClanTable.getInstance().deleteclanswars(requestor.getClanId(), activeChar.getClanId());
 		} else {
-			_log.info(getClass().getSimpleName() + ": Missing implementation for answer: " + _answer + " and name: " + _reqName + "!");
+			LOG.info("Missing implementation for answer: {} and name: {}!", _answer, _reqName);
 		}
 		activeChar.onTransactionRequest(requestor);
 	}

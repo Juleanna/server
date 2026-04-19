@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -38,38 +38,38 @@ import org.aeonbits.owner.Reloadable;
 	"classpath:config/huntingsystem.properties"
 })
 @LoadPolicy(MERGE)
-@HotReload(value = 5, unit = MINUTES, type = ASYNC)
+@HotReload(value = 20, unit = MINUTES, type = ASYNC)
 public interface HuntingSystemConfiguration extends Reloadable {
 	@Key("NevitEnable")
-	Boolean getNevitEnable();
+	boolean getNevitEnable();
 	
 	@Key("NevitBlessingMaxPoints")
-	Integer getNevitBlessingMaxPoints();
+	int getNevitBlessingMaxPoints();
 	
 	@Key("NevitBonusMaxTime")
-	Integer getHuntingBonusMaxTime();
+	int getHuntingBonusMaxTime();
 	
 	@Key("NevitRegularPoints")
-	Integer getNevitRegularPoints();
+	int getNevitRegularPoints();
 	
 	@Key("NevitRegularPoints2")
-	Integer getNevitRegularPoints2();
+	int getNevitRegularPoints2();
 	
 	@Key("NevitNormalPoints")
-	Integer getNevitNormalPoints();
+	int getNevitNormalPoints();
 	
 	@Key("NevitLevelAcquirePoints")
-	Integer getNevitLevelAcquirePoints();
+	int getNevitLevelAcquirePoints();
 	
 	@Key("NevitLevelAcquirePoints2")
-	Integer getNevitLevelAcquirePoints2();
+	int getNevitLevelAcquirePoints2();
 	
 	@Key("NevitDecreaseVitalityAcquirePoints")
-	Integer getNevitDecreaseVitalityAcquirePoints();
+	int getNevitDecreaseVitalityAcquirePoints();
 	
 	@Key("NevitBonusEffectTime")
-	Integer getNevitBlessingEffetcTime();
+	int getNevitBlessingEffetcTime();
 	
 	@Key("HuntingSystemLimit")
-	Boolean getHuntingBonusLimit();
+	boolean getHuntingBonusLimit();
 }

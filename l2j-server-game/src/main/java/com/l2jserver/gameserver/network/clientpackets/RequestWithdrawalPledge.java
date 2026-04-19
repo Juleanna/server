@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,7 +19,6 @@
 package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.character;
-import static java.util.concurrent.TimeUnit.DAYS;
 
 import com.l2jserver.gameserver.model.L2Clan;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -28,6 +27,11 @@ import com.l2jserver.gameserver.network.serverpackets.PledgeShowMemberListDelete
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 /**
+ * RequestWithdrawalPledge client packet.
+ * @author JIV
+ * @author MELERIX
+ * @author Zoey76
+ * @author UnAfraid
  * @since 2005/03/27 15:29:30
  */
 public final class RequestWithdrawalPledge extends L2GameClientPacket {
@@ -58,7 +62,7 @@ public final class RequestWithdrawalPledge extends L2GameClientPacket {
 		}
 		
 		L2Clan clan = activeChar.getClan();
-		clan.removeClanMember(activeChar.getObjectId(), System.currentTimeMillis() + DAYS.toMillis(character().getDaysBeforeJoinAClan()));
+		clan.removeClanMember(activeChar.getObjectId(), System.currentTimeMillis() + character().getDaysBeforeJoinAClan());
 		
 		SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S1_HAS_WITHDRAWN_FROM_THE_CLAN);
 		sm.addString(activeChar.getName());

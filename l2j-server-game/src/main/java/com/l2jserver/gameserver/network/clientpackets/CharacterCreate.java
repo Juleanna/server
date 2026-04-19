@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -43,7 +43,7 @@ import com.l2jserver.gameserver.model.actor.templates.L2PcTemplate;
 import com.l2jserver.gameserver.model.base.ClassId;
 import com.l2jserver.gameserver.model.events.Containers;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerCreate;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerCreate;
 import com.l2jserver.gameserver.model.items.PcItemTemplate;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.network.L2GameClient;
@@ -53,7 +53,7 @@ import com.l2jserver.gameserver.network.serverpackets.CharSelectionInfo;
 
 @SuppressWarnings("unused")
 public final class CharacterCreate extends L2GameClientPacket {
-	
+	private static final Logger LOG = LoggerFactory.getLogger(CharacterCreate.class);
 	private static final Logger LOG_ACCOUNTING = LoggerFactory.getLogger("accounting");
 	
 	private static final String _C__0C_CHARACTERCREATE = "[C] 0C CharacterCreate";
@@ -94,9 +94,9 @@ public final class CharacterCreate extends L2GameClientPacket {
 	
 	@Override
 	protected void runImpl() {
-		if ((_name.length() < 1) || (_name.length() > 16)) {
+		if ((_name.isEmpty()) || (_name.length() > 16)) {
 			if (general().debug()) {
-				_log.fine("Character Creation Failure: Character name " + _name + " is invalid.");
+				LOG.debug("Character Creation Failure: Character name {} is invalid.", _name);
 			}
 			
 			sendPacket(new CharCreateFail(CharCreateFail.REASON_16_ENG_CHARS));
@@ -119,21 +119,21 @@ public final class CharacterCreate extends L2GameClientPacket {
 		}
 		
 		if ((_face > 2) || (_face < 0)) {
-			_log.warning("Character Creation Failure: Character face " + _face + " is invalid. Possible client hack. " + getClient());
+			LOG.warn("Character Creation Failure: Character face {} is invalid. Possible client hack. {}", _face, getClient());
 			
 			sendPacket(new CharCreateFail(CharCreateFail.REASON_CREATION_FAILED));
 			return;
 		}
 		
 		if ((_hairStyle < 0) || ((_sex == 0) && (_hairStyle > 4)) || ((_sex != 0) && (_hairStyle > 6))) {
-			_log.warning("Character Creation Failure: Character hair style " + _hairStyle + " is invalid. Possible client hack. " + getClient());
+			LOG.warn("Character Creation Failure: Character hair style {} is invalid. Possible client hack. {}", _hairStyle, getClient());
 			
 			sendPacket(new CharCreateFail(CharCreateFail.REASON_CREATION_FAILED));
 			return;
 		}
 		
 		if ((_hairColor > 3) || (_hairColor < 0)) {
-			_log.warning("Character Creation Failure: Character hair color " + _hairColor + " is invalid. Possible client hack. " + getClient());
+			LOG.warn("Character Creation Failure: Character hair color {} is invalid. Possible client hack. {}", _hairColor, getClient());
 			
 			sendPacket(new CharCreateFail(CharCreateFail.REASON_CREATION_FAILED));
 			return;
@@ -148,14 +148,14 @@ public final class CharacterCreate extends L2GameClientPacket {
 			if ((CharNameTable.getInstance().getAccountCharacterCount(getClient().getAccountName()) >= character().getCharMaxNumber()) && //
 				(character().getCharMaxNumber() != 0)) {
 				if (general().debug()) {
-					_log.fine("Max number of characters reached. Creation failed.");
+					LOG.debug("Max number of characters reached. Creation failed.");
 				}
 				
 				sendPacket(new CharCreateFail(CharCreateFail.REASON_TOO_MANY_CHARACTERS));
 				return;
 			} else if (CharNameTable.getInstance().doesCharNameExist(_name)) {
 				if (general().debug()) {
-					_log.fine("Character Creation Failure: Message generated: You cannot create another character. Please delete the existing character and try again.");
+					LOG.debug("Character Creation Failure: Message generated: You cannot create another character. Please delete the existing character and try again.");
 				}
 				
 				sendPacket(new CharCreateFail(CharCreateFail.REASON_NAME_ALREADY_EXISTS));
@@ -163,7 +163,7 @@ public final class CharacterCreate extends L2GameClientPacket {
 			}
 			
 			if (ClassId.getClassId(_classId).level() > 0) {
-				_log.warning("Character Creation Failure: " + _name + " classId: " + _classId);
+				LOG.warn("Character Creation Failure: {} classId: {}", _name, _classId);
 				
 				sendPacket(new CharCreateFail(CharCreateFail.REASON_CREATION_FAILED));
 				return;
@@ -190,7 +190,7 @@ public final class CharacterCreate extends L2GameClientPacket {
 	
 	private void initNewChar(L2GameClient client, L2PcInstance newChar) {
 		if (general().debug()) {
-			_log.fine("Character init start");
+			LOG.debug("Character init start");
 		}
 		
 		L2World.getInstance().storeObject(newChar);
@@ -219,7 +219,7 @@ public final class CharacterCreate extends L2GameClientPacket {
 			for (PcItemTemplate ie : initialItems) {
 				final L2ItemInstance item = newChar.getInventory().addItem("Init", ie.getId(), ie.getCount(), newChar, null);
 				if (item == null) {
-					_log.warning("Could not create item during char creation: itemId " + ie.getId() + ", amount " + ie.getCount() + ".");
+					LOG.warn("Could not create item during char creation: itemId {}, amount {}.", ie.getId(), ie.getCount());
 					continue;
 				}
 				
@@ -231,7 +231,7 @@ public final class CharacterCreate extends L2GameClientPacket {
 		
 		for (L2SkillLearn skill : SkillTreesData.getInstance().getAvailableSkills(newChar, newChar.getClassId(), false, true)) {
 			if (general().debug()) {
-				_log.fine("Adding starter skill:" + skill.getSkillId() + " / " + skill.getSkillLevel());
+				LOG.debug("Adding starter skill:{} / {}", skill.getSkillId(), skill.getSkillLevel());
 			}
 			
 			newChar.addSkill(SkillData.getInstance().getSkill(skill.getSkillId(), skill.getSkillLevel()), true);
@@ -240,7 +240,7 @@ public final class CharacterCreate extends L2GameClientPacket {
 		// Register all shortcuts for actions, skills and items for this new character.
 		InitialShortcutData.getInstance().registerAllShortcuts(newChar);
 		
-		EventDispatcher.getInstance().notifyEvent(new OnPlayerCreate(newChar, newChar.getObjectId(), newChar.getName(), client), Containers.Players());
+		EventDispatcher.getInstance().notifyEvent(new PlayerCreate(newChar, newChar.getObjectId(), newChar.getName(), client), Containers.Players());
 		
 		newChar.setOnlineStatus(true, false);
 		newChar.deleteMe();
@@ -249,7 +249,7 @@ public final class CharacterCreate extends L2GameClientPacket {
 		client.setCharSelection(cl.getCharInfo());
 		
 		if (general().debug()) {
-			_log.fine("Character init end");
+			LOG.debug("Character init end");
 		}
 	}
 	

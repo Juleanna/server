@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.LoginServerThread;
 import com.l2jserver.gameserver.LoginServerThread.SessionKey;
 import com.l2jserver.gameserver.network.L2GameClient;
@@ -29,6 +32,8 @@ import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
  * @since 2005/03/27 15:29:30
  */
 public final class AuthLogin extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(AuthLogin.class);
+	
 	private static final String _C__2B_AUTHLOGIN = "[C] 2B AuthLogin";
 	
 	// loginName + keys must match what the login server used.
@@ -59,8 +64,8 @@ public final class AuthLogin extends L2GameClientPacket {
 		}
 		SessionKey key = new SessionKey(_loginKey1, _loginKey2, _playKey1, _playKey2);
 		if (general().debug()) {
-			_log.info("user:" + _loginName);
-			_log.info("key:" + key);
+			LOG.info("User: {}", _loginName);
+			LOG.info("Key: {}", key);
 		}
 		
 		// avoid potential exploits

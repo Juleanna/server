@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -46,7 +46,7 @@ import com.l2jserver.gameserver.model.actor.status.SummonStatus;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerSummonSpawn;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerSummonSpawn;
 import com.l2jserver.gameserver.model.itemcontainer.PetInventory;
 import com.l2jserver.gameserver.model.items.L2EtcItem;
 import com.l2jserver.gameserver.model.items.L2Weapon;
@@ -97,8 +97,8 @@ public abstract class L2Summon extends L2Playable {
 	 * @param template the summon NPC template
 	 * @param owner the owner
 	 */
-	public L2Summon(L2NpcTemplate template, L2PcInstance owner) {
-		super(template);
+	public L2Summon(int objectId, L2NpcTemplate template, L2PcInstance owner) {
+		super(objectId, template);
 		setInstanceType(L2Summon);
 		setInstanceId(owner.getInstanceId());
 		setShowSummonAnimation(true);
@@ -138,7 +138,7 @@ public abstract class L2Summon extends L2Playable {
 		_restoreSummon = false;
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerSummonSpawn(this), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerSummonSpawn(this), this);
 	}
 	
 	@Override

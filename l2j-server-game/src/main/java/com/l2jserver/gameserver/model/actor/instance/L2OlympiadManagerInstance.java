@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -29,8 +29,8 @@ import com.l2jserver.gameserver.model.olympiad.Olympiad;
  */
 public class L2OlympiadManagerInstance extends L2Npc {
 	
-	public L2OlympiadManagerInstance(L2NpcTemplate template) {
-		super(template);
+	public L2OlympiadManagerInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2OlympiadManagerInstance);
 	}
 	

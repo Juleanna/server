@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.enums.PrivateStoreType;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -31,6 +34,8 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @since 2005/07/11 15:29:30
  */
 public final class RequestAutoSoulShot extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestAutoSoulShot.class);
+	
 	private static final String _C__D0_0D_REQUESTAUTOSOULSHOT = "[C] D0:0D RequestAutoSoulShot";
 	
 	// format cd
@@ -52,7 +57,7 @@ public final class RequestAutoSoulShot extends L2GameClientPacket {
 		
 		if ((activeChar.getPrivateStoreType() == PrivateStoreType.NONE) && (activeChar.getActiveRequester() == null) && !activeChar.isDead()) {
 			if (general().debug()) {
-				_log.fine("AutoSoulShot:" + _itemId);
+				LOG.debug("AutoSoulShot: {}", _itemId);
 			}
 			
 			final L2ItemInstance item = activeChar.getInventory().getItemByItemId(_itemId);

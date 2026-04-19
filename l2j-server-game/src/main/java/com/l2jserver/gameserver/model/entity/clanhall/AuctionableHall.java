@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,8 +18,8 @@
  */
 package com.l2jserver.gameserver.model.entity.clanhall;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -34,15 +34,12 @@ import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 public final class AuctionableHall extends ClanHall {
+	private static final Logger LOG = LoggerFactory.getLogger(AuctionableHall.class);
 	
 	private long _paidUntil;
-	
 	private final int _grade;
-	
 	private boolean _paid;
-	
 	private final int _lease;
-	
 	private final int _chRate = 604800000;
 	
 	public AuctionableHall(StatsSet set) {
@@ -100,7 +97,6 @@ public final class AuctionableHall extends ClanHall {
 	
 	/**
 	 * Initialize Fee Task
-	 * @param forced
 	 */
 	private void initializeTask(boolean forced) {
 		long currentTime = System.currentTimeMillis();
@@ -119,7 +115,7 @@ public final class AuctionableHall extends ClanHall {
 	
 	/** Fee Task */
 	protected class FeeTask implements Runnable {
-		private final Logger _log = Logger.getLogger(FeeTask.class.getName());
+		private static final Logger LOG = LoggerFactory.getLogger(FeeTask.class);
 		
 		@Override
 		public void run() {
@@ -172,7 +168,7 @@ public final class AuctionableHall extends ClanHall {
 					}
 				}
 			} catch (Exception e) {
-				_log.log(Level.SEVERE, "", e);
+				LOG.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -187,7 +183,7 @@ public final class AuctionableHall extends ClanHall {
 			ps.setInt(4, getId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: updateOwnerInDB(L2Clan clan): " + e.getMessage(), e);
+			LOG.warn("Exception: updateOwnerInDB(L2Clan clan): {}", e.getMessage(), e);
 		}
 	}
 }

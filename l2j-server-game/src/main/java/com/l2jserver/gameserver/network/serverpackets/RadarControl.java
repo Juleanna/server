@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,28 +18,47 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
+/**
+ * Radar Control server packet implementation.
+ * @author JIV
+ * @author MELERIX
+ * @author UnAfraid
+ * @author Nos
+ * @author Zoey76
+ */
 public class RadarControl extends L2GameServerPacket {
-	private final int _showRadar;
-	private final int _type;
-	private final int _x;
-	private final int _y;
-	private final int _z;
+	private final RadarAction action;
+	private final RadarType type;
+	private final int x;
+	private final int y;
+	private final int z;
 	
-	public RadarControl(int showRadar, int type, int x, int y, int z) {
-		_showRadar = showRadar; // show radar?? 0 = show radar; 1 = delete radar;
-		_type = type; // radar type??
-		_x = x;
-		_y = y;
-		_z = z;
+	public RadarControl(RadarAction action, RadarType type, int x, int y, int z) {
+		this.action = action;
+		this.type = type;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 	
 	@Override
 	protected final void writeImpl() {
-		writeC(0xf1);
-		writeD(_showRadar);
-		writeD(_type); // maybe type
-		writeD(_x);
-		writeD(_y);
-		writeD(_z);
+		writeC(0xF1);
+		writeD(action.ordinal());
+		writeD(type.ordinal() + 1);
+		writeD(x);
+		writeD(y);
+		writeD(z);
+	}
+	
+	public static enum RadarAction {
+		ADD,
+		DELETE,
+		DELETE_ALL
+	}
+	
+	public static enum RadarType {
+		FLAG_1,
+		FLAG_2
 	}
 }

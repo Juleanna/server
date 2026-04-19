@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,13 +21,19 @@ package com.l2jserver.gameserver.network.clientpackets;
 import static com.l2jserver.gameserver.config.Configuration.character;
 import static com.l2jserver.gameserver.model.L2Clan.PENALTY_TYPE_CLAN_DISMISSED;
 import static com.l2jserver.gameserver.model.L2Clan.PENALTY_TYPE_DISMISS_CLAN;
-import static java.util.concurrent.TimeUnit.DAYS;
 
 import com.l2jserver.gameserver.data.sql.impl.ClanTable;
 import com.l2jserver.gameserver.model.L2Clan;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
 
+/**
+ * Ally Dismiss client packet.
+ * @author JV
+ * @author janiii
+ * @author MELERIX
+ * @author Zoey76
+ */
 public final class AllyDismiss extends L2GameClientPacket {
 	private static final String _C__8F_ALLYDISMISS = "[C] 8F AllyDismiss";
 	
@@ -82,13 +88,13 @@ public final class AllyDismiss extends L2GameClientPacket {
 		}
 		
 		long currentTime = System.currentTimeMillis();
-		leaderClan.setAllyPenaltyExpiryTime(currentTime + DAYS.toMillis(character().getDaysBeforeAcceptNewClanWhenDismissed()), PENALTY_TYPE_DISMISS_CLAN);
+		leaderClan.setAllyPenaltyExpiryTime(currentTime + character().getDaysBeforeAcceptNewClanWhenDismissed(), PENALTY_TYPE_DISMISS_CLAN);
 		leaderClan.updateClanInDB();
 		
 		clan.setAllyId(0);
 		clan.setAllyName(null);
 		clan.changeAllyCrest(0, true);
-		clan.setAllyPenaltyExpiryTime(currentTime + DAYS.toMillis(character().getDaysBeforeJoinAllyWhenDismissed()), PENALTY_TYPE_CLAN_DISMISSED);
+		clan.setAllyPenaltyExpiryTime(currentTime + character().getDaysBeforeJoinAllyWhenDismissed(), PENALTY_TYPE_CLAN_DISMISSED);
 		clan.updateClanInDB();
 		player.sendPacket(SystemMessageId.YOU_HAVE_EXPELED_A_CLAN);
 	}

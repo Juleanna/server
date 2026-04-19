@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.serverpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.SevenSigns;
 import com.l2jserver.gameserver.SevenSignsFestival;
 import com.l2jserver.gameserver.model.StatsSet;
@@ -31,6 +34,8 @@ import com.l2jserver.gameserver.network.SystemMessageId;
  * @author shansoft
  */
 public class SSQStatus extends L2GameServerPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(SSQStatus.class);
+	
 	private final int _objectId;
 	private final int _page;
 	
@@ -109,17 +114,17 @@ public class SSQStatus extends L2GameServerPacket {
 				}
 				
 				if (general().debug()) {
-					_log.info("Dusk Stone Score: " + duskStoneScore + " - Dawn Stone Score: " + dawnStoneScore);
-					_log.info("Dusk Festival Score: " + duskFestivalScore + " - Dawn Festival Score: " + dawnFestivalScore);
-					_log.info("Dusk Score: " + duskTotalScore + " - Dawn Score: " + dawnTotalScore);
-					_log.info("Overall Score: " + totalOverallScore);
-					_log.info("");
+					LOG.info("Dusk Stone Score: {} - Dawn Stone Score: {}", duskStoneScore, dawnStoneScore);
+					LOG.info("Dusk Festival Score: {} - Dawn Festival Score: {}", duskFestivalScore, dawnFestivalScore);
+					LOG.info("Dusk Score: {} - Dawn Score: {}", duskTotalScore, dawnTotalScore);
+					LOG.info("Overall Score: {}", totalOverallScore);
+					LOG.info("");
 					if (totalStoneScore == 0) {
-						_log.info("Dusk Prop: 0 - Dawn Prop: 0");
+						LOG.info("Dusk Prop: 0 - Dawn Prop: 0");
 					} else {
-						_log.info("Dusk Prop: " + ((duskStoneScore / totalStoneScore) * 500) + " - Dawn Prop: " + ((dawnStoneScore / totalStoneScore) * 500));
+						LOG.info("Dusk Prop: {} - Dawn Prop: {}", (duskStoneScore / totalStoneScore) * 500, (dawnStoneScore / totalStoneScore) * 500);
 					}
-					_log.info("Dusk %: " + duskPercent + " - Dawn %: " + dawnPercent);
+					LOG.info("Dusk %: {} - Dawn %: {}", duskPercent, dawnPercent);
 				}
 				
 				/* DUSK */
@@ -185,7 +190,7 @@ public class SSQStatus extends L2GameServerPacket {
 					int duskProportion = SevenSigns.getInstance().getSealProportion(i, SevenSigns.CABAL_DUSK);
 					
 					if (general().debug()) {
-						_log.info(SevenSigns.getSealName(i, true) + " = Dawn Prop: " + dawnProportion + "(" + ((dawnProportion / totalDawnMembers) * 100) + "%)" + ", Dusk Prop: " + duskProportion + "(" + ((duskProportion / totalDuskMembers) * 100) + "%)");
+						LOG.info("{} = Dawn Prop: {}({}%), Dusk Prop: {}({}%)", SevenSigns.getSealName(i, true), dawnProportion, (dawnProportion / totalDawnMembers) * 100, duskProportion, (duskProportion / totalDuskMembers) * 100);
 					}
 					
 					writeC(i);

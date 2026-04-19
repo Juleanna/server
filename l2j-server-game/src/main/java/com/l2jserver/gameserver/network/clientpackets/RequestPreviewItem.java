@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -23,7 +23,9 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.data.xml.impl.BuyListData;
@@ -49,6 +51,8 @@ import com.l2jserver.gameserver.util.Util;
  ** @author Gnacik
  */
 public final class RequestPreviewItem extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestPreviewItem.class);
+	
 	private static final String _C__C7_REQUESTPREVIEWITEM = "[C] C7 RequestPreviewItem";
 	
 	@SuppressWarnings("unused")
@@ -70,7 +74,7 @@ public final class RequestPreviewItem extends L2GameClientPacket {
 				activeChar.sendPacket(SystemMessageId.NO_LONGER_TRYING_ON);
 				activeChar.sendPacket(new UserInfo(activeChar));
 			} catch (Exception e) {
-				_log.log(Level.SEVERE, "", e);
+				LOG.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -134,7 +138,7 @@ public final class RequestPreviewItem extends L2GameClientPacket {
 		// Get the current merchant targeted by the player
 		final L2MerchantInstance merchant = (target instanceof L2MerchantInstance) ? (L2MerchantInstance) target : null;
 		if (merchant == null) {
-			_log.warning(getClass().getName() + " Null merchant!");
+			LOG.warn("Null merchant!");
 			return;
 		}
 		

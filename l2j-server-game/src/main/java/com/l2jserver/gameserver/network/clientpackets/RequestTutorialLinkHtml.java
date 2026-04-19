@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,7 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerTutorialEvent;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerTutorial;
 
 public class RequestTutorialLinkHtml extends L2GameClientPacket {
 	private static final String _C__85_REQUESTTUTORIALLINKHTML = "[C] 85 RequestTutorialLinkHtml";
@@ -39,7 +39,7 @@ public class RequestTutorialLinkHtml extends L2GameClientPacket {
 			return;
 		}
 		
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerTutorialEvent(player, _bypass), player);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerTutorial(player, _bypass), player);
 	}
 	
 	@Override

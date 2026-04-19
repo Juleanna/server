@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -82,9 +82,7 @@ public class LongTimeEvent extends Quest {
 		}
 	}
 	
-	public LongTimeEvent(String name, String descr) {
-		super(-1, name, descr);
-		
+	public LongTimeEvent() {
 		loadConfig();
 		
 		if (_eventPeriod != null) {

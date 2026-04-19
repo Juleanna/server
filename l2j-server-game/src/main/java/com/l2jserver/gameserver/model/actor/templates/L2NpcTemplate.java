@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,6 @@ package com.l2jserver.gameserver.model.actor.templates;
 
 import static com.l2jserver.gameserver.config.Configuration.npc;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -35,7 +34,6 @@ import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.Sex;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.actor.L2Character;
-import com.l2jserver.gameserver.model.base.ClassId;
 import com.l2jserver.gameserver.model.drops.DropListScope;
 import com.l2jserver.gameserver.model.drops.IDropItem;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
@@ -94,8 +92,6 @@ public final class L2NpcTemplate extends L2CharTemplate implements IIdentifiable
 	private Map<DropListScope, List<IDropItem>> _dropLists;
 	private double _collisionRadiusGrown;
 	private double _collisionHeightGrown;
-	
-	private final List<ClassId> _teachInfo = new ArrayList<>();
 	
 	/**
 	 * Constructor of L2Character.
@@ -364,7 +360,7 @@ public final class L2NpcTemplate extends L2CharTemplate implements IIdentifiable
 	 */
 	public boolean isClan(String clanName, String... clanNames) {
 		// Using local variable for the sake of reloading since it can be turned to null.
-		final Set<Integer> clans = _clans;
+		final var clans = _clans;
 		
 		if (clans == null) {
 			return false;
@@ -434,19 +430,19 @@ public final class L2NpcTemplate extends L2CharTemplate implements IIdentifiable
 	}
 	
 	public List<IDropItem> getDropList(DropListScope dropListScope) {
-		Map<DropListScope, List<IDropItem>> dropLists = _dropLists;
+		final var dropLists = _dropLists;
 		return dropLists != null ? dropLists.get(dropListScope) : null;
 	}
 	
 	public Collection<ItemHolder> calculateDrops(DropListScope dropListScope, L2Character victim, L2Character killer) {
-		List<IDropItem> dropList = getDropList(dropListScope);
+		final var dropList = getDropList(dropListScope);
 		if (dropList == null) {
 			return null;
 		}
 		
 		Collection<ItemHolder> calculatedDrops = null;
-		for (IDropItem dropItem : dropList) {
-			final Collection<ItemHolder> drops = dropItem.calculateDrops(victim, killer);
+		for (var dropItem : dropList) {
+			final var drops = dropItem.calculateDrops(victim, killer);
 			if ((drops == null) || drops.isEmpty()) {
 				continue;
 			}
@@ -469,20 +465,8 @@ public final class L2NpcTemplate extends L2CharTemplate implements IIdentifiable
 		return _collisionHeightGrown;
 	}
 	
-	public boolean canTeach(ClassId classId) {
-		// If the player is on a third class, fetch the class teacher
-		// information for its parent class.
-		if (classId.level() == 3) {
-			return _teachInfo.contains(classId.getParent());
-		}
-		return _teachInfo.contains(classId);
-	}
-	
-	public List<ClassId> getTeachInfo() {
-		return _teachInfo;
-	}
-	
-	public void addTeachInfo(List<ClassId> teachInfo) {
-		_teachInfo.addAll(teachInfo);
+	@Override
+	public String toString() {
+		return getName() + " [" + getId() + "]";
 	}
 }

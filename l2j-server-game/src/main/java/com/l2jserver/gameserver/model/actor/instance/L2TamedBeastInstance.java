@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -62,14 +62,14 @@ public final class L2TamedBeastInstance extends L2FeedableBeastInstance {
 	protected boolean _isFreyaBeast;
 	private List<Skill> _beastSkills = null;
 	
-	public L2TamedBeastInstance(int npcTemplateId) {
-		super(NpcData.getInstance().getTemplate(npcTemplateId));
+	public L2TamedBeastInstance(int objectId, int npcTemplateId) {
+		super(objectId, NpcData.getInstance().getTemplate(npcTemplateId));
 		setInstanceType(InstanceType.L2TamedBeastInstance);
 		setHome(this);
 	}
 	
-	public L2TamedBeastInstance(int npcTemplateId, L2PcInstance owner, int foodSkillId, int x, int y, int z) {
-		super(NpcData.getInstance().getTemplate(npcTemplateId));
+	public L2TamedBeastInstance(int objectId, int npcTemplateId, L2PcInstance owner, int foodSkillId, int x, int y, int z) {
+		super(objectId, NpcData.getInstance().getTemplate(npcTemplateId));
 		_isFreyaBeast = false;
 		setInstanceType(InstanceType.L2TamedBeastInstance);
 		setCurrentHp(getMaxHp());
@@ -80,8 +80,8 @@ public final class L2TamedBeastInstance extends L2FeedableBeastInstance {
 		spawnMe(x, y, z);
 	}
 	
-	public L2TamedBeastInstance(int npcTemplateId, L2PcInstance owner, int food, int x, int y, int z, boolean isFreyaBeast) {
-		super(NpcData.getInstance().getTemplate(npcTemplateId));
+	public L2TamedBeastInstance(int objectId, int npcTemplateId, L2PcInstance owner, int food, int x, int y, int z, boolean isFreyaBeast) {
+		super(objectId, NpcData.getInstance().getTemplate(npcTemplateId));
 		_isFreyaBeast = isFreyaBeast;
 		setInstanceType(InstanceType.L2TamedBeastInstance);
 		setCurrentHp(getMaxHp());

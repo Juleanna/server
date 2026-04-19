@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -33,8 +33,8 @@ import com.l2jserver.gameserver.network.serverpackets.InventoryUpdate;
 public class L2FestivalMonsterInstance extends L2MonsterInstance {
 	protected int _bonusMultiplier = 1;
 	
-	public L2FestivalMonsterInstance(L2NpcTemplate template) {
-		super(template);
+	public L2FestivalMonsterInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2FestivalMonsterInstance);
 	}
 	

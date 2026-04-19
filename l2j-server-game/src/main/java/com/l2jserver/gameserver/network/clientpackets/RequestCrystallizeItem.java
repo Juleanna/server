@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -17,6 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.l2jserver.gameserver.network.clientpackets;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.enums.PrivateStoreType;
 import com.l2jserver.gameserver.enums.Race;
@@ -36,6 +39,8 @@ import com.l2jserver.gameserver.util.Util;
  * @since 2005/03/27 15:29:30
  */
 public final class RequestCrystallizeItem extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestCrystallizeItem.class);
+	
 	private static final String _C__2F_REQUESTDCRYSTALLIZEITEM = "[C] 2F RequestCrystallizeItem";
 	
 	private int _objectId;
@@ -52,7 +57,7 @@ public final class RequestCrystallizeItem extends L2GameClientPacket {
 		L2PcInstance activeChar = getClient().getActiveChar();
 		
 		if (activeChar == null) {
-			_log.fine("RequestCrystalizeItem: activeChar was null");
+			LOG.debug("activeChar was null");
 			return;
 		}
 		
@@ -76,7 +81,7 @@ public final class RequestCrystallizeItem extends L2GameClientPacket {
 			activeChar.sendPacket(SystemMessageId.CRYSTALLIZE_LEVEL_TOO_LOW);
 			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 			if ((activeChar.getRace() != Race.DWARF) && (activeChar.getClassId().ordinal() != 117) && (activeChar.getClassId().ordinal() != 55)) {
-				_log.info("Player " + activeChar.getClient() + " used crystalize with classid: " + activeChar.getClassId().ordinal());
+				LOG.info("Player {} used crystalize with classid: {}", activeChar.getClient(), activeChar.getClassId().ordinal());
 			}
 			return;
 		}
@@ -104,7 +109,7 @@ public final class RequestCrystallizeItem extends L2GameClientPacket {
 		}
 		
 		if (!itemToRemove.getItem().isCrystallizable() || (itemToRemove.getItem().getCrystalCount() <= 0) || (itemToRemove.getItem().getCrystalType() == CrystalType.NONE)) {
-			_log.warning(activeChar.getName() + " (" + activeChar.getObjectId() + ") tried to crystallize " + itemToRemove.getItem().getId());
+			LOG.warn("{} ({}) tried to crystallize {}", activeChar.getName(), activeChar.getObjectId(), itemToRemove.getItem().getId());
 			return;
 		}
 		

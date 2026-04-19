@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -32,11 +32,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -44,6 +44,7 @@ import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.data.xml.impl.DoorData;
 import com.l2jserver.gameserver.enums.InstanceReenterType;
 import com.l2jserver.gameserver.enums.InstanceRemoveBuffType;
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.L2Spawn;
 import com.l2jserver.gameserver.model.L2World;
@@ -71,11 +72,11 @@ import com.l2jserver.gameserver.util.Broadcast;
  * @author GodKratos
  */
 public final class Instance {
-	private static final Logger _log = Logger.getLogger(Instance.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(Instance.class);
 	
 	private final int _id;
 	private String _name;
-	private int _ejectTime = general().getEjectDeadPlayerTime();
+	private int _ejectTime = (int) general().getEjectDeadPlayerTime();
 	/** Allow random walk for NPCs, global parameter. */
 	private boolean _allowRandomWalk = true;
 	private final List<Integer> _players = new CopyOnWriteArrayList<>();
@@ -101,8 +102,8 @@ public final class Instance {
 	private InstanceRemoveBuffType _removeBuffType = InstanceRemoveBuffType.NONE;
 	private final List<Integer> _exceptionList = new ArrayList<>();
 	
-	protected ScheduledFuture<?> _checkTimeUpTask = null;
-	protected final Map<Integer, ScheduledFuture<?>> _ejectDeadTasks = new ConcurrentHashMap<>();
+	private ScheduledFuture<?> _checkTimeUpTask = null;
+	private final Map<Integer, ScheduledFuture<?>> _ejectDeadTasks = new ConcurrentHashMap<>();
 	
 	public Instance(int id) {
 		_id = id;
@@ -156,7 +157,6 @@ public final class Instance {
 	
 	/**
 	 * Sets the status for the instance for summon friend type skills
-	 * @param b
 	 */
 	public void setAllowSummon(boolean b) {
 		_allowSummon = b;
@@ -164,7 +164,6 @@ public final class Instance {
 	
 	/**
 	 * Returns true if entire instance is PvP zone
-	 * @return
 	 */
 	public boolean isPvPInstance() {
 		return _isPvPInstance;
@@ -172,7 +171,6 @@ public final class Instance {
 	
 	/**
 	 * Sets PvP zone status of the instance
-	 * @param b
 	 */
 	public void setPvPInstance(boolean b) {
 		_isPvPInstance = b;
@@ -201,7 +199,7 @@ public final class Instance {
 	
 	/**
 	 * Checks if the player exists within this instance
-	 * @param objectId
+	 * @param objectId id of the player
 	 * @return true if player exists in instance
 	 */
 	public boolean containsPlayer(int objectId) {
@@ -246,15 +244,17 @@ public final class Instance {
 	 */
 	public void addDoor(int doorId, StatsSet set) {
 		if (_doors.containsKey(doorId)) {
-			_log.warning("Door ID " + doorId + " already exists in instance " + getId());
+			LOG.warn("Door ID {} already exists in instance {}", doorId, getId());
 			return;
 		}
 		
-		final L2DoorInstance newdoor = new L2DoorInstance(new L2DoorTemplate(set));
-		newdoor.setInstanceId(getId());
-		newdoor.setCurrentHp(newdoor.getMaxHp());
-		newdoor.spawnMe(newdoor.getTemplate().getX(), newdoor.getTemplate().getY(), newdoor.getTemplate().getZ());
-		_doors.put(doorId, newdoor);
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var template = new L2DoorTemplate(set);
+		final var door = new L2DoorInstance(objectId, template);
+		door.setInstanceId(getId());
+		door.setCurrentHp(door.getMaxHp());
+		door.spawnMe(door.getTemplate().getX(), door.getTemplate().getY(), door.getTemplate().getZ());
+		_doors.put(doorId, door);
 	}
 	
 	public List<Integer> getPlayers() {
@@ -302,7 +302,6 @@ public final class Instance {
 	
 	/**
 	 * Sets the spawn location for this instance to be used when enter in instance
-	 * @param loc
 	 */
 	public void addEnterLoc(Location loc) {
 		_enterLocations.add(loc);
@@ -317,7 +316,6 @@ public final class Instance {
 	
 	/**
 	 * Sets the spawn location for this instance to be used when leaving the instance
-	 * @param loc
 	 */
 	public void setExitLoc(Location loc) {
 		_exitLocation = loc;
@@ -383,7 +381,7 @@ public final class Instance {
 				ret.add(spawnDat.doSpawn());
 			}
 		} else {
-			_log.warning(getName() + " instance: cannot spawn NPC's, wrong group name: " + groupName);
+			LOG.warn("{}: cannot spawn NPCs, wrong group name: {}", getName(), groupName);
 		}
 		
 		return ret;
@@ -404,9 +402,9 @@ public final class Instance {
 				}
 			}
 		} catch (IOException e) {
-			_log.log(Level.WARNING, "Instance: can not find " + xml.getAbsolutePath() + " ! " + e.getMessage(), e);
+			LOG.warn("Can not find {}! {}", xml.getAbsolutePath(), e.getMessage(), e);
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Instance: error while loading " + xml.getAbsolutePath() + " ! " + e.getMessage(), e);
+			LOG.warn("Error while loading {} ! {}", xml.getAbsolutePath(), e.getMessage(), e);
 		}
 	}
 	
@@ -579,7 +577,7 @@ public final class Instance {
 								int z = Integer.parseInt(loc.getAttributes().getNamedItem("z").getNodeValue());
 								_enterLocations.add(new Location(x, y, z));
 							} catch (Exception e) {
-								_log.log(Level.WARNING, "Error parsing instance xml: " + e.getMessage(), e);
+								LOG.warn("Error parsing instance xml: {}", e.getMessage(), e);
 							}
 						}
 					}
@@ -642,7 +640,7 @@ public final class Instance {
 		}
 	}
 	
-	protected void doCheckTimeUp(long remaining) {
+	private void doCheckTimeUp(long remaining) {
 		CreatureSay cs = null;
 		long timeLeft;
 		int interval;

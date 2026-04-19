@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.enums.PartyDistributionType;
 import com.l2jserver.gameserver.model.BlockList;
 import com.l2jserver.gameserver.model.L2Party;
@@ -34,6 +37,8 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @since 2005/03/27 15:29:30
  */
 public final class RequestJoinParty extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestJoinParty.class);
+	
 	private static final String _C__42_REQUESTJOINPARTY = "[C] 42 RequestJoinParty";
 	
 	private String _name;
@@ -134,10 +139,6 @@ public final class RequestJoinParty extends L2GameClientPacket {
 		}
 	}
 	
-	/**
-	 * @param target
-	 * @param requestor
-	 */
 	private void addTargetToParty(L2PcInstance target, L2PcInstance requestor) {
 		final L2Party party = requestor.getParty();
 		// summary of ppl already in party and ppl that get invitation
@@ -161,7 +162,7 @@ public final class RequestJoinParty extends L2GameClientPacket {
 			party.setPendingInvitation(true);
 			
 			if (general().debug()) {
-				_log.fine("sent out a party invitation to:" + target.getName());
+				LOG.debug("Sent out a party invitation to: {}", target.getName());
 			}
 			
 		} else {
@@ -170,15 +171,11 @@ public final class RequestJoinParty extends L2GameClientPacket {
 			requestor.sendPacket(sm);
 			
 			if (general().debug()) {
-				_log.warning(requestor.getName() + " already received a party invitation");
+				LOG.warn("{} already received a party invitation", requestor.getName());
 			}
 		}
 	}
 	
-	/**
-	 * @param target
-	 * @param requestor
-	 */
 	private void createNewParty(L2PcInstance target, L2PcInstance requestor) {
 		PartyDistributionType partyDistributionType = PartyDistributionType.findById(_partyDistributionTypeId);
 		if (partyDistributionType == null) {
@@ -192,14 +189,14 @@ public final class RequestJoinParty extends L2GameClientPacket {
 			requestor.setPartyDistributionType(partyDistributionType);
 			
 			if (general().debug()) {
-				_log.fine("sent out a party invitation to:" + target.getName());
+				LOG.debug("Sent out a party invitation to: {}", target.getName());
 			}
 			
 		} else {
 			requestor.sendPacket(SystemMessageId.WAITING_FOR_ANOTHER_REPLY);
 			
 			if (general().debug()) {
-				_log.warning(requestor.getName() + " already received a party invitation");
+				LOG.warn("{} already received a party invitation", requestor.getName());
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.handler.AdminCommandHandler;
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerDlgAnswer;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerDlgAnswer;
 import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.holders.DoorRequestHolder;
 import com.l2jserver.gameserver.model.holders.SummonRequestHolder;
@@ -58,7 +58,7 @@ public final class DlgAnswer extends L2GameClientPacket {
 			return;
 		}
 		
-		final TerminateReturn term = EventDispatcher.getInstance().notifyEvent(new OnPlayerDlgAnswer(activeChar, _messageId, _answer, _requesterId), activeChar, TerminateReturn.class);
+		final TerminateReturn term = EventDispatcher.getInstance().notifyEvent(new PlayerDlgAnswer(activeChar, _messageId, _answer, _requesterId), activeChar, TerminateReturn.class);
 		if ((term != null) && term.terminate()) {
 			return;
 		}

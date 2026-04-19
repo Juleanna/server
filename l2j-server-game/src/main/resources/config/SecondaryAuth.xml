@@ -2,10 +2,10 @@
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SecondaryAuth.xsd">
 	<enabled>false</enabled> <!-- Enable Secondary Authentication on Character Select -->
 	<maxAttempts>5</maxAttempts> <!-- Max Attempts for Second Auth Password (0 to disable) -->
-	<banTime>480</banTime> <!-- Ban time if user reach maxAttempts (in minutes) -->
-	<recoveryLink>http://www.example.com/l2j/charPassRec.php</recoveryLink> <!-- Password Recovery Link -->
+	<banTime>480</banTime> <!-- Ban time if the user reaches maxAttempts (in minutes) -->
+	<recoveryLink>https://www.example.com/l2j/charPassRec.php</recoveryLink> <!-- Password Recovery Link -->
 	<forbiddenPasswords> <!-- List of forbidden passwords -->
-		<!-- Client checks for the entries below so you should not remove or edit any of these just add more -->
+		<!-- Client checks for the entries below, so you should not remove or edit any of these just add more -->
 		<password>000000</password>
 		<password>111111</password>
 		<password>222222</password>

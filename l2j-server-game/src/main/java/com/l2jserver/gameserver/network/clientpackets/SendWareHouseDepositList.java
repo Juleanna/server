@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
@@ -42,6 +45,8 @@ import com.l2jserver.gameserver.util.Util;
  * SendWareHouseDepositList client packet class.
  */
 public final class SendWareHouseDepositList extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(SendWareHouseDepositList.class);
+	
 	private static final String _C__3B_SENDWAREHOUSEDEPOSITLIST = "[C] 3B SendWareHouseDepositList";
 	
 	private static final int BATCH_LENGTH = 12;
@@ -110,14 +115,14 @@ public final class SendWareHouseDepositList extends L2GameClientPacket {
 		}
 		
 		// Freight price from config or normal price per item slot (30)
-		final long fee = _items.size() * 30;
+		final long fee = _items.size() * 30L;
 		long currentAdena = player.getAdena();
 		int slots = 0;
 		
 		for (ItemHolder i : _items) {
 			L2ItemInstance item = player.checkItemManipulation(i.getId(), i.getCount(), "deposit");
 			if (item == null) {
-				_log.warning("Error depositing a warehouse object for char " + player.getName() + " (validity check)");
+				LOG.warn("Error depositing a warehouse object for char {} (validity check)", player.getName());
 				return;
 			}
 			
@@ -155,7 +160,7 @@ public final class SendWareHouseDepositList extends L2GameClientPacket {
 			// Check validity of requested item
 			L2ItemInstance oldItem = player.checkItemManipulation(i.getId(), i.getCount(), "deposit");
 			if (oldItem == null) {
-				_log.warning("Error depositing a warehouse object for char " + player.getName() + " (olditem == null)");
+				LOG.warn("Error depositing a warehouse object for char {} (olditem == null)", player.getName());
 				return;
 			}
 			
@@ -165,7 +170,7 @@ public final class SendWareHouseDepositList extends L2GameClientPacket {
 			
 			final L2ItemInstance newItem = player.getInventory().transferItem(warehouse.getName(), i.getId(), i.getCount(), warehouse, player, manager);
 			if (newItem == null) {
-				_log.warning("Error depositing a warehouse object for char " + player.getName() + " (newitem == null)");
+				LOG.warn("Error depositing a warehouse object for char {} (newitem == null)", player.getName());
 				continue;
 			}
 			

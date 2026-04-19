@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,7 +21,8 @@ package com.l2jserver.gameserver.network.clientpackets;
 import static com.l2jserver.gameserver.config.Configuration.character;
 import static com.l2jserver.gameserver.config.Configuration.general;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -42,6 +43,8 @@ import com.l2jserver.gameserver.util.Util;
  * @author mrTJO
  */
 public class RequestPackageSend extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestPackageSend.class);
+	
 	private static final String _C_A8_REQUESTPACKAGESEND = "[C] A8 RequestPackageSend";
 	private static final int BATCH_LENGTH = 12; // length of the one item
 	
@@ -112,7 +115,7 @@ public class RequestPackageSend extends L2GameClientPacket {
 			// Check validity of requested item
 			final L2ItemInstance item = player.checkItemManipulation(i.getId(), i.getCount(), "freight");
 			if (item == null) {
-				_log.log(Level.WARNING, "Error depositing a warehouse object for char " + player.getName() + " (validity check)");
+				LOG.warn("Error depositing a warehouse object for char {} (validity check)", player.getName());
 				warehouse.deleteMe();
 				return;
 			} else if (!item.isFreightable()) {
@@ -150,14 +153,14 @@ public class RequestPackageSend extends L2GameClientPacket {
 			// Check validity of requested item
 			final L2ItemInstance oldItem = player.checkItemManipulation(i.getId(), i.getCount(), "deposit");
 			if (oldItem == null) {
-				_log.log(Level.WARNING, "Error depositing a warehouse object for char " + player.getName() + " (olditem == null)");
+				LOG.warn("Error depositing a warehouse object for char {} (olditem == null)", player.getName());
 				warehouse.deleteMe();
 				return;
 			}
 			
 			final L2ItemInstance newItem = player.getInventory().transferItem("Trade", i.getId(), i.getCount(), warehouse, player, null);
 			if (newItem == null) {
-				_log.log(Level.WARNING, "Error depositing a warehouse object for char " + player.getName() + " (newitem == null)");
+				LOG.warn("Error depositing a warehouse object for char {} (newitem == null)", player.getName());
 				continue;
 			}
 			

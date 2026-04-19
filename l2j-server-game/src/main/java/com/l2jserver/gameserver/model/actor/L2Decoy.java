@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -32,8 +32,8 @@ import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 public abstract class L2Decoy extends L2Character {
 	private final L2PcInstance _owner;
 	
-	public L2Decoy(L2CharTemplate template, L2PcInstance owner) {
-		super(template);
+	public L2Decoy(int objectId, L2CharTemplate template, L2PcInstance owner) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2Decoy);
 		_owner = owner;
 		setXYZInvisible(owner.getX(), owner.getY(), owner.getZ());

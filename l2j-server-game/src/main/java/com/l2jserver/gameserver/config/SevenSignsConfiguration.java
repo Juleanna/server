@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -41,75 +41,79 @@ import org.aeonbits.owner.Reloadable;
 @HotReload(value = 20, unit = MINUTES, type = ASYNC)
 public interface SevenSignsConfiguration extends Reloadable {
 	
+	// TODO(Zoey76): Implement RequireClanCastle configuration.
 	@Key("RequireClanCastle")
-	Boolean requireClanCastle();
+	boolean requireClanCastle();
 	
+	// TODO(Zoey76): Implement CastleForDawn configuration.
 	@Key("CastleForDawn")
-	Boolean castleForDawn();
+	boolean castleForDawn();
 	
+	// TODO(Zoey76): Implement CastleForDusk configuration.
 	@Key("CastleForDusk")
-	Boolean castleForDusk();
+	boolean castleForDusk();
 	
 	@Key("FestivalMinPlayer")
-	Integer getFestivalMinPlayer();
+	int getFestivalMinPlayer();
 	
 	@Key("MaxPlayerContrib")
-	Integer getMaxPlayerContrib();
+	int getMaxPlayerContrib();
 	
+	// TODO(Zoey76): Convert to milliseconds.
 	@Key("FestivalManagerStart")
-	Integer getFestivalManagerStart();
+	int getFestivalManagerStart();
 	
 	@Key("FestivalLength")
-	Integer getFestivalLength();
+	int getFestivalLength();
 	
 	@Key("FestivalCycleLength")
-	Integer getFestivalCycleLength();
+	int getFestivalCycleLength();
 	
 	@Key("FestivalFirstSpawn")
-	Integer getFestivalFirstSpawn();
+	int getFestivalFirstSpawn();
 	
 	@Key("FestivalFirstSwarm")
-	Integer getFestivalFirstSwarm();
+	int getFestivalFirstSwarm();
 	
 	@Key("FestivalSecondSpawn")
-	Integer getFestivalSecondSpawn();
+	int getFestivalSecondSpawn();
 	
 	@Key("FestivalSecondSwarm")
-	Integer getFestivalSecondSwarm();
+	int getFestivalSecondSwarm();
 	
 	@Key("FestivalChestSpawn")
-	Integer getFestivalChestSpawn();
+	int getFestivalChestSpawn();
 	
 	@Key("DawnGatesPdefMult")
-	Double getDawnGatesPdefMult();
+	double getDawnGatesPdefMult();
 	
 	@Key("DuskGatesPdefMult")
-	Double getDuskGatesPdefMult();
+	double getDuskGatesPdefMult();
 	
 	@Key("DawnGatesMdefMult")
-	Double getDawnGatesMdefMult();
+	double getDawnGatesMdefMult();
 	
 	@Key("DuskGatesMdefMult")
-	Double getDuskGatesMdefMult();
+	double getDuskGatesMdefMult();
 	
 	@Key("StrictSevenSigns")
-	Boolean strictSevenSigns();
+	boolean strictSevenSigns();
 	
 	@Key("SevenSignsLazyUpdate")
-	Boolean sevenSignsLazyUpdate();
+	boolean sevenSignsLazyUpdate();
 	
 	@Key("SevenSignsDawnTicketQuantity")
-	Integer getSevenSignsDawnTicketQuantity();
+	int getSevenSignsDawnTicketQuantity();
 	
 	@Key("SevenSignsDawnTicketPrice")
-	Integer getSevenSignsDawnTicketPrice();
+	int getSevenSignsDawnTicketPrice();
 	
 	@Key("SevenSignsDawnTicketBundle")
-	Integer getSevenSignsDawnTicketBundle();
+	int getSevenSignsDawnTicketBundle();
 	
 	@Key("SevenSignsManorsAgreementId")
-	Integer getSevenSignsManorsAgreementId();
+	int getSevenSignsManorsAgreementId();
 	
 	@Key("SevenSignsJoinDawnFee")
-	Integer getSevenSignsJoinDawnFee();
+	int getSevenSignsJoinDawnFee();
 }

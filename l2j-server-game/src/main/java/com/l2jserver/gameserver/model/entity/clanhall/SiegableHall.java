@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,7 +19,9 @@
 package com.l2jserver.gameserver.model.entity.clanhall;
 
 import java.util.Calendar;
-import java.util.logging.Level;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.model.L2Clan;
@@ -37,6 +39,7 @@ import com.l2jserver.gameserver.network.serverpackets.SiegeInfo;
  * @author BiggBoss
  */
 public final class SiegableHall extends ClanHall {
+	private static final Logger LOG = LoggerFactory.getLogger(SiegableHall.class);
 	
 	private static final String SQL_SAVE = "UPDATE siegable_clanhall SET ownerId=?, nextSiege=? WHERE clanHallId=?";
 	
@@ -67,11 +70,11 @@ public final class SiegableHall extends ClanHall {
 				try {
 					_scheduleConfig[i] = Integer.parseInt(rawSchConfig[i]);
 				} catch (Exception e) {
-					_log.warning("SiegableHall - " + getName() + ": Wrong schedule_config parameters!");
+					LOG.warn("{}: Wrong schedule_config parameters!", getName());
 				}
 			}
 		} else {
-			_log.warning(getName() + ": Wrong schedule_config value in siegable_halls table, using default (7 days)");
+			LOG.warn("{}: Wrong schedule_config value in siegable_halls table, using default (7 days)", getName());
 		}
 		
 		_nextSiege = Calendar.getInstance();
@@ -118,7 +121,7 @@ public final class SiegableHall extends ClanHall {
 			ps.setInt(3, getId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: SiegableHall.updateDb(): " + e.getMessage(), e);
+			LOG.warn("Exception: SiegableHall.updateDb(): {}", e.getMessage(), e);
 		}
 	}
 	

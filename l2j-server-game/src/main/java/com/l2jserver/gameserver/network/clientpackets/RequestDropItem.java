@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,6 +21,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 import static com.l2jserver.gameserver.config.Configuration.character;
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.xml.impl.AdminData;
 import com.l2jserver.gameserver.enums.PrivateStoreType;
 import com.l2jserver.gameserver.model.PcCondOverride;
@@ -40,6 +43,8 @@ import com.l2jserver.gameserver.util.Util;
  * @since 2005/04/02 21:25:21
  */
 public final class RequestDropItem extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestDropItem.class);
+	
 	private static final String _C__17_REQUESTDROPITEM = "[C] 17 RequestDropItem";
 	
 	private int _objectId;
@@ -141,7 +146,7 @@ public final class RequestDropItem extends L2GameClientPacket {
 		
 		if ((ItemType2.QUEST == item.getItem().getType2()) && !activeChar.canOverrideCond(PcCondOverride.DROP_ALL_ITEMS)) {
 			if (general().debug()) {
-				_log.finest(activeChar.getObjectId() + ":player tried to drop quest item");
+				LOG.trace("{}:player tried to drop quest item", activeChar.getObjectId());
 			}
 			activeChar.sendPacket(SystemMessageId.CANNOT_DISCARD_EXCHANGE_ITEM);
 			return;
@@ -149,7 +154,7 @@ public final class RequestDropItem extends L2GameClientPacket {
 		
 		if (!activeChar.isInsideRadius(_x, _y, 0, 150, false, false) || (Math.abs(_z - activeChar.getZ()) > 50)) {
 			if (general().debug()) {
-				_log.finest(activeChar.getObjectId() + ": trying to drop too far away");
+				LOG.trace("{}: trying to drop too far away", activeChar.getObjectId());
 			}
 			activeChar.sendPacket(SystemMessageId.CANNOT_DISCARD_DISTANCE_TOO_FAR);
 			return;
@@ -161,7 +166,7 @@ public final class RequestDropItem extends L2GameClientPacket {
 		}
 		
 		if (general().debug()) {
-			_log.fine("requested drop item " + _objectId + "(" + item.getCount() + ") at " + _x + "/" + _y + "/" + _z);
+			LOG.debug("requested drop item {}({}) at {}/{}/{}", _objectId, item.getCount(), _x, _y, _z);
 		}
 		
 		if (item.isEquipped()) {
@@ -181,7 +186,7 @@ public final class RequestDropItem extends L2GameClientPacket {
 		L2ItemInstance dropedItem = activeChar.dropItem("Drop", _objectId, _count, _x, _y, _z, null, false, false);
 		
 		if (general().debug()) {
-			_log.fine("dropping " + _objectId + " item(" + _count + ") at: " + _x + " " + _y + " " + _z);
+			LOG.debug("dropping {} item({}) at: {} {} {}", _objectId, _count, _x, _y, _z);
 		}
 		
 		// activeChar.broadcastUserInfo();
@@ -194,7 +199,7 @@ public final class RequestDropItem extends L2GameClientPacket {
 		
 		if ((dropedItem != null) && (dropedItem.getId() == Inventory.ADENA_ID) && (dropedItem.getCount() >= 1000000)) {
 			String msg = "Character (" + activeChar.getName() + ") has dropped (" + dropedItem.getCount() + ")adena at (" + _x + "," + _y + "," + _z + ")";
-			_log.warning(msg);
+			LOG.warn(msg);
 			AdminData.getInstance().broadcastMessageToGMs(msg);
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -31,9 +31,8 @@ import com.l2jserver.gameserver.model.effects.EffectFlag;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.entity.Instance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureKill;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureKill;
 import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
-import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.serverpackets.EtcStatusUpdate;
@@ -52,12 +51,6 @@ public abstract class L2Playable extends L2Character {
 	
 	public L2Playable(int objectId, L2CharTemplate template) {
 		super(objectId, template);
-		setInstanceType(InstanceType.L2Playable);
-		setIsInvul(false);
-	}
-	
-	public L2Playable(L2CharTemplate template) {
-		super(template);
 		setInstanceType(InstanceType.L2Playable);
 		setIsInvul(false);
 	}
@@ -94,7 +87,7 @@ public abstract class L2Playable extends L2Character {
 	
 	@Override
 	public boolean doDie(L2Character killer) {
-		final TerminateReturn returnBack = EventDispatcher.getInstance().notifyEvent(new OnCreatureKill(killer, this), this, TerminateReturn.class);
+		final TerminateReturn returnBack = EventDispatcher.getInstance().notifyEvent(new CreatureKill(killer, this), this, TerminateReturn.class);
 		if ((returnBack != null) && returnBack.terminate()) {
 			return false;
 		}
@@ -155,8 +148,8 @@ public abstract class L2Playable extends L2Character {
 		L2PcInstance actingPlayer = getActingPlayer();
 		
 		if (!actingPlayer.isNotifyQuestOfDeathEmpty()) {
-			for (QuestState qs : actingPlayer.getNotifyQuestOfDeath()) {
-				qs.getQuest().notifyDeath((killer == null ? this : killer), this, qs);
+			for (var qs : actingPlayer.getNotifyQuestOfDeath()) {
+				qs.getQuest().onDeath((killer == null ? this : killer), this, qs);
 			}
 		}
 		// Notify instance

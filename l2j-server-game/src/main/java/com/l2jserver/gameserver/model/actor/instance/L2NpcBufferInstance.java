@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,9 @@ package com.l2jserver.gameserver.model.actor.instance;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.data.sql.impl.NpcBufferTable;
@@ -43,12 +45,12 @@ import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
  * Zoey76: TODO: Unhardcode as DP base script for NPC Buffers.
  */
 public class L2NpcBufferInstance extends L2Npc {
-	private static final Logger _log = Logger.getLogger(L2NpcBufferInstance.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2NpcBufferInstance.class);
 	
 	private static final Map<Integer, Integer> pageVal = new HashMap<>();
 	
-	public L2NpcBufferInstance(L2NpcTemplate template) {
-		super(template);
+	public L2NpcBufferInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2NpcBufferInstance);
 	}
 	
@@ -102,7 +104,7 @@ public class L2NpcBufferInstance extends L2Npc {
 			
 			for (String buffGroupList : buffGroupArray) {
 				if (buffGroupList == null) {
-					_log.warning("NPC Buffer Warning: npcId = " + npcId + " has no buffGroup set in the bypass for the buff selected.");
+					LOG.warn("npcId = {} has no buffGroup set in the bypass for the buff selected.", npcId);
 					return;
 				}
 				
@@ -110,7 +112,7 @@ public class L2NpcBufferInstance extends L2Npc {
 				
 				final NpcBufferData npcBuffGroupInfo = NpcBufferTable.getInstance().getSkillInfo(npcId, buffGroup);
 				if (npcBuffGroupInfo == null) {
-					_log.warning("NPC Buffer Warning: npcId = " + npcId + " Location: " + getX() + ", " + getY() + ", " + getZ() + " Player: " + player.getName() + " has tried to use skill group (" + buffGroup + ") not assigned to the NPC Buffer!");
+					LOG.warn("npcId = {} Location: {}, {}, {} Player: {} has tried to use skill group ({}) not assigned to the NPC Buffer!", npcId, getX(), getY(), getZ(), player.getName(), buffGroup);
 					return;
 				}
 				

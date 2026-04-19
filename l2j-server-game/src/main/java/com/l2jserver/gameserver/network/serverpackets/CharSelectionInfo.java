@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,8 +24,9 @@ import static com.l2jserver.gameserver.config.Configuration.customs;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.data.json.ExperienceData;
@@ -36,8 +37,7 @@ import com.l2jserver.gameserver.model.itemcontainer.Inventory;
 import com.l2jserver.gameserver.network.L2GameClient;
 
 public class CharSelectionInfo extends L2GameServerPacket {
-	
-	private static final Logger _log = Logger.getLogger(CharSelectionInfo.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(CharSelectionInfo.class);
 	
 	private final String _loginName;
 	
@@ -178,7 +178,7 @@ public class CharSelectionInfo extends L2GameServerPacket {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not restore char info: " + e.getMessage(), e);
+			LOG.warn("Could not restore char info: {}", e.getMessage(), e);
 		}
 		return characterList;
 	}
@@ -196,7 +196,7 @@ public class CharSelectionInfo extends L2GameServerPacket {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not restore char subclass info: " + e.getMessage(), e);
+			LOG.warn("Could not restore char subclass info: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -281,7 +281,7 @@ public class CharSelectionInfo extends L2GameServerPacket {
 					}
 				}
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Could not restore augmentation info: " + e.getMessage(), e);
+				LOG.warn("Could not restore augmentation info: {}", e.getMessage(), e);
 			}
 		}
 		

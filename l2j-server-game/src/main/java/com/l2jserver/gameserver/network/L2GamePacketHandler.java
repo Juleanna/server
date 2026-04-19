@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,11 +21,281 @@ package com.l2jserver.gameserver.network;
 import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.nio.ByteBuffer;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.util.Util;
 import com.l2jserver.gameserver.network.L2GameClient.GameClientState;
-import com.l2jserver.gameserver.network.clientpackets.*;
+import com.l2jserver.gameserver.network.clientpackets.Action;
+import com.l2jserver.gameserver.network.clientpackets.AddTradeItem;
+import com.l2jserver.gameserver.network.clientpackets.AllyDismiss;
+import com.l2jserver.gameserver.network.clientpackets.AllyLeave;
+import com.l2jserver.gameserver.network.clientpackets.AnswerCoupleAction;
+import com.l2jserver.gameserver.network.clientpackets.AnswerJoinPartyRoom;
+import com.l2jserver.gameserver.network.clientpackets.AnswerPartyLootModification;
+import com.l2jserver.gameserver.network.clientpackets.AnswerTradeRequest;
+import com.l2jserver.gameserver.network.clientpackets.Appearing;
+import com.l2jserver.gameserver.network.clientpackets.Attack;
+import com.l2jserver.gameserver.network.clientpackets.AttackRequest;
+import com.l2jserver.gameserver.network.clientpackets.AuthLogin;
+import com.l2jserver.gameserver.network.clientpackets.BrEventRankerList;
+import com.l2jserver.gameserver.network.clientpackets.BypassUserCmd;
+import com.l2jserver.gameserver.network.clientpackets.CannotMoveAnymore;
+import com.l2jserver.gameserver.network.clientpackets.CannotMoveAnymoreInVehicle;
+import com.l2jserver.gameserver.network.clientpackets.CharacterCreate;
+import com.l2jserver.gameserver.network.clientpackets.CharacterDelete;
+import com.l2jserver.gameserver.network.clientpackets.CharacterRestore;
+import com.l2jserver.gameserver.network.clientpackets.CharacterSelect;
+import com.l2jserver.gameserver.network.clientpackets.DlgAnswer;
+import com.l2jserver.gameserver.network.clientpackets.EndScenePlayer;
+import com.l2jserver.gameserver.network.clientpackets.EnterWorld;
+import com.l2jserver.gameserver.network.clientpackets.ExGetOnAirShip;
+import com.l2jserver.gameserver.network.clientpackets.FinishRotating;
+import com.l2jserver.gameserver.network.clientpackets.GameGuardReply;
+import com.l2jserver.gameserver.network.clientpackets.Logout;
+import com.l2jserver.gameserver.network.clientpackets.MoveBackwardToLocation;
+import com.l2jserver.gameserver.network.clientpackets.MoveToLocationAirShip;
+import com.l2jserver.gameserver.network.clientpackets.MoveToLocationInAirShip;
+import com.l2jserver.gameserver.network.clientpackets.MoveWithDelta;
+import com.l2jserver.gameserver.network.clientpackets.MultiSellChoose;
+import com.l2jserver.gameserver.network.clientpackets.NewCharacter;
+import com.l2jserver.gameserver.network.clientpackets.ObserverReturn;
+import com.l2jserver.gameserver.network.clientpackets.ProtocolVersion;
+import com.l2jserver.gameserver.network.clientpackets.RequestAcquireSkill;
+import com.l2jserver.gameserver.network.clientpackets.RequestAcquireSkillInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestActionUse;
+import com.l2jserver.gameserver.network.clientpackets.RequestAllAgitInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestAllCastleInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestAllFortressInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestAllyCrest;
+import com.l2jserver.gameserver.network.clientpackets.RequestAllyInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestAnswerFriendInvite;
+import com.l2jserver.gameserver.network.clientpackets.RequestAnswerJoinAlly;
+import com.l2jserver.gameserver.network.clientpackets.RequestAnswerJoinParty;
+import com.l2jserver.gameserver.network.clientpackets.RequestAnswerJoinPledge;
+import com.l2jserver.gameserver.network.clientpackets.RequestAskJoinPartyRoom;
+import com.l2jserver.gameserver.network.clientpackets.RequestAutoSoulShot;
+import com.l2jserver.gameserver.network.clientpackets.RequestBBSwrite;
+import com.l2jserver.gameserver.network.clientpackets.RequestBidItemAuction;
+import com.l2jserver.gameserver.network.clientpackets.RequestBlock;
+import com.l2jserver.gameserver.network.clientpackets.RequestBookMarkSlotInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestBuyItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestBuySeed;
+import com.l2jserver.gameserver.network.clientpackets.RequestBuySellUIClose;
+import com.l2jserver.gameserver.network.clientpackets.RequestBypassToServer;
+import com.l2jserver.gameserver.network.clientpackets.RequestCancelPostAttachment;
+import com.l2jserver.gameserver.network.clientpackets.RequestChangeNicknameColor;
+import com.l2jserver.gameserver.network.clientpackets.RequestChangePartyLeader;
+import com.l2jserver.gameserver.network.clientpackets.RequestChangePetName;
+import com.l2jserver.gameserver.network.clientpackets.RequestConfirmCancelItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestConfirmGemStone;
+import com.l2jserver.gameserver.network.clientpackets.RequestConfirmRefinerItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestConfirmSiegeWaitingList;
+import com.l2jserver.gameserver.network.clientpackets.RequestConfirmTargetItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestCrystallizeItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestCursedWeaponList;
+import com.l2jserver.gameserver.network.clientpackets.RequestCursedWeaponLocation;
+import com.l2jserver.gameserver.network.clientpackets.RequestDeleteBookMarkSlot;
+import com.l2jserver.gameserver.network.clientpackets.RequestDeleteMacro;
+import com.l2jserver.gameserver.network.clientpackets.RequestDeleteReceivedPost;
+import com.l2jserver.gameserver.network.clientpackets.RequestDeleteSentPost;
+import com.l2jserver.gameserver.network.clientpackets.RequestDestroyItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestDismissAlly;
+import com.l2jserver.gameserver.network.clientpackets.RequestDismissPartyRoom;
+import com.l2jserver.gameserver.network.clientpackets.RequestDispel;
+import com.l2jserver.gameserver.network.clientpackets.RequestDominionInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestDropItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestDuelAnswerStart;
+import com.l2jserver.gameserver.network.clientpackets.RequestDuelStart;
+import com.l2jserver.gameserver.network.clientpackets.RequestDuelSurrender;
+import com.l2jserver.gameserver.network.clientpackets.RequestEnchantItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestEx2ndPasswordCheck;
+import com.l2jserver.gameserver.network.clientpackets.RequestEx2ndPasswordReq;
+import com.l2jserver.gameserver.network.clientpackets.RequestEx2ndPasswordVerify;
+import com.l2jserver.gameserver.network.clientpackets.RequestExAcceptJoinMPCC;
+import com.l2jserver.gameserver.network.clientpackets.RequestExAddContactToContactList;
+import com.l2jserver.gameserver.network.clientpackets.RequestExAskJoinMPCC;
+import com.l2jserver.gameserver.network.clientpackets.RequestExCancelEnchantItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestExChangeName;
+import com.l2jserver.gameserver.network.clientpackets.RequestExCleftEnter;
+import com.l2jserver.gameserver.network.clientpackets.RequestExCubeGameChangeTeam;
+import com.l2jserver.gameserver.network.clientpackets.RequestExCubeGameReadyAnswer;
+import com.l2jserver.gameserver.network.clientpackets.RequestExDeleteContactFromContactList;
+import com.l2jserver.gameserver.network.clientpackets.RequestExEnchantItemAttribute;
+import com.l2jserver.gameserver.network.clientpackets.RequestExEnchantSkill;
+import com.l2jserver.gameserver.network.clientpackets.RequestExEnchantSkillInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestExEnchantSkillInfoDetail;
+import com.l2jserver.gameserver.network.clientpackets.RequestExEnchantSkillRouteChange;
+import com.l2jserver.gameserver.network.clientpackets.RequestExEnchantSkillSafe;
+import com.l2jserver.gameserver.network.clientpackets.RequestExEnchantSkillUntrain;
+import com.l2jserver.gameserver.network.clientpackets.RequestExFishRanking;
+import com.l2jserver.gameserver.network.clientpackets.RequestExFriendListExtended;
+import com.l2jserver.gameserver.network.clientpackets.RequestExMPCCShowPartyMembersInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestExMagicSkillUseGround;
+import com.l2jserver.gameserver.network.clientpackets.RequestExOlympiadMatchListRefresh;
+import com.l2jserver.gameserver.network.clientpackets.RequestExOustFromMPCC;
+import com.l2jserver.gameserver.network.clientpackets.RequestExPledgeCrestLarge;
+import com.l2jserver.gameserver.network.clientpackets.RequestExRemoveItemAttribute;
+import com.l2jserver.gameserver.network.clientpackets.RequestExRqItemLink;
+import com.l2jserver.gameserver.network.clientpackets.RequestExSetPledgeCrestLarge;
+import com.l2jserver.gameserver.network.clientpackets.RequestExShowContactList;
+import com.l2jserver.gameserver.network.clientpackets.RequestExTryToPutEnchantSupportItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestExTryToPutEnchantTargetItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestExitPartyMatchingWaitingRoom;
+import com.l2jserver.gameserver.network.clientpackets.RequestFortressMapInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestFortressSiegeInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestFriendDel;
+import com.l2jserver.gameserver.network.clientpackets.RequestFriendInvite;
+import com.l2jserver.gameserver.network.clientpackets.RequestFriendList;
+import com.l2jserver.gameserver.network.clientpackets.RequestGMCommand;
+import com.l2jserver.gameserver.network.clientpackets.RequestGetBossRecord;
+import com.l2jserver.gameserver.network.clientpackets.RequestGetItemFromPet;
+import com.l2jserver.gameserver.network.clientpackets.RequestGetOffVehicle;
+import com.l2jserver.gameserver.network.clientpackets.RequestGetOnVehicle;
+import com.l2jserver.gameserver.network.clientpackets.RequestGiveItemToPet;
+import com.l2jserver.gameserver.network.clientpackets.RequestGiveNickName;
+import com.l2jserver.gameserver.network.clientpackets.RequestGmList;
+import com.l2jserver.gameserver.network.clientpackets.RequestGotoLobby;
+import com.l2jserver.gameserver.network.clientpackets.RequestHennaEquip;
+import com.l2jserver.gameserver.network.clientpackets.RequestHennaItemInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestHennaItemList;
+import com.l2jserver.gameserver.network.clientpackets.RequestHennaItemRemoveInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestHennaRemove;
+import com.l2jserver.gameserver.network.clientpackets.RequestHennaRemoveList;
+import com.l2jserver.gameserver.network.clientpackets.RequestInfoItemAuction;
+import com.l2jserver.gameserver.network.clientpackets.RequestItemList;
+import com.l2jserver.gameserver.network.clientpackets.RequestJoinAlly;
+import com.l2jserver.gameserver.network.clientpackets.RequestJoinDominionWar;
+import com.l2jserver.gameserver.network.clientpackets.RequestJoinParty;
+import com.l2jserver.gameserver.network.clientpackets.RequestJoinPledge;
+import com.l2jserver.gameserver.network.clientpackets.RequestJoinSiege;
+import com.l2jserver.gameserver.network.clientpackets.RequestKeyMapping;
+import com.l2jserver.gameserver.network.clientpackets.RequestLinkHtml;
+import com.l2jserver.gameserver.network.clientpackets.RequestListPartyMatchingWaitingRoom;
+import com.l2jserver.gameserver.network.clientpackets.RequestMagicSkillUse;
+import com.l2jserver.gameserver.network.clientpackets.RequestMakeMacro;
+import com.l2jserver.gameserver.network.clientpackets.RequestManorList;
+import com.l2jserver.gameserver.network.clientpackets.RequestModifyBookMarkSlot;
+import com.l2jserver.gameserver.network.clientpackets.RequestMoveToLocationInVehicle;
+import com.l2jserver.gameserver.network.clientpackets.RequestOlympiadMatchList;
+import com.l2jserver.gameserver.network.clientpackets.RequestOlympiadObserverEnd;
+import com.l2jserver.gameserver.network.clientpackets.RequestOustFromPartyRoom;
+import com.l2jserver.gameserver.network.clientpackets.RequestOustPartyMember;
+import com.l2jserver.gameserver.network.clientpackets.RequestOustPledgeMember;
+import com.l2jserver.gameserver.network.clientpackets.RequestPCCafeCouponUse;
+import com.l2jserver.gameserver.network.clientpackets.RequestPackageSend;
+import com.l2jserver.gameserver.network.clientpackets.RequestPackageSendableItemList;
+import com.l2jserver.gameserver.network.clientpackets.RequestPartyLootModification;
+import com.l2jserver.gameserver.network.clientpackets.RequestPartyMatchConfig;
+import com.l2jserver.gameserver.network.clientpackets.RequestPartyMatchDetail;
+import com.l2jserver.gameserver.network.clientpackets.RequestPartyMatchList;
+import com.l2jserver.gameserver.network.clientpackets.RequestPetGetItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestPetUseItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestPetition;
+import com.l2jserver.gameserver.network.clientpackets.RequestPetitionCancel;
+import com.l2jserver.gameserver.network.clientpackets.RequestPetitionFeedback;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgeCrest;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgeExtendedInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgeInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgeMemberInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgeMemberList;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgeMemberPowerInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgePower;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgePowerGradeList;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgeReorganizeMember;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgeSetAcademyMaster;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgeSetMemberPowerGrade;
+import com.l2jserver.gameserver.network.clientpackets.RequestPledgeWarList;
+import com.l2jserver.gameserver.network.clientpackets.RequestPostAttachment;
+import com.l2jserver.gameserver.network.clientpackets.RequestPostItemList;
+import com.l2jserver.gameserver.network.clientpackets.RequestPreviewItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestPrivateStoreBuy;
+import com.l2jserver.gameserver.network.clientpackets.RequestPrivateStoreManageBuy;
+import com.l2jserver.gameserver.network.clientpackets.RequestPrivateStoreManageSell;
+import com.l2jserver.gameserver.network.clientpackets.RequestPrivateStoreQuitBuy;
+import com.l2jserver.gameserver.network.clientpackets.RequestPrivateStoreQuitSell;
+import com.l2jserver.gameserver.network.clientpackets.RequestPrivateStoreSell;
+import com.l2jserver.gameserver.network.clientpackets.RequestProcureCropList;
+import com.l2jserver.gameserver.network.clientpackets.RequestQuestAbort;
+import com.l2jserver.gameserver.network.clientpackets.RequestQuestList;
+import com.l2jserver.gameserver.network.clientpackets.RequestReceivedPost;
+import com.l2jserver.gameserver.network.clientpackets.RequestReceivedPostList;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecipeBookDestroy;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecipeBookOpen;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecipeItemMakeInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecipeItemMakeSelf;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecipeShopListSet;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecipeShopMakeInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecipeShopMakeItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecipeShopManagePrev;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecipeShopManageQuit;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecipeShopMessageSet;
+import com.l2jserver.gameserver.network.clientpackets.RequestRecordInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestRefine;
+import com.l2jserver.gameserver.network.clientpackets.RequestRefineCancel;
+import com.l2jserver.gameserver.network.clientpackets.RequestRefundItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestRejectPostAttachment;
+import com.l2jserver.gameserver.network.clientpackets.RequestReplyStartPledgeWar;
+import com.l2jserver.gameserver.network.clientpackets.RequestReplyStopPledgeWar;
+import com.l2jserver.gameserver.network.clientpackets.RequestReplySurrenderPledgeWar;
+import com.l2jserver.gameserver.network.clientpackets.RequestResetNickname;
+import com.l2jserver.gameserver.network.clientpackets.RequestRestart;
+import com.l2jserver.gameserver.network.clientpackets.RequestRestartPoint;
+import com.l2jserver.gameserver.network.clientpackets.RequestSSQStatus;
+import com.l2jserver.gameserver.network.clientpackets.RequestSaveBookMarkSlot;
+import com.l2jserver.gameserver.network.clientpackets.RequestSaveInventoryOrder;
+import com.l2jserver.gameserver.network.clientpackets.RequestSaveKeyMapping;
+import com.l2jserver.gameserver.network.clientpackets.RequestSeedPhase;
+import com.l2jserver.gameserver.network.clientpackets.RequestSellItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestSendFriendMsg;
+import com.l2jserver.gameserver.network.clientpackets.RequestSendPost;
+import com.l2jserver.gameserver.network.clientpackets.RequestSentPost;
+import com.l2jserver.gameserver.network.clientpackets.RequestSentPostList;
+import com.l2jserver.gameserver.network.clientpackets.RequestSetAllyCrest;
+import com.l2jserver.gameserver.network.clientpackets.RequestSetCastleSiegeTime;
+import com.l2jserver.gameserver.network.clientpackets.RequestSetCrop;
+import com.l2jserver.gameserver.network.clientpackets.RequestSetPledgeCrest;
+import com.l2jserver.gameserver.network.clientpackets.RequestSetSeed;
+import com.l2jserver.gameserver.network.clientpackets.RequestShortCutDel;
+import com.l2jserver.gameserver.network.clientpackets.RequestShortCutReg;
+import com.l2jserver.gameserver.network.clientpackets.RequestShowBoard;
+import com.l2jserver.gameserver.network.clientpackets.RequestShowMiniMap;
+import com.l2jserver.gameserver.network.clientpackets.RequestSiegeAttackerList;
+import com.l2jserver.gameserver.network.clientpackets.RequestSiegeDefenderList;
+import com.l2jserver.gameserver.network.clientpackets.RequestSiegeInfo;
+import com.l2jserver.gameserver.network.clientpackets.RequestSkillList;
+import com.l2jserver.gameserver.network.clientpackets.RequestStartPledgeWar;
+import com.l2jserver.gameserver.network.clientpackets.RequestStopPledgeWar;
+import com.l2jserver.gameserver.network.clientpackets.RequestSurrenderPledgeWar;
+import com.l2jserver.gameserver.network.clientpackets.RequestTargetCanceld;
+import com.l2jserver.gameserver.network.clientpackets.RequestTeleportBookMark;
+import com.l2jserver.gameserver.network.clientpackets.RequestTutorialClientEvent;
+import com.l2jserver.gameserver.network.clientpackets.RequestTutorialLinkHtml;
+import com.l2jserver.gameserver.network.clientpackets.RequestTutorialPassCmdToServer;
+import com.l2jserver.gameserver.network.clientpackets.RequestTutorialQuestionMark;
+import com.l2jserver.gameserver.network.clientpackets.RequestUnEquipItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestVoteNew;
+import com.l2jserver.gameserver.network.clientpackets.RequestWithDrawPremiumItem;
+import com.l2jserver.gameserver.network.clientpackets.RequestWithDrawalParty;
+import com.l2jserver.gameserver.network.clientpackets.RequestWithdrawPartyRoom;
+import com.l2jserver.gameserver.network.clientpackets.RequestWithdrawalPledge;
+import com.l2jserver.gameserver.network.clientpackets.RequestWriteHeroWords;
+import com.l2jserver.gameserver.network.clientpackets.Say2;
+import com.l2jserver.gameserver.network.clientpackets.SendBypassBuildCmd;
+import com.l2jserver.gameserver.network.clientpackets.SendWareHouseDepositList;
+import com.l2jserver.gameserver.network.clientpackets.SendWareHouseWithDrawList;
+import com.l2jserver.gameserver.network.clientpackets.SetPrivateStoreListBuy;
+import com.l2jserver.gameserver.network.clientpackets.SetPrivateStoreListSell;
+import com.l2jserver.gameserver.network.clientpackets.SetPrivateStoreMsgBuy;
+import com.l2jserver.gameserver.network.clientpackets.SetPrivateStoreMsgSell;
+import com.l2jserver.gameserver.network.clientpackets.SetPrivateStoreWholeMsg;
+import com.l2jserver.gameserver.network.clientpackets.SnoopQuit;
+import com.l2jserver.gameserver.network.clientpackets.StartRotating;
+import com.l2jserver.gameserver.network.clientpackets.TradeDone;
+import com.l2jserver.gameserver.network.clientpackets.TradeRequest;
+import com.l2jserver.gameserver.network.clientpackets.UseItem;
+import com.l2jserver.gameserver.network.clientpackets.ValidatePosition;
 import com.l2jserver.mmocore.ClientFactory;
 import com.l2jserver.mmocore.MMOConnection;
 import com.l2jserver.mmocore.MMOExecutor;
@@ -44,7 +314,7 @@ import com.l2jserver.mmocore.ReceivablePacket;
  */
 public final class L2GamePacketHandler implements PacketHandler<L2GameClient>, ClientFactory<L2GameClient>, MMOExecutor<L2GameClient> {
 	
-	private static final Logger _log = Logger.getLogger(L2GamePacketHandler.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2GamePacketHandler.class);
 	
 	@Override
 	public ReceivablePacket<L2GameClient> handlePacket(ByteBuffer buf, L2GameClient client) {
@@ -80,7 +350,7 @@ public final class L2GamePacketHandler implements PacketHandler<L2GameClient>, C
 							id2 = buf.getShort() & 0xffff;
 						} else {
 							if (general().packetHandlerDebug()) {
-								_log.warning("Client: " + client.toString() + " sent a 0xd0 without the second opcode.");
+								LOG.warn("Client: {} sent a 0xd0 without the second opcode.", client);
 							}
 							break;
 						}
@@ -104,7 +374,7 @@ public final class L2GamePacketHandler implements PacketHandler<L2GameClient>, C
 							id2 = buf.getShort() & 0xffff;
 						} else {
 							if (general().packetHandlerDebug()) {
-								_log.warning("Client: " + client.toString() + " sent a 0xd0 without the second opcode.");
+								LOG.warn("Client: {} sent a 0xd0 without the second opcode.", client);
 							}
 							break;
 						}
@@ -307,7 +577,7 @@ public final class L2GamePacketHandler implements PacketHandler<L2GameClient>, C
 							id_2 = buf.getShort() & 0xffff;
 						} else {
 							if (general().packetHandlerDebug()) {
-								_log.warning("Client: " + client.toString() + " sent a 0x4a without the second opcode.");
+								LOG.warn("Client: {} sent a 0x4a without the second opcode.", client);
 							}
 							break;
 						}
@@ -671,7 +941,7 @@ public final class L2GamePacketHandler implements PacketHandler<L2GameClient>, C
 							id2 = buf.getShort() & 0xffff;
 						} else {
 							if (general().packetHandlerDebug()) {
-								_log.warning("Client: " + client.toString() + " sent a 0xd0 without the second opcode.");
+								LOG.warn("Client: {} sent a 0xd0 without the second opcode.", client);
 							}
 							break;
 						}
@@ -927,7 +1197,7 @@ public final class L2GamePacketHandler implements PacketHandler<L2GameClient>, C
 								if (buf.remaining() >= 4) {
 									id3 = buf.getInt();
 								} else {
-									_log.warning("Client: " + client.toString() + " sent a 0xd0:0x51 without the third opcode.");
+									LOG.warn("Client: {} sent a 0xd0:0x51 without the third opcode.", client);
 									break;
 								}
 								switch (id3) {
@@ -1131,10 +1401,10 @@ public final class L2GamePacketHandler implements PacketHandler<L2GameClient>, C
 		}
 		
 		int size = buf.remaining();
-		_log.warning("Unknown Packet: 0x" + Integer.toHexString(opcode) + " on State: " + state.name() + " Client: " + client.toString());
+		LOG.warn("Unknown Packet: 0x{} on State: {} Client: {}", Integer.toHexString(opcode), state.name(), client.toString());
 		byte[] array = new byte[size];
 		buf.get(array);
-		_log.warning(Util.printData(array, size));
+		LOG.warn(Util.printData(array, size));
 	}
 	
 	private void printDebugDoubleOpcode(int opcode, int id2, ByteBuffer buf, GameClientState state, L2GameClient client) {
@@ -1144,10 +1414,10 @@ public final class L2GamePacketHandler implements PacketHandler<L2GameClient>, C
 		}
 		
 		int size = buf.remaining();
-		_log.warning("Unknown Packet: 0x" + Integer.toHexString(opcode) + ":0x" + Integer.toHexString(id2) + " on State: " + state.name() + " Client: " + client.toString());
+		LOG.warn("Unknown Packet: 0x{}:0x{} on State: {} Client: {}", Integer.toHexString(opcode), Integer.toHexString(id2), state.name(), client.toString());
 		byte[] array = new byte[size];
 		buf.get(array);
-		_log.warning(Util.printData(array, size));
+		LOG.warn(Util.printData(array, size));
 	}
 	
 	// impl

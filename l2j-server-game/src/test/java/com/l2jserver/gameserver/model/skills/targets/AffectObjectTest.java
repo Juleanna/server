@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -28,6 +28,7 @@ import static com.l2jserver.gameserver.model.skills.targets.AffectObjectStaticIm
 import static com.l2jserver.gameserver.model.skills.targets.AffectObjectStaticImpl.OBJECT_DEAD_NPC_BODY;
 import static com.l2jserver.gameserver.model.skills.targets.AffectObjectStaticImpl.UNDEAD_REAL_ENEMY;
 import static com.l2jserver.gameserver.model.skills.targets.AffectObjectStaticImpl.WYVERN_OBJECT;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -41,6 +42,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.actor.L2Playable;
 
 /**
  * Affect Object test.
@@ -58,6 +60,8 @@ class AffectObjectTest {
 	private L2Character creature;
 	@Mock
 	private L2Npc npc;
+	@Mock
+	private L2Playable playable;
 	
 	@Test
 	@DisplayName("Test affect object ALL.")
@@ -130,16 +134,25 @@ class AffectObjectTest {
 	}
 	
 	@Test
-	@DisplayName("Test affect object INVISIBLE, when object is visible.")
-	void testAffectObjectInvisibleVisibleObject() {
-		when(object.isInvisible()).thenReturn(false);
+	@DisplayName("Test affect object INVISIBLE, when object is visible for caster.")
+	void testInvisibleShouldNotAffectObjectsVisibleByCaster() {
+		when(object.isVisibleFor(caster)).thenReturn(true);
 		
 		assertFalse(INVISIBLE.affectObject(caster, object));
 	}
 	
 	@Test
+	@DisplayName("Test affect object INVISIBLE, when object is invisible for caster.")
+	void testInvisibleShouldAffectObjectsNotVisibleForCaster() {
+		when(object.isVisibleFor(caster)).thenReturn(false);
+		
+		assertTrue(INVISIBLE.affectObject(caster, object));
+	}
+	
+	@Test
 	@DisplayName("Test affect object INVISIBLE, when object is invisible.")
 	void testAffectObjectInvisibleInvisibleObject() {
+		when(object.isVisibleFor(caster)).thenReturn(true);
 		when(object.isInvisible()).thenReturn(true);
 		
 		assertTrue(INVISIBLE.affectObject(caster, object));
@@ -185,6 +198,12 @@ class AffectObjectTest {
 	}
 	
 	@Test
+	@DisplayName("Test affect object NOT_FRIEND, when caster is npc and target is playable.")
+	void testNotFriendAffectsPlayableWhenCastByNpc() {
+		assertThat(NOT_FRIEND.affectObject(npc, playable)).isTrue();
+	}
+	
+	@Test
 	@DisplayName("Test affect object OBJECT_DEAD_NPC_BODY, when target is not NPC.")
 	void testAffectObjectObjectDeadNpcBodyNotNpc() {
 		when(object.isNpc()).thenReturn(false);
@@ -194,7 +213,7 @@ class AffectObjectTest {
 	
 	@Test
 	@DisplayName("Test affect object OBJECT_DEAD_NPC_BODY, when target is not NPC.")
-	void test_affect_object_object_dead_npc_body_not_dead() {
+	void testAffectObjectObjectDeadNpcBodyNotDead() {
 		when(npc.isNpc()).thenReturn(true);
 		when(npc.isDead()).thenReturn(false);
 		

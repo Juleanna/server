@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,7 +21,8 @@ package com.l2jserver.gameserver.model.actor.knownlist;
 import static com.l2jserver.gameserver.config.Configuration.general;
 import static com.l2jserver.gameserver.config.Configuration.npc;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.model.L2Object;
@@ -29,7 +30,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2GuardInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 
 public class GuardKnownList extends AttackableKnownList {
-	private static final Logger _log = Logger.getLogger(GuardKnownList.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(GuardKnownList.class);
 	
 	public GuardKnownList(L2GuardInstance activeChar) {
 		super(activeChar);
@@ -45,7 +46,7 @@ public class GuardKnownList extends AttackableKnownList {
 			// Check if the object added is a L2PcInstance that owns Karma
 			if (object.getActingPlayer().getKarma() > 0) {
 				if (general().debug()) {
-					_log.fine(getActiveChar().getObjectId() + ": PK " + object.getObjectId() + " entered scan range");
+					LOG.debug("{}: PK {} entered scan range", getActiveChar().getObjectId(), object.getObjectId());
 				}
 				
 				// Set the L2GuardInstance Intention to AI_INTENTION_ACTIVE
@@ -57,7 +58,7 @@ public class GuardKnownList extends AttackableKnownList {
 			// Check if the object added is an aggressive L2MonsterInstance
 			if (((L2MonsterInstance) object).isAggressive()) {
 				if (general().debug()) {
-					_log.fine(getActiveChar().getObjectId() + ": Aggressive mob " + object.getObjectId() + " entered scan range");
+					LOG.debug("{}: Aggressive mob {} entered scan range", getActiveChar().getObjectId(), object.getObjectId());
 				}
 				
 				// Set the L2GuardInstance Intention to AI_INTENTION_ACTIVE

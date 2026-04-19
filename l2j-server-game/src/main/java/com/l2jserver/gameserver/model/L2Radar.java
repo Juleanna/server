@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,67 +18,67 @@
  */
 package com.l2jserver.gameserver.model;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import static com.l2jserver.gameserver.network.serverpackets.RadarControl.RadarAction.ADD;
+import static com.l2jserver.gameserver.network.serverpackets.RadarControl.RadarAction.DELETE;
+import static com.l2jserver.gameserver.network.serverpackets.RadarControl.RadarAction.DELETE_ALL;
+import static com.l2jserver.gameserver.network.serverpackets.RadarControl.RadarType.FLAG_1;
+import static com.l2jserver.gameserver.network.serverpackets.RadarControl.RadarType.FLAG_2;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.RadarControl;
 
 /**
+ * Radar.
  * @author dalrond
+ * @author Zoey76
  */
 public final class L2Radar {
 	private final L2PcInstance _player;
-	private final List<RadarMarker> _markers = new CopyOnWriteArrayList<>();
+	private final Set<RadarMarker> _markers = ConcurrentHashMap.newKeySet();
 	
 	public L2Radar(L2PcInstance player) {
 		_player = player;
 	}
 	
-	// Add a marker to player's radar
-	public void addMarker(int x, int y, int z) {
-		RadarMarker newMarker = new RadarMarker(x, y, z);
-		
-		_markers.add(newMarker);
-		_player.sendPacket(new RadarControl(2, 2, x, y, z));
-		_player.sendPacket(new RadarControl(0, 1, x, y, z));
+	public void showRadar(int x, int y, int z, int type) {
+		_markers.add(new RadarMarker(x, y, z));
+		_player.sendPacket(new RadarControl(DELETE_ALL, FLAG_2, x, y, z));
+		_player.sendPacket(new RadarControl(ADD, FLAG_1, x, y, z));
 	}
 	
-	// Remove a marker from player's radar
-	public void removeMarker(int x, int y, int z) {
-		RadarMarker newMarker = new RadarMarker(x, y, z);
-		
-		_markers.remove(newMarker);
-		_player.sendPacket(new RadarControl(1, 1, x, y, z));
+	public void deleteRadar(int x, int y, int z, int type) {
+		_markers.remove(new RadarMarker(x, y, z));
+		_player.sendPacket(new RadarControl(DELETE, FLAG_1, x, y, z));
 	}
 	
-	public void removeAllMarkers() {
-		for (RadarMarker tempMarker : _markers) {
-			_player.sendPacket(new RadarControl(2, 2, tempMarker._x, tempMarker._y, tempMarker._z));
+	public void deleteAllRadar(int type) {
+		for (var r : _markers) {
+			_player.sendPacket(new RadarControl(DELETE_ALL, FLAG_2, r._x, r._y, r._z));
 		}
-		
 		_markers.clear();
 	}
 	
 	public void loadMarkers() {
-		_player.sendPacket(new RadarControl(2, 2, _player.getX(), _player.getY(), _player.getZ()));
-		for (RadarMarker tempMarker : _markers) {
-			_player.sendPacket(new RadarControl(0, 1, tempMarker._x, tempMarker._y, tempMarker._z));
+		_player.sendPacket(new RadarControl(DELETE_ALL, FLAG_2, _player.getX(), _player.getY(), _player.getZ()));
+		for (var r : _markers) {
+			_player.sendPacket(new RadarControl(ADD, FLAG_1, r._x, r._y, r._z));
 		}
 	}
 	
-	public static class RadarMarker {
-		// Simple class to model radar points.
-		public int _type, _x, _y, _z;
+	static class RadarMarker {
+		int _type, _x, _y, _z;
 		
-		public RadarMarker(int type, int x, int y, int z) {
+		RadarMarker(int type, int x, int y, int z) {
 			_type = type;
 			_x = x;
 			_y = y;
 			_z = z;
 		}
 		
-		public RadarMarker(int x, int y, int z) {
+		RadarMarker(int x, int y, int z) {
 			_type = 1;
 			_x = x;
 			_y = y;

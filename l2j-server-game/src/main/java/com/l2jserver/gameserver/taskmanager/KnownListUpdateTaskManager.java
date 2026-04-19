@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,8 +24,9 @@ import static com.l2jserver.gameserver.config.Configuration.npc;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.L2Object;
@@ -36,16 +37,16 @@ import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2GuardInstance;
 
 public class KnownListUpdateTaskManager {
-	protected static final Logger _log = Logger.getLogger(KnownListUpdateTaskManager.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(KnownListUpdateTaskManager.class);
 	
 	private static final int FULL_UPDATE_TIMER = 1;
-	public static boolean updatePass = true;
+	private static boolean updatePass = true;
 	
-	public static int _fullUpdateTimer = FULL_UPDATE_TIMER;
+	private static int _fullUpdateTimer = FULL_UPDATE_TIMER;
 	
-	protected static final Set<L2WorldRegion> FAILED_REGIONS = ConcurrentHashMap.newKeySet(1);
+	private static final Set<L2WorldRegion> FAILED_REGIONS = ConcurrentHashMap.newKeySet(1);
 	
-	protected KnownListUpdateTaskManager() {
+	private KnownListUpdateTaskManager() {
 		ThreadPoolManager.getInstance().scheduleAiAtFixedRate(new KnownListUpdate(), 1000, general().getKnownListUpdateInterval());
 	}
 	
@@ -71,7 +72,7 @@ public class KnownListUpdateTaskManager {
 								FAILED_REGIONS.remove(r); // if all ok, remove
 							}
 						} catch (Exception e) {
-							_log.log(Level.WARNING, "KnownListUpdateTaskManager: updateRegion(" + _fullUpdateTimer + "," + updatePass + ") failed for region " + r.getName() + ". Full update scheduled. " + e.getMessage(), e);
+							LOG.warn("updateRegion({},{}) failed for region {}. Full update scheduled. {}", _fullUpdateTimer, updatePass, r.getName(), e.getMessage(), e);
 							FAILED_REGIONS.add(r);
 						}
 					}
@@ -84,12 +85,12 @@ public class KnownListUpdateTaskManager {
 					_fullUpdateTimer = FULL_UPDATE_TIMER;
 				}
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "", e);
+				LOG.warn(e.getMessage(), e);
 			}
 		}
 	}
 	
-	public void updateRegion(L2WorldRegion region, boolean fullUpdate, boolean forgetObjects) {
+	private void updateRegion(L2WorldRegion region, boolean fullUpdate, boolean forgetObjects) {
 		Collection<L2Object> vObj = region.getVisibleObjects().values();
 		for (L2Object object : vObj) // and for all members in region
 		{

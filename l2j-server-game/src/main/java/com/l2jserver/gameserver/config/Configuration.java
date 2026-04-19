@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -21,9 +21,6 @@ package com.l2jserver.gameserver.config;
 import java.nio.file.Path;
 
 import org.aeonbits.owner.ConfigFactory;
-
-import com.l2jserver.gameserver.GameServer;
-import com.l2jserver.gameserver.config.PlayerPanelConfig;
 
 /**
  * Configuration.
@@ -99,13 +96,11 @@ public class Configuration {
 	private static final TeleporterServiceConfiguration teleporterService = ConfigFactory.create(TeleporterServiceConfiguration.class);
 	
 	private static final DiscordConfiguration discord = ConfigFactory.create(DiscordConfiguration.class);
-	
-	private static final LuckyPigConfig LuckyPig = ConfigFactory.create(LuckyPigConfig.class);
 
-	private static final PlayerPanelConfig PlayerPanel = ConfigFactory.create(PlayerPanelConfig.class);
+	// --- Custom modules ---
+	private static final PlayerPanelConfig playerPanel = ConfigFactory.create(PlayerPanelConfig.class);
+	private static final LuckyPigConfig luckyPig = ConfigFactory.create(LuckyPigConfig.class);
 	
-	
-
 	private Configuration() {
 		// Do nothing.
 	}
@@ -230,6 +225,14 @@ public class Configuration {
 		return teleporterService;
 	}
 	
+	public static PlayerPanelConfig PlayerPanel() {
+		return playerPanel;
+	}
+
+	public static LuckyPigConfig LuckyPig() {
+		return luckyPig;
+	}
+
 	public static DiscordConfiguration discord() {
 		return discord;
 	}
@@ -241,16 +244,7 @@ public class Configuration {
 	public static String getCustomSubpath(String filename) {
 		return CUSTOM_SUBPATH + filename;
 	}
-
-	public static LuckyPigConfig LuckyPig() {
-		return LuckyPig;
-	}
-
-	public static PlayerPanelConfig PlayerPanel() {
-    	return PlayerPanel;
-	}
-
-
+	
 	/**
 	 * Returns either the custom or default path of the config file.<br>
 	 * When the L2J_HOME variable is defined, the custom path to the config file is returned. If not, the default path to the config file is returned.
@@ -258,11 +252,10 @@ public class Configuration {
 	 * @return either the custom or default path to the config file
 	 */
 	public static Path getCustomOrDefaultPath(String filename) {
-		String l2jHome = GameServer.getL2jHomeVariable();
+		var l2jHome = server().getL2jHome();
 		if (l2jHome == null) {
 			return Path.of(getDefaultPath(filename));
 		}
-		
 		return Path.of(l2jHome, getCustomSubpath(filename));
 	}
 }

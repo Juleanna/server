@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -25,8 +25,9 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.Shutdown;
 import com.l2jserver.gameserver.config.Configuration;
@@ -36,7 +37,7 @@ import com.l2jserver.gameserver.config.Configuration;
  * @author -Nemesiss-
  */
 public class DeadLockDetector extends Thread {
-	private static final Logger _log = Logger.getLogger(DeadLockDetector.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(DeadLockDetector.class);
 	
 	private final ThreadMXBean tmx;
 	
@@ -91,7 +92,7 @@ public class DeadLockDetector extends Thread {
 							info.append(Configuration.EOL);
 						}
 					}
-					_log.warning(info.toString());
+					LOG.warn(info.toString());
 					
 					if (general().restartOnDeadlock()) {
 						Broadcast.toAllOnlinePlayers("Server has stability issues - restarting now.");
@@ -101,7 +102,7 @@ public class DeadLockDetector extends Thread {
 				}
 				Thread.sleep(general().getDeadLockCheckInterval());
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "DeadLockDetector: ", e);
+				LOG.warn(e.getMessage(), e);
 			}
 		}
 	}

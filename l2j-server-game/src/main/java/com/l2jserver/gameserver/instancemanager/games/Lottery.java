@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,8 +21,9 @@ package com.l2jserver.gameserver.instancemanager.games;
 import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.commons.util.Rnd;
@@ -33,30 +34,23 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.util.Broadcast;
 
 public class Lottery {
+	protected static final Logger LOG = LoggerFactory.getLogger(Lottery.class);
 	
 	public static final long SECOND = 1000;
-	
 	public static final long MINUTE = 60000;
 	
-	protected static final Logger _log = Logger.getLogger(Lottery.class.getName());
-	
 	private static final String INSERT_LOTTERY = "INSERT INTO games(id, idnr, enddate, prize, newprize) VALUES (?, ?, ?, ?, ?)";
-	
 	private static final String UPDATE_PRICE = "UPDATE games SET prize=?, newprize=? WHERE id = 1 AND idnr = ?";
-	
 	private static final String UPDATE_LOTTERY = "UPDATE games SET finished=1, prize=?, newprize=?, number1=?, number2=?, prize1=?, prize2=?, prize3=? WHERE id=1 AND idnr=?";
-	
 	private static final String SELECT_LAST_LOTTERY = "SELECT idnr, prize, newprize, enddate, finished FROM games WHERE id = 1 ORDER BY idnr DESC LIMIT 1";
-	
 	private static final String SELECT_LOTTERY_ITEM = "SELECT enchant_level, custom_type2 FROM items WHERE item_id = 4442 AND custom_type1 = ?";
-	
 	private static final String SELECT_LOTTERY_TICKET = "SELECT number1, number2, prize1, prize2, prize3 FROM games WHERE id = 1 and idnr = ?";
 	
-	protected int _number;
-	protected long _prize;
-	protected boolean _isSellingTickets;
-	protected boolean _isStarted;
-	protected long _enddate;
+	private int _number;
+	private long _prize;
+	private boolean _isSellingTickets;
+	private boolean _isStarted;
+	private long _enddate;
 	
 	protected Lottery() {
 		_number = 1;
@@ -66,7 +60,7 @@ public class Lottery {
 		_enddate = System.currentTimeMillis();
 		
 		if (general().allowLottery()) {
-			(new startLottery()).run();
+			(new StartLottery()).run();
 		}
 	}
 	
@@ -95,7 +89,7 @@ public class Lottery {
 			ps.setInt(3, getId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Lottery: Could not increase current lottery prize: " + e.getMessage(), e);
+			LOG.warn("Could not increase current lottery prize: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -107,8 +101,8 @@ public class Lottery {
 		return _isStarted;
 	}
 	
-	private class startLottery implements Runnable {
-		protected startLottery() {
+	private class StartLottery implements Runnable {
+		protected StartLottery() {
 			// Do nothing
 		}
 		
@@ -129,28 +123,28 @@ public class Lottery {
 						_enddate = rs.getLong("enddate");
 						
 						if (_enddate <= (System.currentTimeMillis() + (2 * MINUTE))) {
-							(new finishLottery()).run();
+							(new FinishLottery()).run();
 							return;
 						}
 						
 						if (_enddate > System.currentTimeMillis()) {
 							_isStarted = true;
-							ThreadPoolManager.getInstance().scheduleGeneral(new finishLottery(), _enddate - System.currentTimeMillis());
+							ThreadPoolManager.getInstance().scheduleGeneral(new FinishLottery(), _enddate - System.currentTimeMillis());
 							
 							if (_enddate > (System.currentTimeMillis() + (12 * MINUTE))) {
 								_isSellingTickets = true;
-								ThreadPoolManager.getInstance().scheduleGeneral(new stopSellingTickets(), _enddate - System.currentTimeMillis() - (10 * MINUTE));
+								ThreadPoolManager.getInstance().scheduleGeneral(new StopSellingTickets(), _enddate - System.currentTimeMillis() - (10 * MINUTE));
 							}
 							return;
 						}
 					}
 				}
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Lottery: Could not restore lottery data: " + e.getMessage(), e);
+				LOG.warn("Could not restore lottery data: {}", e.getMessage(), e);
 			}
 			
 			if (general().debug()) {
-				_log.info("Lottery: Starting ticket sell for lottery #" + getId() + ".");
+				LOG.info("Starting ticket sell for lottery #{}.", getId());
 			}
 			_isSellingTickets = true;
 			_isStarted = true;
@@ -171,8 +165,8 @@ public class Lottery {
 				_enddate = finishtime.getTimeInMillis();
 			}
 			
-			ThreadPoolManager.getInstance().scheduleGeneral(new stopSellingTickets(), _enddate - System.currentTimeMillis() - (10 * MINUTE));
-			ThreadPoolManager.getInstance().scheduleGeneral(new finishLottery(), _enddate - System.currentTimeMillis());
+			ThreadPoolManager.getInstance().scheduleGeneral(new StopSellingTickets(), _enddate - System.currentTimeMillis() - (10 * MINUTE));
+			ThreadPoolManager.getInstance().scheduleGeneral(new FinishLottery(), _enddate - System.currentTimeMillis());
 			
 			try (var con = ConnectionFactory.getInstance().getConnection();
 				var ps = con.prepareStatement(INSERT_LOTTERY)) {
@@ -183,20 +177,20 @@ public class Lottery {
 				ps.setLong(5, getPrize());
 				ps.execute();
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Lottery: Could not store new lottery data: " + e.getMessage(), e);
+				LOG.warn("Could not store new lottery data: {}", e.getMessage(), e);
 			}
 		}
 	}
 	
-	private class stopSellingTickets implements Runnable {
-		protected stopSellingTickets() {
+	private class StopSellingTickets implements Runnable {
+		protected StopSellingTickets() {
 			// Do nothing
 		}
 		
 		@Override
 		public void run() {
 			if (general().debug()) {
-				_log.info("Lottery: Stopping ticket sell for lottery #" + getId() + ".");
+				LOG.info("Stopping ticket sell for lottery #{}.", getId());
 			}
 			_isSellingTickets = false;
 			
@@ -204,15 +198,15 @@ public class Lottery {
 		}
 	}
 	
-	private class finishLottery implements Runnable {
-		protected finishLottery() {
+	private class FinishLottery implements Runnable {
+		protected FinishLottery() {
 			// Do nothing
 		}
 		
 		@Override
 		public void run() {
 			if (general().debug()) {
-				_log.info("Lottery: Ending lottery #" + getId() + ".");
+				LOG.info("Ending lottery #{}.", getId());
 			}
 			
 			int[] luckynums = new int[5];
@@ -237,7 +231,7 @@ public class Lottery {
 			}
 			
 			if (general().debug()) {
-				_log.info("Lottery: The lucky numbers are " + luckynums[0] + ", " + luckynums[1] + ", " + luckynums[2] + ", " + luckynums[3] + ", " + luckynums[4] + ".");
+				LOG.info("The lucky numbers are {}, {}, {}, {}, {}.", luckynums[0], luckynums[1], luckynums[2], luckynums[3], luckynums[4]);
 			}
 			
 			int enchant = 0;
@@ -245,14 +239,14 @@ public class Lottery {
 			
 			for (int i = 0; i < 5; i++) {
 				if (luckynums[i] < 17) {
-					enchant += Math.pow(2, luckynums[i] - 1);
+					enchant += (int) Math.pow(2, luckynums[i] - 1);
 				} else {
-					type2 += Math.pow(2, luckynums[i] - 17);
+					type2 += (int) Math.pow(2, luckynums[i] - 17);
 				}
 			}
 			
 			if (general().debug()) {
-				_log.info("Lottery: Encoded lucky numbers are " + enchant + ", " + type2);
+				LOG.info("Encoded lucky numbers are {}, {}", enchant, type2);
 			}
 			
 			int count1 = 0;
@@ -303,7 +297,7 @@ public class Lottery {
 					}
 				}
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Lottery: Could restore lottery data: " + e.getMessage(), e);
+				LOG.warn("Could not restore lottery data: {}", e.getMessage(), e);
 			}
 			
 			long prize4 = count4 * general().getLottery2and1NumberPrize();
@@ -324,15 +318,15 @@ public class Lottery {
 			}
 			
 			if (general().debug()) {
-				_log.info("Lottery: " + count1 + " players with all FIVE numbers each win " + prize1 + ".");
-				_log.info("Lottery: " + count2 + " players with FOUR numbers each win " + prize2 + ".");
-				_log.info("Lottery: " + count3 + " players with THREE numbers each win " + prize3 + ".");
-				_log.info("Lottery: " + count4 + " players with ONE or TWO numbers each win " + prize4 + ".");
+				LOG.info("{} players with all FIVE numbers each win {}.", count1, prize1);
+				LOG.info("{} players with FOUR numbers each win {}.", count2, prize2);
+				LOG.info("{} players with THREE numbers each win {}.", count3, prize3);
+				LOG.info("{} players with ONE or TWO numbers each win {}.", count4, prize4);
 			}
 			
 			long newprize = getPrize() - (prize1 + prize2 + prize3 + prize4);
 			if (general().debug()) {
-				_log.info("Lottery: Jackpot for next lottery is " + newprize + ".");
+				LOG.info("Jackpot for next lottery is {}.", newprize);
 			}
 			
 			SystemMessage sm;
@@ -363,10 +357,10 @@ public class Lottery {
 				ps.setInt(8, getId());
 				ps.execute();
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Lottery: Could not store finished lottery data: " + e.getMessage(), e);
+				LOG.warn("Could not store finished lottery data: {}", e.getMessage(), e);
 			}
 			
-			ThreadPoolManager.getInstance().scheduleGeneral(new startLottery(), MINUTE);
+			ThreadPoolManager.getInstance().scheduleGeneral(new StartLottery(), MINUTE);
 			_number++;
 			
 			_isStarted = false;
@@ -405,7 +399,7 @@ public class Lottery {
 		return checkTicket(item.getCustomType1(), item.getEnchantLevel(), item.getCustomType2());
 	}
 	
-	public long[] checkTicket(int id, int enchant, int type2) {
+	private long[] checkTicket(int id, int enchant, int type2) {
 		long[] res = {
 			0,
 			0
@@ -458,12 +452,12 @@ public class Lottery {
 					}
 					
 					if (general().debug()) {
-						_log.warning("count: " + count + ", id: " + id + ", enchant: " + enchant + ", type2: " + type2);
+						LOG.warn("count: {}, id: {}, enchant: {}, type2: {}", count, id, enchant, type2);
 					}
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Lottery: Could not check lottery ticket #" + id + ": " + e.getMessage(), e);
+			LOG.warn("Could not check lottery ticket #{}: {}", id, e.getMessage(), e);
 		}
 		return res;
 	}

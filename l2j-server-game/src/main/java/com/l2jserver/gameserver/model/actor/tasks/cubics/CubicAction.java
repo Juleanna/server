@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,8 +22,9 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.model.L2Object;
@@ -40,7 +41,8 @@ import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
  * @author Zoey76
  */
 public final class CubicAction implements Runnable {
-	private static final Logger _log = Logger.getLogger(CubicAction.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(CubicAction.class);
+	
 	private final L2CubicInstance _cubic;
 	private final AtomicInteger _currentCount = new AtomicInteger();
 	private final int _chance;
@@ -120,8 +122,8 @@ public final class CubicAction implements Runnable {
 				L2Character target = _cubic.getTarget();
 				if ((target != null) && !target.isDead()) {
 					if (general().debug()) {
-						_log.info("L2CubicInstance: Action.run();");
-						_log.info("Cubic ID: " + _cubic.getId() + " Target: " + target.getName() + " distance: " + target.calculateDistance(_cubic.getOwner(), true, false));
+						LOG.info("Action.run();");
+						LOG.info("Cubic ID: {} Target: {} distance: {}", _cubic.getId(), target.getName(), target.calculateDistance(_cubic.getOwner(), true, false));
 					}
 					
 					_cubic.getOwner().broadcastPacket(new MagicSkillUse(_cubic.getOwner(), target, skill.getId(), skill.getLevel(), 0, 0));
@@ -151,7 +153,7 @@ public final class CubicAction implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "", e);
+			LOG.error(e.getMessage(), e);
 		}
 	}
 }

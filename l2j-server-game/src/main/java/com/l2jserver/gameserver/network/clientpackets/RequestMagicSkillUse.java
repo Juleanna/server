@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.character;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
@@ -29,6 +32,8 @@ import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 
 public final class RequestMagicSkillUse extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestMagicSkillUse.class);
+	
 	private static final String _C__39_REQUESTMAGICSKILLUSE = "[C] 39 RequestMagicSkillUse";
 	
 	private int _magicId;
@@ -70,7 +75,7 @@ public final class RequestMagicSkillUse extends L2GameClientPacket {
 				skill = activeChar.getTransformSkill(_magicId);
 				if (skill == null) {
 					activeChar.sendPacket(ActionFailed.STATIC_PACKET);
-					_log.warning("Skill Id " + _magicId + " not found in player : " + activeChar);
+					LOG.warn("Skill Id {} not found in player : {}", _magicId, activeChar);
 					return;
 				}
 			}

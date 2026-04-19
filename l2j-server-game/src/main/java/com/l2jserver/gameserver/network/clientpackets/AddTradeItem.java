@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.TradeItem;
 import com.l2jserver.gameserver.model.TradeList;
@@ -30,6 +33,8 @@ import com.l2jserver.gameserver.network.serverpackets.TradeOwnAdd;
  * @since 2005/03/27 15:29:29
  */
 public final class AddTradeItem extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(AddTradeItem.class);
+	
 	private static final String _C__1B_ADDTRADEITEM = "[C] 1B AddTradeItem";
 	
 	private int _tradeId;
@@ -52,7 +57,7 @@ public final class AddTradeItem extends L2GameClientPacket {
 		
 		final TradeList trade = player.getActiveTradeList();
 		if (trade == null) {
-			_log.warning("Character: " + player.getName() + " requested item:" + _objectId + " add without active tradelist:" + _tradeId);
+			LOG.warn("Character: {} requested item: {} add without active tradelist: {}", player.getName(), _objectId, _tradeId);
 			return;
 		}
 		
@@ -60,7 +65,7 @@ public final class AddTradeItem extends L2GameClientPacket {
 		if ((partner == null) || (L2World.getInstance().getPlayer(partner.getObjectId()) == null) || (partner.getActiveTradeList() == null)) {
 			// Trade partner not found, cancel trade
 			if (partner != null) {
-				_log.warning("Character:" + player.getName() + " requested invalid trade object: " + _objectId);
+				LOG.warn("Character: {} requested invalid trade object: {}", player.getName(), _objectId);
 			}
 			player.sendPacket(SystemMessageId.TARGET_IS_NOT_FOUND_IN_THE_GAME);
 			player.cancelActiveTrade();

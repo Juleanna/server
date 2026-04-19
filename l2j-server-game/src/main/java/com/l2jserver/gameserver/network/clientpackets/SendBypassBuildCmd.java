@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.xml.impl.AdminData;
 import com.l2jserver.gameserver.handler.AdminCommandHandler;
 import com.l2jserver.gameserver.handler.IAdminCommandHandler;
@@ -31,6 +34,7 @@ import com.l2jserver.gameserver.util.GMAudit;
  * @since 2005/03/27 15:29:29
  */
 public final class SendBypassBuildCmd extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(SendBypassBuildCmd.class);
 	
 	private static final String _C__74_SENDBYPASSBUILDCMD = "[C] 74 SendBypassBuildCmd";
 	
@@ -61,13 +65,13 @@ public final class SendBypassBuildCmd extends L2GameClientPacket {
 				activeChar.sendMessage("The command " + command.substring(6) + " does not exists!");
 			}
 			
-			_log.warning("No handler registered for admin command '" + command + "'");
+			LOG.warn("No handler registered for admin command '{}'", command);
 			return;
 		}
 		
 		if (!AdminData.getInstance().hasAccess(command, activeChar.getAccessLevel())) {
 			activeChar.sendMessage("You don't have the access right to use this command!");
-			_log.warning("Character " + activeChar.getName() + " tried to use admin command " + command + ", but have no access to it!");
+			LOG.warn("Character {} tried to use admin command {}, but have no access to it!", activeChar.getName(), command);
 			return;
 		}
 		

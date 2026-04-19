@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,9 +21,8 @@ package com.l2jserver.gameserver.network.clientpackets;
 import static com.l2jserver.gameserver.config.Configuration.general;
 import static com.l2jserver.gameserver.config.Configuration.server;
 
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.network.serverpackets.KeyPacket;
 import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
@@ -32,8 +31,10 @@ import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
  * @since 2005/04/02 10:43:04
  */
 public final class ProtocolVersion extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(ProtocolVersion.class);
+	private static final Logger LOG_ACCOUNTING = LoggerFactory.getLogger("accounting");
+	
 	private static final String _C__0E_PROTOCOLVERSION = "[C] 0E ProtocolVersion";
-	private static final Logger _logAccounting = Logger.getLogger("accounting");
 	
 	private int _version;
 	
@@ -47,23 +48,18 @@ public final class ProtocolVersion extends L2GameClientPacket {
 		// this packet is never encrypted
 		if (_version == -2) {
 			if (general().debug()) {
-				_log.info("Ping received");
+				LOG.info("Ping received");
 			}
 			// this is just a ping attempt from the new C2 client
 			getClient().close((L2GameServerPacket) null);
 		} else if (!server().getAllowedProtocolRevisions().contains(_version)) {
-			LogRecord record = new LogRecord(Level.WARNING, "Wrong protocol");
-			record.setParameters(new Object[] {
-				_version,
-				getClient()
-			});
-			_logAccounting.log(record);
+			LOG_ACCOUNTING.warn("Wrong protocol, {}, {}", _version, getClient());
 			KeyPacket pk = new KeyPacket(getClient().enableCrypt(), 0);
 			getClient().setProtocolOk(false);
 			getClient().close(pk);
 		} else {
 			if (general().debug()) {
-				_log.fine("Client Protocol Revision is ok: " + _version);
+				LOG.debug("Client Protocol Revision is ok: {}", _version);
 			}
 			
 			KeyPacket pk = new KeyPacket(getClient().enableCrypt(), 1);

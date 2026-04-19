@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -28,17 +28,17 @@ import org.junit.jupiter.params.provider.MethodSource;
  * @author Zoey76
  * @version 2.6.3.0
  */
-public class PatternConverterTest {
+class PatternConverterTest {
 	
 	private static final PatternConverter CONVERTER = new PatternConverter();
 	
 	@ParameterizedTest
 	@MethodSource("providePatterns")
-	public void convertTest(String pattern, String text, boolean expected) {
+	void convertTest(String pattern, String text, boolean expected) {
 		assertEquals(CONVERTER.convert(null, pattern).matcher(text).matches(), expected);
 	}
 	
-	public static Object[][] providePatterns() {
+	private static Object[][] providePatterns() {
 		return new Object[][] {
 			{
 				"[A-Z][a-z]{3,3}[A-Za-z0-9]*",

@@ -135,7 +135,7 @@ public class PlayerPanelBuffModule {
         }
         
         // Снять деньги
-        player.reduceAdena("Buff", cost, null, true);
+        player.reduceAdena("Buff", cost, player, true);
         
         // Добавить баф
         Skill skill = SkillData.getInstance().getSkill(skillId, getBuffLevel(skillId));
@@ -160,7 +160,7 @@ public class PlayerPanelBuffModule {
             PlayerPanelDAO.logAction(player, "buff_add", "Added buff " + skill.getName(), cost, true);
         } else {
             player.sendMessage("Ошибка при активации бафа!");
-            player.addAdena("BuffRefund", cost, null, true); // Возврат денег
+            player.addAdena("BuffRefund", cost, player, true); // Возврат денег
         }
         
         // Установка кулдауна
@@ -202,7 +202,7 @@ public class PlayerPanelBuffModule {
         }
         
         // Снять деньги
-        player.reduceAdena("BuffRefresh", cost, null, true);
+        player.reduceAdena("BuffRefresh", cost, player, true);
         
         // Добавить все доступные бафы
         String[] availableBuffs = _config.getAvailableBuffs().split(",");
@@ -233,7 +233,7 @@ public class PlayerPanelBuffModule {
             }
         } else {
             player.sendMessage("❌ Не удалось применить ни одного бафа!");
-            player.addAdena("BuffRefreshRefund", cost, null, true); // Возврат денег
+            player.addAdena("BuffRefreshRefund", cost, player, true); // Возврат денег
             return;
         }
         
@@ -266,8 +266,8 @@ public class PlayerPanelBuffModule {
         }
         
         // Снять деньги
-        player.reduceAdena("BuffScheme", cost, null, true);
-        
+        player.reduceAdena("BuffScheme", cost, player, true);
+
         // Применить бафы схемы
         int appliedCount = 0;
         for (int skillId : scheme.getSkillIds()) {
@@ -280,9 +280,18 @@ public class PlayerPanelBuffModule {
                 }
             }
         }
-        
+
+        // Если все skillId схемы отсутствуют в available-списке, игрок иначе
+        // платил полную сумму и получал 0 бафов. Возвращаем адену.
+        if (appliedCount == 0) {
+            player.addAdena("BuffSchemeRefund", cost, player, true);
+            player.sendMessage("Схема '" + scheme.getName() + "' не содержит доступных бафов. Adena возвращена.");
+            PlayerPanelDAO.logAction(player, "buff_scheme", "Refunded scheme " + schemeName + " (0 buffs available)", cost, false);
+            return;
+        }
+
         player.sendMessage("🎯 Схема '" + scheme.getName() + "' применена! Бафов: " + appliedCount);
-        
+
         // Логирование
         PlayerPanelDAO.logAction(player, "buff_scheme", "Applied scheme " + schemeName + ", buffs: " + appliedCount, cost, true);
     }

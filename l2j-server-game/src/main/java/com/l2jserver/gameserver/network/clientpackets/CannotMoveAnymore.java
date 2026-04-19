@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.ai.CtrlEvent;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -28,6 +31,8 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * @since 2005/03/27 15:29:30
  */
 public final class CannotMoveAnymore extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(CannotMoveAnymore.class);
+	
 	private static final String _C__47_STOPMOVE = "[C] 47 CannotMoveAnymore";
 	
 	private int _x;
@@ -51,7 +56,7 @@ public final class CannotMoveAnymore extends L2GameClientPacket {
 		}
 		
 		if (general().debug()) {
-			_log.fine("client: x:" + _x + " y:" + _y + " z:" + _z + " server x:" + player.getX() + " y:" + player.getY() + " z:" + player.getZ());
+			LOG.debug("Client: x:{} y:{} z:{} server x:{} y:{} z:{}", _x, _y, _z, player.getX(), player.getY(), player.getZ());
 		}
 		if (player.getAI() != null) {
 			player.getAI().notifyEvent(CtrlEvent.EVT_ARRIVED_BLOCKED, new Location(_x, _y, _z, _heading));
@@ -63,7 +68,7 @@ public final class CannotMoveAnymore extends L2GameClientPacket {
 		// player.stopMove();
 		//
 		// if (general().debug())
-		// _log.fine("client: x:"+_x+" y:"+_y+" z:"+_z+
+		// LOG.debug("client: x:"+_x+" y:"+_y+" z:"+_z+
 		// " server x:"+player.getX()+" y:"+player.getZ()+" z:"+player.getZ());
 		// StopMove smwl = new StopMove(player);
 		// getClient().getActiveChar().sendPacket(smwl);

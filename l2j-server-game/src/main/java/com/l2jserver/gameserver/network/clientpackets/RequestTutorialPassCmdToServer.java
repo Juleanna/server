@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,7 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerTutorialCmd;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerTutorialCmd;
 
 public class RequestTutorialPassCmdToServer extends L2GameClientPacket {
 	private static final String _C__86_REQUESTTUTORIALPASSCMDTOSERVER = "[C] 86 RequestTutorialPassCmdToServer";
@@ -38,7 +38,7 @@ public class RequestTutorialPassCmdToServer extends L2GameClientPacket {
 		if (player == null) {
 			return;
 		}
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerTutorialCmd(player, _bypass), player);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerTutorialCmd(player, _bypass), player);
 	}
 	
 	@Override

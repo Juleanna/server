@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.network.serverpackets.ExNeedToChangeName;
 
 /**
@@ -25,6 +28,8 @@ import com.l2jserver.gameserver.network.serverpackets.ExNeedToChangeName;
  * @author JIV
  */
 public class RequestExChangeName extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestExChangeName.class);
+	
 	private static final String _C__D0_3B_REQUESTEXCHANGENAME = "[C] D0:3B RequestExChangeName";
 	
 	private String _newName;
@@ -40,7 +45,7 @@ public class RequestExChangeName extends L2GameClientPacket {
 	
 	@Override
 	protected void runImpl() {
-		_log.info("Received " + getType() + " name: " + _newName + " type: " + _type + " CharSlot: " + _charSlot);
+		LOG.info("Received {} name: {} type: {} CharSlot: {}", getType(), _newName, _type, _charSlot);
 		
 	}
 	

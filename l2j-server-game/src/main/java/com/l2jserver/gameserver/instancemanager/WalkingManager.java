@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -40,7 +40,7 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.tasks.npc.walker.ArrivedTask;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcMoveNodeArrived;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcMoveNodeArrived;
 import com.l2jserver.gameserver.model.holders.NpcRoutesHolder;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -340,7 +340,7 @@ public final class WalkingManager implements IXmlReader {
 	public void onArrived(final L2Npc npc) {
 		if (_activeRoutes.containsKey(npc.getObjectId())) {
 			// Notify quest
-			EventDispatcher.getInstance().notifyEventAsync(new OnNpcMoveNodeArrived(npc), npc);
+			EventDispatcher.getInstance().notifyEventAsync(new NpcMoveNodeArrived(npc), npc);
 			
 			final WalkInfo walk = _activeRoutes.get(npc.getObjectId());
 			

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -23,8 +23,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.config.Configuration;
 
@@ -32,7 +33,7 @@ import com.l2jserver.gameserver.config.Configuration;
  * Audits Game Master's actions.
  */
 public class GMAudit {
-	private static final Logger _log = Logger.getLogger(GMAudit.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(GMAudit.class);
 	
 	static {
 		new File("log/GMAudit").mkdirs();
@@ -57,7 +58,7 @@ public class GMAudit {
 		try (FileWriter save = new FileWriter(file, true)) {
 			save.write(date + ">" + gmName + ">" + action + ">" + target + ">" + params + Configuration.EOL);
 		} catch (IOException e) {
-			_log.log(Level.SEVERE, "GMAudit for GM " + gmName + " could not be saved: ", e);
+			LOG.error("GMAudit for GM {} could not be saved: ", gmName, e);
 		}
 	}
 	

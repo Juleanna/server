@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -36,8 +36,8 @@ public final class L2GrandBossInstance extends L2MonsterInstance {
 	private static final int BOSS_MAINTENANCE_INTERVAL = 10000;
 	private boolean _useRaidCurse = true;
 	
-	public L2GrandBossInstance(L2NpcTemplate template) {
-		super(template);
+	public L2GrandBossInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2GrandBossInstance);
 		setIsRaid(true);
 		setLethalable(false);

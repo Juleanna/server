@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -54,8 +54,6 @@ import static com.l2jserver.gameserver.network.serverpackets.ActionFailed.STATIC
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
-import java.util.logging.Level;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +74,6 @@ import com.l2jserver.gameserver.network.serverpackets.ItemList;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 public final class UseItem extends L2GameClientPacket {
-	
 	private static final Logger LOG = LoggerFactory.getLogger(UseItem.class);
 	
 	private static final String _C__19_USEITEM = "[C] 19 UseItem";
@@ -103,7 +100,7 @@ public final class UseItem extends L2GameClientPacket {
 		}
 		
 		if (general().debug()) {
-			LOG.debug("{} uses item with object Id {}.", activeChar.toString(), _objectId);
+			LOG.debug("{} uses item with object Id {}.", activeChar, _objectId);
 		}
 		
 		// Flood protect UseItem
@@ -287,9 +284,9 @@ public final class UseItem extends L2GameClientPacket {
 			final IItemHandler handler = ItemHandler.getInstance().getHandler(etcItem);
 			if (handler == null) {
 				if ((etcItem != null) && (etcItem.getHandlerName() != null)) {
-					_log.log(Level.WARNING, "Unmanaged Item handler: " + etcItem.getHandlerName() + " for Item Id: " + _itemId + "!");
+					LOG.warn("Unmanaged Item handler: {} for Item Id: {}!", etcItem.getHandlerName(), _itemId);
 				} else if (general().debug()) {
-					_log.log(Level.WARNING, "No Item handler registered for Item Id: " + _itemId + "!");
+					LOG.warn("No Item handler registered for Item Id: {}!", _itemId);
 				}
 				return;
 			}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,11 +21,11 @@ package com.l2jserver.gameserver.model.stats;
 import static com.l2jserver.gameserver.config.Configuration.server;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -44,16 +44,16 @@ public enum BaseStats {
 	MEN(new MEN()),
 	NONE(new NONE());
 	
-	private static final Logger _log = Logger.getLogger(BaseStats.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(BaseStats.class);
 	
-	public static final int MAX_STAT_VALUE = 100;
+	private static final int MAX_STAT_VALUE = 100;
 	
-	protected static final double[] STRbonus = new double[MAX_STAT_VALUE];
-	protected static final double[] INTbonus = new double[MAX_STAT_VALUE];
-	protected static final double[] DEXbonus = new double[MAX_STAT_VALUE];
-	protected static final double[] WITbonus = new double[MAX_STAT_VALUE];
-	protected static final double[] CONbonus = new double[MAX_STAT_VALUE];
-	protected static final double[] MENbonus = new double[MAX_STAT_VALUE];
+	private static final double[] STRbonus = new double[MAX_STAT_VALUE];
+	private static final double[] INTbonus = new double[MAX_STAT_VALUE];
+	private static final double[] DEXbonus = new double[MAX_STAT_VALUE];
+	private static final double[] WITbonus = new double[MAX_STAT_VALUE];
+	private static final double[] CONbonus = new double[MAX_STAT_VALUE];
+	private static final double[] MENbonus = new double[MAX_STAT_VALUE];
 	
 	private final BaseStat _stat;
 	
@@ -137,7 +137,7 @@ public enum BaseStats {
 			try {
 				doc = factory.newDocumentBuilder().parse(file);
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "[BaseStats] Could not parse file: " + e.getMessage(), e);
+				LOG.warn("Could not parse file: {}", e.getMessage(), e);
 			}
 			
 			if (doc != null) {
@@ -156,7 +156,7 @@ public enum BaseStats {
 										val = Integer.parseInt(attrs.getNamedItem("value").getNodeValue());
 										bonus = Double.parseDouble(attrs.getNamedItem("bonus").getNodeValue());
 									} catch (Exception e) {
-										_log.severe("[BaseStats] Invalid stats value: " + value.getNodeValue() + ", skipping");
+										LOG.error("Invalid stats value: {}, skipping", value.getNodeValue(), e);
 										continue;
 									}
 									
@@ -173,7 +173,7 @@ public enum BaseStats {
 									} else if ("MEN".equalsIgnoreCase(statName)) {
 										MENbonus[val] = bonus;
 									} else {
-										_log.severe("[BaseStats] Invalid stats name: " + statName + ", skipping");
+										LOG.error("Invalid stats name: {}, skipping", statName);
 									}
 								}
 							}

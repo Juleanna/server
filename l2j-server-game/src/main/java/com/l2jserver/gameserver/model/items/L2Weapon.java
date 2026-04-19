@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,6 +21,9 @@ package com.l2jserver.gameserver.model.items;
 import java.util.List;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -29,7 +32,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.conditions.ConditionGameChance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcSkillSee;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillSee;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.items.type.ItemType1;
 import com.l2jserver.gameserver.model.items.type.ItemType2;
@@ -38,13 +41,14 @@ import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.stats.Formulas;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
-import com.l2jserver.gameserver.util.StringUtil;
 import com.l2jserver.gameserver.util.Util;
 
 /**
  * Weapon template.
  */
 public final class L2Weapon extends L2Item {
+	private static final Logger LOG = LoggerFactory.getLogger(L2Weapon.class);
+	
 	private final WeaponType _type;
 	private final boolean _isMagicWeapon;
 	private final int _rndDam;
@@ -112,8 +116,8 @@ public final class L2Weapon extends L2Item {
 					id = Integer.parseInt(info[0]);
 					level = Integer.parseInt(info[1]);
 				} catch (Exception nfe) {
-					// Incorrect syntax, dont add new skill
-					_log.info(StringUtil.concat("> Couldnt parse ", skill, " in weapon enchant skills! item ", toString()));
+					// Incorrect syntax, don't add new skill
+					LOG.warn("Couldn't parse {} in weapon enchant skills! item {}!", skill, this);
 				}
 				if ((id > 0) && (level > 0)) {
 					_enchant4Skill = new SkillHolder(id, level);
@@ -133,7 +137,7 @@ public final class L2Weapon extends L2Item {
 					level = Integer.parseInt(info[1]);
 				} catch (Exception nfe) {
 					// Incorrect syntax, don't add new skill
-					_log.info(StringUtil.concat("> Couldnt parse ", skill, " in weapon onmagic skills! item ", toString()));
+					LOG.warn("Couldn't parse {} in weapon onmagic skills! item {}!", skill, this);
 				}
 				if ((id > 0) && (level > 0) && (chance > 0)) {
 					_skillsOnMagic = new SkillHolder(id, level);
@@ -154,7 +158,7 @@ public final class L2Weapon extends L2Item {
 					level = Integer.parseInt(info[1]);
 				} catch (Exception nfe) {
 					// Incorrect syntax, don't add new skill
-					_log.info(StringUtil.concat("> Couldnt parse ", skill, " in weapon oncrit skills! item ", toString()));
+					LOG.warn("Couldn't parse {} in weapon oncrit skills! item {}!", skill, this);
 				}
 				if ((id > 0) && (level > 0) && (chance > 0)) {
 					_skillsOnCrit = new SkillHolder(id, level);
@@ -334,7 +338,7 @@ public final class L2Weapon extends L2Item {
 				.filter(Objects::nonNull)
 				.filter(L2Object::isNpc)
 				.filter(npc -> Util.checkIfInRange(1000, npc, caster, false))
-				.forEach(npc -> EventDispatcher.getInstance().notifyEventAsync(new OnNpcSkillSee((L2Npc) npc, caster.getActingPlayer(), onMagicSkill, List.of(target), false), npc));
+				.forEach(npc -> EventDispatcher.getInstance().notifyEventAsync(new NpcSkillSee((L2Npc) npc, caster.getActingPlayer(), onMagicSkill, List.of(target), false), npc));
 		}
 		if (caster.isPlayer()) {
 			SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S1_HAS_BEEN_ACTIVATED);

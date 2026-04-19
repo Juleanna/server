@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,8 +18,6 @@
  */
 package com.l2jserver.gameserver.model.items.enchant;
 
-import java.util.logging.Logger;
-
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.items.L2Item;
@@ -34,7 +32,6 @@ import com.l2jserver.gameserver.util.Util;
  * @author UnAfraid
  */
 public abstract class AbstractEnchantItem {
-	protected static final Logger _log = Logger.getLogger(AbstractEnchantItem.class.getName());
 	
 	private static final ItemType[] ENCHANT_TYPES = new ItemType[] {
 		EtcItemType.ANCIENT_CRYSTAL_ENCHANT_AM,
@@ -106,7 +103,7 @@ public abstract class AbstractEnchantItem {
 	
 	/**
 	 * @param itemToEnchant the item to be enchanted
-	 * @param supportItem
+	 * @param supportItem the support item used when enchanting (can be null)
 	 * @return {@code true} if this support item can be used with the item to be enchanted, {@code false} otherwise
 	 */
 	public boolean isValid(L2ItemInstance itemToEnchant, EnchantSupportItem supportItem) {
@@ -116,14 +113,14 @@ public abstract class AbstractEnchantItem {
 			return false;
 		} else if (!isValidItemType(itemToEnchant.getItem().getType2())) {
 			return false;
-		} else if ((_maxEnchantLevel != 0) && (itemToEnchant.getEnchantLevel() >= _maxEnchantLevel)) {
+		} else if ((_maxEnchantLevel != 0) && (itemToEnchant.getEnchantLevel() > _maxEnchantLevel)) {
 			return false;
 		}
 		return _grade == itemToEnchant.getItem().getItemGradeSPlus();
 	}
 	
 	/**
-	 * @param type2
+	 * @param type2 the type2 of the item to be enchanted
 	 * @return {@code true} if current type2 is valid to be enchanted, {@code false} otherwise
 	 */
 	private boolean isValidItemType(ItemType2 type2) {

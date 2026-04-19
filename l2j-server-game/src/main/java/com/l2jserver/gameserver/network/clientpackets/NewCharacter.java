@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.xml.impl.PlayerTemplateData;
 import com.l2jserver.gameserver.model.base.ClassId;
 import com.l2jserver.gameserver.network.serverpackets.NewCharacterSuccess;
@@ -28,6 +31,8 @@ import com.l2jserver.gameserver.network.serverpackets.NewCharacterSuccess;
  * @author Zoey76
  */
 public final class NewCharacter extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(NewCharacter.class);
+	
 	private static final String _C__13_NEWCHARACTER = "[C] 13 NewCharacter";
 	
 	@Override
@@ -38,7 +43,7 @@ public final class NewCharacter extends L2GameClientPacket {
 	@Override
 	protected void runImpl() {
 		if (general().debug()) {
-			_log.fine(_C__13_NEWCHARACTER);
+			LOG.debug(_C__13_NEWCHARACTER);
 		}
 		
 		final NewCharacterSuccess ct = new NewCharacterSuccess();

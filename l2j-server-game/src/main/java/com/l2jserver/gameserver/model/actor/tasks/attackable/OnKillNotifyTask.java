@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -41,7 +41,7 @@ public final class OnKillNotifyTask implements Runnable {
 	@Override
 	public void run() {
 		if ((_quest != null) && (_attackable != null) && (_killer != null)) {
-			_quest.notifyKill(_attackable, _killer, _isSummon);
+			_quest.onKill(_attackable, _killer, _isSummon);
 		}
 	}
 }

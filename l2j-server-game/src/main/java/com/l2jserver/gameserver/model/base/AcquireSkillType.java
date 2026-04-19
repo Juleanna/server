@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,7 +19,7 @@
 package com.l2jserver.gameserver.model.base;
 
 /**
- * Learning skill types.
+ * Skill Learn types.
  * @author Zoey76
  */
 public enum AcquireSkillType {

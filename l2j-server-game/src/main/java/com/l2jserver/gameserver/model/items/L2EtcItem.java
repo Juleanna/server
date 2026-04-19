@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,18 +21,22 @@ package com.l2jserver.gameserver.model.items;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.L2ExtractableProduct;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.itemcontainer.Inventory;
 import com.l2jserver.gameserver.model.items.type.EtcItemType;
 import com.l2jserver.gameserver.model.items.type.ItemType1;
 import com.l2jserver.gameserver.model.items.type.ItemType2;
-import com.l2jserver.gameserver.util.StringUtil;
 
 /**
  * This class is dedicated to the management of EtcItem.
  */
 public final class L2EtcItem extends L2Item {
+	private static final Logger LOG = LoggerFactory.getLogger(L2EtcItem.class);
+	
 	private String _handler;
 	private EtcItemType _type;
 	private final boolean _isBlessed;
@@ -74,7 +78,7 @@ public final class L2EtcItem extends L2Item {
 				}
 				String[] data = part.split(",");
 				if (data.length != 4) {
-					_log.info(StringUtil.concat("> Couldn't parse ", part, " in capsuled_items! item ", toString()));
+					LOG.warn("Couldn't parse {} in capsuled_items! item {}!", part, this);
 					continue;
 				}
 				int itemId = Integer.parseInt(data[0]);
@@ -82,7 +86,7 @@ public final class L2EtcItem extends L2Item {
 				int max = Integer.parseInt(data[2]);
 				double chance = Double.parseDouble(data[3]);
 				if (max < min) {
-					_log.info(StringUtil.concat("> Max amount < Min amount in ", part, ", item ", toString()));
+					LOG.warn("Max amount < Min amount in {}, item {}!", part, this);
 					continue;
 				}
 				L2ExtractableProduct product = new L2ExtractableProduct(itemId, min, max, chance);
@@ -92,7 +96,7 @@ public final class L2EtcItem extends L2Item {
 			
 			// check for handler
 			if (_handler == null) {
-				_log.warning("Item " + this + " define capsuled_items but missing handler.");
+				LOG.warn("Item {} define capsuled_items but missing handler!", this);
 				_handler = "ExtractableItems";
 			}
 		} else {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,8 +20,9 @@ package com.l2jserver.gameserver.model;
 
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.enums.ShortcutType;
@@ -34,7 +35,8 @@ import com.l2jserver.gameserver.network.serverpackets.ShortCutInit;
 import com.l2jserver.gameserver.network.serverpackets.ShortCutRegister;
 
 public class ShortCuts implements IRestorable {
-	private static final Logger _log = Logger.getLogger(ShortCuts.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(ShortCuts.class);
+	
 	private static final int MAX_SHORTCUTS_PER_BAR = 12;
 	private final L2PcInstance _owner;
 	private final Map<Integer, Shortcut> _shortCuts = new TreeMap<>();
@@ -44,7 +46,7 @@ public class ShortCuts implements IRestorable {
 	}
 	
 	public Shortcut[] getAllShortCuts() {
-		return _shortCuts.values().toArray(new Shortcut[_shortCuts.size()]);
+		return _shortCuts.values().toArray(new Shortcut[0]);
 	}
 	
 	public Shortcut getShortCut(int slot, int page) {
@@ -88,7 +90,7 @@ public class ShortCuts implements IRestorable {
 			ps.setInt(7, _owner.getClassIndex());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not store character shortcut: " + e.getMessage(), e);
+			LOG.warn("Could not store character shortcut: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -133,7 +135,7 @@ public class ShortCuts implements IRestorable {
 			ps.setInt(4, _owner.getClassIndex());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not delete character shortcut: " + e.getMessage(), e);
+			LOG.warn("Could not delete character shortcut: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -157,7 +159,7 @@ public class ShortCuts implements IRestorable {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not restore character shortcuts: " + e.getMessage(), e);
+			LOG.warn("Could not restore character shortcuts: {}", e.getMessage(), e);
 			return false;
 		}
 		

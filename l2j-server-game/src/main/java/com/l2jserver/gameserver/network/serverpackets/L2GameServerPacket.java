@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,8 +18,8 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.interfaces.IPositionable;
 import com.l2jserver.gameserver.model.itemcontainer.Inventory;
@@ -30,7 +30,7 @@ import com.l2jserver.mmocore.SendablePacket;
  * @author KenM
  */
 public abstract class L2GameServerPacket extends SendablePacket<L2GameClient> {
-	protected static final Logger _log = Logger.getLogger(L2GameServerPacket.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2GameServerPacket.class);
 	
 	private boolean _invisible = false;
 	
@@ -98,7 +98,7 @@ public abstract class L2GameServerPacket extends SendablePacket<L2GameClient> {
 		try {
 			writeImpl();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Client: " + getClient().toString() + " - Failed writing: " + getClass().getSimpleName() + " ; " + e.getMessage(), e);
+			LOG.error("Client: {} - Failed writing: {} ; {}", getClient().toString(), getClass().getSimpleName(), e.getMessage(), e);
 		}
 	}
 	

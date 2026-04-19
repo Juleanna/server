@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -43,8 +43,8 @@ public class L2FortCommanderInstance extends L2DefenderInstance {
 	private static final Logger LOG = LoggerFactory.getLogger(L2FortCommanderInstance.class);
 	private boolean _canTalk;
 	
-	public L2FortCommanderInstance(L2NpcTemplate template) {
-		super(template);
+	public L2FortCommanderInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2FortCommanderInstance);
 		_canTalk = true;
 	}

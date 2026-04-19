@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,8 +20,9 @@ package com.l2jserver.gameserver.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.xml.impl.OptionData;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -42,7 +43,8 @@ public final class L2Augmentation {
 	}
 	
 	public static class AugmentationStatBoni {
-		private static final Logger _log = Logger.getLogger(AugmentationStatBoni.class.getName());
+		private static final Logger LOG = LoggerFactory.getLogger(AugmentationStatBoni.class);
+		
 		private final List<Options> _options = new ArrayList<>();
 		private boolean _active;
 		
@@ -57,7 +59,7 @@ public final class L2Augmentation {
 				if (op != null) {
 					_options.add(op);
 				} else {
-					_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't find option: " + stat);
+					LOG.warn("Couldn't find option: {}", stat);
 				}
 			}
 		}
@@ -103,7 +105,6 @@ public final class L2Augmentation {
 	
 	/**
 	 * Applies the bonuses to the player.
-	 * @param player
 	 */
 	public void applyBonus(L2PcInstance player) {
 		_boni.applyBonus(player);
@@ -111,7 +112,6 @@ public final class L2Augmentation {
 	
 	/**
 	 * Removes the augmentation bonuses from the player.
-	 * @param player
 	 */
 	public void removeBonus(L2PcInstance player) {
 		_boni.removeBonus(player);

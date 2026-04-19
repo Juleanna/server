@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,8 +22,9 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.data.xml.impl.ArmorSetsData;
@@ -34,10 +35,10 @@ import com.l2jserver.gameserver.model.TradeItem;
 import com.l2jserver.gameserver.model.TradeList;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.inventory.OnPlayerItemAdd;
-import com.l2jserver.gameserver.model.events.impl.character.player.inventory.OnPlayerItemDestroy;
-import com.l2jserver.gameserver.model.events.impl.character.player.inventory.OnPlayerItemDrop;
-import com.l2jserver.gameserver.model.events.impl.character.player.inventory.OnPlayerItemTransfer;
+import com.l2jserver.gameserver.model.events.impl.character.player.inventory.PlayerItemAdd;
+import com.l2jserver.gameserver.model.events.impl.character.player.inventory.PlayerItemDestroy;
+import com.l2jserver.gameserver.model.events.impl.character.player.inventory.PlayerItemDrop;
+import com.l2jserver.gameserver.model.events.impl.character.player.inventory.PlayerItemTransfer;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -51,8 +52,7 @@ import com.l2jserver.gameserver.network.serverpackets.StatusUpdate;
 import com.l2jserver.gameserver.util.Util;
 
 public class PcInventory extends Inventory {
-	
-	private static final Logger _log = Logger.getLogger(PcInventory.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(PcInventory.class);
 	
 	private final L2PcInstance _owner;
 	
@@ -151,7 +151,7 @@ public class PcInventory extends Inventory {
 				list.add(item);
 			}
 		}
-		return list.toArray(new L2ItemInstance[list.size()]);
+		return list.toArray(new L2ItemInstance[0]);
 	}
 	
 	/**
@@ -217,7 +217,7 @@ public class PcInventory extends Inventory {
 				list.add(item);
 			}
 		}
-		return list.toArray(new L2ItemInstance[list.size()]);
+		return list.toArray(new L2ItemInstance[0]);
 	}
 	
 	/**
@@ -247,7 +247,7 @@ public class PcInventory extends Inventory {
 				list.add(item);
 			}
 		}
-		return list.toArray(new L2ItemInstance[list.size()]);
+		return list.toArray(new L2ItemInstance[0]);
 	}
 	
 	/**
@@ -269,7 +269,7 @@ public class PcInventory extends Inventory {
 				list.add(item);
 			}
 		}
-		return list.toArray(new L2ItemInstance[list.size()]);
+		return list.toArray(new L2ItemInstance[0]);
 	}
 	
 	/**
@@ -283,7 +283,7 @@ public class PcInventory extends Inventory {
 				list.add(item);
 			}
 		}
-		return list.toArray(new L2ItemInstance[list.size()]);
+		return list.toArray(new L2ItemInstance[0]);
 	}
 	
 	/**
@@ -297,7 +297,7 @@ public class PcInventory extends Inventory {
 				list.add(item);
 			}
 		}
-		return list.toArray(new L2ItemInstance[list.size()]);
+		return list.toArray(new L2ItemInstance[0]);
 	}
 	
 	/**
@@ -315,7 +315,7 @@ public class PcInventory extends Inventory {
 				}
 			}
 		}
-		return list.toArray(new TradeItem[list.size()]);
+		return list.toArray(new TradeItem[0]);
 	}
 	
 	/**
@@ -427,7 +427,7 @@ public class PcInventory extends Inventory {
 		
 		if (item != null) {
 			// Notify to scripts
-			EventDispatcher.getInstance().notifyEventAsync(new OnPlayerItemAdd(actor, item), actor, item.getItem());
+			EventDispatcher.getInstance().notifyEventAsync(new PlayerItemAdd(actor, item), actor, item.getItem());
 		}
 		return item;
 	}
@@ -469,7 +469,7 @@ public class PcInventory extends Inventory {
 				actor.sendPacket(su);
 				
 				// Notify to scripts
-				EventDispatcher.getInstance().notifyEventAsync(new OnPlayerItemAdd(actor, item), actor, item.getItem());
+				EventDispatcher.getInstance().notifyEventAsync(new PlayerItemAdd(actor, item), actor, item.getItem());
 			}
 		}
 		return item;
@@ -498,7 +498,7 @@ public class PcInventory extends Inventory {
 		}
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerItemTransfer(actor, item, target), item.getItem());
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerItemTransfer(actor, item, target), item.getItem());
 		return item;
 	}
 	
@@ -537,7 +537,7 @@ public class PcInventory extends Inventory {
 		
 		// Notify to scripts
 		if (item != null) {
-			EventDispatcher.getInstance().notifyEventAsync(new OnPlayerItemDestroy(actor, item), item.getItem());
+			EventDispatcher.getInstance().notifyEventAsync(new PlayerItemDestroy(actor, item), item.getItem());
 		}
 		return item;
 	}
@@ -600,7 +600,7 @@ public class PcInventory extends Inventory {
 		
 		// Notify to scripts
 		if (item != null) {
-			EventDispatcher.getInstance().notifyEventAsync(new OnPlayerItemDrop(actor, item, item.getLocation()), item.getItem());
+			EventDispatcher.getInstance().notifyEventAsync(new PlayerItemDrop(actor, item, item.getLocation()), item.getItem());
 		}
 		return item;
 	}
@@ -628,7 +628,7 @@ public class PcInventory extends Inventory {
 		
 		// Notify to scripts
 		if (item != null) {
-			EventDispatcher.getInstance().notifyEventAsync(new OnPlayerItemDrop(actor, item, item.getLocation()), item.getItem());
+			EventDispatcher.getInstance().notifyEventAsync(new PlayerItemDrop(actor, item, item.getLocation()), item.getItem());
 		}
 		return item;
 	}
@@ -658,7 +658,7 @@ public class PcInventory extends Inventory {
 				_questSlots--;
 				if (_questSlots < 0) {
 					_questSlots = 0;
-					_log.warning(this + ": QuestInventory size < 0!");
+					LOG.warn("QuestInventory size < 0!");
 				}
 			}
 		}
@@ -704,7 +704,7 @@ public class PcInventory extends Inventory {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not restore inventory: " + e.getMessage(), e);
+			LOG.warn("Could not restore inventory: {}", e.getMessage(), e);
 		}
 		return paperdoll;
 	}
@@ -992,7 +992,7 @@ public class PcInventory extends Inventory {
 						player.removeSkill(itemSkill, false, itemSkill.isPassive());
 						update = true;
 					} else {
-						_log.warning("Inventory.ItemSkillsListener.Weapon: Incorrect skill: " + skillInfo + ".");
+						LOG.warn("Inventory.ItemSkillsListener.Weapon: Incorrect skill: {}.", skillInfo);
 					}
 				}
 			}
@@ -1101,7 +1101,7 @@ public class PcInventory extends Inventory {
 						}
 						update = true;
 					} else {
-						_log.warning("Inventory.ItemSkillsListener.Weapon: Incorrect skill: " + skillInfo + ".");
+						LOG.warn("Inventory.ItemSkillsListener.Weapon: Incorrect skill: {}.", skillInfo);
 					}
 				}
 			}
@@ -1125,11 +1125,9 @@ public class PcInventory extends Inventory {
 		
 		@Override
 		public void notifyEquiped(int slot, L2ItemInstance item, Inventory inventory) {
-			if (!(inventory.getOwner() instanceof L2PcInstance)) {
+			if (!(inventory.getOwner() instanceof L2PcInstance player)) {
 				return;
 			}
-			
-			final L2PcInstance player = (L2PcInstance) inventory.getOwner();
 			
 			// Checks if player is wearing a chest item
 			final L2ItemInstance chestItem = inventory.getPaperdollItem(PAPERDOLL_CHEST);
@@ -1170,7 +1168,7 @@ public class PcInventory extends Inventory {
 								}
 								update = true;
 							} else {
-								_log.warning("Inventory.ArmorSetListener: Incorrect skill: " + holder + ".");
+								LOG.warn("Inventory.ArmorSetListener: Incorrect skill: {}.", holder);
 							}
 						}
 					}
@@ -1182,7 +1180,7 @@ public class PcInventory extends Inventory {
 								player.addSkill(holder.getSkill(), false);
 								update = true;
 							} else {
-								_log.warning("Inventory.ArmorSetListener: Incorrect skill: " + holder + ".");
+								LOG.warn("Inventory.ArmorSetListener: Incorrect skill: {}.", holder);
 							}
 						}
 					}
@@ -1194,7 +1192,7 @@ public class PcInventory extends Inventory {
 								player.addSkill(holder.getSkill(), false);
 								update = true;
 							} else {
-								_log.warning("Inventory.ArmorSetListener: Incorrect skill: " + holder + ".");
+								LOG.warn("Inventory.ArmorSetListener: Incorrect skill: {}.", holder);
 							}
 						}
 					}
@@ -1205,7 +1203,7 @@ public class PcInventory extends Inventory {
 						player.addSkill(holder.getSkill(), false);
 						update = true;
 					} else {
-						_log.warning("Inventory.ArmorSetListener: Incorrect skill: " + holder + ".");
+						LOG.warn("Inventory.ArmorSetListener: Incorrect skill: {}.", holder);
 					}
 				}
 			}
@@ -1221,11 +1219,9 @@ public class PcInventory extends Inventory {
 		
 		@Override
 		public void notifyUnequiped(int slot, L2ItemInstance item, Inventory inventory) {
-			if (!(inventory.getOwner() instanceof L2PcInstance)) {
+			if (!(inventory.getOwner() instanceof L2PcInstance player)) {
 				return;
 			}
-			
-			final L2PcInstance player = (L2PcInstance) inventory.getOwner();
 			
 			boolean remove = false;
 			Skill itemSkill;
@@ -1273,7 +1269,7 @@ public class PcInventory extends Inventory {
 						if (itemSkill != null) {
 							player.removeSkill(itemSkill, false, itemSkill.isPassive());
 						} else {
-							_log.warning("Inventory.ArmorSetListener: Incorrect skill: " + holder + ".");
+							LOG.warn("Inventory.ArmorSetListener: Incorrect skill: {}.", holder);
 						}
 					}
 				}
@@ -1284,7 +1280,7 @@ public class PcInventory extends Inventory {
 						if (itemSkill != null) {
 							player.removeSkill(itemSkill, false, itemSkill.isPassive());
 						} else {
-							_log.warning("Inventory.ArmorSetListener: Incorrect skill: " + holder + ".");
+							LOG.warn("Inventory.ArmorSetListener: Incorrect skill: {}.", holder);
 						}
 					}
 				}
@@ -1295,7 +1291,7 @@ public class PcInventory extends Inventory {
 						if (itemSkill != null) {
 							player.removeSkill(itemSkill, false, itemSkill.isPassive());
 						} else {
-							_log.warning("Inventory.ArmorSetListener: Incorrect skill: " + holder + ".");
+							LOG.warn("Inventory.ArmorSetListener: Incorrect skill: {}.", holder);
 						}
 					}
 				}

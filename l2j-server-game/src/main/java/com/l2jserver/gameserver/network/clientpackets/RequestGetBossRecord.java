@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.instancemanager.RaidBossPointsManager;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.ExGetBossRecord;
@@ -29,6 +32,8 @@ import com.l2jserver.gameserver.network.serverpackets.ExGetBossRecord;
  * @author -Wooden-
  */
 public class RequestGetBossRecord extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestGetBossRecord.class);
+	
 	private static final String _C__D0_40_REQUESTGETBOSSRECORD = "[C] D0:40 RequestGetBossRecord";
 	private int _bossId;
 	
@@ -45,7 +50,7 @@ public class RequestGetBossRecord extends L2GameClientPacket {
 		}
 		
 		if (_bossId != 0) {
-			_log.info("C5: RequestGetBossRecord: d: " + _bossId + " ActiveChar: " + activeChar); // should be always 0, log it if isn't 0 for future research
+			LOG.info("C5: RequestGetBossRecord: d: {} ActiveChar: {}", _bossId, activeChar); // should be always 0, log it if isn't 0 for future research
 		}
 		
 		int points = RaidBossPointsManager.getInstance().getPointsByOwnerId(activeChar.getObjectId());

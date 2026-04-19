@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -27,7 +27,8 @@ import static com.l2jserver.gameserver.network.SystemMessageId.THE_FRIENDS_LIST_
 import static com.l2jserver.gameserver.network.SystemMessageId.YOU_CAN_ONLY_ENTER_UP_128_NAMES_IN_YOUR_FRIENDS_LIST;
 import static com.l2jserver.gameserver.network.SystemMessageId.YOU_HAVE_SUCCEEDED_INVITING_FRIEND;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -35,6 +36,7 @@ import com.l2jserver.gameserver.network.serverpackets.FriendPacket;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 public final class RequestAnswerFriendInvite extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestAnswerFriendInvite.class);
 	
 	private static final String _C__78_REQUESTANSWERFRIENDINVITE = "[C] 78 RequestAnswerFriendInvite";
 	
@@ -100,7 +102,7 @@ public final class RequestAnswerFriendInvite extends L2GameClientPacket {
 				player.sendPacket(new FriendPacket(true, requestor.getObjectId()));
 				requestor.sendPacket(new FriendPacket(true, player.getObjectId()));
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Could not add friend objectid: " + e.getMessage(), e);
+				LOG.warn("Could not add friend objectid: {}", e.getMessage(), e);
 			}
 		} else {
 			requestor.sendPacket(FAILED_TO_INVITE_A_FRIEND);

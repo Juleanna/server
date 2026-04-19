@@ -38,8 +38,10 @@ public class PlayerPanelShopModule {
     /**
      * Серверный каталог магазина: shopId -> запись.
      * Цена берётся только отсюда — никогда из клиентского пакета.
+     * Public, чтобы HTML-генератор рендерил ровно те же цены, что
+     * реально списываются сервером (иначе было расхождение UX).
      */
-    private static final Map<String, ShopEntry> CATALOG;
+    public static final Map<String, ShopEntry> CATALOG;
     static {
         Map<String, ShopEntry> m = new HashMap<>();
         m.put("1",  new ShopEntry(2,    1,  50_000L,    "Demon Sword"));
@@ -174,11 +176,11 @@ public class PlayerPanelShopModule {
     }
 
     /** Запись каталога магазина. Неизменяема. */
-    private static final class ShopEntry {
-        final int itemId;
-        final int quantity;
-        final long price;
-        final String name;
+    public static final class ShopEntry {
+        public final int itemId;
+        public final int quantity;
+        public final long price;
+        public final String name;
 
         ShopEntry(int itemId, int quantity, long price, String name) {
             this.itemId = itemId;

@@ -31,7 +31,7 @@ import com.l2jserver.gameserver.dao.impl.mysql.PlayerPanelDAO;
 import com.l2jserver.gameserver.handler.CommunityBoardHandler;
 import com.l2jserver.gameserver.model.events.Containers;
 import com.l2jserver.gameserver.model.events.EventType;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogout;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLogout;
 import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
 
 /**
@@ -62,9 +62,10 @@ public class PlayerPanelLoader {
             // чтобы карты не росли бесконечно и не держали objectId мёртвых сессий.
             Containers.Global().addListener(new ConsumerEventListener(
                 Containers.Global(),
-                EventType.ON_PLAYER_LOGOUT,
-                (OnPlayerLogout event) -> {
-                    int objectId = event.getActiveChar().getObjectId();
+                EventType.PLAYER_LOGOUT,
+                (PlayerLogout event) -> {
+                    // В upstream событие — record; поле доступается через player()
+                    int objectId = event.player().getObjectId();
                     handler.onPlayerLogout(objectId);
                     PlayerPanelDAO.clearPlayerCooldowns(objectId);
                 },

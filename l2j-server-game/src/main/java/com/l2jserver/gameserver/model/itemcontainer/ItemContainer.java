@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,8 +24,9 @@ import static com.l2jserver.gameserver.config.Configuration.rates;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.GameTimeController;
@@ -41,8 +42,7 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
  * @author Advi
  */
 public abstract class ItemContainer {
-	
-	protected static final Logger _log = Logger.getLogger(ItemContainer.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(ItemContainer.class);
 	
 	protected final List<L2ItemInstance> _items = new CopyOnWriteArrayList<>();
 	
@@ -75,7 +75,7 @@ public abstract class ItemContainer {
 	 * @return the items in inventory
 	 */
 	public L2ItemInstance[] getItems() {
-		return _items.toArray(new L2ItemInstance[_items.size()]);
+		return _items.toArray(new L2ItemInstance[0]);
 	}
 	
 	/**
@@ -292,12 +292,12 @@ public abstract class ItemContainer {
 				item.updateDatabase();
 			}
 		}
-		// If item hasn't be found in inventory, create new one
+		// If item hasn't been found in inventory, create new one
 		else {
 			for (int i = 0; i < count; i++) {
 				L2Item template = ItemTable.getInstance().getTemplate(itemId);
 				if (template == null) {
-					_log.log(Level.WARNING, (actor != null ? "[" + actor.getName() + "] " : "") + "Invalid ItemId requested: ", itemId);
+					LOG.warn("{}Invalid ItemId requested: {}", (actor != null ? "[" + actor.getName() + "] " : ""), itemId);
 					return null;
 				}
 				
@@ -593,7 +593,7 @@ public abstract class ItemContainer {
 			}
 			refreshWeight();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "could not restore container:", e);
+			LOG.warn("Could not restore container:", e);
 		}
 	}
 	

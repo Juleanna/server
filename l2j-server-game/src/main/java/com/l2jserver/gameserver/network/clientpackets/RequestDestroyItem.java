@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,8 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.enums.PrivateStoreType;
@@ -39,6 +40,7 @@ import com.l2jserver.gameserver.util.Util;
  * @since 2005/03/27 15:29:30
  */
 public final class RequestDestroyItem extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestDestroyItem.class);
 	
 	private static final String _C__60_REQUESTDESTROYITEM = "[C] 60 RequestDestroyItem";
 	
@@ -135,7 +137,7 @@ public final class RequestDestroyItem extends L2GameClientPacket {
 				statement.setInt(1, _objectId);
 				statement.execute();
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "could not delete pet objectid: ", e);
+				LOG.warn("Could not delete pet objectid: ", e);
 			}
 		}
 		if (itemToRemove.isTimeLimitedItem()) {

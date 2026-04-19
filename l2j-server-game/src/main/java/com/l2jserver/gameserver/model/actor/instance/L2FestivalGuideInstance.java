@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -44,8 +44,8 @@ public final class L2FestivalGuideInstance extends L2Npc {
 	 * Creates a festival guide.
 	 * @param template the festival guide NPC template
 	 */
-	public L2FestivalGuideInstance(L2NpcTemplate template) {
-		super(template);
+	public L2FestivalGuideInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2FestivalGiudeInstance);
 		
 		switch (getId()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,9 @@ package com.l2jserver.gameserver.model;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.util.Rnd;
 
@@ -29,7 +31,7 @@ import com.l2jserver.commons.util.Rnd;
  * @author Balancer
  */
 public class L2Territory {
-	private static final Logger _log = Logger.getLogger(L2Territory.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2Territory.class);
 	
 	protected static class Point {
 		protected int _x, _y, _zmin, _zmax, _proc;
@@ -153,7 +155,7 @@ public class L2Territory {
 				return new Location(x, y, Rnd.get(zmin, _zMax));
 			}
 		}
-		_log.warning("Can't make point for territory " + _terr);
+		LOG.warn("Can't make point for territory {}", _terr);
 		return null;
 	}
 	

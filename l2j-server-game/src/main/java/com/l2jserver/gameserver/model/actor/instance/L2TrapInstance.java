@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -66,17 +66,16 @@ public final class L2TrapInstance extends L2Npc {
 	/**
 	 * Creates a trap.
 	 * @param template the trap NPC template
-	 * @param instanceId the instance ID
 	 * @param lifeTime the life time
 	 */
-	public L2TrapInstance(L2NpcTemplate template, int instanceId, int lifeTime) {
-		super(template);
+	public L2TrapInstance(int objectId, L2NpcTemplate template, L2PcInstance owner, int instanceId, int lifeTime) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2TrapInstance);
 		setInstanceId(instanceId);
 		setName(template.getName());
 		setIsInvul(false);
 		
-		_owner = null;
+		_owner = owner;
 		_isTriggered = false;
 		_skill = getTemplate().getParameters().getObject("trap_skill", SkillHolder.class);
 		_hasLifeTime = lifeTime >= 0;
@@ -87,21 +86,18 @@ public final class L2TrapInstance extends L2Npc {
 		}
 	}
 	
-	/**
-	 * Creates a trap.
-	 * @param template the trap NPC template
-	 * @param owner the owner
-	 * @param lifeTime the life time
-	 */
-	public L2TrapInstance(L2NpcTemplate template, L2PcInstance owner, int lifeTime) {
-		this(template, owner.getInstanceId(), lifeTime);
-		_owner = owner;
+	public L2TrapInstance(int objectId, L2NpcTemplate template, L2PcInstance owner, int lifeTime) {
+		this(objectId, template, owner, owner.getInstanceId(), lifeTime);
+	}
+	
+	public L2TrapInstance(int objectId, L2NpcTemplate template, int instanceId, int lifeTime) {
+		this(objectId, template, null, instanceId, lifeTime);
 	}
 	
 	@Override
 	public void broadcastPacket(L2GameServerPacket mov) {
 		for (L2PcInstance player : getKnownList().getKnownPlayers().values()) {
-			if ((player != null) && (_isTriggered || canBeSeen(player))) {
+			if ((player != null) && (_isTriggered || isVisibleFor(player))) {
 				player.sendPacket(mov);
 			}
 		}
@@ -110,7 +106,7 @@ public final class L2TrapInstance extends L2Npc {
 	@Override
 	public void broadcastPacket(L2GameServerPacket mov, int radiusInKnownlist) {
 		for (L2PcInstance player : getKnownList().getKnownPlayers().values()) {
-			if ((player != null) && isInsideRadius(player, radiusInKnownlist, false, false) && (_isTriggered || canBeSeen(player))) {
+			if ((player != null) && isInsideRadius(player, radiusInKnownlist, false, false) && (_isTriggered || isVisibleFor(player))) {
 				player.sendPacket(mov);
 			}
 		}
@@ -121,7 +117,8 @@ public final class L2TrapInstance extends L2Npc {
 	 * @param cha the character to verify
 	 * @return {@code true} if the character can see the trap, {@code false} otherwise
 	 */
-	public boolean canBeSeen(L2Character cha) {
+	@Override
+	public boolean isVisibleFor(final L2Character cha) {
 		if ((cha != null) && _playersWhoDetectedMe.contains(cha.getObjectId())) {
 			return true;
 		}
@@ -133,14 +130,14 @@ public final class L2TrapInstance extends L2Npc {
 			return true;
 		}
 		
-		if (cha instanceof L2PcInstance) {
+		if (cha instanceof L2PcInstance player) {
 			// observers can't see trap
-			if (((L2PcInstance) cha).inObserverMode()) {
+			if (player.inObserverMode()) {
 				return false;
 			}
 			
 			// olympiad competitors can't see trap
-			if (_owner.isInOlympiadMode() && ((L2PcInstance) cha).isInOlympiadMode() && (((L2PcInstance) cha).getOlympiadSide() != _owner.getOlympiadSide())) {
+			if (_owner.isInOlympiadMode() && player.isInOlympiadMode() && (player.getOlympiadSide() != _owner.getOlympiadSide())) {
 				return false;
 			}
 		}
@@ -149,9 +146,14 @@ public final class L2TrapInstance extends L2Npc {
 			return true;
 		}
 		
-		return _owner.isInParty() && cha.isInParty() && (_owner.getParty().getLeaderObjectId() == cha.getParty().getLeaderObjectId());
+		return isOwnerInSameParty(cha);
 	}
 	
+	/**
+	 * Checks whether a character is a potential target for the trap.
+	 * @param target The character we're checking against
+	 * @return {@code true} if the character is a valid target, {@code false} otherwise
+	 */
 	public boolean checkTarget(L2Character target) {
 		// Range seems to be reduced from Freya(300) to H5(150)
 		if (!target.isInsideRadius(this, 150, false, false)) {
@@ -252,7 +254,11 @@ public final class L2TrapInstance extends L2Npc {
 	
 	@Override
 	public boolean isAutoAttackable(L2Character attacker) {
-		return !canBeSeen(attacker);
+		if ((attacker == null) || (attacker == _owner) || isOwnerInSameParty(attacker)) {
+			return false;
+		}
+		
+		return isVisibleFor(attacker);
 	}
 	
 	@Override
@@ -298,7 +304,7 @@ public final class L2TrapInstance extends L2Npc {
 	
 	@Override
 	public void sendInfo(L2PcInstance activeChar) {
-		if (_isTriggered || canBeSeen(activeChar)) {
+		if (_isTriggered || isVisibleFor(activeChar)) {
 			activeChar.sendPacket(new TrapInfo(this, activeChar));
 		}
 	}
@@ -391,5 +397,9 @@ public final class L2TrapInstance extends L2Npc {
 	
 	public int getLifeTime() {
 		return _lifeTime;
+	}
+	
+	private boolean isOwnerInSameParty(final L2Character character) {
+		return character.isInParty() && _owner.isInParty() && (character.getParty().getLeaderObjectId() == _owner.getParty().getLeaderObjectId());
 	}
 }

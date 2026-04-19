@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -46,7 +46,7 @@ public class ExBR_AgathionEnergyInfo extends L2GameServerPacket {
 			writeD(agathion.getId());
 			writeD(0x200000);
 			writeD(agathion.getAgathionRemainingEnergy());
-			writeD(AgathionRepository.getInstance().getByItemId(agathion.getId()).getEnergy());
+			writeD(AgathionRepository.getInstance().getByItemId(agathion.getId()).energy());
 		}
 	}
 }

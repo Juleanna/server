@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.gameserver.model.actor.tasks.npc.trap;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2TrapInstance;
@@ -29,7 +30,8 @@ import com.l2jserver.gameserver.network.serverpackets.SocialAction;
  * @author Zoey76
  */
 public class TrapTask implements Runnable {
-	private static final Logger _log = Logger.getLogger(TrapTask.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(TrapTask.class);
+	
 	private static final int TICK = 1000; // 1s
 	private final L2TrapInstance _trap;
 	
@@ -62,7 +64,7 @@ public class TrapTask implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			_log.severe(TrapTask.class.getSimpleName() + ": " + e.getMessage());
+			LOG.error(e.getMessage(), e);
 			_trap.unSummon();
 		}
 	}

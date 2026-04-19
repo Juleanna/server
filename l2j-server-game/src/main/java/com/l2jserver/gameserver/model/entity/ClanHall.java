@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,8 +21,9 @@ package com.l2jserver.gameserver.model.entity;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -36,8 +37,7 @@ import com.l2jserver.gameserver.model.zone.type.L2ClanHallZone;
 import com.l2jserver.gameserver.network.serverpackets.PledgeShowInfoUpdate;
 
 public abstract class ClanHall {
-	
-	protected static final Logger _log = Logger.getLogger(ClanHall.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(ClanHall.class);
 	
 	private final int _clanHallId;
 	private ArrayList<L2DoorInstance> _doors;
@@ -50,14 +50,18 @@ public abstract class ClanHall {
 	private final Map<Integer, ClanHallFunction> _functions;
 	
 	/** Clan Hall Functions */
-	public static final int FUNC_TELEPORT = 1;
-	public static final int FUNC_ITEM_CREATE = 2;
-	public static final int FUNC_RESTORE_HP = 3;
-	public static final int FUNC_RESTORE_MP = 4;
-	public static final int FUNC_RESTORE_EXP = 5;
-	public static final int FUNC_SUPPORT = 6;
-	public static final int FUNC_DECO_FRONTPLATEFORM = 7; // Only Auctionable Halls
-	public static final int FUNC_DECO_CURTAINS = 8; // Only Auctionable Halls
+	public static final int FUNC_RESTORE_HP = 1;
+	public static final int FUNC_RESTORE_MP = 2;
+	public static final int FUNC_RESTORE_CP = 3;
+	public static final int FUNC_RESTORE_EXP = 4;
+	public static final int FUNC_TELEPORT = 5;
+	public static final int FUNC_BROADCAST = 6;
+	public static final int FUNC_DECO_CURTAINS = 7;
+	public static final int FUNC_DECO_HANGING = 8;
+	public static final int FUNC_SUPPORT = 9;
+	public static final int FUNC_DECO_OUTERFLAG = 10;
+	public static final int FUNC_DECO_FRONTPLATEFORM = 11;
+	public static final int FUNC_ITEM_CREATE = 12;
 	
 	public class ClanHallFunction {
 		private final int _type;
@@ -67,7 +71,7 @@ public abstract class ClanHall {
 		private final long _rate;
 		private long _endDate;
 		protected boolean _inDebt;
-		public boolean _cwh; // first activating clanhall function is payed from player inventory, any others from clan warehouse
+		public boolean _cwh; // first activating clanhall function is paid from player inventory, any others from clan warehouse
 		
 		public ClanHallFunction(int type, int lvl, int lease, int tempLease, long rate, long time, boolean cwh) {
 			_type = type;
@@ -150,7 +154,7 @@ public abstract class ClanHall {
 						removeFunction(getType());
 					}
 				} catch (Exception e) {
-					_log.log(Level.SEVERE, "", e);
+					LOG.error(e.getMessage(), e);
 				}
 			}
 		}
@@ -166,7 +170,7 @@ public abstract class ClanHall {
 				ps.setLong(6, getEndTime());
 				ps.execute();
 			} catch (Exception e) {
-				_log.log(Level.SEVERE, "Exception: ClanHall.updateFunctions(int type, int lvl, int lease, long rate, long time, boolean addNew): " + e.getMessage(), e);
+				LOG.error("Exception: ClanHall.updateFunctions(int type, int lvl, int lease, long rate, long time, boolean addNew): {}", e.getMessage(), e);
 			}
 		}
 	}
@@ -234,10 +238,6 @@ public abstract class ClanHall {
 		return _doors;
 	}
 	
-	/**
-	 * @param doorId
-	 * @return Door
-	 */
 	public final L2DoorInstance getDoor(int doorId) {
 		if (doorId <= 0) {
 			return null;
@@ -260,16 +260,12 @@ public abstract class ClanHall {
 	
 	/**
 	 * Sets this clan halls zone
-	 * @param zone
 	 */
 	public void setZone(L2ClanHallZone zone) {
 		_zone = zone;
 	}
 	
 	/**
-	 * @param x
-	 * @param y
-	 * @param z
 	 * @return true if object is inside the zone
 	 */
 	public boolean checkIfInZone(int x, int y, int z) {
@@ -296,7 +292,6 @@ public abstract class ClanHall {
 	
 	/**
 	 * Set owner if clan hall is free
-	 * @param clan
 	 */
 	public void setOwner(L2Clan clan) {
 		// Verify that this ClanHall is Free and Clan isn't null
@@ -313,9 +308,6 @@ public abstract class ClanHall {
 	
 	/**
 	 * Open or Close Door
-	 * @param activeChar
-	 * @param doorId
-	 * @param open
 	 */
 	public void openCloseDoor(L2PcInstance activeChar, int doorId, boolean open) {
 		if ((activeChar != null) && (activeChar.getClanId() == getOwnerId())) {
@@ -359,7 +351,7 @@ public abstract class ClanHall {
 		if (_zone != null) {
 			_zone.banishForeigners(getOwnerId());
 		} else {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Zone is null for clan hall: " + getId() + " " + getName());
+			LOG.warn("Zone is null for clan hall: {} {}", getId(), getName());
 		}
 	}
 	
@@ -373,13 +365,12 @@ public abstract class ClanHall {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: ClanHall.loadFunctions(): " + e.getMessage(), e);
+			LOG.error("Exception: ClanHall.loadFunctions(): {}", e.getMessage(), e);
 		}
 	}
 	
 	/**
 	 * Remove function In List and in DB
-	 * @param functionType
 	 */
 	public void removeFunction(int functionType) {
 		_functions.remove(functionType);
@@ -389,7 +380,7 @@ public abstract class ClanHall {
 			ps.setInt(2, functionType);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: ClanHall.removeFunctions(int functionType): " + e.getMessage(), e);
+			LOG.error("Exception: ClanHall.removeFunctions(int functionType): {}", e.getMessage(), e);
 		}
 	}
 	

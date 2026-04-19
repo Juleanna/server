@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -18,14 +18,13 @@
  */
 package com.l2jserver.gameserver.model.skills.targets;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -34,93 +33,121 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2ChestInstance;
+import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.actor.instance.L2TrapInstance;
 import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
  * Target Type test.
- * @author Noé Caratini aka Kita
+ * @author Kita (Noé Caratini)
  */
 @ExtendWith(MockitoExtension.class)
-public class TargetTypeTest {
+class TargetTypeTest {
+	
 	@Mock
 	private Skill skill;
-
+	@Mock
+	private L2Character caster;
+	@Mock
+	private L2Object target;
+	
 	@Test
-	public void doorTreasureShouldReturnNullIfTargetIsNull() {
-		final var caster = mock(L2Character.class);
-
+	void doorTreasureShouldReturnNullIfTargetIsNull() {
 		final var result = TargetType.DOOR_TREASURE.getTarget(skill, caster, null);
-
+		
 		assertNull(result);
 	}
 	
 	@Test
-    public void doorTreasureShouldReturnNullIfTargetIsNotADoorOrChest() {
-		final var target = mock(L2Object.class);
-        when(target.isDoor()).thenReturn(false);
-
-		final var caster = mock(L2Character.class);
-
+	void doorTreasureShouldReturnNullIfTargetIsNotADoorOrChest() {
+		when(target.isDoor()).thenReturn(false);
+		
 		final var result = TargetType.DOOR_TREASURE.getTarget(skill, caster, target);
-
+		
 		assertNull(result);
-    }
+	}
 	
 	@Test
-    public void doorTreasureShouldReturnTargetIfDoor() {
-		final var target = mock(L2Object.class);
-        when(target.isDoor()).thenReturn(true);
-
-		final var caster = mock(L2Character.class);
-
+	void doorTreasureShouldReturnTargetIfDoor() {
+		when(target.isDoor()).thenReturn(true);
+		
 		final var result = TargetType.DOOR_TREASURE.getTarget(skill, caster, target);
-
+		
 		assertEquals(target, result);
-    }
+	}
 	
 	@Test
-	public void doorTreasureShouldReturnTargetIfChest() {
+	void doorTreasureShouldReturnTargetIfChest() {
 		final var target = mock(L2ChestInstance.class);
-		final var caster = mock(L2Character.class);
-
 		final var result = TargetType.DOOR_TREASURE.getTarget(skill, caster, target);
-
+		
 		assertEquals(target, result);
 	}
-
+	
 	@Test
-	public void testMonstersCanUseEnemyOnlySkillsOnPc() {
+	void testMonstersCanUseEnemyOnlySkillsOnPc() {
 		final var caster = mock(L2MonsterInstance.class);
 		when(caster.getObjectId()).thenReturn(1);
 		when(caster.isPlayable()).thenReturn(false);
-
+		
 		final var target = mock(L2PcInstance.class);
 		when(target.isCharacter()).thenReturn(true);
 		when(target.isDead()).thenReturn(false);
 		when(target.getObjectId()).thenReturn(2);
 		when(target.isAutoAttackable(any())).thenReturn(true);
-
+		
 		final var result = TargetType.ENEMY_ONLY.getTarget(skill, caster, target);
-
+		
 		assertEquals(target, result);
 	}
-
+	
 	@Test
-	public void testPvpChecksReachedForEnemyOnlySkills() {
+	void testPvpChecksReachedForEnemyOnlySkills() {
 		final var caster = mock(L2PcInstance.class);
 		when(caster.getObjectId()).thenReturn(1);
 		when(caster.isPlayable()).thenReturn(true);
 		when(caster.getActingPlayer()).thenReturn(caster);
 		when(caster.isInOlympiadMode()).thenReturn(true);
-
+		
 		final var target = mock(L2PcInstance.class);
 		when(target.isCharacter()).thenReturn(true);
 		when(target.isDead()).thenReturn(false);
 		when(target.getObjectId()).thenReturn(2);
 		when(target.isAutoAttackable(any())).thenReturn(true);
-
+		
 		final var result = TargetType.ENEMY_ONLY.getTarget(skill, caster, target);
-
+		
 		assertNull(result);
+	}
+	
+	@Test
+	void testEnemyTypeShouldTargetAttackableTraps() {
+		when(caster.getObjectId()).thenReturn(1);
+		
+		final var trap = mock(L2TrapInstance.class);
+		when(trap.getObjectId()).thenReturn(2);
+		when(trap.isCharacter()).thenReturn(true);
+		when(trap.isNpc()).thenReturn(true);
+		when(trap.isAutoAttackable(caster)).thenReturn(true);
+		
+		final var result = TargetType.ENEMY.getTarget(skill, caster, trap);
+		
+		assertThat(result).isEqualTo(trap);
+	}
+	
+	@Test
+	void testEnemyTypeShouldNotTargetNonAttackableTraps() {
+		when(caster.getObjectId()).thenReturn(1);
+		
+		final var trap = mock(L2TrapInstance.class);
+		when(trap.getObjectId()).thenReturn(2);
+		when(trap.isCharacter()).thenReturn(true);
+		when(trap.isNpc()).thenReturn(true);
+		when(trap.isAutoAttackable(caster)).thenReturn(false);
+		
+		final var result = TargetType.ENEMY.getTarget(skill, caster, trap);
+		
+		assertThat(result).isNull();
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -23,6 +23,9 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 import static com.l2jserver.gameserver.model.itemcontainer.Inventory.ADENA_ID;
 
 import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.sql.impl.CharNameTable;
 import com.l2jserver.gameserver.data.xml.impl.AdminData;
@@ -48,6 +51,8 @@ import com.l2jserver.gameserver.util.StringUtil;
  * @author DS
  */
 public final class RequestSendPost extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestSendPost.class);
+	
 	private static final String _C__D0_66_REQUESTSENDPOST = "[C] D0:66 RequestSendPost";
 	
 	private static final int BATCH_LENGTH = 12; // length of the one item
@@ -282,13 +287,13 @@ public final class RequestSendPost extends L2GameClientPacket {
 			// Check validity of requested item
 			L2ItemInstance oldItem = player.checkItemManipulation(i.getObjectId(), i.getCount(), "attach");
 			if ((oldItem == null) || !oldItem.isTradeable() || oldItem.isEquipped()) {
-				_log.warning("Error adding attachment for char " + player.getName() + " (olditem == null)");
+				LOG.warn("Error adding attachment for char {} (olditem == null)", player.getName());
 				return false;
 			}
 			
 			final L2ItemInstance newItem = player.getInventory().transferItem("SendMail", i.getObjectId(), i.getCount(), attachments, player, receiver);
 			if (newItem == null) {
-				_log.warning("Error adding attachment for char " + player.getName() + " (newitem == null)");
+				LOG.warn("Error adding attachment for char {} (newitem == null)", player.getName());
 				continue;
 			}
 			newItem.setItemLocation(newItem.getItemLocation(), msg.getId());

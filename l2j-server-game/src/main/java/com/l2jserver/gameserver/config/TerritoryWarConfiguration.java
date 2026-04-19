@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -41,36 +41,40 @@ import org.aeonbits.owner.Reloadable;
 @HotReload(value = 20, unit = MINUTES, type = ASYNC)
 public interface TerritoryWarConfiguration extends Reloadable {
 	
+	// TODO(Zoey76): Convert this to milliseconds.
 	@Key("WarLength")
-	Long getWarLength();
+	long getWarLength();
 	
+	// TODO(Zoey76): Implement ClanMinLevel configuration.
 	@Key("ClanMinLevel")
-	Integer getClanMinLevel();
+	int getClanMinLevel();
 	
 	@Key("PlayerMinLevel")
-	Integer getPlayerMinLevel();
+	int getPlayerMinLevel();
 	
+	// TODO(Zoey76): Implement DefenderMaxClans configuration.
 	@Key("DefenderMaxClans")
-	Integer getDefenderMaxClans();
+	int getDefenderMaxClans();
 	
+	// TODO(Zoey76): Implement DefenderMaxPlayers configuration.
 	@Key("DefenderMaxPlayers")
-	Integer getDefenderMaxPlayers();
+	int getDefenderMaxPlayers();
 	
 	@Key("PlayerWithWardCanBeKilledInPeaceZone")
-	Boolean playerWithWardCanBeKilledInPeaceZone();
+	boolean playerWithWardCanBeKilledInPeaceZone();
 	
 	@Key("SpawnWardsWhenTWIsNotInProgress")
-	Boolean spawnWardsWhenTWIsNotInProgress();
+	boolean spawnWardsWhenTWIsNotInProgress();
 	
 	@Key("ReturnWardsWhenTWStarts")
-	Boolean returnWardsWhenTWStarts();
+	boolean returnWardsWhenTWStarts();
 	
 	@Key("MinTerritoryBadgeForNobless")
-	Integer getMinTerritoryBadgeForNobless();
+	int getMinTerritoryBadgeForNobless();
 	
 	@Key("MinTerritoryBadgeForStriders")
-	Integer getMinTerritoryBadgeForStriders();
+	int getMinTerritoryBadgeForStriders();
 	
 	@Key("MinTerritoryBadgeForBigStrider")
-	Integer getMinTerritoryBadgeForBigStrider();
+	int getMinTerritoryBadgeForBigStrider();
 }

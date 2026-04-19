@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,8 +21,9 @@ package com.l2jserver.gameserver.model.buylist;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -32,14 +33,15 @@ import com.l2jserver.gameserver.model.items.L2Item;
  * @author NosBit
  */
 public final class Product {
-	
-	private static final Logger _log = Logger.getLogger(Product.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(Product.class);
 	
 	private final int _buyListId;
 	
 	private final L2Item _item;
 	
 	private final long _price;
+	
+	private final double _baseTax;
 	
 	private final long _restockDelay;
 	
@@ -49,10 +51,11 @@ public final class Product {
 	
 	private ScheduledFuture<?> _restockTask = null;
 	
-	public Product(int buyListId, L2Item item, long price, long restockDelay, long maxCount) {
+	public Product(int buyListId, L2Item item, long price, double baseTax, long restockDelay, long maxCount) {
 		_buyListId = buyListId;
 		_item = item;
 		_price = price;
+		_baseTax = baseTax;
 		_restockDelay = restockDelay * 60000;
 		_maxCount = maxCount;
 		if (hasLimitedStock()) {
@@ -73,10 +76,11 @@ public final class Product {
 	}
 	
 	public long getPrice() {
-		if (_price < 0) {
-			return getItem().getReferencePrice();
-		}
 		return _price;
+	}
+	
+	public double getBaseTax() {
+		return _baseTax;
 	}
 	
 	public long getRestockDelay() {
@@ -156,7 +160,7 @@ public final class Product {
 			}
 			ps.executeUpdate();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Failed to save Product buylist_id:" + getBuyListId() + " item_id:" + getItemId(), e);
+			LOG.warn("Failed to save Product buylist_id:{} item_id:{}", getBuyListId(), getItemId(), e);
 		}
 	}
 }

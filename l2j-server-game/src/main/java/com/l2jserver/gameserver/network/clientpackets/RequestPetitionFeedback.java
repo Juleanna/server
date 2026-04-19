@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -27,6 +28,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * @author Plim
  */
 public class RequestPetitionFeedback extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestPetitionFeedback.class);
 	
 	private static final String _C__C9_REQUESTPETITIONFEEDBACK = "[C] C9 RequestPetitionFeedback";
 	
@@ -66,7 +68,7 @@ public class RequestPetitionFeedback extends L2GameClientPacket {
 			statement.setLong(5, System.currentTimeMillis());
 			statement.execute();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Error while saving petition feedback");
+			LOG.error("Error while saving petition feedback");
 		}
 	}
 	

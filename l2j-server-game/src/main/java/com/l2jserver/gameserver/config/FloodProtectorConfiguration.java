@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -42,243 +42,245 @@ import org.aeonbits.owner.Reloadable;
 @HotReload(value = 20, unit = MINUTES, type = ASYNC)
 public interface FloodProtectorConfiguration extends Accessible, Reloadable {
 	
+	// TODO(Zoey76): Implement all these configurations.
+	
 	@Key("UseItemInterval")
-	Integer getUseItemInterval();
+	int getUseItemInterval();
 	
 	@Key("UseItemLogFlooding")
-	Boolean useItemLogFlooding();
+	boolean useItemLogFlooding();
 	
 	@Key("UseItemPunishmentLimit")
-	Integer getUseItemPunishmentLimit();
+	int getUseItemPunishmentLimit();
 	
 	@Key("UseItemPunishmentType")
 	String getUseItemPunishmentType();
 	
 	@Key("UseItemPunishmentTime")
-	Integer getUseItemPunishmentTime();
+	int getUseItemPunishmentTime();
 	
 	@Key("RollDiceInterval")
-	Integer getRollDiceInterval();
+	int getRollDiceInterval();
 	
 	@Key("RollDiceLogFlooding")
-	Boolean rollDiceLogFlooding();
+	boolean rollDiceLogFlooding();
 	
 	@Key("RollDicePunishmentLimit")
-	Integer getRollDicePunishmentLimit();
+	int getRollDicePunishmentLimit();
 	
 	@Key("RollDicePunishmentType")
 	String getRollDicePunishmentType();
 	
 	@Key("RollDicePunishmentTime")
-	Integer getRollDicePunishmentTime();
+	int getRollDicePunishmentTime();
 	
 	@Key("FireworkInterval")
-	Integer getFireworkInterval();
+	int getFireworkInterval();
 	
 	@Key("FireworkLogFlooding")
-	Boolean fireworkLogFlooding();
+	boolean fireworkLogFlooding();
 	
 	@Key("FireworkPunishmentLimit")
-	Integer getFireworkPunishmentLimit();
+	int getFireworkPunishmentLimit();
 	
 	@Key("FireworkPunishmentType")
 	String getFireworkPunishmentType();
 	
 	@Key("FireworkPunishmentTime")
-	Integer getFireworkPunishmentTime();
+	int getFireworkPunishmentTime();
 	
 	@Key("ItemPetSummonInterval")
-	Integer geItemPetSummonInterval();
+	int geItemPetSummonInterval();
 	
 	@Key("ItemPetSummonLogFlooding")
-	Boolean itemPetSummonLogFlooding();
+	boolean itemPetSummonLogFlooding();
 	
 	@Key("ItemPetSummonPunishmentLimit")
-	Integer getItemPetSummonPunishmentLimit();
+	int getItemPetSummonPunishmentLimit();
 	
 	@Key("ItemPetSummonPunishmentType")
 	String getItemPetSummonPunishmentType();
 	
 	@Key("ItemPetSummonPunishmentTime")
-	Integer getItemPetSummonPunishmentTime();
+	int getItemPetSummonPunishmentTime();
 	
 	@Key("HeroVoiceInterval")
-	Integer getHeroVoiceInterval();
+	int getHeroVoiceInterval();
 	
 	@Key("HeroVoiceLogFlooding")
-	Boolean heroVoiceLogFlooding();
+	boolean heroVoiceLogFlooding();
 	
 	@Key("HeroVoicePunishmentLimit")
-	Integer getHeroVoicePunishmentLimit();
+	int getHeroVoicePunishmentLimit();
 	
 	@Key("HeroVoicePunishmentType")
 	String getHeroVoicePunishmentType();
 	
 	@Key("HeroVoicePunishmentTime")
-	Integer getHeroVoicePunishmentTime();
+	int getHeroVoicePunishmentTime();
 	
 	@Key("GlobalChatInterval")
-	Integer getGlobalChatInterval();
+	int getGlobalChatInterval();
 	
 	@Key("GlobalChatLogFlooding")
-	Boolean globalChatLogFlooding();
+	boolean globalChatLogFlooding();
 	
 	@Key("GlobalChatPunishmentLimit")
-	Integer getGlobalChatPunishmentLimit();
+	int getGlobalChatPunishmentLimit();
 	
 	@Key("GlobalChatPunishmentType")
 	String getGlobalChatPunishmentType();
 	
 	@Key("GlobalChatPunishmentTime")
-	Integer getGlobalChatPunishmentTime();
+	int getGlobalChatPunishmentTime();
 	
 	@Key("SubclassInterval")
-	Integer getSubclassInterval();
+	int getSubclassInterval();
 	
 	@Key("SubclassLogFlooding")
-	Boolean subclassLogFlooding();
+	boolean subclassLogFlooding();
 	
 	@Key("SubclassPunishmentLimit")
-	Integer getSubclassPunishmentLimit();
+	int getSubclassPunishmentLimit();
 	
 	@Key("SubclassPunishmentType")
 	String getSubclassPunishmentType();
 	
 	@Key("SubclassPunishmentTime")
-	Integer getSubclassPunishmentTime();
+	int getSubclassPunishmentTime();
 	
 	@Key("DropItemInterval")
-	Integer getDropItemInterval();
+	int getDropItemInterval();
 	
 	@Key("DropItemLogFlooding")
-	Boolean dropItemLogFlooding();
+	boolean dropItemLogFlooding();
 	
 	@Key("DropItemPunishmentLimit")
-	Integer getDropItemPunishmentLimit();
+	int getDropItemPunishmentLimit();
 	
 	@Key("DropItemPunishmentType")
 	String getDropItemPunishmentType();
 	
 	@Key("DropItemPunishmentTime")
-	Integer getDropItemPunishmentTime();
+	int getDropItemPunishmentTime();
 	
 	@Key("ServerBypassInterval")
-	Integer getServerBypassInterval();
+	int getServerBypassInterval();
 	
 	@Key("ServerBypassLogFlooding")
-	Boolean serverBypassLogFlooding();
+	boolean serverBypassLogFlooding();
 	
 	@Key("ServerBypassPunishmentLimit")
-	Integer getServerBypassPunishmentLimit();
+	int getServerBypassPunishmentLimit();
 	
 	@Key("ServerBypassPunishmentType")
 	String getServerBypassPunishmentType();
 	
 	@Key("ServerBypassPunishmentTime")
-	Integer getServerBypassPunishmentTime();
+	int getServerBypassPunishmentTime();
 	
 	@Key("MultiSellInterval")
-	Integer getMultiSellInterval();
+	int getMultiSellInterval();
 	
 	@Key("MultiSellLogFlooding")
-	Boolean multiSellLogFlooding();
+	boolean multiSellLogFlooding();
 	
 	@Key("MultiSellPunishmentLimit")
-	Integer getMultiSellPunishmentLimit();
+	int getMultiSellPunishmentLimit();
 	
 	@Key("MultiSellPunishmentType")
 	String getMultiSellPunishmentType();
 	
 	@Key("MultiSellPunishmentTime")
-	Integer getMultiSellPunishmentTime();
+	int getMultiSellPunishmentTime();
 	
 	@Key("TransactionInterval")
-	Integer getTransactionInterval();
+	int getTransactionInterval();
 	
 	@Key("TransactionLogFlooding")
-	Boolean transactionLogFlooding();
+	boolean transactionLogFlooding();
 	
 	@Key("TransactionPunishmentLimit")
-	Integer getTransactionPunishmentLimit();
+	int getTransactionPunishmentLimit();
 	
 	@Key("TransactionPunishmentType")
 	String getTransactionPunishmentType();
 	
 	@Key("TransactionPunishmentTime")
-	Integer getTransactionPunishmentTime();
+	int getTransactionPunishmentTime();
 	
 	@Key("ManufactureInterval")
-	Integer getManufactureInterval();
+	int getManufactureInterval();
 	
 	@Key("ManufactureLogFlooding")
-	Boolean manufactureLogFlooding();
+	boolean manufactureLogFlooding();
 	
 	@Key("ManufacturePunishmentLimit")
-	Integer getManufacturePunishmentLimit();
+	int getManufacturePunishmentLimit();
 	
 	@Key("ManufacturePunishmentType")
 	String getManufacturePunishmentType();
 	
 	@Key("ManufacturePunishmentTime")
-	Integer getManufacturePunishmentTime();
+	int getManufacturePunishmentTime();
 	
 	@Key("ManorInterval")
-	Integer getManorInterval();
+	int getManorInterval();
 	
 	@Key("ManorLogFlooding")
-	Boolean manorLogFlooding();
+	boolean manorLogFlooding();
 	
 	@Key("ManorPunishmentLimit")
-	Integer getManorPunishmentLimit();
+	int getManorPunishmentLimit();
 	
 	@Key("ManorPunishmentType")
 	String getManorPunishmentType();
 	
 	@Key("ManorPunishmentTime")
-	Integer getManorPunishmentTime();
+	int getManorPunishmentTime();
 	
 	@Key("SendMailInterval")
-	Integer getSendMailInterval();
+	int getSendMailInterval();
 	
 	@Key("SendMailLogFlooding")
-	Boolean sendMailLogFlooding();
+	boolean sendMailLogFlooding();
 	
 	@Key("SendMailPunishmentLimit")
-	Integer getSendMailPunishmentLimit();
+	int getSendMailPunishmentLimit();
 	
 	@Key("SendMailPunishmentType")
 	String getSendMailPunishmentType();
 	
 	@Key("SendMailPunishmentTime")
-	Integer getSendMailPunishmentTime();
+	int getSendMailPunishmentTime();
 	
 	@Key("CharacterSelectInterval")
-	Integer getCharacterSelectInterval();
+	int getCharacterSelectInterval();
 	
 	@Key("CharacterSelectLogFlooding")
-	Boolean characterSelectLogFlooding();
+	boolean characterSelectLogFlooding();
 	
 	@Key("CharacterSelectPunishmentLimit")
-	Integer getCharacterSelectPunishmentLimit();
+	int getCharacterSelectPunishmentLimit();
 	
 	@Key("CharacterSelectPunishmentType")
 	String getCharacterSelectPunishmentType();
 	
 	@Key("CharacterSelectPunishmentTime")
-	Integer getCharacterSelectPunishmentTime();
+	int getCharacterSelectPunishmentTime();
 	
 	@Key("ItemAuctionInterval")
-	Integer getItemAuctionInterval();
+	int getItemAuctionInterval();
 	
 	@Key("ItemAuctionLogFlooding")
-	Boolean itemAuctionLogFlooding();
+	boolean itemAuctionLogFlooding();
 	
 	@Key("ItemAuctionPunishmentLimit")
-	Integer getItemAuctionPunishmentLimit();
+	int getItemAuctionPunishmentLimit();
 	
 	@Key("ItemAuctionPunishmentType")
 	String getItemAuctionPunishmentType();
 	
 	@Key("ItemAuctionPunishmentTime")
-	Integer getItemAuctionPunishmentTime();
+	int getItemAuctionPunishmentTime();
 }

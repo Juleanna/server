@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,17 +21,19 @@ package com.l2jserver.gameserver.script;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Luis Arias
  */
 public class DateRange {
-	protected static final Logger _log = Logger.getLogger(DateRange.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(DateRange.class);
+	
 	private final Date _startDate, _endDate;
 	
-	public DateRange(Date from, Date to) {
+	private DateRange(Date from, Date to) {
 		_startDate = from;
 		_endDate = to;
 	}
@@ -45,7 +47,7 @@ public class DateRange {
 				
 				return new DateRange(start, end);
 			} catch (ParseException e) {
-				_log.log(Level.WARNING, "Invalid Date Format.", e);
+				LOG.warn("Invalid Date Format.", e);
 			}
 		}
 		return new DateRange(null, null);

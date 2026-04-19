@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -34,6 +34,7 @@ import org.aeonbits.owner.Reloadable;
 
 import com.l2jserver.gameserver.config.converter.ClassMasterSetting;
 import com.l2jserver.gameserver.config.converter.ClassMasterSettingConverter;
+import com.l2jserver.gameserver.config.converter.Days2MillisecondsConverter;
 import com.l2jserver.gameserver.config.converter.MapIntegerIntegerConverter;
 import com.l2jserver.gameserver.config.converter.PatternConverter;
 import com.l2jserver.gameserver.config.converter.Seconds2MillisecondsConverter;
@@ -54,277 +55,277 @@ public interface CharacterConfiguration extends Reloadable {
 	
 	// Statistics
 	@Key("Delevel")
-	Boolean delevel();
+	boolean delevel();
 	
 	@Key("DecreaseSkillOnDelevel")
-	Boolean decreaseSkillOnDelevel();
+	boolean decreaseSkillOnDelevel();
 	
 	@Key("WeightLimit")
-	Integer getWeightLimit();
+	int getWeightLimit();
 	
 	@Key("RunSpeedBoost")
-	Integer getRunSpeedBoost();
+	int getRunSpeedBoost();
 	
 	@Key("DeathPenaltyChance")
-	Integer getDeathPenaltyChance();
+	int getDeathPenaltyChance();
 	
 	@Key("RespawnRestoreCP")
-	Double getRespawnRestoreCP();
+	double getRespawnRestoreCP();
 	
 	@Key("RespawnRestoreHP")
-	Double getRespawnRestoreHP();
+	double getRespawnRestoreHP();
 	
 	@Key("RespawnRestoreMP")
-	Double getRespawnRestoreMP();
+	double getRespawnRestoreMP();
 	
 	@Key("HpRegenMultiplier")
-	Double getHpRegenMultiplier();
+	double getHpRegenMultiplier();
 	
 	@Key("MpRegenMultiplier")
-	Double getMpRegenMultiplier();
+	double getMpRegenMultiplier();
 	
 	@Key("CpRegenMultiplier")
-	Double getCpRegenMultiplier();
+	double getCpRegenMultiplier();
 	
 	// Skills & Effects
 	
 	@Key("ModifySkillDuration")
-	Boolean modifySkillDuration();
+	boolean modifySkillDuration();
 	
 	@Key("SkillDuration")
 	@ConverterClass(MapIntegerIntegerConverter.class)
 	Map<Integer, Integer> getSkillDuration();
 	
 	@Key("ModifySkillReuse")
-	Boolean modifySkillReuse();
+	boolean modifySkillReuse();
 	
 	@Key("SkillReuse")
 	@ConverterClass(MapIntegerIntegerConverter.class)
 	Map<Integer, Integer> getSkillReuse();
 	
 	@Key("AutoLearnSkills")
-	Boolean autoLearnSkills();
+	boolean autoLearnSkills();
 	
 	@Key("AutoLearnForgottenScrollSkills")
-	Boolean autoLearnForgottenScrollSkills();
+	boolean autoLearnForgottenScrollSkills();
 	
 	@Key("AutoLootHerbs")
-	Boolean autoLootHerbs();
+	boolean autoLootHerbs();
 	
 	@Key("MaxBuffAmount")
-	Integer getMaxBuffAmount();
+	int getMaxBuffAmount();
 	
 	@Key("MaxTriggeredBuffAmount")
-	Integer getMaxTriggeredBuffAmount();
+	int getMaxTriggeredBuffAmount();
 	
 	@Key("MaxDanceAmount")
-	Integer getMaxDanceAmount();
+	int getMaxDanceAmount();
 	
 	@Key("DanceCancelBuff")
-	Boolean danceCancelBuff();
+	boolean danceCancelBuff();
 	
 	@Key("DanceConsumeAdditionalMP")
-	Boolean danceConsumeAdditionalMP();
+	boolean danceConsumeAdditionalMP();
 	
 	@Key("StoreDances")
-	Boolean storeDances();
+	boolean storeDances();
 	
 	@Key("AutoLearnDivineInspiration")
-	Boolean autoLearnDivineInspiration();
+	boolean autoLearnDivineInspiration();
 	
 	@Key("CancelByHit")
 	String cancelByHit();
 	
-	default Boolean cancelBow() {
+	default boolean cancelBow() {
 		return cancelByHit().equalsIgnoreCase("all") || cancelByHit().equalsIgnoreCase("bow");
 	}
 	
-	default Boolean cancelCast() {
+	default boolean cancelCast() {
 		return cancelByHit().equalsIgnoreCase("all") || cancelByHit().equalsIgnoreCase("cast");
 	}
 	
 	@Key("MagicFailures")
-	Boolean magicFailures();
+	boolean magicFailures();
 	
 	@Key("PlayerFakeDeathUpProtection")
-	Integer getPlayerFakeDeathUpProtection();
+	int getPlayerFakeDeathUpProtection();
 	
 	@Key("StoreSkillCooltime")
-	Boolean storeSkillCooltime();
+	boolean storeSkillCooltime();
 	
 	@Key("SubclassStoreSkillCooltime")
-	Boolean subclassStoreSkillCooltime();
+	boolean subclassStoreSkillCooltime();
 	
 	@Key("ShieldBlocks")
-	Boolean shieldBlocks();
+	boolean shieldBlocks();
 	
 	@Key("PerfectShieldBlockRate")
-	Integer getPerfectShieldBlockRate();
+	int getPerfectShieldBlockRate();
 	
 	@Key("EffectTickRatio")
-	Integer getEffectTickRatio();
+	int getEffectTickRatio();
 	
 	// Class, Sub-class and skill learning
 	
 	@Key("AllowClassMasters")
-	Boolean allowClassMasters();
+	boolean allowClassMasters();
 	
 	@Key("ConfigClassMaster")
 	@ConverterClass(ClassMasterSettingConverter.class)
 	ClassMasterSetting getClassMaster();
 	
 	@Key("AllowEntireTree")
-	Boolean allowEntireTree();
+	boolean allowEntireTree();
 	
 	@Key("AlternateClassMaster")
-	Boolean alternateClassMaster();
+	boolean alternateClassMaster();
 	
 	@Key("LifeCrystalNeeded")
-	Boolean lifeCrystalNeeded();
+	boolean lifeCrystalNeeded();
 	
 	@Key("EnchantSkillSpBookNeeded")
-	Boolean enchantSkillSpBookNeeded();
+	boolean enchantSkillSpBookNeeded();
 	
 	@Key("DivineInspirationSpBookNeeded")
-	Boolean divineInspirationSpBookNeeded();
+	boolean divineInspirationSpBookNeeded();
 	
 	@Key("SkillLearn")
-	Boolean skillLearn();
+	boolean skillLearn();
 	
 	@Key("SubclassWithoutQuests")
-	Boolean subclassWithoutQuests();
+	boolean subclassWithoutQuests();
 	
 	@Key("SubclassEverywhere")
-	Boolean subclassEverywhere();
+	boolean subclassEverywhere();
 	
 	@Key("TransformationWithoutQuest")
-	Boolean transformationWithoutQuest();
+	boolean transformationWithoutQuest();
 	
 	@Key("FeeDeleteTransferSkills")
-	Integer getFeeDeleteTransferSkills();
+	int getFeeDeleteTransferSkills();
 	
 	@Key("FeeDeleteSubClassSkills")
-	Integer getFeeDeleteSubClassSkills();
+	int getFeeDeleteSubClassSkills();
 	
 	// Summons
 	
 	@Key("SummonStoreSkillCooltime")
-	Boolean summonStoreSkillCooltime();
+	boolean summonStoreSkillCooltime();
 	
 	@Key("RestoreServitorOnReconnect")
-	Boolean restoreServitorOnReconnect();
+	boolean restoreServitorOnReconnect();
 	
 	@Key("RestorePetOnReconnect")
-	Boolean restorePetOnReconnect();
+	boolean restorePetOnReconnect();
 	
 	// Limits
 	
 	@Key("MaxExpBonus")
-	Double getMaxExpBonus();
+	double getMaxExpBonus();
 	
 	@Key("MaxSpBonus")
-	Double getMaxSpBonus();
+	double getMaxSpBonus();
 	
 	@Key("MaxRunSpeed")
-	Integer getMaxRunSpeed();
+	int getMaxRunSpeed();
 	
 	@Key("MaxPCritRate")
-	Integer getMaxPCritRate();
+	int getMaxPCritRate();
 	
 	@Key("MaxMCritRate")
-	Integer getMaxMCritRate();
+	int getMaxMCritRate();
 	
 	@Key("MaxPAtkSpeed")
-	Integer getMaxPAtkSpeed();
+	int getMaxPAtkSpeed();
 	
 	@Key("MaxMAtkSpeed")
-	Integer getMaxMAtkSpeed();
+	int getMaxMAtkSpeed();
 	
 	@Key("MaxEvasion")
-	Integer getMaxEvasion();
+	int getMaxEvasion();
 	
 	@Key("MinAbnormalStateSuccessRate")
-	Integer getMinAbnormalStateSuccessRate();
+	int getMinAbnormalStateSuccessRate();
 	
 	@Key("MaxAbnormalStateSuccessRate")
-	Integer getMaxAbnormalStateSuccessRate();
+	int getMaxAbnormalStateSuccessRate();
 	
 	@Key("MaxPlayerLevel")
-	Integer getMaxPlayerLevel();
+	int getMaxPlayerLevel();
 	
 	@Key("MaxPetLevel")
-	Integer getMaxPetLevel();
+	int getMaxPetLevel();
 	
 	@Key("MaxSubclass")
-	Integer getMaxSubclass();
+	int getMaxSubclass();
 	
 	@Key("BaseSubclassLevel")
-	Integer getBaseSubclassLevel();
+	int getBaseSubclassLevel();
 	
 	@Key("MaxSubclassLevel")
-	Integer getMaxSubclassLevel();
+	int getMaxSubclassLevel();
 	
 	@Key("MaxPvtStoreSellSlotsDwarf")
-	Integer getMaxPvtStoreSellSlotsDwarf();
+	int getMaxPvtStoreSellSlotsDwarf();
 	
 	@Key("MaxPvtStoreSellSlotsOther")
-	Integer getMaxPvtStoreSellSlotsOther();
+	int getMaxPvtStoreSellSlotsOther();
 	
 	@Key("MaxPvtStoreBuySlotsDwarf")
-	Integer getMaxPvtStoreBuySlotsDwarf();
+	int getMaxPvtStoreBuySlotsDwarf();
 	
 	@Key("MaxPvtStoreBuySlotsOther")
-	Integer getMaxPvtStoreBuySlotsOther();
+	int getMaxPvtStoreBuySlotsOther();
 	
 	@Key("MaximumSlotsForNoDwarf")
-	Integer getMaximumSlotsForNoDwarf();
+	int getMaximumSlotsForNoDwarf();
 	
 	@Key("MaximumSlotsForDwarf")
-	Integer getMaximumSlotsForDwarf();
+	int getMaximumSlotsForDwarf();
 	
 	@Key("MaximumSlotsForGMPlayer")
-	Integer getMaximumSlotsForGMPlayer();
+	int getMaximumSlotsForGMPlayer();
 	
 	@Key("MaximumSlotsForQuestItems")
-	Integer getMaximumSlotsForQuestItems();
+	int getMaximumSlotsForQuestItems();
 	
 	@Key("MaximumWarehouseSlotsForDwarf")
-	Integer getMaximumWarehouseSlotsForDwarf();
+	int getMaximumWarehouseSlotsForDwarf();
 	
 	@Key("MaximumWarehouseSlotsForNoDwarf")
-	Integer getMaximumWarehouseSlotsForNoDwarf();
+	int getMaximumWarehouseSlotsForNoDwarf();
 	
 	@Key("MaximumWarehouseSlotsForClan")
-	Integer getMaximumWarehouseSlotsForClan();
+	int getMaximumWarehouseSlotsForClan();
 	
 	@Key("MaximumFreightSlots")
-	Integer getMaximumFreightSlots();
+	int getMaximumFreightSlots();
 	
 	@Key("FreightPrice")
-	Integer getFreightPrice();
+	int getFreightPrice();
 	
 	@Key("NpcTalkBlockingTime")
-	Integer getNpcTalkBlockingTime();
+	int getNpcTalkBlockingTime();
 	
 	@Key("FriendListLimit")
-	Integer getFriendListLimit();
+	int getFriendListLimit();
 	
 	@Key("BlockListLimit")
-	Integer getBlockListLimit();
+	int getBlockListLimit();
 	
 	// Enchanting
 	
 	@Key("EnchantChanceElementStone")
-	Integer getEnchantChanceElementStone();
+	int getEnchantChanceElementStone();
 	
 	@Key("EnchantChanceElementCrystal")
-	Integer getEnchantChanceElementCrystal();
+	int getEnchantChanceElementCrystal();
 	
 	@Key("EnchantChanceElementJewel")
-	Integer getEnchantChanceElementJewel();
+	int getEnchantChanceElementJewel();
 	
 	@Key("EnchantChanceElementEnergy")
-	Integer getEnchantChanceElementEnergy();
+	int getEnchantChanceElementEnergy();
 	
 	@Key("EnchantBlacklist")
 	Set<Integer> getEnchantBlacklist();
@@ -332,37 +333,37 @@ public interface CharacterConfiguration extends Reloadable {
 	// Augmenting
 	
 	@Key("AugmentationNGSkillChance")
-	Integer getAugmentationNGSkillChance();
+	int getAugmentationNGSkillChance();
 	
 	@Key("AugmentationMidSkillChance")
-	Integer getAugmentationMidSkillChance();
+	int getAugmentationMidSkillChance();
 	
 	@Key("AugmentationHighSkillChance")
-	Integer getAugmentationHighSkillChance();
+	int getAugmentationHighSkillChance();
 	
 	@Key("AugmentationTopSkillChance")
-	Integer getAugmentationTopSkillChance();
+	int getAugmentationTopSkillChance();
 	
 	@Key("AugmentationAccSkillChance")
-	Integer getAugmentationAccSkillChance();
+	int getAugmentationAccSkillChance();
 	
 	@Key("AugmentationBaseStatChance")
-	Integer getAugmentationBaseStatChance();
+	int getAugmentationBaseStatChance();
 	
 	@Key("AugmentationNGGlowChance")
-	Integer getAugmentationNGGlowChance();
+	int getAugmentationNGGlowChance();
 	
 	@Key("AugmentationMidGlowChance")
-	Integer getAugmentationMidGlowChance();
+	int getAugmentationMidGlowChance();
 	
 	@Key("AugmentationHighGlowChance")
-	Integer getAugmentationHighGlowChance();
+	int getAugmentationHighGlowChance();
 	
 	@Key("AugmentationTopGlowChance")
-	Integer getAugmentationTopGlowChance();
+	int getAugmentationTopGlowChance();
 	
 	@Key("RetailLikeAugmentation")
-	Boolean retailLikeAugmentation();
+	boolean retailLikeAugmentation();
 	
 	@Key("RetailLikeAugmentationNoGradeChance")
 	List<Integer> getRetailLikeAugmentationNoGradeChance();
@@ -377,245 +378,252 @@ public interface CharacterConfiguration extends Reloadable {
 	List<Integer> getRetailLikeAugmentationTopGradeChance();
 	
 	@Key("RetailLikeAugmentationAccessory")
-	Boolean retailLikeAugmentationAccessory();
+	boolean retailLikeAugmentationAccessory();
 	
 	@Key("AugmentationBlacklist")
 	Set<Integer> getAugmentationBlacklist();
 	
 	@Key("AllowAugmentPvPItems")
-	Boolean allowAugmentPvPItems();
+	boolean allowAugmentPvPItems();
 	
 	// Karma
 	
 	@Key("KarmaPlayerCanBeKilledInPeaceZone")
-	Boolean karmaPlayerCanBeKilledInPeaceZone();
+	boolean karmaPlayerCanBeKilledInPeaceZone();
 	
 	@Key("KarmaPlayerCanUseGK")
-	Boolean karmaPlayerCanUseGK();
+	boolean karmaPlayerCanUseGK();
 	
 	@Key("KarmaPlayerCanTeleport")
-	Boolean karmaPlayerCanTeleport();
+	boolean karmaPlayerCanTeleport();
 	
 	@Key("KarmaPlayerCanShop")
-	Boolean karmaPlayerCanShop();
+	boolean karmaPlayerCanShop();
 	
 	@Key("KarmaPlayerCanTrade")
-	Boolean karmaPlayerCanTrade();
+	boolean karmaPlayerCanTrade();
 	
 	@Key("KarmaPlayerCanUseWareHouse")
-	Boolean karmaPlayerCanUseWareHouse();
+	boolean karmaPlayerCanUseWareHouse();
 	
 	// Fame
 	
 	@Key("MaxPersonalFamePoints")
-	Integer getMaxPersonalFamePoints();
+	int getMaxPersonalFamePoints();
 	
 	@Key("FortressZoneFameTaskFrequency")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getFortressZoneFameTaskFrequency();
+	long getFortressZoneFameTaskFrequency();
 	
 	@Key("FortressZoneFameAcquirePoints")
-	Integer getFortressZoneFameAcquirePoints();
+	int getFortressZoneFameAcquirePoints();
 	
 	@Key("CastleZoneFameTaskFrequency")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getCastleZoneFameTaskFrequency();
+	long getCastleZoneFameTaskFrequency();
 	
 	@Key("CastleZoneFameAcquirePoints")
-	Integer getCastleZoneFameAcquirePoints();
+	int getCastleZoneFameAcquirePoints();
 	
 	@Key("FameForDeadPlayers")
-	Boolean fameForDeadPlayers();
+	boolean fameForDeadPlayers();
 	
 	// Crafting
 	
 	@Key("Crafting")
-	Boolean crafting();
+	boolean crafting();
 	
 	@Key("CraftMasterwork")
-	Boolean craftMasterwork();
+	boolean craftMasterwork();
 	
 	@Key("DwarfRecipeLimit")
-	Integer getDwarfRecipeLimit();
+	int getDwarfRecipeLimit();
 	
 	@Key("CommonRecipeLimit")
-	Integer getCommonRecipeLimit();
+	int getCommonRecipeLimit();
 	
 	@Key("AlternativeCrafting")
-	Boolean alternativeCrafting();
+	boolean alternativeCrafting();
 	
 	@Key("CraftingSpeed")
-	Double getCraftingSpeed();
+	double getCraftingSpeed();
 	
 	@Key("CraftingXpRate")
-	Double getCraftingXpRate();
+	double getCraftingXpRate();
 	
 	@Key("CraftingSpRate")
-	Double getCraftingSpRate();
+	double getCraftingSpRate();
 	
 	@Key("CraftingRareXpRate")
-	Double getCraftingRareXpRate();
+	double getCraftingRareXpRate();
 	
 	@Key("CraftingRareSpRate")
-	Double getCraftingRareSpRate();
+	double getCraftingRareSpRate();
 	
 	@Key("BlacksmithUseRecipes")
-	Boolean blacksmithUseRecipes();
+	boolean blacksmithUseRecipes();
 	
 	@Key("StoreRecipeShopList")
-	Boolean storeRecipeShopList();
+	boolean storeRecipeShopList();
 	
 	// Clan
 	
 	@Key("ClanLeaderDateChange")
-	Integer getClanLeaderDateChange();
+	int getClanLeaderDateChange();
 	
 	@Key("ClanLeaderHourChange")
 	String getClanLeaderHourChange();
 	
 	@Key("ClanLeaderInstantActivation")
-	Boolean clanLeaderInstantActivation();
+	boolean clanLeaderInstantActivation();
 	
 	@Key("DaysBeforeJoinAClan")
-	Integer getDaysBeforeJoinAClan();
+	@ConverterClass(Days2MillisecondsConverter.class)
+	long getDaysBeforeJoinAClan();
 	
 	@Key("DaysBeforeCreateAClan")
-	Integer getDaysBeforeCreateAClan();
+	@ConverterClass(Days2MillisecondsConverter.class)
+	long getDaysBeforeCreateAClan();
 	
 	@Key("DaysToPassToDissolveAClan")
-	Integer getDaysToPassToDissolveAClan();
+	@ConverterClass(Days2MillisecondsConverter.class)
+	long getDaysToPassToDissolveAClan();
 	
 	@Key("DaysBeforeJoiningAllianceAfterLeaving")
-	Integer getDaysBeforeJoiningAllianceAfterLeaving();
+	@ConverterClass(Days2MillisecondsConverter.class)
+	long getDaysBeforeJoiningAllianceAfterLeaving();
 	
 	@Key("DaysBeforeJoinAllyWhenDismissed")
-	Integer getDaysBeforeJoinAllyWhenDismissed();
+	@ConverterClass(Days2MillisecondsConverter.class)
+	long getDaysBeforeJoinAllyWhenDismissed();
 	
 	@Key("DaysBeforeAcceptNewClanWhenDismissed")
-	Integer getDaysBeforeAcceptNewClanWhenDismissed();
+	@ConverterClass(Days2MillisecondsConverter.class)
+	long getDaysBeforeAcceptNewClanWhenDismissed();
 	
 	@Key("DaysBeforeCreateNewAllyWhenDissolved")
-	Integer getDaysBeforeCreateNewAllyWhenDissolved();
+	@ConverterClass(Days2MillisecondsConverter.class)
+	long getDaysBeforeCreateNewAllyWhenDissolved();
 	
 	@Key("MaxNumOfClansInAlly")
-	Integer getMaxNumOfClansInAlly();
+	int getMaxNumOfClansInAlly();
 	
 	@Key("MembersCanWithdrawFromClanWH")
-	Boolean membersCanWithdrawFromClanWH();
+	boolean membersCanWithdrawFromClanWH();
 	
 	@Key("RemoveCastleCirclets")
-	Boolean removeCastleCirclets();
+	boolean removeCastleCirclets();
 	
 	@Key("ClanMembersForWar")
-	Integer getClanMembersForWar();
+	int getClanMembersForWar();
 	
 	// Party
 	
 	@Key("PartyRange")
-	Integer getPartyRange();
+	int getPartyRange();
 	
 	@Key("PartyRange2")
-	Integer getPartyRange2();
+	int getPartyRange2();
 	
 	@Key("PartyEvenlyDistributeAllStackableItems")
-	Boolean getPartyEvenlyDistributeAllStackableItems();
+	boolean getPartyEvenlyDistributeAllStackableItems();
 	
 	@Key("PartyEvenlyDistributeAllOtherItems")
-	Boolean getPartyEvenlyDistributeAllOtherItems();
+	boolean getPartyEvenlyDistributeAllOtherItems();
 	
 	@Key("PartyEvenlyDistributeItems")
 	List<Integer> getPartyEvenlyDistributeItems();
 	
 	@Key("LeavePartyLeader")
-	Boolean leavePartyLeader();
+	boolean leavePartyLeader();
 	
 	// Initial
 	
 	@Key("InitialEquipmentEvent")
-	Boolean initialEquipmentEvent();
+	boolean initialEquipmentEvent();
 	
 	@Key("StartingAdena")
-	Integer getStartingAdena();
+	int getStartingAdena();
 	
 	@Key("StartingLevel")
-	Integer getStartingLevel();
+	int getStartingLevel();
 	
 	@Key("StartingSP")
-	Integer getStartingSP();
+	int getStartingSP();
 	
 	// Other
 	
 	@Key("MaxAdena")
-	Long getMaxAdena();
+	long getMaxAdena();
 	
 	@Key("AutoLoot")
-	Boolean autoLoot();
+	boolean autoLoot();
 	
 	@Key("AutoLootRaids")
-	Boolean autoLootRaids();
+	boolean autoLootRaids();
 	
 	@Key("RaidLootRightsInterval")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getRaidLootRightsInterval();
+	long getRaidLootRightsInterval();
 	
 	@Key("RaidLootRightsCCSize")
-	Integer getRaidLootRightsCCSize();
+	int getRaidLootRightsCCSize();
 	
 	@Key("UnstuckInterval")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getUnstuckInterval();
+	long getUnstuckInterval();
 	
 	@Key("TeleportWatchdogTimeout")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getTeleportWatchdogTimeout();
+	long getTeleportWatchdogTimeout();
 	
 	@Key("PlayerSpawnProtection")
-	Integer getPlayerSpawnProtection();
+	int getPlayerSpawnProtection();
 	
 	@Key("PlayerSpawnProtectionAllowedItems")
 	Set<Integer> getPlayerSpawnProtectionAllowedItems();
 	
 	@Key("PlayerTeleportProtection")
-	Integer getPlayerTeleportProtection();
+	int getPlayerTeleportProtection();
 	
 	@Key("RandomRespawnInTown")
-	Boolean randomRespawnInTown();
+	boolean randomRespawnInTown();
 	
 	@Key("OffsetOnTeleport")
-	Boolean offsetOnTeleport();
+	boolean offsetOnTeleport();
 	
 	@Key("MaxOffsetOnTeleport")
-	Integer getMaxOffsetOnTeleport();
+	int getMaxOffsetOnTeleport();
 	
 	@Key("PetitioningAllowed")
-	Boolean petitioningAllowed();
+	boolean petitioningAllowed();
 	
 	@Key("MaxPetitionsPerPlayer")
-	Integer getMaxPetitionsPerPlayer();
+	int getMaxPetitionsPerPlayer();
 	
 	@Key("MaxPetitionsPending")
-	Integer getMaxPetitionsPending();
+	int getMaxPetitionsPending();
 	
 	@Key("FreeTeleporting")
-	Boolean freeTeleporting();
+	boolean freeTeleporting();
 	
 	@Key("DeleteCharAfterDays")
-	Integer getDeleteCharAfterDays();
+	int getDeleteCharAfterDays();
 	
 	@Key("ExponentXp")
-	Integer getExponentXp();
+	int getExponentXp();
 	
 	@Key("ExponentSp")
-	Integer getExponentSp();
+	int getExponentSp();
 	
 	@Key("PartyXpCutoffMethod")
 	String getPartyXpCutoffMethod();
 	
 	@Key("PartyXpCutoffPercent")
-	Double getPartyXpCutoffPercent();
+	double getPartyXpCutoffPercent();
 	
 	@Key("PartyXpCutoffLevel")
-	Integer getPartyXpCutoffLevel();
+	int getPartyXpCutoffLevel();
 	
 	@Key("PartyXpCutoffGaps")
 	@ConverterClass(MapIntegerIntegerConverter.class)
@@ -625,19 +633,19 @@ public interface CharacterConfiguration extends Reloadable {
 	List<Integer> getPartyXpCutoffGapPercent();
 	
 	@Key("Tutorial")
-	Boolean tutorial();
+	boolean tutorial();
 	
 	@Key("ExpertisePenalty")
-	Boolean expertisePenalty();
+	boolean expertisePenalty();
 	
 	@Key("StoreUISettings")
-	Boolean storeUISettings();
+	boolean storeUISettings();
 	
 	@Key("SilenceModeExclude")
-	Boolean silenceModeExclude();
+	boolean silenceModeExclude();
 	
 	@Key("ValidateTriggerSkills")
-	Boolean validateTriggerSkills();
+	boolean validateTriggerSkills();
 	
 	@Key("PlayerNameTemplate")
 	@ConverterClass(PatternConverter.class)
@@ -651,5 +659,5 @@ public interface CharacterConfiguration extends Reloadable {
 	Set<String> getForbiddenNames();
 	
 	@Key("CharMaxNumber")
-	Integer getCharMaxNumber();
+	int getCharMaxNumber();
 }

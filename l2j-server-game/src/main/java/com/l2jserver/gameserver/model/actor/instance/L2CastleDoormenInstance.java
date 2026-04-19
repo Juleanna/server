@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,67 +18,12 @@
  */
 package com.l2jserver.gameserver.model.actor.instance;
 
-import java.util.StringTokenizer;
-
 import com.l2jserver.gameserver.enums.InstanceType;
-import com.l2jserver.gameserver.model.ClanPrivilege;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
-import com.l2jserver.gameserver.model.entity.clanhall.SiegableHall;
 
 public class L2CastleDoormenInstance extends L2DoormenInstance {
-	public L2CastleDoormenInstance(L2NpcTemplate template) {
-		super(template);
+	public L2CastleDoormenInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2CastleDoormenInstance);
-	}
-	
-	@Override
-	protected final void openDoors(L2PcInstance player, String command) {
-		StringTokenizer st = new StringTokenizer(command.substring(10), ", ");
-		st.nextToken();
-		
-		while (st.hasMoreTokens()) {
-			if (getConquerableHall() != null) {
-				getConquerableHall().openCloseDoor(Integer.parseInt(st.nextToken()), true);
-			} else {
-				getCastle().openDoor(player, Integer.parseInt(st.nextToken()));
-			}
-		}
-	}
-	
-	@Override
-	protected final void closeDoors(L2PcInstance player, String command) {
-		StringTokenizer st = new StringTokenizer(command.substring(11), ", ");
-		st.nextToken();
-		
-		while (st.hasMoreTokens()) {
-			if (getConquerableHall() != null) {
-				getConquerableHall().openCloseDoor(Integer.parseInt(st.nextToken()), false);
-			} else {
-				getCastle().closeDoor(player, Integer.parseInt(st.nextToken()));
-			}
-		}
-	}
-	
-	@Override
-	protected final boolean isOwnerClan(L2PcInstance player) {
-		if ((player.getClan() != null) && player.hasClanPrivilege(ClanPrivilege.CS_OPEN_DOOR)) {
-			SiegableHall hall = getConquerableHall();
-			// save in variable because it's a costly call
-			if (hall != null) {
-				return player.getClanId() == hall.getOwnerId();
-			} else if (getCastle() != null) {
-				return player.getClanId() == getCastle().getOwnerId();
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	protected final boolean isUnderSiege() {
-		SiegableHall hall = getConquerableHall();
-		if (hall != null) {
-			return hall.isInSiege();
-		}
-		return getCastle().getZone().isActive();
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -43,8 +43,8 @@ public class L2SiegeFlagInstance extends L2Npc {
 	private final boolean _isAdvanced;
 	private boolean _canTalk;
 	
-	public L2SiegeFlagInstance(L2PcInstance player, L2NpcTemplate template, boolean advanced, boolean outPost) {
-		super(template);
+	public L2SiegeFlagInstance(int objectId, L2PcInstance player, L2NpcTemplate template, boolean advanced, boolean outPost) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2SiegeFlagInstance);
 		
 		if (TerritoryWarManager.getInstance().isTWInProgress()) {

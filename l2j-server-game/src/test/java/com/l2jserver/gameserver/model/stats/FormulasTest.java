@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -48,7 +48,7 @@ import com.l2jserver.gameserver.model.skills.Skill;
  * @version 2.6.3.0
  */
 @ExtendWith(MockitoExtension.class)
-public class FormulasTest {
+class FormulasTest {
 	
 	private static final int HP_REGENERATE_PERIOD_CHARACTER = 3000;
 	
@@ -65,14 +65,14 @@ public class FormulasTest {
 	}
 	
 	@Test
-	public void test_get_regenerate_period() {
+	void testGetRegeneratePeriod() {
 		when(character.isDoor()).thenReturn(false);
 		
 		assertEquals(HP_REGENERATE_PERIOD_CHARACTER, Formulas.getRegeneratePeriod(character));
 	}
 	
 	@Test
-	public void test_get_regenerate_period_door() {
+	void testGetRegeneratePeriodDoor() {
 		when(character.isDoor()).thenReturn(true);
 		
 		assertEquals(HP_REGENERATE_PERIOD_DOOR, Formulas.getRegeneratePeriod(character));
@@ -80,7 +80,7 @@ public class FormulasTest {
 	
 	@ParameterizedTest
 	@MethodSource("provide")
-	public void test_calculate_cast_time(int hitTime, boolean isChanneling, int channelingSkillId, boolean isStatic, boolean isMagic, //
+	void testCalculateCastTime(int hitTime, boolean isChanneling, int channelingSkillId, boolean isStatic, boolean isMagic, //
 		int mAtkSpeed, double pAtkSpeed, boolean isChargedSpiritshots, boolean isChargedBlessedSpiritShots, double expected) {
 		lenient().when(character.getMAtkSpd()).thenReturn(mAtkSpeed);
 		lenient().when(character.getPAtkSpd()).thenReturn(pAtkSpeed);

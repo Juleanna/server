@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -23,6 +23,9 @@ import static com.l2jserver.gameserver.model.actor.L2Npc.INTERACTION_DISTANCE;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.enums.PrivateStoreType;
 import com.l2jserver.gameserver.model.ItemRequest;
 import com.l2jserver.gameserver.model.L2World;
@@ -32,6 +35,8 @@ import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.util.Util;
 
 public final class RequestPrivateStoreBuy extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestPrivateStoreBuy.class);
+	
 	private static final String _C__83_REQUESTPRIVATESTOREBUY = "[C] 83 RequestPrivateStoreBuy";
 	
 	private static final int BATCH_LENGTH = 20; // length of the one item
@@ -123,7 +128,7 @@ public final class RequestPrivateStoreBuy extends L2GameClientPacket {
 		if (result > 0) {
 			sendPacket(ActionFailed.STATIC_PACKET);
 			if (result > 1) {
-				_log.warning("PrivateStore buy has failed due to invalid list or request. Player: " + player.getName() + ", Private store of: " + storePlayer.getName());
+				LOG.warn("PrivateStore buy has failed due to invalid list or request. Player: {}, Private store of: {}", player.getName(), storePlayer.getName());
 			}
 			return;
 		}

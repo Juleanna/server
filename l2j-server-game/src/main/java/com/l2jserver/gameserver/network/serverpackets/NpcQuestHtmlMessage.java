@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -27,8 +27,8 @@ import com.l2jserver.gameserver.enums.HtmlActionScope;
 public final class NpcQuestHtmlMessage extends AbstractHtmlPacket {
 	private final int _questId;
 	
-	public NpcQuestHtmlMessage(int npcObjId, int questId) {
-		super(npcObjId);
+	public NpcQuestHtmlMessage(int npcObjId, int questId, String html) {
+		super(npcObjId, html);
 		_questId = questId;
 	}
 	

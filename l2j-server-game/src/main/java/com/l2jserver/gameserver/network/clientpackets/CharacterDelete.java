@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,12 +20,13 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.CharSelectInfoPackage;
 import com.l2jserver.gameserver.model.events.Containers;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerDelete;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerDelete;
 import com.l2jserver.gameserver.network.serverpackets.CharDeleteFail;
 import com.l2jserver.gameserver.network.serverpackets.CharDeleteSuccess;
 import com.l2jserver.gameserver.network.serverpackets.CharSelectionInfo;
@@ -34,6 +35,8 @@ import com.l2jserver.gameserver.network.serverpackets.CharSelectionInfo;
  * @since 2005/03/27 15:29:30
  */
 public final class CharacterDelete extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(CharacterDelete.class);
+	
 	private static final String _C__0C_CHARACTERDELETE = "[C] 0D CharacterDelete";
 	
 	private int _charSlot;
@@ -51,7 +54,7 @@ public final class CharacterDelete extends L2GameClientPacket {
 		}
 		
 		if (general().debug()) {
-			_log.fine("deleting slot:" + _charSlot);
+			LOG.debug("Deleting slot: {}", _charSlot);
 		}
 		
 		try {
@@ -64,7 +67,7 @@ public final class CharacterDelete extends L2GameClientPacket {
 				case 0: // Success!
 					sendPacket(new CharDeleteSuccess());
 					final CharSelectInfoPackage charInfo = getClient().getCharSelection(_charSlot);
-					EventDispatcher.getInstance().notifyEvent(new OnPlayerDelete(charInfo.getObjectId(), charInfo.getName(), getClient()), Containers.Players());
+					EventDispatcher.getInstance().notifyEvent(new PlayerDelete(charInfo.getObjectId(), charInfo.getName(), getClient()), Containers.Players());
 					break;
 				case 1:
 					sendPacket(new CharDeleteFail(CharDeleteFail.REASON_YOU_MAY_NOT_DELETE_CLAN_MEMBER));
@@ -74,7 +77,7 @@ public final class CharacterDelete extends L2GameClientPacket {
 					break;
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Error:", e);
+			LOG.error("Error:", e);
 		}
 		
 		CharSelectionInfo cl = new CharSelectionInfo(getClient().getAccountName(), getClient().getSessionId().playOkID1, 0);

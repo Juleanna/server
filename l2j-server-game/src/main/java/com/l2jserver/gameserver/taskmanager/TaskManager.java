@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.taskmanager.tasks.TaskBirthday;
+import com.l2jserver.gameserver.taskmanager.tasks.TaskCastleTaxUpdate;
 import com.l2jserver.gameserver.taskmanager.tasks.TaskClanLeaderApply;
 import com.l2jserver.gameserver.taskmanager.tasks.TaskCleanUp;
 import com.l2jserver.gameserver.taskmanager.tasks.TaskDailySkillReuseClean;
@@ -165,6 +166,7 @@ public final class TaskManager {
 	
 	private void initializate() {
 		registerTask(new TaskBirthday());
+		registerTask(new TaskCastleTaxUpdate());
 		registerTask(new TaskClanLeaderApply());
 		registerTask(new TaskCleanUp());
 		registerTask(new TaskDailySkillReuseClean());
@@ -181,7 +183,7 @@ public final class TaskManager {
 	
 	public void registerTask(Task task) {
 		int key = task.getName().hashCode();
-		_tasks.computeIfAbsent(key, k -> {
+		_tasks.computeIfAbsent(key, _ -> {
 			task.initializate();
 			return task;
 		});
@@ -237,6 +239,8 @@ public final class TaskManager {
 					}
 					LOG.info("Task {} is due.", task.getId());
 				} catch (Exception e) {
+					LOG.warn("Could not schedule TYPE_TIME task {} (param='{}').",
+						task.getId(), task.getParams().length > 0 ? task.getParams()[0] : "", e);
 				}
 				break;
 			case TYPE_SPECIAL:

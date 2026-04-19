@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,7 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerTutorialQuestionMark;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerTutorialQuestionMark;
 
 public class RequestTutorialQuestionMark extends L2GameClientPacket {
 	private static final String _C__87_REQUESTTUTORIALQUESTIONMARK = "[C] 87 RequestTutorialQuestionMark";
@@ -38,7 +38,7 @@ public class RequestTutorialQuestionMark extends L2GameClientPacket {
 		if (player == null) {
 			return;
 		}
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerTutorialQuestionMark(player, _number), player);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerTutorialQuestionMark(player, _number), player);
 	}
 	
 	@Override

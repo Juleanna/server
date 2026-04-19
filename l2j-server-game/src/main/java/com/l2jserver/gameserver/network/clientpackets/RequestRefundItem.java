@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.model.actor.L2Npc.INTERACTION_DISTANCE;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.xml.impl.BuyListData;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -38,6 +41,8 @@ import com.l2jserver.gameserver.util.Util;
  * RequestRefundItem client packet class.
  */
 public final class RequestRefundItem extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestRefundItem.class);
+	
 	private static final String _C__D0_75_REQUESTREFUNDITEM = "[C] D0:75 RequestRefundItem";
 	
 	private static final int BATCH_LENGTH = 4; // length of the one item
@@ -176,7 +181,7 @@ public final class RequestRefundItem extends L2GameClientPacket {
 		for (int i = 0; i < _items.length; i++) {
 			L2ItemInstance item = player.getRefund().transferItem("Refund", objectIds[i], Long.MAX_VALUE, player.getInventory(), player, player.getLastFolkNPC());
 			if (item == null) {
-				_log.warning("Error refunding object for char " + player.getName() + " (newitem == null)");
+				LOG.warn("Error refunding object for char {} (newitem == null)", player.getName());
 			}
 		}
 		

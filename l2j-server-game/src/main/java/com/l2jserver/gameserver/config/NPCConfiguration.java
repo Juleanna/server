@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -48,31 +48,31 @@ import com.l2jserver.gameserver.config.converter.MapIntegerIntegerConverter;
 public interface NPCConfiguration extends Reloadable {
 	
 	@Key("AnnounceMammonSpawn")
-	Boolean announceMammonSpawn();
+	boolean announceMammonSpawn();
 	
 	@Key("MobAggroInPeaceZone")
-	Boolean mobAggroInPeaceZone();
+	boolean mobAggroInPeaceZone();
 	
 	@Key("AttackableNpcs")
-	Boolean attackableNpcs();
+	boolean attackableNpcs();
 	
 	@Key("ViewNpc")
-	Boolean viewNpc();
+	boolean viewNpc();
 	
 	@Key("MaxDriftRange")
-	Integer getMaxDriftRange();
+	int getMaxDriftRange();
 	
 	@Key("ShowNpcLevel")
-	Boolean showNpcLevel();
+	boolean showNpcLevel();
 	
 	@Key("ShowCrestWithoutQuest")
-	Boolean showCrestWithoutQuest();
+	boolean showCrestWithoutQuest();
 	
 	@Key("RandomEnchantEffect")
-	Boolean randomEnchantEffect();
+	boolean randomEnchantEffect();
 	
 	@Key("MinNPCLevelForDmgPenalty")
-	Integer getMinNPCLevelForDmgPenalty();
+	int getMinNPCLevelForDmgPenalty();
 	
 	@Key("DmgPenaltyForLvLDifferences")
 	List<Double> getDmgPenaltyForLvLDifferences();
@@ -83,119 +83,122 @@ public interface NPCConfiguration extends Reloadable {
 	@Key("SkillDmgPenaltyForLvLDifferences")
 	List<Double> getSkillDmgPenaltyForLvLDifferences();
 	
+	// TODO(Zoey76): Implement MinNPCLevelForMagicPenalty configuration.
 	@Key("MinNPCLevelForMagicPenalty")
-	Integer getMinNPCLevelForMagicPenalty();
+	int getMinNPCLevelForMagicPenalty();
 	
 	@Key("SkillChancePenaltyForLvLDifferences")
 	List<Double> getSkillChancePenaltyForLvLDifferences();
 	
 	// Monsters
 	
+	// TODO(Zoey76): Implement DecayTimeTask configuration.
 	@Key("DecayTimeTask")
-	Integer getDecayTimeTask();
+	int getDecayTimeTask();
 	
 	@Key("DefaultCorpseTime")
-	Integer getDefaultCorpseTime();
+	int getDefaultCorpseTime();
 	
 	@Key("SpoiledCorpseExtendTime")
-	Integer getSpoiledCorpseExtendTime();
+	int getSpoiledCorpseExtendTime();
 	
 	@Key("CorpseConsumeSkillAllowedTimeBeforeDecay")
-	Integer getCorpseConsumeSkillAllowedTimeBeforeDecay();
+	int getCorpseConsumeSkillAllowedTimeBeforeDecay();
 	
 	// Guards
 	
 	@Key("GuardAttackAggroMob")
-	Boolean guardAttackAggroMob();
+	boolean guardAttackAggroMob();
 	
 	// Pets
 	
+	// TODO(Zoey76): Implement AllowWyvernUpgrader configuration.
 	@Key("AllowWyvernUpgrader")
-	Integer allowWyvernUpgrader();
+	int allowWyvernUpgrader();
 	
 	@Key("PetRentNPCs")
 	Set<Integer> getPetRentNPCs();
 	
 	@Key("MaximumSlotsForPet")
-	Integer getMaximumSlotsForPet();
+	int getMaximumSlotsForPet();
 	
 	@Key("PetHpRegenMultiplier")
-	Double getPetHpRegenMultiplier();
+	double getPetHpRegenMultiplier();
 	
 	@Key("PetMpRegenMultiplier")
-	Double getPetMpRegenMultiplier();
+	double getPetMpRegenMultiplier();
 	
 	// Raid Bosses
 	
 	@Key("RaidHpRegenMultiplier")
-	Double getRaidHpRegenMultiplier();
+	double getRaidHpRegenMultiplier();
 	
 	@Key("RaidMpRegenMultiplier")
-	Double getRaidMpRegenMultiplier();
+	double getRaidMpRegenMultiplier();
 	
 	@Key("RaidPDefenceMultiplier")
-	Double getRaidPDefenceMultiplier();
+	double getRaidPDefenceMultiplier();
 	
 	@Key("RaidMDefenceMultiplier")
-	Double getRaidMDefenceMultiplier();
+	double getRaidMDefenceMultiplier();
 	
 	@Key("RaidPAttackMultiplier")
-	Double getRaidPAttackMultiplier();
+	double getRaidPAttackMultiplier();
 	
 	@Key("RaidMAttackMultiplier")
-	Double getRaidMAttackMultiplier();
+	double getRaidMAttackMultiplier();
 	
 	@Key("RaidMinRespawnMultiplier")
-	Double getRaidMinRespawnMultiplier();
+	double getRaidMinRespawnMultiplier();
 	
 	@Key("RaidMaxRespawnMultiplier")
-	Double getRaidMaxRespawnMultiplier();
+	double getRaidMaxRespawnMultiplier();
 	
 	@Key("RaidMinionRespawnTime")
-	Long getRaidMinionRespawnTime();
+	long getRaidMinionRespawnTime();
 	
 	@Key("CustomMinionsRespawnTime")
 	@ConverterClass(MapIntegerIntegerConverter.class)
 	Map<Integer, Integer> getCustomMinionsRespawnTime();
 	
 	@Key("RaidCurse")
-	Boolean raidCurse();
+	boolean raidCurse();
 	
 	@Key("RaidChaosTime")
-	Integer getRaidChaosTime();
+	int getRaidChaosTime();
 	
 	@Key("GrandChaosTime")
-	Integer getGrandChaosTime();
+	int getGrandChaosTime();
 	
 	@Key("MinionChaosTime")
-	Integer getMinionChaosTime();
+	int getMinionChaosTime();
 	
 	// Drops
 	
 	@Key("UseDeepBlueDropRules")
-	Boolean useDeepBlueDropRules();
+	boolean useDeepBlueDropRules();
 	
 	@Key("UseDeepBlueDropRulesRaid")
-	Boolean useDeepBlueDropRulesRaid();
+	boolean useDeepBlueDropRulesRaid();
 	
 	@Key("DropAdenaMinLevelDifference")
-	Integer getDropAdenaMinLevelDifference();
+	int getDropAdenaMinLevelDifference();
 	
 	@Key("DropAdenaMaxLevelDifference")
-	Integer getDropAdenaMaxLevelDifference();
+	int getDropAdenaMaxLevelDifference();
 	
 	@Key("DropAdenaMinLevelGapChance")
-	Integer getDropAdenaMinLevelGapChance();
+	int getDropAdenaMinLevelGapChance();
 	
 	@Key("DropItemMinLevelDifference")
-	Integer getDropItemMinLevelDifference();
+	int getDropItemMinLevelDifference();
 	
 	@Key("DropItemMaxLevelDifference")
-	Integer getDropItemMaxLevelDifference();
+	int getDropItemMaxLevelDifference();
 	
 	@Key("DropItemMinLevelGapChance")
-	Integer getDropItemMinLevelGapChance();
+	int getDropItemMinLevelGapChance();
 	
 	@Key("MaxAggroRange")
-	Integer getMaxAggroRange();
+	int getMaxAggroRange();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -47,10 +47,10 @@ import com.l2jserver.gameserver.model.entity.FortSiege;
 import com.l2jserver.gameserver.model.entity.Siege;
 import com.l2jserver.gameserver.model.entity.clanhall.SiegableHall;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.clan.OnPlayerClanCreate;
-import com.l2jserver.gameserver.model.events.impl.character.player.clan.OnPlayerClanDestroy;
-import com.l2jserver.gameserver.model.events.impl.clan.OnClanWarFinish;
-import com.l2jserver.gameserver.model.events.impl.clan.OnClanWarStart;
+import com.l2jserver.gameserver.model.events.impl.character.player.clan.PlayerClanCreate;
+import com.l2jserver.gameserver.model.events.impl.character.player.clan.PlayerClanDestroy;
+import com.l2jserver.gameserver.model.events.impl.clan.ClanWarFinish;
+import com.l2jserver.gameserver.model.events.impl.clan.ClanWarStart;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
 import com.l2jserver.gameserver.network.serverpackets.PledgeShowInfoUpdate;
@@ -162,8 +162,9 @@ public class ClanTable {
 			return null;
 		}
 		
-		L2Clan clan = new L2Clan(IdFactory.getInstance().getNextId(), clanName);
-		L2ClanMember leader = new L2ClanMember(clan, player);
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var clan = new L2Clan(objectId, clanName);
+		final var leader = new L2ClanMember(clan, player);
 		clan.setLeader(leader);
 		leader.setPlayerInstance(player);
 		clan.store();
@@ -182,7 +183,7 @@ public class ClanTable {
 		player.sendPacket(SystemMessageId.CLAN_CREATED);
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerClanCreate(player, clan));
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerClanCreate(player, clan));
 		return clan;
 	}
 	
@@ -293,7 +294,7 @@ public class ClanTable {
 		}
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerClanDestroy(leaderMember, clan));
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerClanDestroy(leaderMember, clan));
 	}
 	
 	public void scheduleRemoveClan(final int clanId) {
@@ -320,7 +321,7 @@ public class ClanTable {
 		final L2Clan clan1 = getClan(clanId1);
 		final L2Clan clan2 = getClan(clanId2);
 		
-		EventDispatcher.getInstance().notifyEventAsync(new OnClanWarStart(clan1, clan2));
+		EventDispatcher.getInstance().notifyEventAsync(new ClanWarStart(clan1, clan2));
 		
 		clan1.setEnemyClan(clan2);
 		clan2.setAttackerClan(clan1);
@@ -355,7 +356,7 @@ public class ClanTable {
 		L2Clan clan1 = getClan(clanId1);
 		L2Clan clan2 = getClan(clanId2);
 		
-		EventDispatcher.getInstance().notifyEventAsync(new OnClanWarFinish(clan1, clan2));
+		EventDispatcher.getInstance().notifyEventAsync(new ClanWarFinish(clan1, clan2));
 		
 		clan1.deleteEnemyClan(clan2);
 		clan2.deleteAttackerClan(clan1);

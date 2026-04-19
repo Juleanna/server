@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,8 +20,8 @@ package com.l2jserver.gameserver.model.announce;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 
@@ -30,13 +30,10 @@ import com.l2jserver.commons.database.ConnectionFactory;
  * @author UnAfraid
  */
 public class Announcement implements IAnnouncement {
-	
-	protected static final Logger _log = Logger.getLogger(Announcement.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(Announcement.class);
 	
 	private static final String INSERT_QUERY = "INSERT INTO announcements (type, content, author) VALUES (?, ?, ?)";
-	
 	private static final String UPDATE_QUERY = "UPDATE announcements SET type = ?, content = ?, author = ? WHERE id = ?";
-	
 	private static final String DELETE_QUERY = "DELETE FROM announcements WHERE id = ?";
 	
 	protected int _id;
@@ -112,7 +109,7 @@ public class Announcement implements IAnnouncement {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't store announcement: ", e);
+			LOG.warn("Couldn't store announcement: ", e);
 			return false;
 		}
 		return true;
@@ -128,7 +125,7 @@ public class Announcement implements IAnnouncement {
 			ps.setInt(4, _id);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't store announcement: ", e);
+			LOG.warn("Couldn't store announcement: ", e);
 			return false;
 		}
 		return true;
@@ -141,7 +138,7 @@ public class Announcement implements IAnnouncement {
 			ps.setInt(1, _id);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't remove announcement: ", e);
+			LOG.warn("Couldn't remove announcement: ", e);
 			return false;
 		}
 		return true;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,15 +18,14 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.xml.impl.SkillTreesData;
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.model.ClanPrivilege;
-import com.l2jserver.gameserver.model.L2SkillLearn;
-import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2NpcInstance;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.base.AcquireSkillType;
-import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.serverpackets.AcquireSkillInfo;
 
 /**
@@ -34,6 +33,9 @@ import com.l2jserver.gameserver.network.serverpackets.AcquireSkillInfo;
  * @author Zoey76
  */
 public final class RequestAcquireSkillInfo extends L2GameClientPacket {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(RequestAcquireSkillInfo.class);
+	
 	private static final String _C__73_REQUESTACQUIRESKILLINFO = "[C] 73 RequestAcquireSkillInfo";
 	
 	private int _id;
@@ -50,16 +52,16 @@ public final class RequestAcquireSkillInfo extends L2GameClientPacket {
 	@Override
 	protected void runImpl() {
 		if ((_id <= 0) || (_level <= 0)) {
-			_log.warning(RequestAcquireSkillInfo.class.getSimpleName() + ": Invalid Id: " + _id + " or level: " + _level + "!");
+			LOG.warn("Invalid Id: {} or level: {}!", _id, _level);
 			return;
 		}
 		
-		final L2PcInstance activeChar = getClient().getActiveChar();
+		final var activeChar = getClient().getActiveChar();
 		if (activeChar == null) {
 			return;
 		}
 		
-		final L2Npc trainer = activeChar.getLastFolkNPC();
+		final var trainer = activeChar.getLastFolkNPC();
 		if (!(trainer instanceof L2NpcInstance)) {
 			return;
 		}
@@ -68,9 +70,9 @@ public final class RequestAcquireSkillInfo extends L2GameClientPacket {
 			return;
 		}
 		
-		final Skill skill = SkillData.getInstance().getSkill(_id, _level);
+		final var skill = SkillData.getInstance().getSkill(_id, _level);
 		if (skill == null) {
-			_log.warning(RequestAcquireSkillInfo.class.getSimpleName() + ": Skill Id: " + _id + " level: " + _level + " is undefined. " + RequestAcquireSkillInfo.class.getName() + " failed.");
+			LOG.warn("Skill Id: {} level: {} is undefined!", _id, _level);
 			return;
 		}
 		
@@ -78,38 +80,26 @@ public final class RequestAcquireSkillInfo extends L2GameClientPacket {
 		final int prevSkillLevel = activeChar.getSkillLevel(_id);
 		if ((prevSkillLevel > 0) && !((_skillType == AcquireSkillType.TRANSFER) || (_skillType == AcquireSkillType.SUBPLEDGE))) {
 			if (prevSkillLevel == _level) {
-				_log.warning(RequestAcquireSkillInfo.class.getSimpleName() + ": Player " + activeChar.getName() + " is requesting info for a skill that already knows, Id: " + _id + " level: " + _level + "!");
+				LOG.warn("Player {} is requesting info for a skill that already knows, Id: {} level: {}!", activeChar, _id, _level);
 			} else if (prevSkillLevel != (_level - 1)) {
-				_log.warning(RequestAcquireSkillInfo.class.getSimpleName() + ": Player " + activeChar.getName() + " is requesting info for skill Id: " + _id + " level " + _level + " without knowing it's previous level!");
+				LOG.warn("Player {} is requesting info for skill Id: {} level {} without knowing it's previous level!", activeChar, _id, _level);
 			}
 		}
 		
-		final L2SkillLearn s = SkillTreesData.getInstance().getSkillLearn(_skillType, _id, _level, activeChar);
-		if (s == null) {
+		if ((_skillType == AcquireSkillType.PLEDGE) && !activeChar.isClanLeader()) {
 			return;
 		}
 		
-		switch (_skillType) {
-			case TRANSFORM, FISHING, SUBCLASS, COLLECT, TRANSFER -> sendPacket(new AcquireSkillInfo(_skillType, s));
-			case CLASS -> {
-				if (trainer.getTemplate().canTeach(activeChar.getLearningClass())) {
-					final int customSp = s.getCalculatedLevelUpSp(activeChar.getClassId(), activeChar.getLearningClass());
-					sendPacket(new AcquireSkillInfo(_skillType, s, customSp));
-				}
-			}
-			case PLEDGE -> {
-				if (!activeChar.isClanLeader()) {
-					return;
-				}
-				sendPacket(new AcquireSkillInfo(_skillType, s));
-			}
-			case SUBPLEDGE -> {
-				if (!activeChar.isClanLeader() || !activeChar.hasClanPrivilege(ClanPrivilege.CL_TROOPS_FAME)) {
-					return;
-				}
-				sendPacket(new AcquireSkillInfo(_skillType, s));
-			}
+		if ((_skillType == AcquireSkillType.SUBPLEDGE) && (!activeChar.isClanLeader() || !activeChar.hasClanPrivilege(ClanPrivilege.CL_TROOPS_FAME))) {
+			return;
 		}
+		
+		final var skillLearn = SkillTreesData.getInstance().getSkillLearn(_skillType, _id, _level, activeChar);
+		if (skillLearn == null) {
+			return;
+		}
+		
+		sendPacket(new AcquireSkillInfo(activeChar, _skillType, skillLearn));
 	}
 	
 	@Override

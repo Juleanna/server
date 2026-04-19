@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,8 +22,9 @@ import static com.l2jserver.gameserver.config.Configuration.character;
 import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.nio.BufferUnderflowException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.L2GameClient;
@@ -38,8 +39,7 @@ import com.l2jserver.mmocore.ReceivablePacket;
  * @author KenM
  */
 public abstract class L2GameClientPacket extends ReceivablePacket<L2GameClient> {
-	
-	protected static final Logger _log = Logger.getLogger(L2GameClientPacket.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2GameClientPacket.class);
 	
 	static final int MAX_ITEM_IN_PACKET = Math.max(character().getMaximumSlotsForNoDwarf(), //
 		Math.max(character().getMaximumSlotsForDwarf(), //
@@ -51,7 +51,7 @@ public abstract class L2GameClientPacket extends ReceivablePacket<L2GameClient> 
 			readImpl();
 			return true;
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Client: " + getClient().toString() + " - Failed reading: " + getType() + " ; " + e.getMessage(), e);
+			LOG.error("Client: {} - Failed reading: {} ; {}", getClient().toString(), getType(), e.getMessage(), e);
 			
 			if (e instanceof BufferUnderflowException) {
 				getClient().onBufferUnderflow();
@@ -75,12 +75,12 @@ public abstract class L2GameClientPacket extends ReceivablePacket<L2GameClient> 
 				if ((actor != null) && (actor.isSpawnProtected() || actor.isInvul())) {
 					actor.onActionRequest();
 					if (general().debug()) {
-						_log.info("Spawn protection for player " + actor.getName() + " removed by packet: " + getType());
+						LOG.info("Spawn protection for player {} removed by packet: {}", actor.getName(), getType());
 					}
 				}
 			}
 		} catch (Throwable t) {
-			_log.log(Level.SEVERE, "Client: " + getClient().toString() + " - Failed running: " + getType() + " ; " + t.getMessage(), t);
+			LOG.error("Client: {} - Failed running: {} ; {}", getClient().toString(), getType(), t.getMessage(), t);
 			// in case of EnterWorld error kick player from game
 			if (this instanceof EnterWorld) {
 				getClient().closeNow();
@@ -100,7 +100,7 @@ public abstract class L2GameClientPacket extends ReceivablePacket<L2GameClient> 
 	
 	/**
 	 * Sends a system message to the client.
-	 * @param id the system message Id
+	 * @param id the system message id
 	 */
 	public void sendPacket(SystemMessageId id) {
 		sendPacket(SystemMessage.getSystemMessage(id));
@@ -113,14 +113,13 @@ public abstract class L2GameClientPacket extends ReceivablePacket<L2GameClient> 
 	
 	/**
 	 * Overridden with true value on some packets that should disable spawn protection (RequestItemList and UseItem only)
-	 * @return
 	 */
 	protected boolean triggersOnActionRequest() {
 		return true;
 	}
 	
 	/**
-	 * @return the active player if exist, otherwise null.
+	 * @return the active player if it exists, otherwise null.
 	 */
 	protected final L2PcInstance getActiveChar() {
 		return getClient().getActiveChar();

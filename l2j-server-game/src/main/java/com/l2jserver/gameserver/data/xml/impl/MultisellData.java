@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -200,12 +200,12 @@ public final class MultisellData implements IXmlReader {
 	public void separateAndSend(int listId, L2PcInstance player, L2Npc npc, boolean inventoryOnly, double productMultiplier, double ingredientMultiplier) {
 		ListContainer template = _entries.get(listId);
 		if (template == null) {
-			LOG.warn("{}: Cannot find list ID: {} requested by player: {}, NPC ID: {}!", getClass().getSimpleName(), listId, player, (npc != null ? npc.getId() : 0));
+			LOG.warn("Cannot find list ID: {} requested by player: {}, NPC ID: {}!", listId, player, (npc != null ? npc.getId() : 0));
 			return;
 		}
 		
 		if (((npc != null) && !template.isNpcAllowed(npc.getId())) || ((npc == null) && template.isNpcOnly())) {
-			LOG.warn("{}: Player {} attempted to open multisell {} from npc {} which is not allowed!", getClass().getSimpleName(), player, listId, npc);
+			LOG.warn("Player {} attempted to open multisell {} from npc {} which is not allowed!", player, listId, npc);
 			return;
 		}
 		
@@ -299,12 +299,12 @@ public final class MultisellData implements IXmlReader {
 			for (Entry ent : listContainer.getEntries()) {
 				for (Ingredient ing : ent.getIngredients()) {
 					if (!verifyIngredient(ing)) {
-						LOG.warn("{}: Cannot find ingredient with item ID: {} in list: {}!", getClass().getSimpleName(), ing.getItemId(), listContainer.getListId());
+						LOG.warn("Cannot find ingredient with item ID: {} in list: {}!", ing.getItemId(), listContainer.getListId());
 					}
 				}
 				for (Ingredient ing : ent.getProducts()) {
 					if (!verifyIngredient(ing)) {
-						LOG.warn("{}: Cannot find product with item ID: {} in list: {}!", getClass().getSimpleName(), ing.getItemId(), listContainer.getListId());
+						LOG.warn("Cannot find product with item ID: {} in list: {}!", ing.getItemId(), listContainer.getListId());
 					}
 				}
 			}

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,7 +24,6 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 import static com.l2jserver.gameserver.config.Configuration.hunting;
 import static com.l2jserver.gameserver.config.Configuration.npc;
 import static com.l2jserver.gameserver.config.Configuration.rates;
-
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,9 +66,9 @@ import com.l2jserver.gameserver.model.actor.tasks.attackable.CommandChannelTimer
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.drops.DropListScope;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableAggroRangeEnter;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableAttack;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableKill;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAggroRangeEnter;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableAttack;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableKill;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -81,7 +80,6 @@ import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 import com.l2jserver.gameserver.util.Util;
-import com.l2jserver.gameserver.enums.Team;
 
 public class L2Attackable extends L2Npc {
 	private static final Logger LOG = LoggerFactory.getLogger(L2Attackable.class);
@@ -121,8 +119,8 @@ public class L2Attackable extends L2Npc {
 	 * Creates an attackable NPC.
 	 * @param template the attackable NPC template
 	 */
-	public L2Attackable(L2NpcTemplate template) {
-		super(template);
+	public L2Attackable(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2Attackable);
 		setIsInvul(false);
 		_mustGiveExpSp = true;
@@ -302,7 +300,7 @@ public class L2Attackable extends L2Npc {
 		
 		if ((killer != null) && killer.isPlayable()) {
 			// Delayed notification
-			EventDispatcher.getInstance().notifyEventAsyncDelayed(new OnAttackableKill(killer.getActingPlayer(), this, killer.isSummon()), this, _onKillDelay);
+			EventDispatcher.getInstance().notifyEventAsyncDelayed(new AttackableKill(killer.getActingPlayer(), this, killer.isSummon()), this, _onKillDelay);
 		}
 		
 		// Notify to minions if there are.
@@ -574,7 +572,7 @@ public class L2Attackable extends L2Npc {
 				
 				final L2PcInstance player = attacker.getActingPlayer();
 				if (player != null) {
-					EventDispatcher.getInstance().notifyEventAsync(new OnAttackableAttack(player, this, damage, skill, attacker.isSummon()), this);
+					EventDispatcher.getInstance().notifyEventAsync(new AttackableAttack(player, this, damage, skill, attacker.isSummon()), this);
 				}
 			} catch (Exception ex) {
 				LOG.error("Error adding damage!", ex);
@@ -614,7 +612,7 @@ public class L2Attackable extends L2Npc {
 			}
 			
 			// Notify to scripts
-			EventDispatcher.getInstance().notifyEventAsync(new OnAttackableAggroRangeEnter(this, targetPlayer, attacker.isSummon()), this);
+			EventDispatcher.getInstance().notifyEventAsync(new AttackableAggroRangeEnter(this, targetPlayer, attacker.isSummon()), this);
 		} else if ((targetPlayer == null) && (aggro == 0)) {
 			aggro = 1;
 			ai.addHate(1);
@@ -1389,11 +1387,13 @@ public class L2Attackable extends L2Npc {
 		return -Math.min(damage, getMaxHp()) / divider;
 	}
 	
-	/*
-	 * True if vitality rate for exp and sp should be applied
+	/**
+	 * Determines whether the vitality rate for EXP and SP should be applied.
+	 *
+	 * @return {@code true} if the vitality rate should be applied, {@code false} otherwise.
 	 */
 	public boolean useVitalityRate() {
-		return isChampion() ? customs().championEnableVitality() : true;
+	    return !isChampion() || customs().championEnableVitality();
 	}
 	
 	/** Return True if the L2Character is RaidBoss or his minion. */
@@ -1438,10 +1438,6 @@ public class L2Attackable extends L2Npc {
 	
 	public void setChampion(boolean champ) {
 		_champion = champ;
-		if (customs().ChampionAura())
-		{
-			setTeam(champ ? Team.RED : Team.NONE);
-		}
 	}
 	
 	@Override

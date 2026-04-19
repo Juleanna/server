@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -39,6 +39,7 @@ import com.l2jserver.gameserver.network.serverpackets.SetSummonRemainTime;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 /**
+ * Servitor.
  * @author UnAfraid
  */
 public class L2ServitorInstance extends L2Summon implements Runnable {
@@ -52,8 +53,8 @@ public class L2ServitorInstance extends L2Summon implements Runnable {
 	
 	private int _referenceSkill;
 	
-	public L2ServitorInstance(L2NpcTemplate template, L2PcInstance owner) {
-		super(template, owner);
+	public L2ServitorInstance(int objectId, L2NpcTemplate template, L2PcInstance owner) {
+		super(objectId, template, owner);
 		setInstanceType(InstanceType.L2ServitorInstance);
 		setShowSummonAnimation(true);
 	}

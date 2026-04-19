@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -60,6 +60,10 @@ public class Shutdown extends Thread {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(Shutdown.class);
 	
+	// Мутабельный static — читается и пишется из Telnet / GM admin-команд
+	// параллельно. Все обращения идут под COUNTER_LOCK, чтобы два одновременных
+	// /shutdown не затирали друг друга без корректного abort.
+	private static final Object COUNTER_LOCK = new Object();
 	private static Shutdown _counterInstance = null;
 	
 	private int _secondsShut;
@@ -116,23 +120,27 @@ public class Shutdown extends Thread {
 				SendServerQuit(seconds);
 		}
 		
-		if (_counterInstance != null) {
-			_counterInstance._abort();
+		synchronized (COUNTER_LOCK) {
+			if (_counterInstance != null) {
+				_counterInstance._abort();
+			}
+			_counterInstance = new Shutdown(seconds, restart);
+			_counterInstance.start();
 		}
-		_counterInstance = new Shutdown(seconds, restart);
-		_counterInstance.start();
 	}
-	
+
 	/**
 	 * This function aborts a running countdown
 	 * @param IP IP Which Issued shutdown command
 	 */
 	public void telnetAbort(String IP) {
 		LOG.warn("IP: {} issued shutdown ABORT. {} has been stopped!", IP, MODE_TEXT[_shutdownMode]);
-		
-		if (_counterInstance != null) {
-			_counterInstance._abort();
-			Broadcast.toAllOnlinePlayers("Server aborts " + MODE_TEXT[_shutdownMode] + " and continues normal operation!", false);
+
+		synchronized (COUNTER_LOCK) {
+			if (_counterInstance != null) {
+				_counterInstance._abort();
+				Broadcast.toAllOnlinePlayers("Server aborts " + MODE_TEXT[_shutdownMode] + " and continues normal operation!", false);
+			}
 		}
 	}
 	
@@ -192,42 +200,42 @@ public class Shutdown extends Thread {
 				disconnectAllCharacters();
 				LOG.info("All players disconnected and saved({}ms).", tc.getEstimatedTimeAndRestartCounter());
 			} catch (Exception e) {
-				// ignore
+				LOG.warn("Failed to disconnect all characters.", e);
 			}
-			
+
 			// ensure all services are stopped
 			try {
 				GameTimeController.getInstance().stopTimer();
 				LOG.info("Game Time Controller: Timer stopped({}ms).", tc.getEstimatedTimeAndRestartCounter());
 			} catch (Exception e) {
-				// ignore
+				LOG.warn("Failed to stop GameTimeController.", e);
 			}
-			
+
 			// stop all thread pools
 			try {
 				ThreadPoolManager.getInstance().shutdown();
 				LOG.info("Thread Pool Manager: Manager has been shut down({}ms).", tc.getEstimatedTimeAndRestartCounter());
 			} catch (Exception e) {
-				// ignore
+				LOG.warn("Failed to shutdown ThreadPoolManager.", e);
 			}
-			
+
 			try {
 				LoginServerThread.getInstance().interrupt();
 				LOG.info("Login Server Thread: Thread interrupted({}ms).", tc.getEstimatedTimeAndRestartCounter());
 			} catch (Exception e) {
-				// ignore
+				LOG.warn("Failed to interrupt LoginServerThread.", e);
 			}
-			
+
 			// last bye bye, save all data and quit this server
 			saveData();
 			tc.restartCounter();
-			
+
 			// saveData sends messages to exit players, so shutdown selector after it
 			try {
 				GameServer.gameServer.getSelectorThread().shutdown();
 				LOG.info("Game Server: Selector thread has been shut down({}ms).", tc.getEstimatedTimeAndRestartCounter());
 			} catch (Exception e) {
-				// ignore
+				LOG.warn("Failed to shutdown selector thread.", e);
 			}
 			
 			// commit data, last chance
@@ -300,24 +308,28 @@ public class Shutdown extends Thread {
 			}
 		}
 		
-		if (_counterInstance != null) {
-			_counterInstance._abort();
+		synchronized (COUNTER_LOCK) {
+			if (_counterInstance != null) {
+				_counterInstance._abort();
+			}
+
+			// the main instance should only run for shutdown hook, so we start a new instance
+			_counterInstance = new Shutdown(seconds, restart);
+			_counterInstance.start();
 		}
-		
-		// the main instance should only run for shutdown hook, so we start a new instance
-		_counterInstance = new Shutdown(seconds, restart);
-		_counterInstance.start();
 	}
-	
+
 	/**
 	 * This function aborts a running countdown.
 	 * @param activeChar GM who issued the abort command
 	 */
 	public void abort(L2PcInstance activeChar) {
 		LOG.warn("GM: {}({}) issued shutdown ABORT. {} has been stopped!", activeChar.getName(), activeChar.getObjectId(), MODE_TEXT[_shutdownMode]);
-		if (_counterInstance != null) {
-			_counterInstance._abort();
-			Broadcast.toAllOnlinePlayers("Server aborts " + MODE_TEXT[_shutdownMode] + " and continues normal operation!", false);
+		synchronized (COUNTER_LOCK) {
+			if (_counterInstance != null) {
+				_counterInstance._abort();
+				Broadcast.toAllOnlinePlayers("Server aborts " + MODE_TEXT[_shutdownMode] + " and continues normal operation!", false);
+			}
 		}
 	}
 	

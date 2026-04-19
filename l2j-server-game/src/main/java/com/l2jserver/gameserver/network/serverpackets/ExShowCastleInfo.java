@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.serverpackets;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.sql.impl.ClanTable;
 import com.l2jserver.gameserver.instancemanager.CastleManager;
 import com.l2jserver.gameserver.model.entity.Castle;
@@ -28,6 +31,7 @@ import com.l2jserver.gameserver.model.entity.Castle;
  * @author KenM
  */
 public class ExShowCastleInfo extends L2GameServerPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(ExShowCastleInfo.class);
 	
 	@Override
 	protected void writeImpl() {
@@ -41,7 +45,7 @@ public class ExShowCastleInfo extends L2GameServerPacket {
 				if (ClanTable.getInstance().getClan(castle.getOwnerId()) != null) {
 					writeS(ClanTable.getInstance().getClan(castle.getOwnerId()).getName());
 				} else {
-					_log.warning("Castle owner with no name! Castle: " + castle.getName() + " has an OwnerId = " + castle.getOwnerId() + " who does not have a  name!");
+					LOG.warn("Castle owner with no name! Castle: {} has an OwnerId = {} who does not have a  name!", castle.getName(), castle.getOwnerId());
 					writeS("");
 				}
 			} else {

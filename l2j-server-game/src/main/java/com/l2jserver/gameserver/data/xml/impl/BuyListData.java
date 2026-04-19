@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -51,13 +51,8 @@ public final class BuyListData implements IXmlReader {
 	
 	private final Map<Integer, L2BuyList> _buyLists = new HashMap<>();
 	
-	protected BuyListData() {
-		load();
-	}
-	
 	@Override
 	public synchronized void load() {
-		_buyLists.clear();
 		parseDatapackDirectory("data/buylists", false);
 		if (general().customBuyListLoad()) {
 			parseDatapackDirectory("data/buylists/custom", false);
@@ -123,7 +118,7 @@ public final class BuyListData implements IXmlReader {
 							}
 							final L2Item item = ItemTable.getInstance().getTemplate(itemId);
 							if (item != null) {
-								buyList.addProduct(new Product(buyList.getListId(), item, price, restockDelay, count));
+								buyList.addProduct(new Product(buyList.getListId(), item, price, 0, restockDelay, count));
 							} else {
 								LOG.warn("Item not found. BuyList: {} Item ID: {} File: {}", buyList.getListId(), itemId, f.getName());
 							}
@@ -151,6 +146,10 @@ public final class BuyListData implements IXmlReader {
 	
 	public L2BuyList getBuyList(int listId) {
 		return _buyLists.get(listId);
+	}
+	
+	public void addBuyList(L2BuyList buyList) {
+		_buyLists.put(buyList.getListId(), buyList);
 	}
 	
 	public static BuyListData getInstance() {

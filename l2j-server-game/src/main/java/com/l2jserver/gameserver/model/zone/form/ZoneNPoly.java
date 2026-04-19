@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,6 +19,7 @@
 package com.l2jserver.gameserver.model.zone.form;
 
 import java.awt.Polygon;
+import java.awt.Rectangle;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.GeoData;
@@ -39,6 +40,11 @@ public class ZoneNPoly extends L2ZoneForm {
 		
 		_z1 = Math.min(z1, z2);
 		_z2 = Math.max(z1, z2);
+	}
+	
+	@Override
+	public Rectangle getBoundingBox() {
+		return _p.getBounds();
 	}
 	
 	@Override

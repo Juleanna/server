@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -60,7 +60,7 @@ public class PetStat extends SummonStat {
 			return PetDataTable.getInstance().getPetLevelData(getActiveChar().getId(), Math.min(level, getMaxExpLevel())).getPetMaxExp();
 		} catch (NullPointerException e) {
 			if (getActiveChar() != null) {
-				_log.warning("Pet objectId:" + getActiveChar().getObjectId() + ", NpcId:" + getActiveChar().getId() + ", level:" + level + " is missing data from pets_stats table!");
+				LOG.warn("Pet objectId:{}, NpcId:{}, level:{} is missing data from pets_stats table!", getActiveChar().getObjectId(), getActiveChar().getId(), level);
 			}
 			throw e;
 		}

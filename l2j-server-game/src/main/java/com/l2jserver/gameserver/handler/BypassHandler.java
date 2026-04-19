@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -48,7 +48,9 @@ public class BypassHandler implements IHandler<IBypassHandler, String> {
 	
 	@Override
 	public IBypassHandler getHandler(String command) {
-		if (command.contains(" ")) {
+		if (command.contains("?")) {
+			command = command.substring(0, command.indexOf("?"));
+		} else if (command.contains(" ")) {
 			command = command.substring(0, command.indexOf(" "));
 		}
 		return _datatable.get(command.toLowerCase());

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,8 +18,8 @@
  */
 package com.l2jserver.gameserver.instancemanager.tasks;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.instancemanager.MailManager;
 import com.l2jserver.gameserver.model.L2World;
@@ -33,9 +33,9 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @author xban1x
  */
 public final class MessageDeletionTask implements Runnable {
-	private static final Logger _log = Logger.getLogger(MessageDeletionTask.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(MessageDeletionTask.class);
 	
-	final int _msgId;
+	private final int _msgId;
 	
 	public MessageDeletionTask(int msgId) {
 		_msgId = msgId;
@@ -68,7 +68,7 @@ public final class MessageDeletionTask implements Runnable {
 					receiver.sendPacket(sm);
 				}
 			} catch (Exception e) {
-				_log.log(Level.WARNING, getClass().getSimpleName() + ": Error returning items:" + e.getMessage(), e);
+				LOG.warn("Error returning items:{}", e.getMessage(), e);
 			}
 		}
 		MailManager.getInstance().deleteMessageInDb(msg.getId());

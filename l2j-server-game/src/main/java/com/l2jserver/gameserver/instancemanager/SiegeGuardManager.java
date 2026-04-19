@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,8 +20,9 @@ package com.l2jserver.gameserver.instancemanager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.model.L2Spawn;
@@ -29,8 +30,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.Castle;
 
 public final class SiegeGuardManager {
-	
-	private static final Logger _log = Logger.getLogger(SiegeGuardManager.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(SiegeGuardManager.class);
 	
 	private final Castle _castle;
 	
@@ -40,11 +40,6 @@ public final class SiegeGuardManager {
 		_castle = castle;
 	}
 	
-	/**
-	 * Add guard.
-	 * @param activeChar
-	 * @param npcId
-	 */
 	public void addSiegeGuard(L2PcInstance activeChar, int npcId) {
 		if (activeChar == null) {
 			return;
@@ -52,23 +47,10 @@ public final class SiegeGuardManager {
 		addSiegeGuard(activeChar.getX(), activeChar.getY(), activeChar.getZ(), activeChar.getHeading(), npcId);
 	}
 	
-	/**
-	 * Add guard.
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param heading
-	 * @param npcId
-	 */
-	public void addSiegeGuard(int x, int y, int z, int heading, int npcId) {
+	private void addSiegeGuard(int x, int y, int z, int heading, int npcId) {
 		saveSiegeGuard(x, y, z, heading, npcId, 0);
 	}
 	
-	/**
-	 * Hire merc.
-	 * @param activeChar
-	 * @param npcId
-	 */
 	public void hireMerc(L2PcInstance activeChar, int npcId) {
 		if (activeChar == null) {
 			return;
@@ -76,24 +58,12 @@ public final class SiegeGuardManager {
 		hireMerc(activeChar.getX(), activeChar.getY(), activeChar.getZ(), activeChar.getHeading(), npcId);
 	}
 	
-	/**
-	 * Hire merc.
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param heading
-	 * @param npcId
-	 */
 	public void hireMerc(int x, int y, int z, int heading, int npcId) {
 		saveSiegeGuard(x, y, z, heading, npcId, 1);
 	}
 	
 	/**
 	 * Remove a single mercenary, identified by the npcId and location. Presumably, this is used when a castle lord picks up a previously dropped ticket
-	 * @param npcId
-	 * @param x
-	 * @param y
-	 * @param z
 	 */
 	public void removeMerc(int npcId, int x, int y, int z) {
 		try (var con = ConnectionFactory.getInstance().getConnection();
@@ -104,7 +74,7 @@ public final class SiegeGuardManager {
 			ps.setInt(4, z);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Error deleting hired siege guard at " + x + ',' + y + ',' + z + ": " + e.getMessage(), e);
+			LOG.warn("Error deleting hired siege guard at {},{},{}: {}", x, y, z, e.getMessage(), e);
 		}
 	}
 	
@@ -117,7 +87,7 @@ public final class SiegeGuardManager {
 			ps.setInt(1, getCastle().getResidenceId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Error deleting hired siege guard for castle " + getCastle().getName() + ": " + e.getMessage(), e);
+			LOG.warn("Error deleting hired siege guard for castle {}: {}", getCastle().getName(), e.getMessage(), e);
 		}
 	}
 	
@@ -141,7 +111,7 @@ public final class SiegeGuardManager {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, getClass().getSimpleName() + ": Error spawning siege guards for castle " + getCastle().getName(), e);
+			LOG.error("Error spawning siege guards for castle {}", getCastle().getName(), e);
 		}
 	}
 	
@@ -186,19 +156,10 @@ public final class SiegeGuardManager {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Error loading siege guard for castle " + getCastle().getName() + ": " + e.getMessage(), e);
+			LOG.warn("Error loading siege guard for castle {}: {}", getCastle().getName(), e.getMessage(), e);
 		}
 	}
 	
-	/**
-	 * Save guards.
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param heading
-	 * @param npcId
-	 * @param isHire
-	 */
 	private void saveSiegeGuard(int x, int y, int z, int heading, int npcId, int isHire) {
 		try (var con = ConnectionFactory.getInstance().getConnection();
 			var ps = con.prepareStatement("INSERT INTO castle_siege_guards (castleId, npcId, x, y, z, heading, respawnDelay, isHired) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
@@ -212,7 +173,7 @@ public final class SiegeGuardManager {
 			ps.setInt(8, isHire);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Error adding siege guard for castle " + getCastle().getName() + ": " + e.getMessage(), e);
+			LOG.warn("Error adding siege guard for castle {}: {}", getCastle().getName(), e.getMessage(), e);
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -51,8 +51,8 @@ public interface DatabaseConfiguration extends Reloadable {
 	String getPassword();
 	
 	@Key("MaxConnections")
-	Integer getMaxConnections();
+	int getMaxConnections();
 	
 	@Key("MaxIdleTime")
-	Integer getMaxIdleTime();
+	int getMaxIdleTime();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.xml.impl.EnchantItemData;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -31,6 +32,8 @@ import com.l2jserver.gameserver.network.serverpackets.ExPutEnchantTargetItemResu
  * @author KenM
  */
 public class RequestExTryToPutEnchantTargetItem extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestExTryToPutEnchantTargetItem.class);
+	
 	private static final String _C__D0_4C_REQUESTEXTRYTOPUTENCHANTTARGETITEM = "[C] D0:4C RequestExTryToPutEnchantTargetItem";
 	
 	private int _objectId;
@@ -63,7 +66,7 @@ public class RequestExTryToPutEnchantTargetItem extends L2GameClientPacket {
 			activeChar.setActiveEnchantItemId(L2PcInstance.ID_NONE);
 			activeChar.sendPacket(new ExPutEnchantTargetItemResult(0));
 			if (scrollTemplate == null) {
-				_log.log(Level.WARNING, getClass().getSimpleName() + ": Undefined scroll have been used id: " + scroll.getId());
+				LOG.warn("Undefined scroll have been used id: {}", scroll.getId());
 			}
 			return;
 		}

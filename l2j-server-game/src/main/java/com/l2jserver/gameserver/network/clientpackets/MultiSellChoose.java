@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,6 +24,9 @@ import static com.l2jserver.gameserver.model.actor.L2Npc.INTERACTION_DISTANCE;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.xml.impl.MultisellData;
 import com.l2jserver.gameserver.model.Elementals;
 import com.l2jserver.gameserver.model.L2Augmentation;
@@ -43,6 +46,8 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * The Class MultiSellChoose.
  */
 public class MultiSellChoose extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(MultiSellChoose.class);
+	
 	private static final String _C__B0_MULTISELLCHOOSE = "[C] B0 MultiSellChoose";
 	
 	private int _listId;
@@ -128,7 +133,7 @@ public class MultiSellChoose extends L2GameClientPacket {
 		for (Entry entry : list.getEntries()) {
 			if (entry.getEntryId() == _entryId) {
 				if (!entry.isStackable() && (_amount > 1)) {
-					_log.severe("Character: " + player.getName() + " is trying to set amount > 1 on non-stackable multisell, id:" + _listId + ":" + _entryId);
+					LOG.error("Character: {} is trying to set amount > 1 on non-stackable multisell, id:{}:{}", player.getName(), _listId, _entryId);
 					player.setMultiSell(null);
 					return;
 				}
@@ -226,7 +231,7 @@ public class MultiSellChoose extends L2GameClientPacket {
 					} else {
 						L2ItemInstance itemToTake = inv.getItemByItemId(e.getItemId()); // initialize and initial guess for the item to take.
 						if (itemToTake == null) { // this is a cheat, transaction will be aborted and if any items already taken will not be returned back to inventory!
-							_log.severe("Character: " + player.getName() + " is trying to cheat in multisell, id:" + _listId + ":" + _entryId);
+							LOG.error("Character: {} is trying to cheat in multisell, id:{}:{}", player.getName(), _listId, _entryId);
 							player.setMultiSell(null);
 							return;
 						}

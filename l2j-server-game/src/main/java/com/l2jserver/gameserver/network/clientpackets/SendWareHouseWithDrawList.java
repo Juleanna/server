@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -23,6 +23,9 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.ClanPrivilege;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -41,6 +44,8 @@ import com.l2jserver.gameserver.util.Util;
  * @since 2005/03/29 23:15:16
  */
 public final class SendWareHouseWithDrawList extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(SendWareHouseWithDrawList.class);
+	
 	private static final String _C__32_SENDWAREHOUSEWITHDRAWLIST = "[C] 3C SendWareHouseWithDrawList";
 	
 	private static final int BATCH_LENGTH = 12; // length of the one item
@@ -149,12 +154,12 @@ public final class SendWareHouseWithDrawList extends L2GameClientPacket {
 		for (ItemHolder i : _items) {
 			L2ItemInstance oldItem = warehouse.getItemByObjectId(i.getId());
 			if ((oldItem == null) || (oldItem.getCount() < i.getCount())) {
-				_log.warning("Error withdrawing a warehouse object for char " + player.getName() + " (olditem == null)");
+				LOG.warn("Error withdrawing a warehouse object for char {} (olditem == null)", player.getName());
 				return;
 			}
 			final L2ItemInstance newItem = warehouse.transferItem(warehouse.getName(), i.getId(), i.getCount(), player.getInventory(), player, manager);
 			if (newItem == null) {
-				_log.warning("Error withdrawing a warehouse object for char " + player.getName() + " (newitem == null)");
+				LOG.warn("Error withdrawing a warehouse object for char {} (newitem == null)", player.getName());
 				return;
 			}
 			

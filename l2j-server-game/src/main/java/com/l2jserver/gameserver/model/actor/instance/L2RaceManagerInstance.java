@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -90,8 +90,8 @@ public class L2RaceManagerInstance extends L2Npc {
 		100000
 	};
 	
-	public L2RaceManagerInstance(L2NpcTemplate template) {
-		super(template);
+	public L2RaceManagerInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2RaceManagerInstance);
 		if (_notInitialized) {
 			_notInitialized = false;
@@ -370,7 +370,8 @@ public class L2RaceManagerInstance extends L2Npc {
 			sm.addInt(_raceNumber);
 			sm.addItemName(4443);
 			player.sendPacket(sm);
-			L2ItemInstance item = new L2ItemInstance(IdFactory.getInstance().getNextId(), 4443);
+			final var objectId = IdFactory.getInstance().getNextId();
+			final var item = new L2ItemInstance(objectId, 4443);
 			item.setCount(1);
 			item.setEnchantLevel(_raceNumber);
 			item.setCustomType1(ticket);
@@ -378,7 +379,7 @@ public class L2RaceManagerInstance extends L2Npc {
 			player.getInventory().addItem("Race", item, player, this);
 			InventoryUpdate iu = new InventoryUpdate();
 			iu.addItem(item);
-			L2ItemInstance adenaupdate = player.getInventory().getItemByItemId(Inventory.ADENA_ID);
+			final var adenaupdate = player.getInventory().getItemByItemId(Inventory.ADENA_ID);
 			iu.addModifiedItem(adenaupdate);
 			player.sendPacket(iu);
 			return;

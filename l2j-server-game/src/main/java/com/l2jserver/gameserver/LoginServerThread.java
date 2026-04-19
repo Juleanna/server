@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,6 +22,8 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 import static com.l2jserver.gameserver.config.Configuration.hexId;
 import static com.l2jserver.gameserver.config.Configuration.ip;
 import static com.l2jserver.gameserver.config.Configuration.server;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -32,8 +34,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
@@ -397,9 +397,12 @@ public class LoginServerThread extends Thread {
 		try {
 			sendPacket(cal);
 		} catch (IOException e) {
+			// Раньше исключение глоталось: при обрыве сокета к LS бан/access level
+			// молча терялись, админ не видел проблемы.
+			LOG.warn("Failed to send ChangeAccessLevel for account {}.", account, e);
 		}
 	}
-	
+
 	/**
 	 * Send client tracert.
 	 * @param account the account
@@ -410,9 +413,10 @@ public class LoginServerThread extends Thread {
 		try {
 			sendPacket(ptc);
 		} catch (IOException e) {
+			LOG.warn("Failed to send PlayerTracert for account {}.", account, e);
 		}
 	}
-	
+
 	/**
 	 * Send mail.
 	 * @param account the account
@@ -424,9 +428,10 @@ public class LoginServerThread extends Thread {
 		try {
 			sendPacket(sem);
 		} catch (IOException e) {
+			LOG.warn("Failed to send mail '{}' for account {}.", mailId, account, e);
 		}
 	}
-	
+
 	/**
 	 * Send temp ban.
 	 * @param account the account
@@ -438,6 +443,7 @@ public class LoginServerThread extends Thread {
 		try {
 			sendPacket(tbn);
 		} catch (IOException e) {
+			LOG.warn("Failed to send TempBan for account {} (ip={}).", account, ip, e);
 		}
 	}
 	
@@ -491,6 +497,7 @@ public class LoginServerThread extends Thread {
 		try {
 			sendPacket(rec);
 		} catch (IOException e) {
+			LOG.warn("Failed to send ReplyCharacters for account {}.", account, e);
 		}
 	}
 	
@@ -542,9 +549,10 @@ public class LoginServerThread extends Thread {
 		try {
 			sendPacket(ss);
 		} catch (IOException e) {
+			LOG.warn("Failed to send ServerStatus (id={}, value={}).", id, value, e);
 		}
 	}
-	
+
 	/**
 	 * Send Server Type Config to LS.
 	 */
@@ -554,9 +562,10 @@ public class LoginServerThread extends Thread {
 		try {
 			sendPacket(ss);
 		} catch (IOException e) {
+			LOG.warn("Failed to send ServerType.", e);
 		}
 	}
-	
+
 	/**
 	 * Send change password.
 	 * @param accountName the account name
@@ -569,6 +578,7 @@ public class LoginServerThread extends Thread {
 		try {
 			sendPacket(cp);
 		} catch (IOException e) {
+			LOG.warn("Failed to send ChangePassword for account {} (char {}).", accountName, charName, e);
 		}
 	}
 	
@@ -676,14 +686,16 @@ public class LoginServerThread extends Thread {
 	 * @param hexId the hexadecimal ID to store
 	 */
 	public static void saveHexid(int serverId, String hexId) {
-		Path hexIdFilePath = Configuration.getCustomOrDefaultPath(HexIdConfiguration.FILENAME);
-		
+		final var hexIdFilePath = Configuration.getCustomOrDefaultPath(HexIdConfiguration.FILENAME);
 		hexId().setProperty(HexIdConfiguration.SERVERID_KEY, String.valueOf(serverId));
 		hexId().setProperty(HexIdConfiguration.HEXID_KEY, hexId);
 		
-		try (OutputStream out = Files.newOutputStream(hexIdFilePath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-			hexId().store(out, "the hexID to auth into login");
-			LOG.info("Saved {}.", hexIdFilePath);
+		try {
+			Files.createDirectories(hexIdFilePath.getParent());
+			try (var out = Files.newOutputStream(hexIdFilePath, CREATE, TRUNCATE_EXISTING)) {
+				hexId().store(out, "the hexID to auth into login");
+				LOG.info("Saved {}.", hexIdFilePath);
+			}
 		} catch (Exception ex) {
 			LOG.warn("Failed to save {}.", hexIdFilePath, ex);
 		}

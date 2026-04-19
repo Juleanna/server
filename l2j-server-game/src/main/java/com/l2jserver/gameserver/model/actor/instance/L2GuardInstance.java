@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -34,7 +34,7 @@ import com.l2jserver.gameserver.model.actor.knownlist.GuardKnownList;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
 import com.l2jserver.gameserver.model.events.EventType;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcFirstTalk;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcFirstTalk;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 
@@ -44,8 +44,8 @@ import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 public class L2GuardInstance extends L2Attackable {
 	private static final Logger LOG = LoggerFactory.getLogger(L2GuardInstance.class);
 	
-	public L2GuardInstance(L2NpcTemplate template) {
-		super(template);
+	public L2GuardInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2GuardInstance);
 	}
 	
@@ -155,12 +155,12 @@ public class L2GuardInstance extends L2Attackable {
 					player.setLastFolkNPC(this);
 					
 					// Open a chat window on client with the text of the L2GuardInstance
-					if (hasListener(EventType.ON_NPC_QUEST_START)) {
+					if (hasListener(EventType.NPC_QUEST_START)) {
 						player.setLastQuestNpcObject(getObjectId());
 					}
 					
-					if (hasListener(EventType.ON_NPC_FIRST_TALK)) {
-						EventDispatcher.getInstance().notifyEventAsync(new OnNpcFirstTalk(this, player), this);
+					if (hasListener(EventType.NPC_FIRST_TALK)) {
+						EventDispatcher.getInstance().notifyEventAsync(new NpcFirstTalk(this, player), this);
 					} else {
 						showChatWindow(player, 0);
 					}

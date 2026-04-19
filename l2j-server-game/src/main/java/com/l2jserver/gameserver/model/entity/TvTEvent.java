@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,8 +24,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.cache.HtmCache;
@@ -45,10 +46,10 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PetInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2ServitorInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.events.OnTvTEventFinish;
-import com.l2jserver.gameserver.model.events.impl.events.OnTvTEventKill;
-import com.l2jserver.gameserver.model.events.impl.events.OnTvTEventRegistrationStart;
-import com.l2jserver.gameserver.model.events.impl.events.OnTvTEventStart;
+import com.l2jserver.gameserver.model.events.impl.events.TvTEventFinish;
+import com.l2jserver.gameserver.model.events.impl.events.TvTEventKill;
+import com.l2jserver.gameserver.model.events.impl.events.TvTEventRegistrationStart;
+import com.l2jserver.gameserver.model.events.impl.events.TvTEventStart;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
@@ -72,7 +73,8 @@ public class TvTEvent {
 		REWARDING
 	}
 	
-	protected static final Logger _log = Logger.getLogger(TvTEvent.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(TvTEvent.class);
+	
 	/** html path **/
 	private static final String HTML_PATH = "com/l2jserver/datapack/custom/events/TvT/TvTManager/";
 	/** The teams of the TvTEvent. */
@@ -120,12 +122,12 @@ public class TvTEvent {
 			_lastNpcSpawn.spawnMe(_npcSpawn.getLastSpawn().getX(), _npcSpawn.getLastSpawn().getY(), _npcSpawn.getLastSpawn().getZ());
 			_lastNpcSpawn.broadcastPacket(new MagicSkillUse(_lastNpcSpawn, _lastNpcSpawn, 1034, 1, 1, 1));
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "TvTEventEngine[TvTEvent.startParticipation()]: exception: " + e.getMessage(), e);
+			LOG.warn("TvTEventEngine[TvTEvent.startParticipation()]: exception: {}", e.getMessage(), e);
 			return false;
 		}
 		
 		setState(EventState.PARTICIPATING);
-		EventDispatcher.getInstance().notifyEventAsync(new OnTvTEventRegistrationStart());
+		EventDispatcher.getInstance().notifyEventAsync(new TvTEventRegistrationStart());
 		return true;
 	}
 	
@@ -241,7 +243,7 @@ public class TvTEvent {
 				InstanceManager.getInstance().getInstance(_TvTEventInstance).setEmptyDestroyTime(tvt().getStartLeaveTeleportDelay() + 60000L);
 			} catch (Exception e) {
 				_TvTEventInstance = 0;
-				_log.log(Level.WARNING, "TvTEventEngine[TvTEvent.createDynamicInstance]: exception: " + e.getMessage(), e);
+				LOG.warn("TvTEventEngine[TvTEvent.createDynamicInstance]: exception: {}", e.getMessage(), e);
 			}
 		}
 		
@@ -266,7 +268,7 @@ public class TvTEvent {
 		}
 		
 		// Notify to scripts.
-		EventDispatcher.getInstance().notifyEventAsync(new OnTvTEventStart());
+		EventDispatcher.getInstance().notifyEventAsync(new TvTEventStart());
 		return true;
 	}
 	
@@ -307,7 +309,7 @@ public class TvTEvent {
 		rewardTeam(team);
 		
 		// Notify to scripts.
-		EventDispatcher.getInstance().notifyEventAsync(new OnTvTEventFinish());
+		EventDispatcher.getInstance().notifyEventAsync(new TvTEventFinish());
 		return "TvT Event: Event finish. Team " + team.getName() + " won with " + team.getPoints() + " kills.";
 	}
 	
@@ -670,7 +672,7 @@ public class TvTEvent {
 			}
 			
 			// Notify to scripts.
-			EventDispatcher.getInstance().notifyEventAsync(new OnTvTEventKill(killerPlayerInstance, killedPlayerInstance, killerTeam));
+			EventDispatcher.getInstance().notifyEventAsync(new TvTEventKill(killerPlayerInstance, killedPlayerInstance, killerTeam));
 		}
 	}
 	

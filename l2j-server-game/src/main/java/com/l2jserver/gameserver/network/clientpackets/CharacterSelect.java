@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -34,7 +34,7 @@ import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.Containers;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerSelect;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerSelect;
 import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.punishment.PunishmentAffect;
 import com.l2jserver.gameserver.model.punishment.PunishmentType;
@@ -45,6 +45,7 @@ import com.l2jserver.gameserver.network.serverpackets.SSQInfo;
 import com.l2jserver.gameserver.network.serverpackets.ServerClose;
 
 public class CharacterSelect extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(CharacterSelect.class);
 	
 	private static final String _C__12_CHARACTERSELECT = "[C] 12 CharacterSelect";
 	
@@ -118,7 +119,7 @@ public class CharacterSelect extends L2GameClientPacket {
 					
 					// The L2PcInstance must be created here, so that it can be attached to the L2GameClient
 					if (general().debug()) {
-						_log.fine("selected slot:" + _charSlot);
+						LOG.debug("Selected slot: {}", _charSlot);
 					}
 					
 					// load up character from disk
@@ -133,7 +134,7 @@ public class CharacterSelect extends L2GameClientPacket {
 					client.setActiveChar(cha);
 					cha.setOnlineStatus(true, true);
 					
-					final TerminateReturn terminate = EventDispatcher.getInstance().notifyEvent(new OnPlayerSelect(cha, cha.getObjectId(), cha.getName(), getClient()), Containers.Players(), TerminateReturn.class);
+					final TerminateReturn terminate = EventDispatcher.getInstance().notifyEvent(new PlayerSelect(cha, cha.getObjectId(), cha.getName(), getClient()), Containers.Players(), TerminateReturn.class);
 					if ((terminate != null) && terminate.terminate()) {
 						cha.deleteMe();
 						return;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -36,6 +36,7 @@ import static com.l2jserver.gameserver.network.SystemMessageId.EQUIPMENT_S1_S2_R
 import static com.l2jserver.gameserver.network.SystemMessageId.S1_DISARMED;
 import static com.l2jserver.gameserver.network.SystemMessageId.S1_EQUIPPED;
 import static com.l2jserver.gameserver.network.SystemMessageId.S1_S2_EQUIPPED;
+import static com.l2jserver.gameserver.network.SystemMessageId.YOU_EARNED_S1_EXP_BONUS_S2_AND_S3_SP_BONUS_S4;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.util.ArrayList;
@@ -206,21 +207,21 @@ import com.l2jserver.gameserver.model.entity.Siege;
 import com.l2jserver.gameserver.model.entity.TvTEvent;
 import com.l2jserver.gameserver.model.events.Containers;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerEquipItem;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerFameChanged;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerHennaRemove;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerKarmaChanged;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLevelChanged;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogin;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogout;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerPKChanged;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerProfessionCancel;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerProfessionChange;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerPvPChanged;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerPvPKill;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerSit;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerStand;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerTransform;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerEquipItem;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerFameChanged;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerHennaRemove;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerKarmaChanged;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLevelChanged;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLogin;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLogout;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerPKChanged;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerProfessionCancel;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerProfessionChange;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerPvPChanged;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerPvPKill;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerSit;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerStand;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerTransform;
 import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.fishing.L2Fish;
 import com.l2jserver.gameserver.model.fishing.L2Fishing;
@@ -695,16 +696,6 @@ public final class L2PcInstance extends L2Playable {
 	}
 	
 	/**
-	 * Creates a player.
-	 * @param classId the player class ID
-	 * @param accountName the account name
-	 * @param app the player appearance
-	 */
-	private L2PcInstance(int classId, String accountName, PcAppearance app) {
-		this(IdFactory.getInstance().getNextId(), classId, accountName, app);
-	}
-	
-	/**
 	 * Create a new L2PcInstance and add it in the characters table of the database.<br>
 	 * <B><U> Actions</U> :</B>
 	 * <ul>
@@ -720,7 +711,8 @@ public final class L2PcInstance extends L2Playable {
 	 */
 	public static L2PcInstance create(int classId, String accountName, String name, PcAppearance app) {
 		// Create a new L2PcInstance with an account name
-		L2PcInstance player = new L2PcInstance(classId, accountName, app);
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var player = new L2PcInstance(objectId, classId, accountName, app);
 		// Set the name of the L2PcInstance
 		player.setName(name);
 		// Set Character's create time
@@ -1576,7 +1568,7 @@ public final class L2PcInstance extends L2Playable {
 	 * @param pkKills
 	 */
 	public void setPkKills(int pkKills) {
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerPKChanged(this, _pkKills, pkKills), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerPKChanged(this, _pkKills, pkKills), this);
 		_pkKills = pkKills;
 	}
 	
@@ -1621,7 +1613,7 @@ public final class L2PcInstance extends L2Playable {
 	 */
 	public void setKarma(int karma) {
 		// Notify to scripts.
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerKarmaChanged(this, getKarma(), karma), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerKarmaChanged(this, getKarma(), karma), this);
 		
 		if (karma < 0) {
 			karma = 0;
@@ -1839,12 +1831,12 @@ public final class L2PcInstance extends L2Playable {
 		
 		// If item is agathion with energy, then send info to client.
 		final var agathionInfo = AgathionRepository.getInstance().getByItemId(item.getId());
-		if ((agathionInfo != null) && (agathionInfo.getMaxEnergy() > 0)) {
+		if ((agathionInfo != null) && (agathionInfo.maxEnergy() > 0)) {
 			sendPacket(new ExBR_AgathionEnergyInfo(List.of(item)));
 		}
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerEquipItem(this, item), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerEquipItem(this, item), this);
 	}
 	
 	/**
@@ -1859,7 +1851,7 @@ public final class L2PcInstance extends L2Playable {
 	 * @param pvpKills
 	 */
 	public void setPvpKills(int pvpKills) {
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerPvPChanged(this, _pvpKills, pvpKills), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerPvPChanged(this, _pvpKills, pvpKills), this);
 		_pvpKills = pvpKills;
 	}
 	
@@ -1875,7 +1867,7 @@ public final class L2PcInstance extends L2Playable {
 	 * @param fame
 	 */
 	public void setFame(int fame) {
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerFameChanged(this, _fame, fame), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerFameChanged(this, _fame, fame), this);
 		_fame = (fame > character().getMaxPersonalFamePoints()) ? character().getMaxPersonalFamePoints() : fame;
 	}
 	
@@ -2008,7 +2000,7 @@ public final class L2PcInstance extends L2Playable {
 		}
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerLevelChanged(this, getLevel(), getLevel() + value), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerLevelChanged(this, getLevel(), getLevel() + value), this);
 		
 		boolean levelIncreased = getSubStat().addLevel(value);
 		onLevelChange(levelIncreased);
@@ -2453,7 +2445,7 @@ public final class L2PcInstance extends L2Playable {
 	}
 	
 	public void sitDown(boolean checkCast) {
-		final TerminateReturn terminate = EventDispatcher.getInstance().notifyEvent(new OnPlayerSit(this), this, TerminateReturn.class);
+		final TerminateReturn terminate = EventDispatcher.getInstance().notifyEvent(new PlayerSit(this), this, TerminateReturn.class);
 		if ((terminate != null) && terminate.terminate()) {
 			return;
 		}
@@ -2477,7 +2469,7 @@ public final class L2PcInstance extends L2Playable {
 	 * Stand up the L2PcInstance, set the AI Intention to AI_INTENTION_IDLE and send a Server->Client ChangeWaitType packet (broadcast)
 	 */
 	public void standUp() {
-		final TerminateReturn terminate = EventDispatcher.getInstance().notifyEvent(new OnPlayerStand(this), Containers.Players(), TerminateReturn.class);
+		final TerminateReturn terminate = EventDispatcher.getInstance().notifyEvent(new PlayerStand(this), Containers.Players(), TerminateReturn.class);
 		if ((terminate != null) && terminate.terminate()) {
 			return;
 		}
@@ -2854,7 +2846,8 @@ public final class L2PcInstance extends L2Playable {
 				if (handler == null) {
 					LOG.warn("No item handler registered for Herb {}!", item);
 				} else {
-					handler.useItem(this, new L2ItemInstance(itemId), false);
+					final var objectId = IdFactory.getInstance().getNextId();
+					handler.useItem(this, new L2ItemInstance(objectId, itemId), false);
 				}
 			} else {
 				// Add the item to inventory
@@ -4024,7 +4017,7 @@ public final class L2PcInstance extends L2Playable {
 		broadcastUserInfo();
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerTransform(this, transformation.getId()), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerTransform(this, transformation.getId()), this);
 	}
 	
 	@Override
@@ -4040,7 +4033,7 @@ public final class L2PcInstance extends L2Playable {
 			broadcastUserInfo();
 			
 			// Notify to scripts
-			EventDispatcher.getInstance().notifyEventAsync(new OnPlayerTransform(this, 0), this);
+			EventDispatcher.getInstance().notifyEventAsync(new PlayerTransform(this, 0), this);
 		}
 	}
 	
@@ -4376,7 +4369,7 @@ public final class L2PcInstance extends L2Playable {
 		if (killer != null) {
 			final L2PcInstance pk = killer.getActingPlayer();
 			if (pk != null) {
-				EventDispatcher.getInstance().notifyEventAsync(new OnPlayerPvPKill(pk, this), this);
+				EventDispatcher.getInstance().notifyEventAsync(new PlayerPvPKill(pk, this), this);
 				
 				TvTEvent.onKill(killer, this);
 				
@@ -4459,7 +4452,7 @@ public final class L2PcInstance extends L2Playable {
 		}
 		
 		if (isInParty() && getParty().isInDimensionalRift()) {
-			getParty().getDimensionalRift().getDeadMemberList().add(this);
+			getParty().getDimensionalRift().getDeadPlayers().add(this);
 		}
 		
 		if (getAgathionId() != 0) {
@@ -4786,14 +4779,17 @@ public final class L2PcInstance extends L2Playable {
 			addToSp = (int) (addToSp * ratioTakenByPlayer);
 		}
 		
-		getSubStat().addExp(addToExp);
+		final var gainedExp = getSubStat().addExp(addToExp);
 		getSubStat().addSp(addToSp);
 		
-		SystemMessage sm = null;
-		
-		sm = SystemMessage.getSystemMessage(SystemMessageId.YOU_EARNED_S1_EXP_BONUS_S2_AND_S3_SP_BONUS_S4);
-		sm.addLong(addToExp);
-		sm.addLong(addToExp - baseExp);
+		final var sm = SystemMessage.getSystemMessage(YOU_EARNED_S1_EXP_BONUS_S2_AND_S3_SP_BONUS_S4);
+		if (gainedExp) {
+			sm.addLong(addToExp);
+			sm.addLong(addToExp - baseExp);
+		} else {
+			sm.addLong(0);
+			sm.addLong(0);
+		}
 		sm.addInt(addToSp);
 		sm.addInt(addToSp - baseSp);
 		
@@ -6050,7 +6046,7 @@ public final class L2PcInstance extends L2Playable {
 		sendPacket(SystemMessageId.SYMBOL_DELETED);
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerHennaRemove(this, henna), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerHennaRemove(this, henna), this);
 		return true;
 	}
 	
@@ -6077,7 +6073,7 @@ public final class L2PcInstance extends L2Playable {
 				sendPacket(new ExBrExtraUserInfo(this));
 				
 				// Notify to scripts
-				EventDispatcher.getInstance().notifyEventAsync(new OnPlayerHennaRemove(this, henna), this);
+				EventDispatcher.getInstance().notifyEventAsync(new PlayerHennaRemove(this, henna), this);
 				return true;
 			}
 		}
@@ -7616,7 +7612,7 @@ public final class L2PcInstance extends L2Playable {
 			
 			// Notify to scripts
 			int classId = getSubClasses().get(classIndex).getClassId();
-			EventDispatcher.getInstance().notifyEventAsync(new OnPlayerProfessionCancel(this, classId), this);
+			EventDispatcher.getInstance().notifyEventAsync(new PlayerProfessionCancel(this, classId), this);
 			
 			getSubClasses().remove(classIndex);
 		} finally {
@@ -7678,7 +7674,7 @@ public final class L2PcInstance extends L2Playable {
 		setTemplate(pcTemplate);
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerProfessionChange(this, pcTemplate, isSubClassActive()), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerProfessionChange(this, pcTemplate, isSubClassActive()), this);
 	}
 	
 	/**
@@ -7940,7 +7936,7 @@ public final class L2PcInstance extends L2Playable {
 			LOG.error("{}", e);
 		}
 		
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerLogin(this), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerLogin(this), this);
 	}
 	
 	public long getLastAccess() {
@@ -8422,7 +8418,7 @@ public final class L2PcInstance extends L2Playable {
 	}
 	
 	private synchronized void cleanup() {
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerLogout(this), this);
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerLogout(this), this);
 		
 		try {
 			for (L2ZoneType zone : ZoneManager.getInstance().getZones(this)) {
@@ -8728,8 +8724,8 @@ public final class L2PcInstance extends L2Playable {
 	// Also worthy of note is the fact the code to find the hook landing position was also striped.
 	// The stripped code was moved into fishing.java.
 	// In my opinion it makes more sense for it to be there since all other skill related checks were also there.
-	// Last but not least, moving the zone check there, fixed a bug where baits would always be consumed no matter if fishing actualy took place.
-	// startFishing() now takes up 3 arguments, wich are acurately described as being the hook landing coordinates.
+	// Last but not least, moving the zone check there, fixed a bug where baits would always be consumed no matter if fishing actually took place.
+	// startFishing() now takes up 3 arguments, which are accurately described as being the hook landing coordinates.
 	public void startFishing(int _x, int _y, int _z) {
 		stopMove(null);
 		setIsImmobilized(true);
@@ -8755,7 +8751,7 @@ public final class L2PcInstance extends L2Playable {
 		if (!GameTimeController.getInstance().isNight() && _lure.isNightLure()) {
 			_fish.setFishGroup(-1);
 		}
-		// sendMessage("Hook x,y: " + _x + "," + _y + " - Water Z, Player Z:" + _z + ", " + getZ()); //debug line, uncoment to show coordinates used in fishing.
+		// sendMessage("Hook x,y: " + _x + "," + _y + " - Water Z, Player Z:" + _z + ", " + getZ()); //debug line, uncomment to show coordinates used in fishing.
 		broadcastPacket(new ExFishingStart(this, _fish.getFishGroup(), _x, _y, _z, _lure.isNightLure()));
 		sendPacket(Music.SF_P_01.getPacket());
 		startLookingForFishTask();
@@ -8874,7 +8870,7 @@ public final class L2PcInstance extends L2Playable {
 							type = 3;
 						}
 						break;
-					case 6522: // all theese lures (purple) are prefered by fat fish (type 0)
+					case 6522: // all these lures (purple) are preferred by fat fish (type 0)
 					case 8508:
 					case 6523:
 					case 6524:
@@ -8889,7 +8885,7 @@ public final class L2PcInstance extends L2Playable {
 							type = 3;
 						}
 						break;
-					case 6525: // all theese lures (yellow) are prefered by ugly fish (type 2)
+					case 6525: // all these lures (yellow) are preferred by ugly fish (type 2)
 					case 8511:
 					case 6526:
 					case 6527:

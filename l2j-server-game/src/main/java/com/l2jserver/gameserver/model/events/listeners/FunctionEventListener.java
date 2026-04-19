@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,12 +19,13 @@
 package com.l2jserver.gameserver.model.events.listeners;
 
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.events.EventType;
 import com.l2jserver.gameserver.model.events.ListenersContainer;
-import com.l2jserver.gameserver.model.events.impl.IBaseEvent;
+import com.l2jserver.gameserver.model.events.impl.BaseEvent;
 import com.l2jserver.gameserver.model.events.returns.AbstractEventReturn;
 
 /**
@@ -32,22 +33,22 @@ import com.l2jserver.gameserver.model.events.returns.AbstractEventReturn;
  * @author UnAfraid
  */
 public class FunctionEventListener extends AbstractEventListener {
-	private static final Logger _log = Logger.getLogger(FunctionEventListener.class.getName());
-	private final Function<IBaseEvent, ? extends AbstractEventReturn> _callback;
+	private static final Logger LOG = LoggerFactory.getLogger(FunctionEventListener.class);
+	
+	private final Function<BaseEvent, ? extends AbstractEventReturn> _callback;
 	
 	@SuppressWarnings("unchecked")
-	public FunctionEventListener(ListenersContainer container, EventType type, Function<? extends IBaseEvent, ? extends AbstractEventReturn> callback, Object owner) {
+	public FunctionEventListener(ListenersContainer container, EventType type, Function<? extends BaseEvent, ? extends AbstractEventReturn> callback, Object owner) {
 		super(container, type, owner);
-		_callback = (Function<IBaseEvent, ? extends AbstractEventReturn>) callback;
+		_callback = (Function<BaseEvent, ? extends AbstractEventReturn>) callback;
 	}
 	
 	@Override
-	public <R extends AbstractEventReturn> R executeEvent(IBaseEvent event, Class<R> returnBackClass) {
+	public <R extends AbstractEventReturn> R executeEvent(BaseEvent event, Class<R> returnBackClass) {
 		try {
 			return returnBackClass.cast(_callback.apply(event));
-			
 		} catch (Exception e) {
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Error while invoking " + event + " on " + getOwner(), e);
+			LOG.warn("Error while invoking {} on {}", event, getOwner(), e);
 		}
 		return null;
 	}

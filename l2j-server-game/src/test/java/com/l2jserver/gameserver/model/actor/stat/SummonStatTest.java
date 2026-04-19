@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -31,11 +31,11 @@ import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 /**
- * @author Noé Caratini aka Kita
+ * @author Kita (Noé Caratini)
  * @version 2.6.3.0
  */
 @ExtendWith(MockitoExtension.class)
-public class SummonStatTest {
+class SummonStatTest {
 	
 	@Mock
 	private L2Summon summon;
@@ -47,7 +47,7 @@ public class SummonStatTest {
 	private SummonStat summonStat;
 	
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		summonStat = new SummonStat(summon);
 		
 		when(summon.getOwner()).thenReturn(player);
@@ -55,7 +55,7 @@ public class SummonStatTest {
 	}
 	
 	@Test
-	public void shouldReturnOwnersMaxBuffCount() {
+	void shouldReturnOwnersMaxBuffCount() {
 		int maxBuffs = 24;
 		
 		when(pcStat.getMaxBuffCount()).thenReturn(maxBuffs);

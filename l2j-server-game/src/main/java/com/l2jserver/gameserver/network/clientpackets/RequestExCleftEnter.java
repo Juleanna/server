@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,12 +18,17 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Format: (ch) chd
  * @author HorridoJoho
  * @since 2.6.3.0
  */
 public class RequestExCleftEnter extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestExCleftEnter.class);
+	
 	private static final String _C__D0_59_REQUESTEXCLEFTENTER = "[C] D0:59 RequestExCleftEnter";
 	
 	private int _0;
@@ -39,7 +44,7 @@ public class RequestExCleftEnter extends L2GameClientPacket {
 	
 	@Override
 	protected void runImpl() {
-		_log.fine(_C__D0_59_REQUESTEXCLEFTENTER + " - c=" + _0 + ", h=" + _1 + ", d=" + _2);
+		LOG.debug(_C__D0_59_REQUESTEXCLEFTENTER + " - c={}, h={}, d={}", _0, _1, _2);
 	}
 	
 	@Override

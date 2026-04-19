@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -141,7 +141,7 @@ public class OlympiadManager {
 	}
 	
 	private boolean isInCompetition(L2PcInstance noble, L2PcInstance player, boolean showMessage) {
-		if (!Olympiad._inCompPeriod) {
+		if (!Olympiad.getInstance().inCompPeriod()) {
 			return false;
 		}
 		
@@ -181,7 +181,7 @@ public class OlympiadManager {
 	}
 	
 	public final boolean registerNoble(L2PcInstance player, CompetitionType type) {
-		if (!Olympiad._inCompPeriod) {
+		if (!Olympiad.getInstance().inCompPeriod()) {
 			player.sendPacket(SystemMessageId.THE_OLYMPIAD_GAME_IS_NOT_CURRENTLY_IN_PROGRESS);
 			return false;
 		}
@@ -287,7 +287,7 @@ public class OlympiadManager {
 	}
 	
 	public final boolean unRegisterNoble(L2PcInstance noble) {
-		if (!Olympiad._inCompPeriod) {
+		if (!Olympiad.getInstance().inCompPeriod()) {
 			noble.sendPacket(SystemMessageId.THE_OLYMPIAD_GAME_IS_NOT_CURRENTLY_IN_PROGRESS);
 			return false;
 		}
@@ -421,7 +421,7 @@ public class OlympiadManager {
 			statDat = new StatsSet();
 			statDat.set(Olympiad.CLASS_ID, noble.getBaseClass());
 			statDat.set(Olympiad.CHAR_NAME, noble.getName());
-			statDat.set(Olympiad.POINTS, Olympiad.DEFAULT_POINTS);
+			statDat.set(Olympiad.POINTS, olympiad().getStartPoints());
 			statDat.set(Olympiad.COMP_DONE, 0);
 			statDat.set(Olympiad.COMP_WON, 0);
 			statDat.set(Olympiad.COMP_LOST, 0);

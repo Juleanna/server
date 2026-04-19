@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -51,7 +51,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcMoveFinished;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcMoveFinished;
 import com.l2jserver.gameserver.model.interfaces.ILocational;
 import com.l2jserver.gameserver.model.items.L2Weapon;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -666,7 +666,7 @@ public class L2CharacterAI extends AbstractAI {
 			WalkingManager.getInstance().onArrived(npc); // Walking Manager support
 			
 			// Notify to scripts
-			EventDispatcher.getInstance().notifyEventAsync(new OnNpcMoveFinished(npc), npc);
+			EventDispatcher.getInstance().notifyEventAsync(new NpcMoveFinished(npc), npc);
 		}
 		
 		// If the Intention was AI_INTENTION_MOVE_TO, set the Intention to AI_INTENTION_ACTIVE
@@ -860,7 +860,7 @@ public class L2CharacterAI extends AbstractAI {
 	
 	@Override
 	protected void onEvtAfraid(L2Character effector, boolean start) {
-		double radians = Math.toRadians(start ? Util.calculateAngleFrom(effector, _actor) : Util.convertHeadingToDegree(_actor.getHeading()));
+		double radians = Math.toRadians(Util.calculateAngleFrom(effector, _actor));
 		
 		int posX = (int) (_actor.getX() + (FEAR_RANGE * Math.cos(radians)));
 		int posY = (int) (_actor.getY() + (FEAR_RANGE * Math.sin(radians)));

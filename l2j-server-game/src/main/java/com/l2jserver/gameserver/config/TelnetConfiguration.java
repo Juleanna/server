@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -44,10 +44,10 @@ import org.aeonbits.owner.Reloadable;
 public interface TelnetConfiguration extends Reloadable {
 	
 	@Key("EnableTelnet")
-	Boolean isEnabled();
+	boolean isEnabled();
 	
 	@Key("Port")
-	Integer getPort();
+	int getPort();
 	
 	@Key("Password")
 	String getPassword();

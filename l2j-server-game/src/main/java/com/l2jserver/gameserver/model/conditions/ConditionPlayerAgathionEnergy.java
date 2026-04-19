@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -46,12 +46,12 @@ public class ConditionPlayerAgathionEnergy extends Condition {
 		
 		final var player = effector.getActingPlayer();
 		final var agathionInfo = AgathionRepository.getInstance().getByNpcId(player.getAgathionId());
-		if ((agathionInfo == null) || (agathionInfo.getMaxEnergy() <= 0)) {
+		if ((agathionInfo == null) || (agathionInfo.maxEnergy() <= 0)) {
 			return false;
 		}
 		
 		final var agathionItem = player.getInventory().getPaperdollItem(PAPERDOLL_LBRACELET);
-		if ((agathionItem == null) || (agathionInfo.getItemId() != agathionItem.getId())) {
+		if ((agathionItem == null) || (agathionInfo.itemId() != agathionItem.getId())) {
 			return false;
 		}
 		return agathionItem.getAgathionRemainingEnergy() >= energy;

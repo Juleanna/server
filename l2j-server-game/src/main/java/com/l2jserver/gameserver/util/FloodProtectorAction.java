@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,8 +21,9 @@ package com.l2jserver.gameserver.util;
 import static com.l2jserver.gameserver.config.Configuration.floodProtector;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.GameTimeController;
 import com.l2jserver.gameserver.instancemanager.PunishmentManager;
@@ -38,8 +39,7 @@ import com.l2jserver.gameserver.network.L2GameClient;
  * @author Zoey76
  */
 public final class FloodProtectorAction {
-	
-	private static final Logger _log = Logger.getLogger(FloodProtectorAction.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(FloodProtectorAction.class);
 	
 	private final L2GameClient client;
 	
@@ -95,7 +95,7 @@ public final class FloodProtectorAction {
 		}
 		
 		if ((curTick < nextGameTick) || punishmentInProgress) {
-			if (logFlooding && !logged && _log.isLoggable(Level.WARNING)) {
+			if (logFlooding && !logged && LOG.isWarnEnabled()) {
 				log(" called command ", command, " ~", String.valueOf((interval - (nextGameTick - curTick)) * GameTimeController.MILLIS_IN_TICK), " ms after previous command");
 				logged = true;
 			}
@@ -116,7 +116,7 @@ public final class FloodProtectorAction {
 		}
 		
 		if (count.get() > 0) {
-			if (logFlooding && _log.isLoggable(Level.WARNING)) {
+			if (logFlooding && LOG.isWarnEnabled()) {
 				log(" issued ", String.valueOf(count), " extra requests within ~", String.valueOf(interval * GameTimeController.MILLIS_IN_TICK), " ms");
 			}
 		}
@@ -137,7 +137,7 @@ public final class FloodProtectorAction {
 			client.closeNow();
 		}
 		
-		if (_log.isLoggable(Level.WARNING)) {
+		if (LOG.isWarnEnabled()) {
 			log("kicked for flooding");
 		}
 	}
@@ -147,7 +147,7 @@ public final class FloodProtectorAction {
 	 */
 	private void banAccount() {
 		PunishmentManager.getInstance().startPunishment(new PunishmentTask(client.getAccountName(), PunishmentAffect.ACCOUNT, PunishmentType.BAN, System.currentTimeMillis() + punishmentTime, "", getClass().getSimpleName()));
-		if (_log.isLoggable(Level.WARNING)) {
+		if (LOG.isWarnEnabled()) {
 			log(" banned for flooding ", punishmentTime <= 0 ? "forever" : "for " + (punishmentTime / 60000) + " mins");
 		}
 	}
@@ -162,7 +162,7 @@ public final class FloodProtectorAction {
 				PunishmentManager.getInstance().startPunishment(new PunishmentTask(charId, PunishmentAffect.CHARACTER, PunishmentType.JAIL, System.currentTimeMillis() + punishmentTime, "", getClass().getSimpleName()));
 			}
 			
-			if (_log.isLoggable(Level.WARNING)) {
+			if (LOG.isWarnEnabled()) {
 				log(" jailed for flooding ", punishmentTime <= 0 ? "forever" : "for " + (punishmentTime / 60000) + " mins");
 			}
 		}
@@ -176,6 +176,9 @@ public final class FloodProtectorAction {
 				address = client.getConnection().getInetAddress().getHostAddress();
 			}
 		} catch (Exception e) {
+			// Сокет мог быть уже закрыт между проверкой isDetached и getInetAddress —
+			// не блокируем логирование из-за этого, но оставляем trace-след.
+			LOG.trace("Failed to obtain client IP for flood protector log.", e);
 		}
 		
 		switch (client.getState()) {
@@ -199,6 +202,6 @@ public final class FloodProtectorAction {
 		}
 		
 		StringUtil.append(output, lines);
-		_log.warning(output.toString());
+		LOG.warn(output.toString());
 	}
 }

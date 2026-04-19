@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -68,7 +68,7 @@ public final class RequestStopPledgeWar extends L2GameClientPacket {
 			return;
 		}
 		
-		// _log.info("RequestStopPledgeWar: By leader or authorized player: " + playerClan.getLeaderName() + " of clan: "
+		// LOG.info("RequestStopPledgeWar: By leader or authorized player: " + playerClan.getLeaderName() + " of clan: "
 		// + playerClan.getName() + " to clan: " + _pledgeName);
 		
 		// L2PcInstance leader = L2World.getInstance().getPlayer(clan.getLeaderName());

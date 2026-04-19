@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -48,8 +48,8 @@ public class L2ControllableAirShipInstance extends L2AirShipInstance {
 	 * @param template the controllable air ship template
 	 * @param ownerId the owner ID
 	 */
-	public L2ControllableAirShipInstance(L2CharTemplate template, int ownerId) {
-		super(template);
+	public L2ControllableAirShipInstance(int objectId, L2CharTemplate template, int ownerId) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2ControllableAirShipInstance);
 		_ownerId = ownerId;
 		_helmId = IdFactory.getInstance().getNextId(); // not forget to release !

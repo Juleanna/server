@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -41,8 +41,8 @@ public final class RequestPledgeMemberInfo extends L2GameClientPacket {
 	
 	@Override
 	protected void runImpl() {
-		// _log.info("C5: RequestPledgeMemberInfo d:"+_unk1);
-		// _log.info("C5: RequestPledgeMemberInfo S:"+_player);
+		// LOG.info("C5: RequestPledgeMemberInfo d:"+_unk1);
+		// LOG.info("C5: RequestPledgeMemberInfo S:"+_player);
 		L2PcInstance activeChar = getClient().getActiveChar();
 		if (activeChar == null) {
 			return;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -29,6 +29,7 @@ import org.aeonbits.owner.Config.LoadPolicy;
 import org.aeonbits.owner.Config.Sources;
 import org.aeonbits.owner.Reloadable;
 
+import com.l2jserver.gameserver.config.converter.Hours2MillisecondsConverter;
 import com.l2jserver.gameserver.config.converter.Minutes2MillisecondsConverter;
 
 /**
@@ -47,69 +48,88 @@ public interface GrandBossConfiguration extends Reloadable {
 	
 	@Key("AntharasWaitTime")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getAntharasWaitTime();
+	long getAntharasWaitTime();
 	
 	@Key("IntervalOfAntharasSpawn")
-	Integer getIntervalOfAntharasSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getIntervalOfAntharasSpawn();
 	
 	@Key("RandomOfAntharasSpawn")
-	Integer getRandomOfAntharasSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getRandomOfAntharasSpawn();
 	
 	@Key("ValakasWaitTime")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getValakasWaitTime();
+	long getValakasWaitTime();
 	
 	@Key("IntervalOfValakasSpawn")
-	Integer getIntervalOfValakasSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getIntervalOfValakasSpawn();
 	
 	@Key("RandomOfValakasSpawn")
-	Integer getRandomOfValakasSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getRandomOfValakasSpawn();
 	
 	@Key("IntervalOfBaiumSpawn")
-	Integer getIntervalOfBaiumSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getIntervalOfBaiumSpawn();
 	
 	@Key("RandomOfBaiumSpawn")
-	Integer getRandomOfBaiumSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getRandomOfBaiumSpawn();
 	
 	@Key("IntervalOfCoreSpawn")
-	Integer getIntervalOfCoreSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getIntervalOfCoreSpawn();
 	
 	@Key("RandomOfCoreSpawn")
-	Integer getRandomOfCoreSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getRandomOfCoreSpawn();
 	
 	@Key("IntervalOfOrfenSpawn")
-	Integer getIntervalOfOrfenSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getIntervalOfOrfenSpawn();
 	
 	@Key("RandomOfOrfenSpawn")
-	Integer getRandomOfOrfenSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getRandomOfOrfenSpawn();
 	
 	@Key("IntervalOfQueenAntSpawn")
-	Integer getIntervalOfQueenAntSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getIntervalOfQueenAntSpawn();
 	
 	@Key("RandomOfQueenAntSpawn")
-	Integer getRandomOfQueenAntSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getRandomOfQueenAntSpawn();
 	
 	@Key("IntervalOfBelethSpawn")
-	Integer getIntervalOfBelethSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getIntervalOfBelethSpawn();
 	
 	@Key("RandomOfBelethSpawn")
-	Integer getRandomOfBelethSpawn();
+	@ConverterClass(Hours2MillisecondsConverter.class)
+	long getRandomOfBelethSpawn();
 	
 	@Key("BelethMinPlayers")
-	Integer getBelethMinPlayers();
+	int getBelethMinPlayers();
 	
+	// TODO(Zoey76): Implement AllowZakenWithoutParty configuration.
 	@Key("AllowZakenWithoutParty")
-	Boolean getAllowZakenWithoutParty();
+	boolean getAllowZakenWithoutParty();
 	
+	// TODO(Zoey76): Implement ZakenMinPlayers configuration.
 	@Key("ZakenMinPlayers")
 	List<Integer> getZakenMinPlayers();
 	
+	// TODO(Zoey76): Implement ZakenMaxPlayers configuration.
 	@Key("ZakenMaxPlayers")
 	List<Integer> getZakenMaxPlayers();
 	
+	// TODO(Zoey76): Implement ZakenMinPlayerLevel configuration.
 	@Key("ZakenMinPlayerLevel")
 	List<Integer> getZakenMinPlayerLevel();
 	
+	// TODO(Zoey76): Implement ZakenCanBeRevealedByAOESpells configuration.
 	@Key("ZakenCanBeRevealedByAOESpells")
-	Boolean getZakenCanBeRevealedByAoeSPells();
+	boolean getZakenCanBeRevealedByAoeSPells();
 }

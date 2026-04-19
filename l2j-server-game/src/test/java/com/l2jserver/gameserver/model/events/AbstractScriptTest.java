@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -46,10 +46,10 @@ import com.l2jserver.gameserver.model.quest.QuestDroplist.QuestDropInfo;
 
 /**
  * Abstract Script test.
- * @author Noé Caratini aka Kita
+ * @author Kita (Noé Caratini)
  */
 @ExtendWith(MockitoExtension.class)
-public class AbstractScriptTest {
+class AbstractScriptTest {
 	
 	@Mock
 	private L2PcInstance player;
@@ -63,7 +63,7 @@ public class AbstractScriptTest {
 	private IDropItem dropItem;
 	
 	@Test
-	public void shouldReturnTrueIfQuestItemsAtLimit() {
+	void shouldReturnTrueIfQuestItemsAtLimit() {
 		QuestItemChanceHolder questItem = new QuestItemChanceHolder(1, 10L);
 		
 		when(player.getInventory()).thenReturn(inventory);
@@ -75,7 +75,7 @@ public class AbstractScriptTest {
 	}
 	
 	@Test
-	public void shouldReturnFalseIfQuestItemsNotAtLimit() {
+	void shouldReturnFalseIfQuestItemsNotAtLimit() {
 		QuestItemChanceHolder questItem = new QuestItemChanceHolder(1, 10L);
 		
 		when(player.getInventory()).thenReturn(inventory);
@@ -87,32 +87,32 @@ public class AbstractScriptTest {
 	}
 	
 	@Test
-	public void shouldReturnFalseIfDropItemIsNull() {
+	void shouldReturnFalseIfDropItemIsNull() {
 		boolean result = AbstractScript.giveItemRandomly(player, npc, player, null, 0L, true);
 		
 		assertThat(result).isFalse();
 	}
 	
 	@Test
-    public void shouldReturnFalseIfCalculateDropsResultIsNull() {
-        when(dropItem.calculateDrops(any(), any())).thenReturn(null);
-
-        boolean result = AbstractScript.giveItemRandomly(player, npc, player, dropItem, 0L, true);
-
-        assertThat(result).isFalse();
-    }
+	void shouldReturnFalseIfCalculateDropsResultIsNull() {
+		when(dropItem.calculateDrops(any(), any())).thenReturn(null);
+		
+		boolean result = AbstractScript.giveItemRandomly(player, npc, player, dropItem, 0L, true);
+		
+		assertThat(result).isFalse();
+	}
 	
 	@Test
-    public void shouldReturnFalseIfCalculateDropsResultIsEmpty() {
-        when(dropItem.calculateDrops(any(), any())).thenReturn(Collections.emptyList());
-
-        boolean result = AbstractScript.giveItemRandomly(player, npc, player, dropItem, 0L, true);
-
-        assertThat(result).isFalse();
-    }
+	void shouldReturnFalseIfCalculateDropsResultIsEmpty() {
+		when(dropItem.calculateDrops(any(), any())).thenReturn(Collections.emptyList());
+		
+		boolean result = AbstractScript.giveItemRandomly(player, npc, player, dropItem, 0L, true);
+		
+		assertThat(result).isFalse();
+	}
 	
 	@Test
-	public void shouldReturnFalseIfPlayerHasNoInventoryCapacity() {
+	void shouldReturnFalseIfPlayerHasNoInventoryCapacity() {
 		int itemId = 1;
 		
 		when(dropItem.calculateDrops(any(), any())).thenReturn(List.of(new ItemHolder(itemId, 10L)));
@@ -126,7 +126,7 @@ public class AbstractScriptTest {
 	}
 	
 	@Test
-	public void shouldAddItemsToPlayer() {
+	void shouldAddItemsToPlayer() {
 		int itemId = 1;
 		long amount = 10L;
 		
@@ -141,7 +141,7 @@ public class AbstractScriptTest {
 	}
 	
 	@Test
-	public void shouldCapItemsAmountAtLimit() {
+	void shouldCapItemsAmountAtLimit() {
 		int itemId = 1;
 		
 		when(dropItem.calculateDrops(any(), any())).thenReturn(List.of(new ItemHolder(itemId, 10L)));
@@ -155,7 +155,7 @@ public class AbstractScriptTest {
 	}
 	
 	@Test
-	public void shouldReturnTrueIfItemsGivenAndLimitReached() {
+	void shouldReturnTrueIfItemsGivenAndLimitReached() {
 		int itemId = 1;
 		
 		when(dropItem.calculateDrops(any(), any())).thenReturn(List.of(new ItemHolder(itemId, 10L)));
@@ -170,7 +170,7 @@ public class AbstractScriptTest {
 	}
 	
 	@Test
-	public void shouldReturnFalseIfItemsGivenAndLimitNotReached() {
+	void shouldReturnFalseIfItemsGivenAndLimitNotReached() {
 		int itemId = 1;
 		
 		when(dropItem.calculateDrops(any(), any())).thenReturn(List.of(new ItemHolder(itemId, 10L)));
@@ -185,7 +185,7 @@ public class AbstractScriptTest {
 	}
 	
 	@Test
-	public void shouldReturnTrueIfItemsGivenAndNoLimit() {
+	void shouldReturnTrueIfItemsGivenAndNoLimit() {
 		int itemId = 1;
 		
 		when(dropItem.calculateDrops(any(), any())).thenReturn(List.of(new ItemHolder(itemId, 10L)));
@@ -200,7 +200,7 @@ public class AbstractScriptTest {
 	}
 	
 	@Test
-	public void shouldReturnFalseIfDropInfoIsNull() {
+	void shouldReturnFalseIfDropInfoIsNull() {
 		QuestDropInfo dropInfo = null;
 		
 		boolean result = AbstractScript.giveItemRandomly(player, npc, dropInfo, true);

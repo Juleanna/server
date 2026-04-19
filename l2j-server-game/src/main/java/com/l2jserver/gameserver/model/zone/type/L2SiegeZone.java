@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,6 +19,9 @@
 package com.l2jserver.gameserver.model.zone.type;
 
 import static com.l2jserver.gameserver.config.Configuration.castle;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.enums.MountType;
@@ -45,6 +48,8 @@ import com.l2jserver.gameserver.network.SystemMessageId;
  * @author durgus
  */
 public class L2SiegeZone extends L2ZoneType {
+	private static final Logger LOG = LoggerFactory.getLogger(L2SiegeZone.class);
+	
 	private static final int DISMOUNT_DELAY = 5;
 	
 	public L2SiegeZone(int id) {
@@ -61,7 +66,7 @@ public class L2SiegeZone extends L2ZoneType {
 		private Siegable _siege = null;
 		private boolean _isActiveSiege = false;
 		
-		protected Settings() {
+		private Settings() {
 		}
 		
 		public int getSiegeableId() {
@@ -117,7 +122,7 @@ public class L2SiegeZone extends L2ZoneType {
 				getSettings().setSiegeableId(Integer.parseInt(value));
 				SiegableHall hall = ClanHallSiegeManager.getInstance().getConquerableHalls().get(getSettings().getSiegeableId());
 				if (hall == null) {
-					_log.warning("L2SiegeZone: Siegable clan hall with id " + value + " does not exist!");
+					LOG.warn("Siegable clan hall with id {} does not exist!", value);
 				} else {
 					hall.setSiegeZone(this);
 				}
@@ -239,7 +244,6 @@ public class L2SiegeZone extends L2ZoneType {
 	
 	/**
 	 * Sends a message to all players in this zone
-	 * @param message
 	 */
 	public void announceToPlayers(String message) {
 		for (L2PcInstance player : getPlayersInside()) {
@@ -267,7 +271,6 @@ public class L2SiegeZone extends L2ZoneType {
 	
 	/**
 	 * Removes all foreigners from the zone
-	 * @param owningClanId
 	 */
 	public void banishForeigners(int owningClanId) {
 		TeleportWhereType type = TeleportWhereType.TOWN;

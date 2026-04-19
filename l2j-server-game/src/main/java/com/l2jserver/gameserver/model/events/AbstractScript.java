@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,26 @@ package com.l2jserver.gameserver.model.events;
 
 import static com.l2jserver.gameserver.config.Configuration.character;
 import static com.l2jserver.gameserver.config.Configuration.rates;
+import static com.l2jserver.gameserver.model.events.EventType.CASTLE_SIEGE_FINISH;
+import static com.l2jserver.gameserver.model.events.EventType.CASTLE_SIEGE_OWNER_CHANGE;
+import static com.l2jserver.gameserver.model.events.EventType.CASTLE_SIEGE_START;
+import static com.l2jserver.gameserver.model.events.EventType.CREATURE_KILL;
+import static com.l2jserver.gameserver.model.events.EventType.NPC_CAN_BE_SEEN;
+import static com.l2jserver.gameserver.model.events.EventType.NPC_EVENT_RECEIVED;
+import static com.l2jserver.gameserver.model.events.EventType.NPC_FIRST_TALK;
+import static com.l2jserver.gameserver.model.events.EventType.NPC_HATE;
+import static com.l2jserver.gameserver.model.events.EventType.NPC_QUEST_START;
+import static com.l2jserver.gameserver.model.events.EventType.NPC_TALK;
+import static com.l2jserver.gameserver.model.events.EventType.OLYMPIAD_MATCH_RESULT;
+import static com.l2jserver.gameserver.model.events.EventType.PLAYER_LOGOUT;
+import static com.l2jserver.gameserver.model.events.EventType.PLAYER_PROFESSION_CANCEL;
+import static com.l2jserver.gameserver.model.events.EventType.PLAYER_PROFESSION_CHANGE;
+import static com.l2jserver.gameserver.model.events.EventType.PLAYER_SUMMON_SPAWN;
+import static com.l2jserver.gameserver.model.events.EventType.PLAYER_SUMMON_TALK;
+import static com.l2jserver.gameserver.model.events.ListenerRegisterType.CASTLE;
+import static com.l2jserver.gameserver.model.events.ListenerRegisterType.GLOBAL;
+import static com.l2jserver.gameserver.model.events.ListenerRegisterType.NPC;
+import static com.l2jserver.gameserver.model.events.ListenerRegisterType.OLYMPIAD;
 import static com.l2jserver.gameserver.model.quest.QuestDroplist.singleDropItem;
 
 import java.lang.annotation.Annotation;
@@ -52,6 +72,7 @@ import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.audio.IAudio;
 import com.l2jserver.gameserver.enums.audio.Sound;
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.CastleManager;
 import com.l2jserver.gameserver.instancemanager.FortManager;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
@@ -82,44 +103,21 @@ import com.l2jserver.gameserver.model.events.annotations.Range;
 import com.l2jserver.gameserver.model.events.annotations.Ranges;
 import com.l2jserver.gameserver.model.events.annotations.RegisterEvent;
 import com.l2jserver.gameserver.model.events.annotations.RegisterType;
-import com.l2jserver.gameserver.model.events.impl.IBaseEvent;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureKill;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureZoneEnter;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureZoneExit;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcCanBeSeen;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcCreatureSee;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcEventReceived;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcFirstTalk;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcMoveFinished;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcMoveNodeArrived;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcMoveRouteFinished;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcSkillFinished;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcSkillSee;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcSpawn;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcTeleport;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableAggroRangeEnter;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableAttack;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableFactionCall;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableHate;
-import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableKill;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogin;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerLogout;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerProfessionCancel;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerProfessionChange;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerSkillLearn;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerSummonSpawn;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerSummonTalk;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerTutorialClientEvent;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerTutorialCmd;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerTutorialEvent;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerTutorialQuestionMark;
-import com.l2jserver.gameserver.model.events.impl.character.trap.OnTrapAction;
-import com.l2jserver.gameserver.model.events.impl.item.OnItemBypassEvent;
-import com.l2jserver.gameserver.model.events.impl.item.OnItemTalk;
-import com.l2jserver.gameserver.model.events.impl.olympiad.OnOlympiadMatchResult;
-import com.l2jserver.gameserver.model.events.impl.sieges.castle.OnCastleSiegeFinish;
-import com.l2jserver.gameserver.model.events.impl.sieges.castle.OnCastleSiegeOwnerChange;
-import com.l2jserver.gameserver.model.events.impl.sieges.castle.OnCastleSiegeStart;
+import com.l2jserver.gameserver.model.events.impl.BaseEvent;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureKill;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcCanBeSeen;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcEventReceived;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcFirstTalk;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.AttackableHate;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerLogout;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerProfessionCancel;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerProfessionChange;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerSummonSpawn;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerSummonTalk;
+import com.l2jserver.gameserver.model.events.impl.olympiad.OlympiadMatchResult;
+import com.l2jserver.gameserver.model.events.impl.sieges.castle.CastleSiegeFinish;
+import com.l2jserver.gameserver.model.events.impl.sieges.castle.CastleSiegeOwnerChange;
+import com.l2jserver.gameserver.model.events.impl.sieges.castle.CastleSiegeStart;
 import com.l2jserver.gameserver.model.events.listeners.AbstractEventListener;
 import com.l2jserver.gameserver.model.events.listeners.AnnotationEventListener;
 import com.l2jserver.gameserver.model.events.listeners.ConsumerEventListener;
@@ -238,28 +236,28 @@ public abstract class AbstractScript implements INamable {
 						if (range.from() > range.to()) {
 							LOG.warn("Wrong {} from is higher then to!", annotation.getClass().getSimpleName());
 							continue;
-						} else if (type != ListenerRegisterType.NPC) {
+						} else if (type != NPC) {
 							LOG.warn("ListenerRegisterType {} for {} NPC is expected!", type, annotation.getClass().getSimpleName());
 							continue;
 						}
 						
 						for (int level = range.from(); level <= range.to(); level++) {
 							final List<L2NpcTemplate> templates = NpcData.getInstance().getAllOfLevel(level);
-							templates.forEach(template -> ids.add(template.getId()));
+							templates.forEach(t -> ids.add(t.getId()));
 						}
 					} else if (annotation instanceof NpcLevelRanges ranges) {
 						for (NpcLevelRange range : ranges.value()) {
 							if (range.from() > range.to()) {
 								LOG.warn("Wrong {} from is higher then to!", annotation.getClass().getSimpleName());
 								continue;
-							} else if (type != ListenerRegisterType.NPC) {
+							} else if (type != NPC) {
 								LOG.warn("ListenerRegisterType {} for {} NPC is expected!", type, annotation.getClass().getSimpleName());
 								continue;
 							}
 							
 							for (int level = range.from(); level <= range.to(); level++) {
 								final List<L2NpcTemplate> templates = NpcData.getInstance().getAllOfLevel(level);
-								templates.forEach(template -> ids.add(template.getId()));
+								templates.forEach(t -> ids.add(t.getId()));
 							}
 						}
 					} else if (annotation instanceof Priority p) {
@@ -303,35 +301,13 @@ public abstract class AbstractScript implements INamable {
 	// ---------------------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * Provides delayed (Depending on {@link com.l2jserver.gameserver.model.actor.L2Attackable#getOnKillDelay()}) callback operation when L2Attackable dies from a player.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setAttackableKillId(Consumer<OnAttackableKill> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_ATTACKABLE_KILL, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides delayed (Depending on {@link com.l2jserver.gameserver.model.actor.L2Attackable#getOnKillDelay()}) callback operation when L2Attackable dies from a player.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setAttackableKillId(Consumer<OnAttackableKill> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_ATTACKABLE_KILL, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
 	 * Provides instant callback operation when L2Attackable dies from a player with return type.
 	 * @param callback
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> addCreatureKillId(Function<OnCreatureKill, ? extends AbstractEventReturn> callback, int... npcIds) {
-		return registerFunction(callback, EventType.ON_CREATURE_KILL, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> addCreatureKillId(Function<CreatureKill, ? extends AbstractEventReturn> callback, int... npcIds) {
+		return registerFunction(callback, CREATURE_KILL, NPC, npcIds);
 	}
 	
 	/**
@@ -340,8 +316,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setCreatureKillId(Consumer<OnCreatureKill> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_CREATURE_KILL, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setCreatureKillId(Consumer<CreatureKill> callback, int... npcIds) {
+		return registerConsumer(callback, CREATURE_KILL, NPC, npcIds);
 	}
 	
 	/**
@@ -350,8 +326,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setCreatureKillId(Consumer<OnCreatureKill> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_CREATURE_KILL, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setCreatureKillId(Consumer<CreatureKill> callback, Collection<Integer> npcIds) {
+		return registerConsumer(callback, CREATURE_KILL, NPC, npcIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -362,8 +338,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setNpcFirstTalkId(Consumer<OnNpcFirstTalk> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_FIRST_TALK, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setNpcFirstTalkId(Consumer<NpcFirstTalk> callback, int... npcIds) {
+		return registerConsumer(callback, NPC_FIRST_TALK, NPC, npcIds);
 	}
 	
 	/**
@@ -372,26 +348,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setNpcFirstTalkId(Consumer<OnNpcFirstTalk> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_FIRST_TALK, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	protected final List<AbstractEventListener> setPlayerTutorialEvent(Consumer<OnPlayerTutorialEvent> callback) {
-		return registerConsumer(callback, EventType.ON_PLAYER_TUTORIAL_EVENT, ListenerRegisterType.GLOBAL);
-	}
-	
-	protected final List<AbstractEventListener> setPlayerTutorialClientEvent(Consumer<OnPlayerTutorialClientEvent> callback) {
-		return registerConsumer(callback, EventType.ON_PLAYER_TUTORIAL_CLIENT_EVENT, ListenerRegisterType.GLOBAL);
-	}
-	
-	protected final List<AbstractEventListener> setPlayerTutorialQuestionMark(Consumer<OnPlayerTutorialQuestionMark> callback) {
-		return registerConsumer(callback, EventType.ON_PLAYER_TUTORIAL_QUESTION_MARK, ListenerRegisterType.GLOBAL);
-	}
-	
-	protected final List<AbstractEventListener> setPlayerTutorialCmd(Consumer<OnPlayerTutorialCmd> callback) {
-		return registerConsumer(callback, EventType.ON_PLAYER_TUTORIAL_CMD, ListenerRegisterType.GLOBAL);
+	protected final List<AbstractEventListener> setNpcFirstTalkId(Consumer<NpcFirstTalk> callback, Collection<Integer> npcIds) {
+		return registerConsumer(callback, NPC_FIRST_TALK, NPC, npcIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -402,7 +360,7 @@ public abstract class AbstractScript implements INamable {
 	 * @return
 	 */
 	protected final List<AbstractEventListener> setNpcTalkId(Collection<Integer> npcIds) {
-		return registerDummy(EventType.ON_NPC_TALK, ListenerRegisterType.NPC, npcIds);
+		return registerDummy(NPC_TALK, NPC, npcIds);
 	}
 	
 	/**
@@ -411,29 +369,7 @@ public abstract class AbstractScript implements INamable {
 	 * @return
 	 */
 	protected final List<AbstractEventListener> setNpcTalkId(int... npcIds) {
-		return registerDummy(EventType.ON_NPC_TALK, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when teleport {@link L2Npc}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcTeleportId(Consumer<OnNpcTeleport> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_TELEPORT, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when teleport {@link L2Npc}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcTeleportId(Consumer<OnNpcTeleport> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_TELEPORT, ListenerRegisterType.NPC, npcIds);
+		return registerDummy(NPC_TALK, NPC, npcIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -444,7 +380,7 @@ public abstract class AbstractScript implements INamable {
 	 * @return
 	 */
 	protected final List<AbstractEventListener> setNpcQuestStartId(int... npcIds) {
-		return registerDummy(EventType.ON_NPC_QUEST_START, ListenerRegisterType.NPC, npcIds);
+		return registerDummy(NPC_QUEST_START, NPC, npcIds);
 	}
 	
 	/**
@@ -453,73 +389,7 @@ public abstract class AbstractScript implements INamable {
 	 * @return
 	 */
 	protected final List<AbstractEventListener> setNpcQuestStartId(Collection<Integer> npcIds) {
-		return registerDummy(EventType.ON_NPC_QUEST_START, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when L2Npc sees skill from a player.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcSkillSeeId(Consumer<OnNpcSkillSee> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_SKILL_SEE, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when L2Npc sees skill from a player.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcSkillSeeId(Consumer<OnNpcSkillSee> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_SKILL_SEE, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when L2Npc casts skill on a player.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcSkillFinishedId(Consumer<OnNpcSkillFinished> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_SKILL_FINISHED, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when L2Npc casts skill on a player.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcSkillFinishedId(Consumer<OnNpcSkillFinished> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_SKILL_FINISHED, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when L2Npc is spawned.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcSpawnId(Consumer<OnNpcSpawn> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_SPAWN, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when L2Npc is spawned.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcSpawnId(Consumer<OnNpcSpawn> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_SPAWN, ListenerRegisterType.NPC, npcIds);
+		return registerDummy(NPC_QUEST_START, NPC, npcIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -530,8 +400,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setNpcEventReceivedId(Consumer<OnNpcEventReceived> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_EVENT_RECEIVED, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setNpcEventReceivedId(Consumer<NpcEventReceived> callback, int... npcIds) {
+		return registerConsumer(callback, NPC_EVENT_RECEIVED, NPC, npcIds);
 	}
 	
 	/**
@@ -540,74 +410,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setNpcEventReceivedId(Consumer<OnNpcEventReceived> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_EVENT_RECEIVED, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link L2Npc} finishes to move.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcMoveFinishedId(Consumer<OnNpcMoveFinished> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_MOVE_FINISHED, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link L2Npc} finishes to move.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcMoveFinishedId(Consumer<OnNpcMoveFinished> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_MOVE_FINISHED, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link L2Npc} arrive to node of its route
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcMoveNodeArrivedId(Consumer<OnNpcMoveNodeArrived> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_MOVE_NODE_ARRIVED, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link L2Npc} arrive to node of its route
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcMoveNodeArrivedId(Consumer<OnNpcMoveNodeArrived> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_MOVE_NODE_ARRIVED, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link L2Npc} finishes to move on its route.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcMoveRouteFinishedId(Consumer<OnNpcMoveRouteFinished> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_MOVE_ROUTE_FINISHED, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link L2Npc} finishes to move on its route.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcMoveRouteFinishedId(Consumer<OnNpcMoveRouteFinished> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_MOVE_ROUTE_FINISHED, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setNpcEventReceivedId(Consumer<NpcEventReceived> callback, Collection<Integer> npcIds) {
+		return registerConsumer(callback, NPC_EVENT_RECEIVED, NPC, npcIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -618,8 +422,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setNpcHateId(Consumer<OnAttackableHate> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_HATE, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setNpcHateId(Consumer<AttackableHate> callback, int... npcIds) {
+		return registerConsumer(callback, NPC_HATE, NPC, npcIds);
 	}
 	
 	/**
@@ -628,8 +432,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setNpcHateId(Consumer<OnAttackableHate> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_HATE, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setNpcHateId(Consumer<AttackableHate> callback, Collection<Integer> npcIds) {
+		return registerConsumer(callback, NPC_HATE, NPC, npcIds);
 	}
 	
 	/**
@@ -638,8 +442,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> addNpcHateId(Function<OnAttackableHate, TerminateReturn> callback, int... npcIds) {
-		return registerFunction(callback, EventType.ON_NPC_HATE, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> addNpcHateId(Function<AttackableHate, TerminateReturn> callback, int... npcIds) {
+		return registerFunction(callback, NPC_HATE, NPC, npcIds);
 	}
 	
 	/**
@@ -648,8 +452,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> addNpcHateId(Function<OnAttackableHate, TerminateReturn> callback, Collection<Integer> npcIds) {
-		return registerFunction(callback, EventType.ON_NPC_HATE, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> addNpcHateId(Function<AttackableHate, TerminateReturn> callback, Collection<Integer> npcIds) {
+		return registerFunction(callback, NPC_HATE, NPC, npcIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -660,8 +464,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setNpcCanBeSeenId(Consumer<OnNpcCanBeSeen> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_CAN_BE_SEEN, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setNpcCanBeSeenId(Consumer<NpcCanBeSeen> callback, int... npcIds) {
+		return registerConsumer(callback, NPC_CAN_BE_SEEN, NPC, npcIds);
 	}
 	
 	/**
@@ -670,8 +474,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setNpcCanBeSeenId(Consumer<OnNpcCanBeSeen> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_CAN_BE_SEEN, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setNpcCanBeSeenId(Consumer<NpcCanBeSeen> callback, Collection<Integer> npcIds) {
+		return registerConsumer(callback, NPC_CAN_BE_SEEN, NPC, npcIds);
 	}
 	
 	/**
@@ -680,8 +484,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setNpcCanBeSeenId(Function<OnNpcCanBeSeen, TerminateReturn> callback, int... npcIds) {
-		return registerFunction(callback, EventType.ON_NPC_CAN_BE_SEEN, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setNpcCanBeSeenId(Function<NpcCanBeSeen, TerminateReturn> callback, int... npcIds) {
+		return registerFunction(callback, NPC_CAN_BE_SEEN, NPC, npcIds);
 	}
 	
 	/**
@@ -690,118 +494,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setNpcCanBeSeenId(Function<OnNpcCanBeSeen, TerminateReturn> callback, Collection<Integer> npcIds) {
-		return registerFunction(callback, EventType.ON_NPC_CAN_BE_SEEN, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link L2Npc} sees another creature.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcCreatureSeeId(Consumer<OnNpcCreatureSee> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_CREATURE_SEE, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link L2Npc} sees another creature.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setNpcCreatureSeeId(Consumer<OnNpcCreatureSee> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_NPC_CREATURE_SEE, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when L2Attackable is under attack to other clan mates.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setAttackableFactionIdId(Consumer<OnAttackableFactionCall> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_ATTACKABLE_FACTION_CALL, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when L2Attackable is under attack to other clan mates.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setAttackableFactionIdId(Consumer<OnAttackableFactionCall> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_ATTACKABLE_FACTION_CALL, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when L2Attackable is attacked from a player.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setAttackableAttackId(Consumer<OnAttackableAttack> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_ATTACKABLE_ATTACK, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when L2Attackable is attacked from a player.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setAttackableAttackId(Consumer<OnAttackableAttack> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_ATTACKABLE_ATTACK, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link L2PcInstance} enters in {@link L2Attackable}'s aggressive range.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setAttackableAggroRangeEnterId(Consumer<OnAttackableAggroRangeEnter> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_ATTACKABLE_AGGRO_RANGE_ENTER, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link L2PcInstance} enters in {@link L2Attackable}'s aggressive range.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setAttackableAggroRangeEnterId(Consumer<OnAttackableAggroRangeEnter> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_ATTACKABLE_AGGRO_RANGE_ENTER, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link L2PcInstance} learns a {@link Skill}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setPlayerSkillLearnId(Consumer<OnPlayerSkillLearn> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_PLAYER_SKILL_LEARN, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link L2PcInstance} learns a {@link Skill}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setPlayerSkillLearnId(Consumer<OnPlayerSkillLearn> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_PLAYER_SKILL_LEARN, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setNpcCanBeSeenId(Function<NpcCanBeSeen, TerminateReturn> callback, Collection<Integer> npcIds) {
+		return registerFunction(callback, NPC_CAN_BE_SEEN, NPC, npcIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -812,8 +506,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setPlayerSummonSpawnId(Consumer<OnPlayerSummonSpawn> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_PLAYER_SUMMON_SPAWN, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setPlayerSummonSpawnId(Consumer<PlayerSummonSpawn> callback, int... npcIds) {
+		return registerConsumer(callback, PLAYER_SUMMON_SPAWN, NPC, npcIds);
 	}
 	
 	/**
@@ -822,8 +516,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setPlayerSummonSpawnId(Consumer<OnPlayerSummonSpawn> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_PLAYER_SUMMON_SPAWN, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setPlayerSummonSpawnId(Consumer<PlayerSummonSpawn> callback, Collection<Integer> npcIds) {
+		return registerConsumer(callback, PLAYER_SUMMON_SPAWN, NPC, npcIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -834,8 +528,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setPlayerSummonTalkId(Consumer<OnPlayerSummonTalk> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_PLAYER_SUMMON_TALK, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setPlayerSummonTalkId(Consumer<PlayerSummonTalk> callback, int... npcIds) {
+		return registerConsumer(callback, PLAYER_SUMMON_TALK, NPC, npcIds);
 	}
 	
 	/**
@@ -844,8 +538,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setPlayerSummonTalkId(Consumer<OnPlayerSummonSpawn> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_PLAYER_SUMMON_TALK, ListenerRegisterType.NPC, npcIds);
+	protected final List<AbstractEventListener> setPlayerSummonTalkId(Consumer<PlayerSummonSpawn> callback, Collection<Integer> npcIds) {
+		return registerConsumer(callback, PLAYER_SUMMON_TALK, NPC, npcIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -855,129 +549,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param callback
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setPlayerLoginId(Consumer<OnPlayerLogin> callback) {
-		return registerConsumer(callback, EventType.ON_PLAYER_LOGIN, ListenerRegisterType.GLOBAL);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link L2PcInstance} summons a servitor or a pet
-	 * @param callback
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setPlayerLogoutId(Consumer<OnPlayerLogout> callback) {
-		return registerConsumer(callback, EventType.ON_PLAYER_LOGOUT, ListenerRegisterType.GLOBAL);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link com.l2jserver.gameserver.model.actor.L2Character} Enters on a {@link L2ZoneType}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setCreatureZoneEnterId(Consumer<OnCreatureZoneEnter> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_CREATURE_ZONE_ENTER, ListenerRegisterType.ZONE, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link com.l2jserver.gameserver.model.actor.L2Character} Enters on a {@link L2ZoneType}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setCreatureZoneEnterId(Consumer<OnCreatureZoneEnter> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_CREATURE_ZONE_ENTER, ListenerRegisterType.ZONE, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link com.l2jserver.gameserver.model.actor.L2Character} Exits on a {@link L2ZoneType}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setCreatureZoneExitId(Consumer<OnCreatureZoneExit> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_CREATURE_ZONE_EXIT, ListenerRegisterType.ZONE, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link com.l2jserver.gameserver.model.actor.L2Character} Exits on a {@link L2ZoneType}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setCreatureZoneExitId(Consumer<OnCreatureZoneExit> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_CREATURE_ZONE_EXIT, ListenerRegisterType.ZONE, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link com.l2jserver.gameserver.model.actor.instance.L2TrapInstance} acts.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setTrapActionId(Consumer<OnTrapAction> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_TRAP_ACTION, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link com.l2jserver.gameserver.model.actor.instance.L2TrapInstance} acts.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setTrapActionId(Consumer<OnTrapAction> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_TRAP_ACTION, ListenerRegisterType.NPC, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link L2Item} receives an event from {@link L2PcInstance}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setItemBypassEvenId(Consumer<OnItemBypassEvent> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_ITEM_BYPASS_EVENT, ListenerRegisterType.ITEM, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link L2Item} receives an event from {@link L2PcInstance}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setItemBypassEvenId(Consumer<OnItemBypassEvent> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_ITEM_BYPASS_EVENT, ListenerRegisterType.ITEM, npcIds);
-	}
-	
-	// ---------------------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Provides instant callback operation when {@link L2PcInstance} talk to {@link L2Item}.
-	 * @param callback
-	 * @param npcIds
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setItemTalkId(Consumer<OnItemTalk> callback, int... npcIds) {
-		return registerConsumer(callback, EventType.ON_ITEM_TALK, ListenerRegisterType.ITEM, npcIds);
-	}
-	
-	/**
-	 * Provides instant callback operation when {@link L2PcInstance} talk to {@link L2Item}.
-	 * @param callback the event callback
-	 * @param npcIds the NPC Ids
-	 * @return
-	 */
-	protected final List<AbstractEventListener> setItemTalkId(Consumer<OnItemTalk> callback, Collection<Integer> npcIds) {
-		return registerConsumer(callback, EventType.ON_ITEM_TALK, ListenerRegisterType.ITEM, npcIds);
+	protected final List<AbstractEventListener> setPlayerLogoutId(Consumer<PlayerLogout> callback) {
+		return registerConsumer(callback, PLAYER_LOGOUT, GLOBAL);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -987,8 +560,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param callback the event callback
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setOlympiadMatchResult(Consumer<OnOlympiadMatchResult> callback) {
-		return registerConsumer(callback, EventType.ON_OLYMPIAD_MATCH_RESULT, ListenerRegisterType.OLYMPIAD);
+	protected final List<AbstractEventListener> setOlympiadMatchResult(Consumer<OlympiadMatchResult> callback) {
+		return registerConsumer(callback, OLYMPIAD_MATCH_RESULT, OLYMPIAD);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -999,8 +572,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param castleIds the castle Ids
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setCastleSiegeStartId(Consumer<OnCastleSiegeStart> callback, int... castleIds) {
-		return registerConsumer(callback, EventType.ON_CASTLE_SIEGE_START, ListenerRegisterType.CASTLE, castleIds);
+	protected final List<AbstractEventListener> setCastleSiegeStartId(Consumer<CastleSiegeStart> callback, int... castleIds) {
+		return registerConsumer(callback, CASTLE_SIEGE_START, CASTLE, castleIds);
 	}
 	
 	/**
@@ -1009,8 +582,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param castleIds the castle Ids
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setCastleSiegeStartId(Consumer<OnCastleSiegeStart> callback, Collection<Integer> castleIds) {
-		return registerConsumer(callback, EventType.ON_CASTLE_SIEGE_START, ListenerRegisterType.CASTLE, castleIds);
+	protected final List<AbstractEventListener> setCastleSiegeStartId(Consumer<CastleSiegeStart> callback, Collection<Integer> castleIds) {
+		return registerConsumer(callback, CASTLE_SIEGE_START, CASTLE, castleIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -1021,8 +594,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param castleIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setCastleSiegeOwnerChangeId(Consumer<OnCastleSiegeOwnerChange> callback, int... castleIds) {
-		return registerConsumer(callback, EventType.ON_CASTLE_SIEGE_OWNER_CHANGE, ListenerRegisterType.CASTLE, castleIds);
+	protected final List<AbstractEventListener> setCastleSiegeOwnerChangeId(Consumer<CastleSiegeOwnerChange> callback, int... castleIds) {
+		return registerConsumer(callback, CASTLE_SIEGE_OWNER_CHANGE, CASTLE, castleIds);
 	}
 	
 	/**
@@ -1031,8 +604,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param castleIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setCastleSiegeOwnerChangeId(Consumer<OnCastleSiegeOwnerChange> callback, Collection<Integer> castleIds) {
-		return registerConsumer(callback, EventType.ON_CASTLE_SIEGE_OWNER_CHANGE, ListenerRegisterType.CASTLE, castleIds);
+	protected final List<AbstractEventListener> setCastleSiegeOwnerChangeId(Consumer<CastleSiegeOwnerChange> callback, Collection<Integer> castleIds) {
+		return registerConsumer(callback, CASTLE_SIEGE_OWNER_CHANGE, CASTLE, castleIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -1043,8 +616,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param castleIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setCastleSiegeFinishId(Consumer<OnCastleSiegeFinish> callback, int... castleIds) {
-		return registerConsumer(callback, EventType.ON_CASTLE_SIEGE_FINISH, ListenerRegisterType.CASTLE, castleIds);
+	protected final List<AbstractEventListener> setCastleSiegeFinishId(Consumer<CastleSiegeFinish> callback, int... castleIds) {
+		return registerConsumer(callback, CASTLE_SIEGE_FINISH, CASTLE, castleIds);
 	}
 	
 	/**
@@ -1053,8 +626,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param castleIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setCastleSiegeFinishId(Consumer<OnCastleSiegeFinish> callback, Collection<Integer> castleIds) {
-		return registerConsumer(callback, EventType.ON_CASTLE_SIEGE_FINISH, ListenerRegisterType.CASTLE, castleIds);
+	protected final List<AbstractEventListener> setCastleSiegeFinishId(Consumer<CastleSiegeFinish> callback, Collection<Integer> castleIds) {
+		return registerConsumer(callback, CASTLE_SIEGE_FINISH, CASTLE, castleIds);
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -1064,8 +637,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param callback
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setPlayerProfessionChangeId(Consumer<OnPlayerProfessionChange> callback) {
-		return registerConsumer(callback, EventType.ON_PLAYER_PROFESSION_CHANGE, ListenerRegisterType.GLOBAL);
+	protected final List<AbstractEventListener> setPlayerProfessionChangeId(Consumer<PlayerProfessionChange> callback) {
+		return registerConsumer(callback, PLAYER_PROFESSION_CHANGE, GLOBAL);
 	}
 	
 	/**
@@ -1073,8 +646,8 @@ public abstract class AbstractScript implements INamable {
 	 * @param callback
 	 * @return
 	 */
-	protected final List<AbstractEventListener> setPlayerProfessionCancelId(Consumer<OnPlayerProfessionCancel> callback) {
-		return registerConsumer(callback, EventType.ON_PLAYER_PROFESSION_CANCEL, ListenerRegisterType.GLOBAL);
+	protected final List<AbstractEventListener> setPlayerProfessionCancelId(Consumer<PlayerProfessionCancel> callback) {
+		return registerConsumer(callback, PLAYER_PROFESSION_CANCEL, GLOBAL);
 	}
 	
 	// --------------------------------------------------------------------------------------------------
@@ -1089,7 +662,7 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> registerConsumer(Consumer<? extends IBaseEvent> callback, EventType type, ListenerRegisterType registerType, int... npcIds) {
+	protected final List<AbstractEventListener> registerConsumer(Consumer<? extends BaseEvent> callback, EventType type, ListenerRegisterType registerType, int... npcIds) {
 		return registerListener(container -> new ConsumerEventListener(container, type, callback, this), registerType, npcIds);
 	}
 	
@@ -1101,7 +674,7 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> registerConsumer(Consumer<? extends IBaseEvent> callback, EventType type, ListenerRegisterType registerType, Collection<Integer> npcIds) {
+	protected final List<AbstractEventListener> registerConsumer(Consumer<? extends BaseEvent> callback, EventType type, ListenerRegisterType registerType, Collection<Integer> npcIds) {
 		return registerListener(container -> new ConsumerEventListener(container, type, callback, this), registerType, npcIds);
 	}
 	
@@ -1113,7 +686,7 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> registerFunction(Function<? extends IBaseEvent, ? extends AbstractEventReturn> callback, EventType type, ListenerRegisterType registerType, int... npcIds) {
+	protected final List<AbstractEventListener> registerFunction(Function<? extends BaseEvent, ? extends AbstractEventReturn> callback, EventType type, ListenerRegisterType registerType, int... npcIds) {
 		return registerListener(container -> new FunctionEventListener(container, type, callback, this), registerType, npcIds);
 	}
 	
@@ -1125,7 +698,7 @@ public abstract class AbstractScript implements INamable {
 	 * @param npcIds
 	 * @return
 	 */
-	protected final List<AbstractEventListener> registerFunction(Function<? extends IBaseEvent, ? extends AbstractEventReturn> callback, EventType type, ListenerRegisterType registerType, Collection<Integer> npcIds) {
+	protected final List<AbstractEventListener> registerFunction(Function<? extends BaseEvent, ? extends AbstractEventReturn> callback, EventType type, ListenerRegisterType registerType, Collection<Integer> npcIds) {
 		return registerListener(container -> new FunctionEventListener(container, type, callback, this), registerType, npcIds);
 	}
 	
@@ -1597,7 +1170,7 @@ public abstract class AbstractScript implements INamable {
 				y += offset;
 			}
 			
-			final L2Spawn spawn = new L2Spawn(npcId);
+			final var spawn = new L2Spawn(npcId);
 			spawn.setInstanceId(instanceId);
 			spawn.setHeading(heading);
 			spawn.setX(x);
@@ -1605,7 +1178,7 @@ public abstract class AbstractScript implements INamable {
 			spawn.setZ(z);
 			spawn.stopRespawn();
 			
-			final L2Npc npc = spawn.spawnOne(isSummonSpawn);
+			final var npc = spawn.spawnOne(isSummonSpawn);
 			if (despawnDelay > 0) {
 				npc.scheduleDespawn(despawnDelay);
 			}
@@ -1631,11 +1204,12 @@ public abstract class AbstractScript implements INamable {
 	 * @return
 	 */
 	public L2TrapInstance addTrap(int trapId, int x, int y, int z, int heading, Skill skill, int instanceId) {
-		final L2NpcTemplate npcTemplate = NpcData.getInstance().getTemplate(trapId);
-		L2TrapInstance trap = new L2TrapInstance(npcTemplate, instanceId, -1);
+		final var template = NpcData.getInstance().getTemplate(trapId);
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var trap = new L2TrapInstance(objectId, template, instanceId, -1);
 		trap.setCurrentHp(trap.getMaxHp());
 		trap.setCurrentMp(trap.getMaxMp());
-		trap.setIsInvul(true);
+		trap.setIsMortal(false);
 		trap.setHeading(heading);
 		trap.spawnMe(x, y, z);
 		return trap;
@@ -2305,7 +1879,7 @@ public abstract class AbstractScript implements INamable {
 	 * @return the counts of each items given to each player
 	 */
 	protected static Map<L2PcInstance, Map<Integer, Long>> distributeItems(Collection<L2PcInstance> players, Collection<ItemHolder> items, long limit, boolean playSound) {
-		return distributeItems(players, items, t -> limit, playSound);
+		return distributeItems(players, items, _ -> limit, playSound);
 	}
 	
 	/**
@@ -2433,7 +2007,7 @@ public abstract class AbstractScript implements INamable {
 	 * @return the counts of each items given to each player
 	 */
 	protected static Map<L2PcInstance, Map<Integer, Long>> distributeItems(Collection<L2PcInstance> players, final GroupedGeneralDropItem items, L2Character killer, L2Character victim, long limit, boolean playSound, boolean smartDrop) {
-		return distributeItems(players, items, killer, victim, t -> limit, playSound, smartDrop);
+		return distributeItems(players, items, killer, victim, _ -> limit, playSound, smartDrop);
 	}
 	
 	/**
@@ -2934,29 +2508,36 @@ public abstract class AbstractScript implements INamable {
 	}
 	
 	/**
-	 * @param player
-	 * @param x
-	 * @param y
-	 * @param z
+	 * Displays a radar marker for the specified player at the given coordinates.
+	 * @param player the player
+	 * @param x the X coordinate of the radar marker
+	 * @param y the Y coordinate of the radar marker
+	 * @param z the Z coordinate of the radar marker
+	 * @param type the type of the radar marker
 	 */
-	public static void addRadar(L2PcInstance player, int x, int y, int z) {
-		player.getRadar().addMarker(x, y, z);
+	public void showRadar(L2PcInstance player, int x, int y, int z, int type) {
+		player.getRadar().showRadar(x, y, z, type);
 	}
 	
 	/**
-	 * @param player
-	 * @param x
-	 * @param y
-	 * @param z
+	 * Deletes a specific radar marker for the specified player at the given coordinates.
+	 * @param player the player
+	 * @param x the X coordinate of the radar marker
+	 * @param y the Y coordinate of the radar marker
+	 * @param z the Z coordinate of the radar marker
+	 * @param type the type of the radar marker
 	 */
-	public void removeRadar(L2PcInstance player, int x, int y, int z) {
-		player.getRadar().removeMarker(x, y, z);
+	public void deleteRadar(L2PcInstance player, int x, int y, int z, int type) {
+		player.getRadar().deleteRadar(x, y, z, type);
 	}
 	
 	/**
-	 * @param player
+	 * Deletes all radar markers of a specific type for the specified player.
+	 * @param player the player
+	 * @param type the type of radar markers to delete
 	 */
-	public void clearRadar(L2PcInstance player) {
-		player.getRadar().removeAllMarkers();
+	public void deleteAllRadar(L2PcInstance player, int type) {
+		player.getRadar().deleteAllRadar(type);
 	}
+	
 }

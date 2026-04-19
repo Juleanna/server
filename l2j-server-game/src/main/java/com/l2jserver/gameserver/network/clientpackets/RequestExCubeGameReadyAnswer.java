@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.instancemanager.HandysBlockCheckerManager;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
@@ -26,6 +29,8 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * @author mrTJO
  */
 public final class RequestExCubeGameReadyAnswer extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestExCubeGameReadyAnswer.class);
+	
 	private static final String _C__D0_5C_REQUESTEXCUBEGAMEREADYANSWER = "[C] D0:5C RequestExCubeGameReadyAnswer";
 	
 	private int _arena;
@@ -56,7 +61,7 @@ public final class RequestExCubeGameReadyAnswer extends L2GameClientPacket {
 				HandysBlockCheckerManager.getInstance().increaseArenaVotes(_arena);
 				break;
 			default:
-				_log.warning("Unknown Cube Game Answer ID: " + _answer);
+				LOG.warn("Unknown Cube Game Answer ID: {}", _answer);
 				break;
 		}
 	}

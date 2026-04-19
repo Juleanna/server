@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,8 +21,9 @@ package com.l2jserver.gameserver.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.data.xml.impl.UIData;
@@ -33,8 +34,7 @@ import com.l2jserver.gameserver.data.xml.impl.UIData;
  * @author Zoey76
  */
 public class UIKeysSettings {
-	
-	private static final Logger _log = Logger.getLogger(UIKeysSettings.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(UIKeysSettings.class);
 	
 	private final int _playerObjId;
 	private Map<Integer, List<ActionKey>> _storedKeys;
@@ -70,7 +70,7 @@ public class UIKeysSettings {
 		return _storedKeys;
 	}
 	
-	public void loadFromDB() {
+	private void loadFromDB() {
 		getCatsFromDB();
 		getKeysFromDB();
 	}
@@ -97,7 +97,7 @@ public class UIKeysSettings {
 			var statement = con.prepareStatement(query.toString())) {
 			statement.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: saveInDB(): " + e.getMessage(), e);
+			LOG.warn("Exception: saveInDB(): {}", e.getMessage(), e);
 		}
 		
 		query = new StringBuilder("REPLACE INTO character_ui_actions (`charId`, `cat`, `order`, `cmd`, `key`, `tgKey1`, `tgKey2`, `show`) VALUES");
@@ -113,12 +113,12 @@ public class UIKeysSettings {
 			var statement = con.prepareStatement(query.toString())) {
 			statement.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: saveInDB(): " + e.getMessage(), e);
+			LOG.warn("Exception: saveInDB(): {}", e.getMessage(), e);
 		}
 		_saved = true;
 	}
 	
-	public void getCatsFromDB() {
+	private void getCatsFromDB() {
 		if (_storedCategories != null) {
 			return;
 		}
@@ -134,7 +134,7 @@ public class UIKeysSettings {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: getCatsFromDB(): " + e.getMessage(), e);
+			LOG.warn("Exception: getCatsFromDB(): {}", e.getMessage(), e);
 		}
 		
 		if (_storedCategories.isEmpty()) {
@@ -142,7 +142,7 @@ public class UIKeysSettings {
 		}
 	}
 	
-	public void getKeysFromDB() {
+	private void getKeysFromDB() {
 		if (_storedKeys != null) {
 			return;
 		}
@@ -164,7 +164,7 @@ public class UIKeysSettings {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: getKeysFromDB(): " + e.getMessage(), e);
+			LOG.warn("Exception: getKeysFromDB(): {}", e.getMessage(), e);
 		}
 		
 		if (_storedKeys.isEmpty()) {

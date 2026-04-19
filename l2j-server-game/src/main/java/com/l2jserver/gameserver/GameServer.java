@@ -1,18 +1,18 @@
 /*
- * Copyright © 2004-2023 L2J Server
- * 
+ * Copyright © 2004-2026 L2J Server
+ *
  * This file is part of L2J Server.
- * 
+ *
  * L2J Server is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * L2J Server is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -34,11 +34,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Calendar;
-import java.util.logging.LogManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.l2jserver.commons.UPnPService;
 import com.l2jserver.commons.dao.ServerNameDAO;
@@ -46,6 +44,7 @@ import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.commons.util.IPv4Filter;
 import com.l2jserver.commons.util.Util;
 import com.l2jserver.gameserver.bbs.service.ForumsBBSManager;
+import com.l2jserver.gameserver.loader.PlayerPanelLoader;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.dao.factory.impl.DAOFactory;
 import com.l2jserver.gameserver.data.json.ExperienceData;
@@ -57,7 +56,6 @@ import com.l2jserver.gameserver.data.sql.impl.CrestTable;
 import com.l2jserver.gameserver.data.sql.impl.NpcBufferTable;
 import com.l2jserver.gameserver.data.sql.impl.OfflineTradersTable;
 import com.l2jserver.gameserver.data.sql.impl.SummonSkillsTable;
-import com.l2jserver.gameserver.data.sql.impl.TeleportLocationTable;
 import com.l2jserver.gameserver.data.xml.impl.AdminData;
 import com.l2jserver.gameserver.data.xml.impl.ArmorSetsData;
 import com.l2jserver.gameserver.data.xml.impl.BuyListData;
@@ -96,7 +94,6 @@ import com.l2jserver.gameserver.datatables.AugmentationData;
 import com.l2jserver.gameserver.datatables.BotReportTable;
 import com.l2jserver.gameserver.datatables.EventDroplist;
 import com.l2jserver.gameserver.datatables.ItemTable;
-import com.l2jserver.gameserver.datatables.MerchantPriceConfigTable;
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.handler.EffectHandler;
@@ -144,6 +141,8 @@ import com.l2jserver.gameserver.model.events.EventDispatcher;
 import com.l2jserver.gameserver.model.olympiad.Olympiad;
 import com.l2jserver.gameserver.network.L2GameClient;
 import com.l2jserver.gameserver.network.L2GamePacketHandler;
+import com.l2jserver.gameserver.network.NpcStringId;
+import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.pathfinding.PathFinding;
 import com.l2jserver.gameserver.script.faenor.FaenorScriptEngine;
 import com.l2jserver.gameserver.scripting.ScriptEngineManager;
@@ -153,7 +152,6 @@ import com.l2jserver.gameserver.taskmanager.TaskManager;
 import com.l2jserver.gameserver.util.DeadLockDetector;
 import com.l2jserver.mmocore.SelectorConfig;
 import com.l2jserver.mmocore.SelectorThread;
-import com.l2jserver.gameserver.loader.PlayerPanelLoader;
 
 public final class GameServer {
 	
@@ -164,8 +162,6 @@ public final class GameServer {
 	private static final String SCRIPT = "-s";
 	
 	private static final String GEODATA = "-gd";
-	
-	private static final String L2JHOME_VARIABLE = "L2J_HOME";
 	
 	private final SelectorThread<L2GameClient> _selectorThread;
 	
@@ -178,12 +174,8 @@ public final class GameServer {
 	public static final Calendar dateTimeServerStarted = Calendar.getInstance();
 	
 	public GameServer() throws Exception {
-		// TODO(Zoey76): Remove when loggers rework is completed.
-		LogManager.getLogManager().reset();
-		SLF4JBridgeHandler.install();
 		
-		final var serverLoadStart = System.currentTimeMillis();
-		printSection("Database");
+		final var serverLoadStart = startTimedSection("Database");
 		ConnectionFactory.builder() //
 			.withUrl(database().getURL()) //
 			.withUser(database().getUser()) //
@@ -198,45 +190,50 @@ public final class GameServer {
 			LOG.error("Could not read object IDs from database. Please check your configuration.");
 			throw new Exception("Could not initialize the Id factory!");
 		}
+		endTimedSection("Database", serverLoadStart);
 		
 		ThreadPoolManager.getInstance();
 		EventDispatcher.getInstance();
 		ScriptEngineManager.getInstance();
 		
-		printSection("World");
+		final var worldStart = startTimedSection("World");
 		GameTimeController.init();
 		InstanceManager.getInstance();
 		L2World.getInstance();
 		MapRegionManager.getInstance();
 		AnnouncementsTable.getInstance();
 		GlobalVariablesManager.getInstance();
+		endTimedSection("World", worldStart);
 		
-		printSection("Data");
+		final var dataStart = startTimedSection("Data");
 		CategoryData.getInstance();
 		SecondaryAuthData.getInstance();
+		endTimedSection("Data", dataStart);
 		
-		printSection("Effects");
+		final var effectsStart = startTimedSection("Effects");
 		EffectHandler.getInstance().executeScript();
+		endTimedSection("Effects", effectsStart);
 		
-		printSection("Enchant Skill Groups");
+		final var esgStart = startTimedSection("Enchant Skill Groups");
 		EnchantSkillGroupsData.getInstance();
+		endTimedSection("Enchant Skill Groups", esgStart);
 		
-		printSection("Skill Trees");
+		final var skillTreesStart = startTimedSection("Skill Trees");
 		SkillTreesData.getInstance();
+		endTimedSection("Skill Trees", skillTreesStart);
 		
-		printSection("Skills");
+		final var skillsStart = startTimedSection("Skills");
 		SkillData.getInstance();
 		SummonSkillsTable.getInstance();
+		endTimedSection("Skills", skillsStart);
 		
-		printSection("Items");
+		final var itemsStart = startTimedSection("Items");
 		ItemTable.getInstance();
 		EnchantItemGroupsData.getInstance();
 		EnchantItemData.getInstance();
 		EnchantItemOptionsData.getInstance();
 		OptionData.getInstance();
 		EnchantItemHPBonusData.getInstance();
-		MerchantPriceConfigTable.getInstance().loadInstances();
-		BuyListData.getInstance();
 		MultisellData.getInstance();
 		RecipeData.getInstance();
 		ArmorSetsData.getInstance();
@@ -244,8 +241,9 @@ public final class GameServer {
 		FishingMonstersData.getInstance();
 		FishingRodsData.getInstance();
 		HennaData.getInstance();
+		endTimedSection("Items", itemsStart);
 		
-		printSection("Characters");
+		final var charactersStart = startTimedSection("Characters");
 		ClassListData.getInstance();
 		InitialEquipmentData.getInstance();
 		InitialShortcutData.getInstance();
@@ -260,25 +258,31 @@ public final class GameServer {
 		RaidBossPointsManager.getInstance();
 		PetDataTable.getInstance();
 		CharSummonTable.getInstance().init();
+		endTimedSection("Characters", charactersStart);
 		
-		printSection("BBS");
+		final var bbsStart = startTimedSection("BBS");
 		if (general().enableCommunityBoard()) {
 			ForumsBBSManager.getInstance().load();
 		}
+		// Custom: panel игрока в BBS (Shop/Enchant/Buff).
+		PlayerPanelLoader.load();
+		endTimedSection("BBS", bbsStart);
 		
-		printSection("Clans");
+		final var clansStart = startTimedSection("Clans");
 		ClanTable.getInstance();
 		ClanHallSiegeManager.getInstance();
 		ClanHallManager.getInstance();
 		AuctionManager.getInstance();
+		endTimedSection("Clans", clansStart);
 		
-		printSection("Geodata");
+		final var geodataStart = startTimedSection("Geodata");
 		GeoData.getInstance();
 		if (geodata().getPathFinding() > 0) {
 			PathFinding.getInstance();
 		}
+		endTimedSection("Geodata", geodataStart);
 		
-		printSection("NPCs");
+		final var npcsStart = startTimedSection("NPCs");
 		SkillLearnData.getInstance();
 		NpcData.getInstance();
 		WalkingManager.getInstance();
@@ -289,22 +293,25 @@ public final class GameServer {
 		NpcBufferTable.getInstance();
 		GrandBossManager.getInstance().initZones();
 		EventDroplist.getInstance();
+		endTimedSection("NPCs", npcsStart);
 		
-		printSection("Auction Manager");
+		final var auctionStart = startTimedSection("Auction Manager");
 		ItemAuctionManager.getInstance();
+		endTimedSection("Auction Manager", auctionStart);
 		
-		printSection("Olympiad");
+		final var olympiadStart = startTimedSection("Olympiad");
 		Olympiad.getInstance();
 		Hero.getInstance();
+		endTimedSection("Olympiad", olympiadStart);
 		
-		printSection("Seven Signs");
+		final var sevenSignsStart = startTimedSection("Seven Signs");
 		SevenSigns.getInstance();
+		endTimedSection("Seven Signs", sevenSignsStart);
 		
 		// Call to load caches
-		printSection("Cache");
+		final var cacheStart = startTimedSection("Cache");
 		HtmCache.getInstance();
 		CrestTable.getInstance();
-		TeleportLocationTable.getInstance();
 		UIData.getInstance();
 		PartyMatchWaitingList.getInstance();
 		PartyMatchRoomList.getInstance();
@@ -317,48 +324,62 @@ public final class GameServer {
 		BoatManager.getInstance();
 		AirShipManager.getInstance();
 		GraciaSeedsManager.getInstance();
+		endTimedSection("Cache", cacheStart);
 		
-		printSection("Handlers");
+		final var handlersStart = startTimedSection("Handlers");
 		ScriptEngineManager.getInstance().executeScript("com/l2jserver/datapack/handlers/MasterHandler.java");
+		endTimedSection("Handlers", handlersStart);
 		
-		printSection("AI");
+		final var aiStart = startTimedSection("AI");
 		ScriptEngineManager.getInstance().executeScript("com/l2jserver/datapack/ai/AILoader.java");
+		endTimedSection("AI", aiStart);
 		
-		printSection("Instances");
+		final var instancesStart = startTimedSection("Instances");
 		ScriptEngineManager.getInstance().executeScript("com/l2jserver/datapack/instances/InstanceLoader.java");
+		endTimedSection("Instances", instancesStart);
 		
-		printSection("Gracia");
+		final var graciaStart = startTimedSection("Gracia");
 		ScriptEngineManager.getInstance().executeScript("com/l2jserver/datapack/gracia/GraciaLoader.java");
+		endTimedSection("Gracia", graciaStart);
 		
-		printSection("Hellbound");
+		final var hellboundStart = startTimedSection("Hellbound");
 		ScriptEngineManager.getInstance().executeScript("com/l2jserver/datapack/hellbound/HellboundLoader.java");
+		endTimedSection("Hellbound", hellboundStart);
 		
-		printSection("Quests");
+		final var questsStart = startTimedSection("Quests");
 		ScriptEngineManager.getInstance().executeScript("com/l2jserver/datapack/quests/QuestLoader.java");
 		ScriptEngineManager.getInstance().executeScript("com/l2jserver/datapack/quests/TerritoryWarScripts/TerritoryWarSuperClass.java");
+		endTimedSection("Quests", questsStart);
 		
-		printSection("Scripts");
+		final var scriptsStart = startTimedSection("Scripts");
 		ScriptEngineManager.getInstance().executeScriptList(new File(server().getDatapackRoot(), "data/scripts.cfg"));
+		endTimedSection("Scripts", scriptsStart);
 		
-		printSection("Spawns");
+		final var buyListStart = startTimedSection("BuyLists");
+		BuyListData.getInstance().load();
+		endTimedSection("BuyLists", buyListStart);
+		
+		final var spawnsStart = startTimedSection("Spawns");
 		SpawnTable.getInstance().load();
 		DayNightSpawnManager.getInstance().trim().notifyChangeMode();
 		FourSepulchersManager.getInstance().init();
 		DimensionalRiftManager.getInstance();
 		RaidBossSpawnManager.getInstance();
+		endTimedSection("Spawns", spawnsStart);
 		
-		printSection("Siege");
+		final var siegeStart = startTimedSection("Siege");
 		SiegeManager.getInstance().getSieges();
 		CastleManager.getInstance().activateInstances();
 		FortManager.getInstance().loadInstances();
 		FortManager.getInstance().activateInstances();
 		FortSiegeManager.getInstance();
 		SiegeScheduleData.getInstance();
-		MerchantPriceConfigTable.getInstance().updateReferences();
 		TerritoryWarManager.getInstance();
 		CastleManorManager.getInstance();
 		MercTicketManager.getInstance();
+		endTimedSection("Siege", siegeStart);
 		
+		final var otherStart = startTimedSection("Other");
 		if (general().saveDroppedItem()) {
 			ItemsOnGroundManager.getInstance();
 		}
@@ -397,6 +418,18 @@ public final class GameServer {
 		if ((customs().offlineTradeEnable() || customs().offlineCraftEnable()) && customs().restoreOffliners()) {
 			OfflineTradersTable.getInstance().restoreOfflineTraders();
 		}
+		
+		// Multilingual Support
+		if (customs().multiLangEnable()) {
+			if (customs().multiLangSystemMessageEnable()) {
+				SystemMessageId.reloadLocalisations();
+			}
+			if (customs().multiLangNpcStringEnable()) {
+				NpcStringId.reloadLocalisations();
+			}
+		}
+		
+		endTimedSection("Other", otherStart);
 		
 		if (general().deadLockDetector()) {
 			_deadDetectThread = new DeadLockDetector();
@@ -443,7 +476,7 @@ public final class GameServer {
 		}
 		
 		if (server().enableUPnP()) {
-			printSection("UPnP");
+			startTimedSection("UPnP");
 			UPnPService.getInstance().load(server().getPort(), "L2J Game Server");
 		}
 		
@@ -492,27 +525,17 @@ public final class GameServer {
 		return _deadDetectThread;
 	}
 	
-	public static void printSection(String s) {
-		StringBuilder sBuilder = new StringBuilder("=[ " + s + " ]");
+	public static long startTimedSection(String sectionName) {
+		final var sBuilder = new StringBuilder("=[ " + sectionName + " ]");
 		while (sBuilder.length() < 61) {
 			sBuilder.insert(0, "-");
 		}
-		s = sBuilder.toString();
-		LOG.info(s);
+		LOG.info(sBuilder.toString());
+		
+		return System.currentTimeMillis();
 	}
-
 	
-	
-	/**
-	 * Returns either the value of the L2J_HOME variable or null.<br>
-	 * When the L2J_HOME variable can be found as system property or environment variable, it's value is returned (favoring the system property). If the variable is not available, null is returned.
-	 * @return returns the value of the L2J_HOME variable or null
-	 */
-	public static String getL2jHomeVariable() {
-		String l2jHome = System.getProperty(L2JHOME_VARIABLE);
-		if (l2jHome == null) {
-			l2jHome = System.getenv(L2JHOME_VARIABLE);
-		}
-		return l2jHome;
+	private static void endTimedSection(String sectionName, long startTime) {
+		LOG.info("[ {} loaded in {}ms ]", sectionName, System.currentTimeMillis() - startTime);
 	}
 }

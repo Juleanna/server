@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.actor.instance.L2StaticObjectInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2CharTemplate;
@@ -78,7 +79,9 @@ public final class StaticObjectData implements IXmlReader {
 	 * @param set the stats set to add.
 	 */
 	private void addObject(StatsSet set) {
-		L2StaticObjectInstance obj = new L2StaticObjectInstance(new L2CharTemplate(new StatsSet()), set.getInt("id"));
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var template = new L2CharTemplate(new StatsSet());
+		final var obj = new L2StaticObjectInstance(objectId, template, set.getInt("id"));
 		obj.setType(set.getInt("type", 0));
 		obj.setName(set.getString("name"));
 		obj.setMap(set.getString("texture", "none"), set.getInt("map_x", 0), set.getInt("map_y", 0));

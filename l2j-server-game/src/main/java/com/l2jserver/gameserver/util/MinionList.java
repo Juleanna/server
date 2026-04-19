@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -30,10 +30,10 @@ import org.slf4j.LoggerFactory;
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
-import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.holders.MinionHolder;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 
@@ -289,12 +289,9 @@ public class MinionList {
 	 * @return
 	 */
 	public static L2MonsterInstance spawnMinion(L2MonsterInstance master, int minionId) {
-		// Get the template of the Minion to spawn
-		L2NpcTemplate minionTemplate = NpcData.getInstance().getTemplate(minionId);
-		if (minionTemplate == null) {
-			return null;
-		}
-		return initializeNpcInstance(master, new L2MonsterInstance(minionTemplate));
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var template = NpcData.getInstance().getTemplate(minionId);
+		return initializeNpcInstance(master, new L2MonsterInstance(objectId, template));
 	}
 	
 	protected static L2MonsterInstance initializeNpcInstance(L2MonsterInstance master, L2MonsterInstance minion) {

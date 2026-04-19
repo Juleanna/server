@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -44,31 +44,31 @@ import com.l2jserver.gameserver.model.zone.ZoneId;
 public interface TeleporterServiceConfiguration extends Reloadable {
 	
 	@Key("Enable")
-	Boolean enable();
+	boolean enable();
 	
 	@Key("Debug")
-	Boolean getDebug();
+	boolean getDebug();
 	
 	@Key("ForbidInZones")
 	ZoneId[] getForbidInZones();
 	
 	@Key("ForbidInEvents")
-	Boolean getForbidInEvents();
+	boolean getForbidInEvents();
 	
-	@Key("ForbidInDuell")
-	Boolean getForbidInDuell();
+	@Key("ForbidInDuel")
+	boolean getForbidInDuel();
 	
 	@Key("ForbidInFight")
-	Boolean getForbidInFight();
+	boolean getForbidInFight();
 	
 	@Key("ForbidInPvp")
-	Boolean getForbidInPvp();
+	boolean getForbidInPvp();
 	
 	@Key("ForbidForChaoticPlayers")
-	Boolean getForbidForChaoticPlayers();
+	boolean getForbidForChaoticPlayers();
 	
 	@Key("VoicedEnable")
-	Boolean getVoicedEnable();
+	boolean getVoicedEnable();
 	
 	@Key("VoicedCommand")
 	String getVoicedCommand();
@@ -77,5 +77,5 @@ public interface TeleporterServiceConfiguration extends Reloadable {
 	String getVoicedName();
 	
 	@Key("VoicedRequiredItem")
-	Integer getVoicedRequiredItem();
+	int getVoicedRequiredItem();
 }

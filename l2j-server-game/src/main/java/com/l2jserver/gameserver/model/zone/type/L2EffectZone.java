@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.datatables.SkillData;
@@ -34,17 +37,18 @@ import com.l2jserver.gameserver.model.zone.L2ZoneType;
 import com.l2jserver.gameserver.model.zone.TaskZoneSettings;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.serverpackets.EtcStatusUpdate;
-import com.l2jserver.gameserver.util.StringUtil;
 
 /**
  * another type of damage zone with skills
  * @author kerberos
  */
 public class L2EffectZone extends L2ZoneType {
+	private static final Logger LOG = LoggerFactory.getLogger(L2EffectZone.class);
+	
 	private int _chance;
 	private int _initialDelay;
 	private int _reuse;
-	protected boolean _bypassConditions;
+	private boolean _bypassConditions;
 	private boolean _isShowDangerIcon;
 	protected volatile Map<Integer, Integer> _skills;
 	
@@ -82,13 +86,13 @@ public class L2EffectZone extends L2ZoneType {
 				for (String skill : propertySplit) {
 					String[] skillSplit = skill.split("-");
 					if (skillSplit.length != 2) {
-						_log.warning(StringUtil.concat(getClass().getSimpleName() + ": invalid config property -> skillsIdLvl \"", skill, "\""));
+						LOG.warn("Invalid config property -> skillsIdLvl \"{}\"", skill);
 					} else {
 						try {
 							_skills.put(Integer.parseInt(skillSplit[0]), Integer.parseInt(skillSplit[1]));
 						} catch (NumberFormatException nfe) {
 							if (!skill.isEmpty()) {
-								_log.warning(StringUtil.concat(getClass().getSimpleName() + ": invalid config property -> skillsIdLvl \"", skillSplit[0], "\"", skillSplit[1]));
+								LOG.warn("Invalid config property -> skillsIdLvl \"{}\"{}", skillSplit[0], skillSplit[1]);
 							}
 						}
 					}
@@ -178,7 +182,7 @@ public class L2EffectZone extends L2ZoneType {
 	}
 	
 	private final class ApplySkill implements Runnable {
-		protected ApplySkill() {
+		private ApplySkill() {
 			if (_skills == null) {
 				throw new IllegalStateException("No skills defined.");
 			}

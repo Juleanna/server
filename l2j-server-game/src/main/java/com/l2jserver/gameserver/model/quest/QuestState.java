@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,8 +21,9 @@ package com.l2jserver.gameserver.model.quest;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.enums.QuestType;
@@ -48,8 +49,7 @@ import com.l2jserver.gameserver.util.Util;
  * @author Luis Arias
  */
 public final class QuestState {
-	
-	private static final Logger _log = Logger.getLogger(QuestState.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(QuestState.class);
 	
 	/** The name of the quest of this QuestState */
 	private final String _questName;
@@ -234,7 +234,7 @@ public final class QuestState {
 				}
 				setCond(Integer.parseInt(val), previousVal);
 			} catch (Exception e) {
-				_log.log(Level.WARNING, _player.getName() + ", " + getQuestName() + " cond [" + val + "] is not an integer.  Value stored, but no packet was sent: " + e.getMessage(), e);
+				LOG.warn("{}, {} cond [{}] is not an integer. Value stored, but no packet was sent: {}", _player.getName(), getQuestName(), val, e.getMessage(), e);
 			}
 		}
 		
@@ -320,7 +320,7 @@ public final class QuestState {
 		_player.sendPacket(new QuestList());
 		
 		final Quest q = getQuest();
-		if (!q.isCustomQuest() && (cond > 0)) {
+		if (!q.isCustom() && (cond > 0)) {
 			_player.sendPacket(new ExShowQuestMark(q.getId()));
 		}
 	}
@@ -356,7 +356,7 @@ public final class QuestState {
 			ps.setString(3, value);
 			ps.executeUpdate();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not insert player's global quest variable: " + e.getMessage(), e);
+			LOG.warn("Could not insert player's global quest variable: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -382,7 +382,7 @@ public final class QuestState {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not load player's global quest variable: " + e.getMessage(), e);
+			LOG.warn("Could not load player's global quest variable: {}", e.getMessage(), e);
 		}
 		return result;
 	}
@@ -398,7 +398,7 @@ public final class QuestState {
 			ps.setString(2, var);
 			ps.executeUpdate();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "could not delete player's global quest variable; charId = " + _player.getObjectId() + ", variable name = " + var + ". Exception: " + e.getMessage(), e);
+			LOG.warn("Could not delete player's global quest variable; charId = {}, variable name = {}. Exception: {}", _player.getObjectId(), var, e.getMessage(), e);
 		}
 	}
 	
@@ -431,7 +431,7 @@ public final class QuestState {
 		try {
 			varint = Integer.parseInt(variable);
 		} catch (NumberFormatException nfe) {
-			_log.log(Level.INFO, "Quest " + getQuestName() + ", method getInt(" + var + "), tried to parse a non-integer value (" + variable + "). Char Id: " + _player.getObjectId(), nfe);
+			LOG.warn("Quest {}, method getInt({}), tried to parse a non-integer value ({}). Char Id: {}", getQuestName(), var, variable, _player.getObjectId(), nfe);
 		}
 		
 		return varint;
@@ -673,22 +673,6 @@ public final class QuestState {
 		return AbstractScript.giveItemRandomly(_player, npc, itemId, minAmount, maxAmount, limit, dropChance, playSound);
 	}
 	
-	// TODO: More radar functions need to be added when the radar class is complete.
-	// BEGIN STUFF THAT WILL PROBABLY BE CHANGED
-	public void addRadar(int x, int y, int z) {
-		_player.getRadar().addMarker(x, y, z);
-	}
-	
-	public void removeRadar(int x, int y, int z) {
-		_player.getRadar().removeMarker(x, y, z);
-	}
-	
-	public void clearRadar() {
-		_player.getRadar().removeAllMarkers();
-	}
-	
-	// END STUFF THAT WILL PROBABLY BE CHANGED
-	
 	/**
 	 * Remove items from player's inventory when talking to NPC in order to have rewards.<br>
 	 * Actions:<br>
@@ -744,7 +728,7 @@ public final class QuestState {
 	
 	/**
 	 * Start a timed event for a quest.<br>
-	 * Will call an event in onEvent/onAdvEvent.
+	 * Will call an event in onEvent.
 	 * @param name the name of the timer/event
 	 * @param time time in milliseconds till the event is executed
 	 */
@@ -754,7 +738,7 @@ public final class QuestState {
 	
 	/**
 	 * Start a timed event for a quest.<br>
-	 * Will call an event in onEvent/onAdvEvent.
+	 * Will call an event in onEvent.
 	 * @param name the name of the timer/event
 	 * @param time time in milliseconds till the event is executed
 	 * @param npc the L2Npc associated with this event
@@ -765,7 +749,7 @@ public final class QuestState {
 	
 	/**
 	 * Start a repeating timed event for a quest.<br>
-	 * Will call an event in onEvent/onAdvEvent.
+	 * Will call an event in onEvent.
 	 * @param name the name of the timer/event
 	 * @param time time in milliseconds till the event is executed/repeated
 	 */
@@ -775,7 +759,7 @@ public final class QuestState {
 	
 	/**
 	 * Start a repeating timed event for a quest.<br>
-	 * Will call an event in onEvent/onAdvEvent.
+	 * Will call an event in onEvent.
 	 * @param name the name of the timer/event
 	 * @param time time in milliseconds till the event is executed/repeated
 	 * @param npc the L2Npc associated with this event
@@ -921,30 +905,6 @@ public final class QuestState {
 	}
 	
 	/**
-	 * Send an HTML file to the specified player.
-	 * @param filename the name of the HTML file to show
-	 * @return the contents of the HTML file that was sent to the player
-	 * @see #showHtmlFile(String, L2Npc)
-	 * @see Quest#showHtmlFile(L2PcInstance, String)
-	 * @see Quest#showHtmlFile(L2PcInstance, String, L2Npc)
-	 */
-	public String showHtmlFile(String filename) {
-		return showHtmlFile(filename, null);
-	}
-	
-	/**
-	 * Send an HTML file to the specified player.
-	 * @param filename the name of the HTML file to show
-	 * @param npc the NPC that is showing the HTML file
-	 * @return the contents of the HTML file that was sent to the player
-	 * @see Quest#showHtmlFile(L2PcInstance, String)
-	 * @see Quest#showHtmlFile(L2PcInstance, String, L2Npc)
-	 */
-	public String showHtmlFile(String filename, L2Npc npc) {
-		return getQuest().showHtmlFile(_player, filename, npc);
-	}
-	
-	/**
 	 * Set condition to 1, state to STARTED and play the "ItemSound.quest_accept".<br>
 	 * Works only if state is CREATED and the quest is not a custom quest.
 	 * @return the newly created {@code QuestState} object
@@ -969,7 +929,7 @@ public final class QuestState {
 	 * @return the quest state
 	 */
 	public QuestState startQuest(boolean playSound, int cond) {
-		if (isCreated() && !getQuest().isCustomQuest()) {
+		if (isCreated() && !getQuest().isCustom()) {
 			set("cond", cond);
 			setState(State.STARTED);
 			if (playSound) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,9 +24,9 @@ import com.l2jserver.gameserver.enums.ItemLocation;
 import com.l2jserver.gameserver.model.L2Clan;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.clanwh.OnPlayerClanWHItemAdd;
-import com.l2jserver.gameserver.model.events.impl.character.player.clanwh.OnPlayerClanWHItemDestroy;
-import com.l2jserver.gameserver.model.events.impl.character.player.clanwh.OnPlayerClanWHItemTransfer;
+import com.l2jserver.gameserver.model.events.impl.character.player.clanwh.PlayerClanWHItemAdd;
+import com.l2jserver.gameserver.model.events.impl.character.player.clanwh.PlayerClanWHItemDestroy;
+import com.l2jserver.gameserver.model.events.impl.character.player.clanwh.PlayerClanWHItemTransfer;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 
 public final class ClanWarehouse extends Warehouse {
@@ -77,21 +77,21 @@ public final class ClanWarehouse extends Warehouse {
 		final L2ItemInstance item = super.addItem(process, itemId, count, enchantLevel, actor, reference);
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerClanWHItemAdd(process, actor, item, this), item.getItem());
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerClanWHItemAdd(process, actor, item, this), item.getItem());
 		return item;
 	}
 	
 	@Override
 	public L2ItemInstance addItem(String process, L2ItemInstance item, L2PcInstance actor, Object reference) {
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerClanWHItemAdd(process, actor, item, this), item.getItem());
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerClanWHItemAdd(process, actor, item, this), item.getItem());
 		return super.addItem(process, item, actor, reference);
 	}
 	
 	@Override
 	public L2ItemInstance destroyItem(String process, L2ItemInstance item, long count, L2PcInstance actor, Object reference) {
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerClanWHItemDestroy(process, actor, item, count, this), item.getItem());
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerClanWHItemDestroy(process, actor, item, count, this), item.getItem());
 		return super.destroyItem(process, item, count, actor, reference);
 	}
 	
@@ -100,7 +100,7 @@ public final class ClanWarehouse extends Warehouse {
 		final L2ItemInstance item = getItemByObjectId(objectId);
 		
 		// Notify to scripts
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerClanWHItemTransfer(process, actor, item, count, target), item.getItem());
+		EventDispatcher.getInstance().notifyEventAsync(new PlayerClanWHItemTransfer(process, actor, item, count, target), item.getItem());
 		return super.transferItem(process, objectId, count, target, actor, reference);
 	}
 }

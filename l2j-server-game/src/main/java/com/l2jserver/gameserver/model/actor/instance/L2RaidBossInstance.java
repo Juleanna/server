@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -42,8 +42,8 @@ public class L2RaidBossInstance extends L2MonsterInstance {
 	private RaidBossSpawnManager.StatusEnum _raidStatus;
 	private boolean _useRaidCurse = true;
 	
-	public L2RaidBossInstance(L2NpcTemplate template) {
-		super(template);
+	public L2RaidBossInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2RaidBossInstance);
 		setIsRaid(true);
 		setLethalable(false);

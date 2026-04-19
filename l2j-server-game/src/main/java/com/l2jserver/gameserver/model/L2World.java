@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,12 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -335,7 +334,9 @@ public final class L2World {
 	 * @return
 	 */
 	public List<L2Object> getVisibleObjects(L2Object object) {
-		final List<L2Object> result = new LinkedList<>();
+		// ArrayList вместо LinkedList: hot path (AI tick, move), в основном
+		// чтение с конца — random-access лучше, узел per-element не нужен.
+		final List<L2Object> result = new ArrayList<>(64);
 		for (L2WorldRegion regi : object.getWorldRegion().getSurroundingRegions()) {
 			for (L2Object visibleObject : regi.getVisibleObjects().values()) {
 				if ((visibleObject == null) || visibleObject.equals(object) || !visibleObject.isVisible()) {
@@ -355,44 +356,32 @@ public final class L2World {
 	 * @return the visible objects in the radius
 	 */
 	public List<L2Object> getVisibleObjects(L2Object object, int radius) {
-		if ((object == null) || !object.isVisible()) {
-			return List.of();
-		}
-		
-		final int sqRadius = radius * radius;
-		final var result = new LinkedList<L2Object>();
-		for (var region : object.getWorldRegion().getSurroundingRegions()) {
-			// Go through visible objects of the selected region
-			for (var visibleObject : region.getVisibleObjects().values()) {
-				if ((visibleObject == null) || visibleObject.equals(object)) {
-					continue; // skip our own character
-				}
-				
-				if (sqRadius > object.calculateDistance(visibleObject, false, true)) {
-					result.add(visibleObject);
-				}
-			}
-		}
-		return result;
+		return getVisibleObjects(object, radius, true);
 	}
 	
 	/**
-	 * Gets the visible objects to the object taking the target as point of origin.
-	 * @param object the object to check visibility
-	 * @param target the origin
+	 * Gets the visible objects around a given object.
+	 * @param object the origin
 	 * @param radius the radius to check
+	 * @param excludeTarget if the target should be excluded
 	 * @return the visible objects in the radius
 	 */
-	public List<L2Object> getVisibleObjects(L2Object object, L2Object target, int radius) {
+	public List<L2Object> getVisibleObjects(L2Object object, int radius, boolean excludeTarget) {
+		return getVisibleObjectsStream(object, radius, excludeTarget).toList();
+	}
+	
+	public Stream<L2Object> getVisibleObjectsStream(L2Object object, int radius, boolean excludeTarget) {
+		if ((object == null) || !object.isVisible()) {
+			return Stream.of();
+		}
 		final int sqRadius = radius * radius;
-		return target.getWorldRegion()
+		return object.getWorldRegion()
 			.getSurroundingRegions()
 			.stream()
 			.flatMap(r -> r.getVisibleObjects().values().stream())
 			.filter(Objects::nonNull)
-			.filter(o -> !o.equals(object))
-			.filter(o -> sqRadius > target.calculateDistance(o, false, true))
-			.collect(Collectors.toList());
+			.filter(o -> !excludeTarget || !o.equals(object))
+			.filter(o -> sqRadius > object.calculateDistance(o, false, true));
 	}
 	
 	/**
@@ -412,19 +401,19 @@ public final class L2World {
 		final int sqRadius = radius * radius;
 		
 		// Create a list in order to contain all visible objects.
-		final List<L2Object> result = new LinkedList<>();
+		final List<L2Object> result = new ArrayList<>(64);
 		for (L2WorldRegion regi : object.getWorldRegion().getSurroundingRegions()) {
 			for (L2Object _object : regi.getVisibleObjects().values()) {
 				if ((_object == null) || _object.equals(object)) {
 					continue; // skip our own character
 				}
-				
+
 				if (sqRadius > object.calculateDistance(_object, true, true)) {
 					result.add(_object);
 				}
 			}
 		}
-		
+
 		return result;
 	}
 	
@@ -442,7 +431,7 @@ public final class L2World {
 		}
 		
 		// Create a list in order to contain all visible objects.
-		final List<L2Playable> result = new LinkedList<>();
+		final List<L2Playable> result = new ArrayList<>(32);
 		for (L2WorldRegion regi : reg.getSurroundingRegions()) {
 			// Create an Iterator to go through the visible L2Object of the L2WorldRegion
 			Map<Integer, L2Playable> _allpls = regi.getVisiblePlayable();

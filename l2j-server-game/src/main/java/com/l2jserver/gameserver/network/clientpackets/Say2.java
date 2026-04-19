@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -31,7 +31,7 @@ import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerChat;
+import com.l2jserver.gameserver.model.events.impl.character.player.PlayerChat;
 import com.l2jserver.gameserver.model.events.returns.ChatFilterReturn;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
@@ -39,6 +39,7 @@ import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.util.Util;
 
 public final class Say2 extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(Say2.class);
 	
 	private static final String _C__49_SAY2 = "[C] 49 Say2";
 	
@@ -146,7 +147,7 @@ public final class Say2 extends L2GameClientPacket {
 	@Override
 	protected void runImpl() {
 		if (general().debug()) {
-			_log.info("Say2: Msg Type = '" + _type + "' Text = '" + _text + "'.");
+			LOG.info("Msg Type = '{}' Text = '{}'.", _type, _text);
 		}
 		
 		L2PcInstance activeChar = getClient().getActiveChar();
@@ -155,14 +156,14 @@ public final class Say2 extends L2GameClientPacket {
 		}
 		
 		if ((_type < 0) || (_type >= CHAT_NAMES.length)) {
-			_log.warning("Say2: Invalid type: " + _type + " Player : " + activeChar.getName() + " text: " + _text);
+			LOG.warn("Invalid type: {} Player : {} text: {}", _type, activeChar.getName(), _text);
 			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 			activeChar.logout();
 			return;
 		}
 		
 		if (_text.isEmpty()) {
-			_log.warning(activeChar.getName() + ": sending empty text. Possible packet hack!");
+			LOG.warn("{}: sending empty text. Possible packet hack!", activeChar.getName());
 			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 			activeChar.logout();
 			return;
@@ -222,7 +223,7 @@ public final class Say2 extends L2GameClientPacket {
 			}
 		}
 		
-		final ChatFilterReturn filter = EventDispatcher.getInstance().notifyEvent(new OnPlayerChat(activeChar, L2World.getInstance().getPlayer(_target), _text, _type), ChatFilterReturn.class);
+		final ChatFilterReturn filter = EventDispatcher.getInstance().notifyEvent(new PlayerChat(activeChar, L2World.getInstance().getPlayer(_target), _text, _type), ChatFilterReturn.class);
 		if (filter != null) {
 			_text = filter.getFilteredText();
 		}
@@ -236,7 +237,7 @@ public final class Say2 extends L2GameClientPacket {
 		if (handler != null) {
 			handler.handleChat(_type, activeChar, _target, _text);
 		} else {
-			_log.info("No handler registered for ChatType: " + _type + " Player: " + getClient());
+			LOG.info("No handler registered for ChatType: {} Player: {}", _type, getClient());
 		}
 	}
 	
@@ -273,18 +274,18 @@ public final class Say2 extends L2GameClientPacket {
 			L2Object item = L2World.getInstance().findObject(id);
 			if (item instanceof L2ItemInstance) {
 				if (owner.getInventory().getItemByObjectId(id) == null) {
-					_log.info(getClient() + " trying publish item which doesnt own! ID:" + id);
+					LOG.info("{} trying publish item which doesnt own! ID:{}", getClient(), id);
 					return false;
 				}
 				((L2ItemInstance) item).publish();
 			} else {
-				_log.info(getClient() + " trying publish object which is not item! Object:" + item);
+				LOG.info("{} trying publish object which is not item! Object:{}", getClient(), item);
 				return false;
 			}
 			pos1 = _text.indexOf(8, pos) + 1;
 			// missing ending tag
 			if (pos1 == 0) {
-				_log.info(getClient() + " sent invalid publish item msg! ID:" + id);
+				LOG.info("{} sent invalid publish item msg! ID:{}", getClient(), id);
 				return false;
 			}
 		}

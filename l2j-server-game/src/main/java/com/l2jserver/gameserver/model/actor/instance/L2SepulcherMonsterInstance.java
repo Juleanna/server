@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -29,6 +29,7 @@ import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.network.serverpackets.NpcSay;
 
 /**
+ * Sepulcher Monster.
  * @author sandman
  */
 public class L2SepulcherMonsterInstance extends L2MonsterInstance {
@@ -41,8 +42,8 @@ public class L2SepulcherMonsterInstance extends L2MonsterInstance {
 	protected Future<?> _changeImmortalTask = null;
 	protected Future<?> _onDeadEventTask = null;
 	
-	public L2SepulcherMonsterInstance(L2NpcTemplate template) {
-		super(template);
+	public L2SepulcherMonsterInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2SepulcherMonsterInstance);
 		setShowSummonAnimation(true);
 		switch (template.getId()) {

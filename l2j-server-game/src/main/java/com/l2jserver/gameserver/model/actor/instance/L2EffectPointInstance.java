@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -27,8 +27,8 @@ import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 public class L2EffectPointInstance extends L2Npc {
 	private final L2PcInstance _owner;
 	
-	public L2EffectPointInstance(L2NpcTemplate template, L2Character owner) {
-		super(template);
+	public L2EffectPointInstance(int objectId, L2NpcTemplate template, L2Character owner) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2EffectPointInstance);
 		setIsInvul(false);
 		_owner = owner == null ? null : owner.getActingPlayer();

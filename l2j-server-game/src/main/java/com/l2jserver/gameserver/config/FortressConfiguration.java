@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -43,64 +43,55 @@ import com.l2jserver.gameserver.config.converter.Minutes2MillisecondsConverter;
 @HotReload(value = 20, unit = MINUTES, type = ASYNC)
 public interface FortressConfiguration extends Reloadable {
 	
-	@Key("TeleportFunctionFeeRatio")
-	Long getTeleportFunctionFeeRatio();
+	@Key("FunctionFeeDay7")
+	long getFunctionFeeDay7();
 	
-	@Key("TeleportFunctionFeeLvl1")
-	Integer getTeleportFunctionFeeLvl1();
+	@Key("TeleportFunctionFeeLvl11")
+	int getTeleportFunctionFeeLvl11();
 	
-	@Key("TeleportFunctionFeeLvl2")
-	Integer getTeleportFunctionFeeLvl2();
+	@Key("TeleportFunctionFeeLvl12")
+	int getTeleportFunctionFeeLvl12();
 	
-	@Key("SupportFunctionFeeRatio")
-	Long getSupportFunctionFeeRatio();
+	@Key("SupportFeeLvl15")
+	int getSupportFeeLvl15();
 	
-	@Key("SupportFeeLvl1")
-	Integer getSupportFeeLvl1();
+	@Key("SupportFeeLvl18")
+	int getSupportFeeLvl18();
 	
-	@Key("SupportFeeLvl2")
-	Integer getSupportFeeLvl2();
+	@Key("MpRegenerationFeeLvl18")
+	int getMpRegenerationFeeLvl18();
 	
-	@Key("MpRegenerationFunctionFeeRatio")
-	Long getMpRegenerationFunctionFeeRatio();
+	@Key("MpRegenerationFeeLvl20")
+	int getMpRegenerationFeeLvl20();
 	
-	@Key("MpRegenerationFeeLvl1")
-	Integer getMpRegenerationFeeLvl1();
+	@Key("HpRegenerationFeeLvl25")
+	int getHpRegenerationFeeLvl25();
 	
-	@Key("MpRegenerationFeeLvl2")
-	Integer getMpRegenerationFeeLvl2();
+	@Key("HpRegenerationFeeLvl30")
+	int getHpRegenerationFeeLvl30();
 	
-	@Key("HpRegenerationFunctionFeeRatio")
-	Long getHpRegenerationFunctionFeeRatio();
+	@Key("ExpRegenerationFeeLvl19")
+	int getExpRegenerationFeeLvl19();
 	
-	@Key("HpRegenerationFeeLvl1")
-	Integer getHpRegenerationFeeLvl1();
-	
-	@Key("HpRegenerationFeeLvl2")
-	Integer getHpRegenerationFeeLvl2();
-	
-	@Key("ExpRegenerationFunctionFeeRatio")
-	Long getExpRegenerationFunctionFeeRatio();
-	
-	@Key("ExpRegenerationFeeLvl1")
-	Integer getExpRegenerationFeeLvl1();
-	
-	@Key("ExpRegenerationFeeLvl2")
-	Integer getExpRegenerationFeeLvl2();
+	@Key("ExpRegenerationFeeLvl20")
+	int getExpRegenerationFeeLvl20();
 	
 	@Key("PeriodicUpdateFrequency")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getPeriodicUpdateFrequency();
+	long getPeriodicUpdateFrequency();
 	
 	@Key("BloodOathCount")
-	Integer getBloodOathCount();
+	int getBloodOathCount();
 	
 	@Key("MaxSupplyLevel")
-	Integer getMaxSupplyLevel();
+	int getMaxSupplyLevel();
 	
 	@Key("FeeForCastle")
-	Integer getFeeForCastle();
+	int getFeeForCastle();
 	
 	@Key("MaxKeepTime")
-	Integer getMaxKeepTime();
+	int getMaxKeepTime();
+	
+	@Key("MpBuffFree")
+	boolean mpBuffFree();
 }

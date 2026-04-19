@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,8 +24,9 @@ import static com.l2jserver.gameserver.model.itemcontainer.Inventory.ADENA_ID;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -41,37 +42,22 @@ import com.l2jserver.gameserver.model.itemcontainer.ItemContainer;
 import com.l2jserver.gameserver.network.SystemMessageId;
 
 public class Auction {
-	
-	protected static final Logger _log = Logger.getLogger(Auction.class.getName());
+	protected static final Logger LOG = LoggerFactory.getLogger(Auction.class);
 	
 	private final int _id;
-	
 	private long _endDate;
-	
 	private int _highestBidderId = 0;
-	
 	private String _highestBidderName = "";
-	
 	private long _highestBidderMaxBid = 0;
-	
 	private int _itemId = 0;
-	
 	private String _itemName = "";
-	
 	private int _itemObjectId = 0;
-	
 	private final long _itemQuantity = 0;
-	
 	private String _itemType = "";
-	
 	private int _sellerId = 0;
-	
 	private String _sellerClanName = "";
-	
 	private String _sellerName = "";
-	
 	private long _currentBid = 0;
-	
 	private long _startingBid = 0;
 	
 	private final Map<Integer, Bidder> _bidders = new ConcurrentHashMap<>();
@@ -128,7 +114,7 @@ public class Auction {
 			try {
 				endAuction();
 			} catch (Exception e) {
-				_log.log(Level.SEVERE, "", e);
+				LOG.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -171,7 +157,7 @@ public class Auction {
 			}
 			loadBid();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: Auction.load(): " + e.getMessage(), e);
+			LOG.warn("Exception: Auction.load(): {}", e.getMessage(), e);
 		}
 	}
 	
@@ -194,7 +180,7 @@ public class Auction {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: Auction.loadBid(): " + e.getMessage(), e);
+			LOG.warn("Exception: Auction.loadBid(): {}", e.getMessage(), e);
 		}
 	}
 	
@@ -222,14 +208,12 @@ public class Auction {
 			ps.setInt(2, _id);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: saveAuctionDate(): " + e.getMessage(), e);
+			LOG.error("Exception: saveAuctionDate(): {}", e.getMessage(), e);
 		}
 	}
 	
 	/**
 	 * Set a bid
-	 * @param bidder
-	 * @param bid
 	 */
 	public synchronized void setBid(L2PcInstance bidder, long bid) {
 		long requiredAdena = bid;
@@ -261,13 +245,13 @@ public class Auction {
 		
 		final L2Clan clan = ClanTable.getInstance().getClanByName(clanName);
 		if (clan == null) {
-			_log.warning("Clan " + clanName + " doesn't exist!");
+			LOG.warn("Clan {} doesn't exist!", clanName);
 			return;
 		}
 		
 		final ItemContainer cwh = clan.getWarehouse();
 		if (cwh == null) {
-			_log.warning("There has been a problem with " + clanName + "'s clan warehouse!");
+			LOG.warn("There has been a problem with {}'s clan warehouse!", clanName);
 			return;
 		}
 		
@@ -280,9 +264,6 @@ public class Auction {
 	
 	/**
 	 * Take Item in WHC
-	 * @param bidder
-	 * @param quantity
-	 * @return
 	 */
 	private boolean takeItem(L2PcInstance bidder, long quantity) {
 		if ((bidder.getClan() != null) && (bidder.getClan().getWarehouse().getAdena() >= quantity)) {
@@ -295,8 +276,6 @@ public class Auction {
 	
 	/**
 	 * Update auction in DB
-	 * @param bidder
-	 * @param bid
 	 */
 	private void updateInDB(L2PcInstance bidder, long bid) {
 		try (var con = ConnectionFactory.getInstance().getConnection()) {
@@ -337,7 +316,7 @@ public class Auction {
 			}
 			bidder.sendPacket(SystemMessageId.BID_IN_CLANHALL_AUCTION);
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: Auction.updateInDB(L2PcInstance bidder, int bid): " + e.getMessage(), e);
+			LOG.error("Exception: Auction.updateInDB(L2PcInstance bidder, int bid): {}", e.getMessage(), e);
 		}
 	}
 	
@@ -347,7 +326,7 @@ public class Auction {
 			ps.setInt(1, getId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: Auction.deleteFromDB(): " + e.getMessage(), e);
+			LOG.error("Exception: Auction.deleteFromDB(): {}", e.getMessage(), e);
 		}
 		
 		for (Bidder b : _bidders.values()) {
@@ -370,11 +349,10 @@ public class Auction {
 			ps.setInt(1, _itemId);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: Auction.deleteFromDB(): " + e.getMessage(), e);
+			LOG.error("Exception: Auction.deleteFromDB(): {}", e.getMessage(), e);
 		}
 	}
 	
-	/** End of auction */
 	public void endAuction() {
 		if (ClanHallManager.getInstance().loaded()) {
 			if ((_highestBidderId == 0) && (_sellerId == 0)) {
@@ -382,7 +360,7 @@ public class Auction {
 				return;
 			}
 			if ((_highestBidderId == 0) && (_sellerId > 0)) {
-				// If seller haven't sell ClanHall, auction removed, THIS MUST BE CONFIRMED
+				// If seller haven't sold ClanHall, auction removed, THIS MUST BE CONFIRMED
 				int aucId = AuctionManager.getInstance().getAuctionIndex(_id);
 				AuctionManager.getInstance().getAuctions().remove(aucId);
 				return;
@@ -405,7 +383,6 @@ public class Auction {
 	
 	/**
 	 * Cancel bid
-	 * @param bidder
 	 */
 	public synchronized void cancelBid(int bidder) {
 		try (var con = ConnectionFactory.getInstance().getConnection();
@@ -414,7 +391,7 @@ public class Auction {
 			ps.setInt(2, bidder);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: Auction.cancelBid(String bidder): " + e.getMessage(), e);
+			LOG.error("Exception: Auction.cancelBid(String bidder): {}", e.getMessage(), e);
 		}
 		
 		returnItem(_bidders.get(bidder).getClanName(), _bidders.get(bidder).getBid(), true);
@@ -448,7 +425,7 @@ public class Auction {
 			ps.setLong(12, _endDate);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: Auction.load(): " + e.getMessage(), e);
+			LOG.error("Exception: Auction.load(): {}", e.getMessage(), e);
 		}
 	}
 	

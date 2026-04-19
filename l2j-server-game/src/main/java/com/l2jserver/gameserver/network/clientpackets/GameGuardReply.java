@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,7 +21,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.logging.Level;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.network.L2GameClient;
 
@@ -30,6 +32,8 @@ import com.l2jserver.gameserver.network.L2GameClient;
  * @author KenM
  */
 public class GameGuardReply extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(GameGuardReply.class);
+	
 	private static final String _C__CB_GAMEGUARDREPLY = "[C] CB GameGuardReply";
 	
 	private static final byte[] VALID = {
@@ -74,7 +78,7 @@ public class GameGuardReply extends L2GameClientPacket {
 				client.setGameGuardOk(true);
 			}
 		} catch (NoSuchAlgorithmException e) {
-			_log.log(Level.WARNING, "", e);
+			LOG.warn(e.getMessage(), e);
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,8 +18,6 @@
  */
 package com.l2jserver.gameserver.model.conditions;
 
-import java.util.logging.Logger;
-
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.skills.Skill;
@@ -29,7 +27,6 @@ import com.l2jserver.gameserver.model.skills.Skill;
  * @author Gigiikun
  */
 public final class ConditionPlayerGrade extends Condition {
-	protected static final Logger _log = Logger.getLogger(ConditionPlayerGrade.class.getName());
 	// conditional values
 	public static final int COND_NO_GRADE = 0x0001;
 	public static final int COND_D_GRADE = 0x0002;

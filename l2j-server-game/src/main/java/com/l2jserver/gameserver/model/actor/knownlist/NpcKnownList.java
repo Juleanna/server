@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -31,7 +31,7 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2FestivalGuideInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcCreatureSee;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcCreatureSee;
 
 public class NpcKnownList extends CharKnownList {
 	private ScheduledFuture<?> _trackingTask = null;
@@ -47,8 +47,7 @@ public class NpcKnownList extends CharKnownList {
 		}
 		
 		if (getActiveObject().isNpc() && (object instanceof L2Character)) {
-			// Notify to scripts
-			EventDispatcher.getInstance().notifyEventAsync(new OnNpcCreatureSee(getActiveChar(), (L2Character) object, object.isSummon()), getActiveChar());
+			EventDispatcher.getInstance().notifyEventAsync(new NpcCreatureSee(getActiveChar(), (L2Character) object), getActiveChar());
 		}
 		return true;
 	}

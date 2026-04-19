@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.instancemanager.QuestManager;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
@@ -30,6 +33,8 @@ import com.l2jserver.gameserver.network.serverpackets.QuestList;
  * @since 2005/03/27 15:29:30
  */
 public final class RequestQuestAbort extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestQuestAbort.class);
+	
 	private static final String _C__63_REQUESTQUESTABORT = "[C] 63 RequestQuestAbort";
 	
 	private int _questId;
@@ -54,12 +59,12 @@ public final class RequestQuestAbort extends L2GameClientPacket {
 				activeChar.sendPacket(new QuestList());
 			} else {
 				if (general().debug()) {
-					_log.info("Player '" + activeChar.getName() + "' try to abort quest " + qe.getName() + " but he didn't have it started.");
+					LOG.info("Player '{}' try to abort quest {} but he didn't have it started.", activeChar.getName(), qe.getName());
 				}
 			}
 		} else {
 			if (general().debug()) {
-				_log.warning("Quest (id='" + _questId + "') not found.");
+				LOG.warn("Quest (id='{}') not found.", _questId);
 			}
 		}
 	}

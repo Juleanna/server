@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,8 +24,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.GeoData;
 import com.l2jserver.gameserver.config.Configuration;
@@ -43,7 +44,8 @@ import com.l2jserver.gameserver.util.StringUtil;
  * @author DS
  */
 public class CellPathFinding extends PathFinding {
-	private static final Logger _log = Logger.getLogger(CellPathFinding.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(CellPathFinding.class);
+	
 	private final BufferInfo[] _allBuffers;
 	private int _findSuccess = 0;
 	private int _findFails = 0;
@@ -58,7 +60,7 @@ public class CellPathFinding extends PathFinding {
 		return SingletonHolder._instance;
 	}
 	
-	protected CellPathFinding() {
+	private CellPathFinding() {
 		try {
 			String[] array = geodata().getPathFindBuffers().split(";");
 			
@@ -76,7 +78,7 @@ public class CellPathFinding extends PathFinding {
 				_allBuffers[i] = new BufferInfo(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "CellPathFinding: Problem during buffer init: " + e.getMessage(), e);
+			LOG.warn("Problem during buffer init: {}", e.getMessage(), e);
 			throw new Error("CellPathFinding: load aborted");
 		}
 	}
@@ -141,7 +143,7 @@ public class CellPathFinding extends PathFinding {
 			
 			path = constructPath(result);
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "", e);
+			LOG.warn(e.getMessage(), e);
 			return null;
 		} finally {
 			buffer.free();
@@ -228,7 +230,7 @@ public class CellPathFinding extends PathFinding {
 				previousDirectionX = directionX;
 				previousDirectionY = directionY;
 				
-				path.add(0, node.getLoc());
+				path.addFirst(node.getLoc());
 				node.setLoc(null);
 			}
 			
@@ -280,7 +282,8 @@ public class CellPathFinding extends PathFinding {
 	}
 	
 	private void dropDebugItem(int itemId, int num, AbstractNodeLoc loc) {
-		final L2ItemInstance item = new L2ItemInstance(IdFactory.getInstance().getNextId(), itemId);
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var item = new L2ItemInstance(objectId, itemId);
 		item.setCount(num);
 		item.spawnMe(loc.getX(), loc.getY(), loc.getZ());
 		_debugItems.add(item);

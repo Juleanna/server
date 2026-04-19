@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.model.zone.type;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.instancemanager.ClanHallManager;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.entity.ClanHall;
@@ -30,6 +33,8 @@ import com.l2jserver.gameserver.network.serverpackets.AgitDecoInfo;
  * @author durgus
  */
 public class L2ClanHallZone extends L2ResidenceZone {
+	private static final Logger LOG = LoggerFactory.getLogger(L2ClanHallZone.class);
+	
 	public L2ClanHallZone(int id) {
 		super(id);
 	}
@@ -41,7 +46,7 @@ public class L2ClanHallZone extends L2ResidenceZone {
 			// Register self to the correct clan hall
 			ClanHall hall = ClanHallManager.getInstance().getClanHallById(getResidenceId());
 			if (hall == null) {
-				_log.warning("L2ClanHallZone: Clan hall with id " + getResidenceId() + " does not exist!");
+				LOG.warn("Clan hall with id {} does not exist!", getResidenceId());
 			} else {
 				hall.setZone(this);
 			}

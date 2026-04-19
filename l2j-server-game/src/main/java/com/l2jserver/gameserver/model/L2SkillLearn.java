@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,7 +20,7 @@ package com.l2jserver.gameserver.model;
 
 import static com.l2jserver.gameserver.config.Configuration.character;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.l2jserver.gameserver.enums.Race;
@@ -30,6 +30,7 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 
 /**
+ * Skill Learn.
  * @author Zoey76
  */
 public final class L2SkillLearn {
@@ -39,13 +40,13 @@ public final class L2SkillLearn {
 	private final int _getLevel;
 	private final boolean _autoGet;
 	private final int _levelUpSp;
-	private final List<ItemHolder> _requiredItems = new ArrayList<>();
-	private final List<Race> _races = new ArrayList<>();
-	private final List<SkillHolder> _preReqSkills = new ArrayList<>();
+	private final List<ItemHolder> _requiredItems = new LinkedList<>();
+	private final List<Race> _races = new LinkedList<>();
+	private final List<SkillHolder> _preReqSkills = new LinkedList<>();
 	private SocialClass _socialClass;
 	private final boolean _residenceSkill;
-	private final List<Integer> _residenceIds = new ArrayList<>();
-	private final List<SubClassData> _subClassLvlNumber = new ArrayList<>();
+	private final List<Integer> _residenceIds = new LinkedList<>();
+	private final List<SubClassData> _subClassLvlNumber = new LinkedList<>();
 	private final boolean _learnedByNpc;
 	private final boolean _learnedByFS;
 	
@@ -263,5 +264,10 @@ public final class L2SkillLearn {
 			}
 		}
 		return levelUpSp;
+	}
+	
+	@Override
+	public String toString() {
+		return _skillName + " (" + _skillId + ", " + _skillLvl + ")";
 	}
 }

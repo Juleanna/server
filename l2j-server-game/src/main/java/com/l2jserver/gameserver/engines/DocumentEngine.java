@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +80,7 @@ public class DocumentEngine {
 		}
 	}
 	
-	public List<Skill> loadSkills(File file) {
+	private List<Skill> loadSkills(File file) {
 		if (file == null) {
 			LOG.warn("Skill file not found!");
 			return null;
@@ -87,19 +90,12 @@ public class DocumentEngine {
 		return doc.getSkills();
 	}
 	
-	public void loadAllSkills(final Map<Integer, Skill> allSkills) {
-		int count = 0;
-		for (File file : _skillFiles) {
-			List<Skill> s = loadSkills(file);
-			if (s == null) {
-				continue;
-			}
-			for (Skill skill : s) {
-				allSkills.put(SkillData.getSkillHashCode(skill), skill);
-				count++;
-			}
-		}
-		LOG.info("Loaded {} skill templates from XML files.", count);
+	public Map<Integer, Skill> loadAllSkills() {
+		return _skillFiles.parallelStream()
+			.map(this::loadSkills)
+			.filter(Objects::nonNull)
+			.flatMap(List::stream)
+			.collect(Collectors.toConcurrentMap(SkillData::getSkillHashCode, Function.identity()));
 	}
 	
 	/**
@@ -107,13 +103,15 @@ public class DocumentEngine {
 	 * @return List of {@link L2Item}
 	 */
 	public List<L2Item> loadItems() {
-		List<L2Item> list = new ArrayList<>();
-		for (File f : _itemFiles) {
-			DocumentItem document = new DocumentItem(f);
-			document.parse();
-			list.addAll(document.getItemList());
-		}
-		return list;
+		return _itemFiles.parallelStream()
+			.filter(Objects::nonNull)
+			.map(DocumentItem::new)
+			.map(doc -> {
+				doc.parse();
+				return doc.getItemList();
+			})
+			.flatMap(List::stream)
+			.toList();
 	}
 	
 	private static class SingletonHolder {

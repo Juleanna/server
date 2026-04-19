@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,11 +24,16 @@ import static com.l2jserver.gameserver.network.SystemMessageId.MESSAGE_REFUSAL_M
 import static com.l2jserver.gameserver.network.SystemMessageId.YOU_CANNOT_EXCLUDE_YOURSELF;
 import static com.l2jserver.gameserver.network.SystemMessageId.YOU_MAY_NOT_IMPOSE_A_BLOCK_ON_GM;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.sql.impl.CharNameTable;
 import com.l2jserver.gameserver.model.BlockList;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 public final class RequestBlock extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestBlock.class);
+	
 	private static final String _C__A9_REQUESTBLOCK = "[C] A9 RequestBlock";
 	
 	private static final int BLOCK = 0;
@@ -91,7 +96,7 @@ public final class RequestBlock extends L2GameClientPacket {
 				activeChar.sendPacket(MESSAGE_ACCEPTANCE_MODE);
 				BlockList.setBlockAll(activeChar, false);
 			}
-			default -> _log.info("Unknown 0xA9 block type: " + _type);
+			default -> LOG.info("Unknown 0xA9 block type: {}", _type);
 		}
 	}
 	

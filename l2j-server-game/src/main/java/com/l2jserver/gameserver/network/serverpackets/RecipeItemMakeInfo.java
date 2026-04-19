@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,11 +18,16 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.xml.impl.RecipeData;
 import com.l2jserver.gameserver.model.L2RecipeList;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 public class RecipeItemMakeInfo extends L2GameServerPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RecipeItemMakeInfo.class);
+	
 	private final int _id;
 	private final L2PcInstance _activeChar;
 	private final boolean _success;
@@ -50,7 +55,7 @@ public class RecipeItemMakeInfo extends L2GameServerPacket {
 			writeD(_activeChar.getMaxMp());
 			writeD(_success ? 1 : 0); // item creation success/failed
 		} else {
-			_log.info("Character: " + getClient().getActiveChar() + ": Requested unexisting recipe with id = " + _id);
+			LOG.info("Character: {}: Requested unexisting recipe with id = {}", getClient().getActiveChar(), _id);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -30,13 +30,13 @@ import org.apache.logging.log4j.util.Strings;
  * @author Zoey76
  * @version 2.6.1.0
  */
-public class Seconds2MillisecondsConverter implements Converter<Integer> {
+public class Seconds2MillisecondsConverter implements Converter<Long> {
 	
 	@Override
-	public Integer convert(Method method, String input) {
+	public Long convert(Method method, String input) {
 		if (Strings.isBlank(input)) {
-			return 0;
+			return 0L;
 		}
-		return (int) SECONDS.toMillis(Integer.parseInt(input));
+		return SECONDS.toMillis(Long.parseLong(input));
 	}
 }

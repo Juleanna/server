@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,8 @@
  */
 package com.l2jserver.gameserver.model.zone;
 
+import java.awt.Rectangle;
+
 import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.ZoneManager;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -28,6 +30,8 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
  */
 public abstract class L2ZoneForm {
 	protected static final int STEP = 10;
+	
+	public abstract Rectangle getBoundingBox();
 	
 	public abstract boolean isInsideZone(int x, int y, int z);
 	
@@ -48,7 +52,8 @@ public abstract class L2ZoneForm {
 	public abstract void visualizeZone(int z);
 	
 	protected final void dropDebugItem(int itemId, int num, int x, int y, int z) {
-		L2ItemInstance item = new L2ItemInstance(IdFactory.getInstance().getNextId(), itemId);
+		final var objectId = IdFactory.getInstance().getNextId();
+		final var item = new L2ItemInstance(objectId, itemId);
 		item.setCount(num);
 		item.spawnMe(x, y, z + 5);
 		ZoneManager.getInstance().getDebugItems().add(item);

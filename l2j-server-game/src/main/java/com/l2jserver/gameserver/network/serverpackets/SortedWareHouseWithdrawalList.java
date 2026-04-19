@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.data.xml.impl.RecipeData;
 import com.l2jserver.gameserver.model.L2RecipeList;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -33,6 +36,8 @@ import com.l2jserver.gameserver.model.items.type.ItemType2;
 import com.l2jserver.gameserver.model.items.type.MaterialType;
 
 public class SortedWareHouseWithdrawalList extends L2GameServerPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(SortedWareHouseWithdrawalList.class);
+	
 	public static final int PRIVATE = 1;
 	public static final int CLAN = 2;
 	public static final int CASTLE = 3; // not sure
@@ -89,7 +94,7 @@ public class SortedWareHouseWithdrawalList extends L2GameServerPacket {
 		_playerAdena = player.getAdena();
 		if (player.getActiveWarehouse() == null) {
 			// Something went wrong!
-			_log.warning("error while sending withdraw request to: " + player.getName());
+			LOG.warn("Error while sending withdraw request to: {}", player.getName());
 			return;
 		}
 		

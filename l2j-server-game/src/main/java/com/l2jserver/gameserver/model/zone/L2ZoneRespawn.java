@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -23,6 +23,9 @@ import static com.l2jserver.gameserver.config.Configuration.character;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.model.Location;
 
@@ -33,6 +36,8 @@ import com.l2jserver.gameserver.model.Location;
  * @since 2011/07/10
  */
 public abstract class L2ZoneRespawn extends L2ZoneType {
+	private static final Logger LOG = LoggerFactory.getLogger(L2ZoneRespawn.class);
+	
 	private List<Location> _spawnLocs = null;
 	private List<Location> _otherSpawnLocs = null;
 	private List<Location> _chaoticSpawnLocs = null;
@@ -50,7 +55,7 @@ public abstract class L2ZoneRespawn extends L2ZoneType {
 				case "other" -> addOtherSpawn(x, y, z);
 				case "chaotic" -> addChaoticSpawn(x, y, z);
 				case "banish" -> addBanishSpawn(x, y, z);
-				default -> _log.warning(getClass().getSimpleName() + ": Unknown location type: " + type);
+				default -> LOG.warn("Unknown location type: {}", type);
 			}
 		}
 	}
@@ -95,7 +100,7 @@ public abstract class L2ZoneRespawn extends L2ZoneType {
 		if (character().randomRespawnInTown()) {
 			return _spawnLocs.get(Rnd.get(_spawnLocs.size()));
 		}
-		return _spawnLocs.get(0);
+		return _spawnLocs.getFirst();
 	}
 	
 	public final Location getOtherSpawnLoc() {
@@ -103,7 +108,7 @@ public abstract class L2ZoneRespawn extends L2ZoneType {
 			if (character().randomRespawnInTown()) {
 				return _otherSpawnLocs.get(Rnd.get(_otherSpawnLocs.size()));
 			}
-			return _otherSpawnLocs.get(0);
+			return _otherSpawnLocs.getFirst();
 		}
 		return getSpawnLoc();
 	}
@@ -113,7 +118,7 @@ public abstract class L2ZoneRespawn extends L2ZoneType {
 			if (character().randomRespawnInTown()) {
 				return _chaoticSpawnLocs.get(Rnd.get(_chaoticSpawnLocs.size()));
 			}
-			return _chaoticSpawnLocs.get(0);
+			return _chaoticSpawnLocs.getFirst();
 		}
 		return getSpawnLoc();
 	}
@@ -123,7 +128,7 @@ public abstract class L2ZoneRespawn extends L2ZoneType {
 			if (character().randomRespawnInTown()) {
 				return _banishSpawnLocs.get(Rnd.get(_banishSpawnLocs.size()));
 			}
-			return _banishSpawnLocs.get(0);
+			return _banishSpawnLocs.getFirst();
 		}
 		return getSpawnLoc();
 	}

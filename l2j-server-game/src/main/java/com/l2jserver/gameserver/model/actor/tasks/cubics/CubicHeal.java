@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,8 +19,9 @@
 package com.l2jserver.gameserver.model.actor.tasks.cubics;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2CubicInstance;
@@ -32,7 +33,8 @@ import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
  * @author Zoey76
  */
 public class CubicHeal implements Runnable {
-	private static final Logger _log = Logger.getLogger(CubicHeal.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(CubicHeal.class);
+	
 	private final L2CubicInstance _cubic;
 	
 	public CubicHeal(L2CubicInstance cubic) {
@@ -66,7 +68,7 @@ public class CubicHeal implements Runnable {
 				_cubic.getOwner().broadcastPacket(new MagicSkillUse(_cubic.getOwner(), target, skill.getId(), skill.getLevel(), 0, 0));
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "", e);
+			LOG.error(e.getMessage(), e);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -87,9 +87,7 @@ public abstract class ClanHallSiegeEngine extends Quest implements Siegable {
 	
 	public boolean _missionAccomplished = false;
 	
-	public ClanHallSiegeEngine(String name, String descr, final int hallId) {
-		super(-1, name, descr);
-		
+	public ClanHallSiegeEngine(int hallId) {
 		_hall = ClanHallSiegeManager.getInstance().getSiegableHall(hallId);
 		_hall.setSiege(this);
 		

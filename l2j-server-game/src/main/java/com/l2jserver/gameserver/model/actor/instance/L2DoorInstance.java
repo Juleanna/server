@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -83,8 +83,8 @@ public class L2DoorInstance extends L2Character {
 	// used for autoclose on open
 	private Future<?> _autoCloseTask;
 	
-	public L2DoorInstance(L2DoorTemplate template) {
-		super(template);
+	public L2DoorInstance(int objectId, L2DoorTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2DoorInstance);
 		setIsInvul(false);
 		setLethalable(false);
@@ -373,7 +373,7 @@ public class L2DoorInstance extends L2Character {
 		DoorStatusUpdate dsu = new DoorStatusUpdate(this);
 		OnEventTrigger oe = null;
 		if (getEmitter() > 0) {
-			oe = new OnEventTrigger(this, getOpen());
+			oe = new OnEventTrigger(this, !getOpen());
 		}
 		
 		for (L2PcInstance player : knownPlayers) {
@@ -567,7 +567,7 @@ public class L2DoorInstance extends L2Character {
 	public void sendInfo(L2PcInstance activeChar) {
 		if (isVisibleFor(activeChar)) {
 			if (getEmitter() > 0) {
-				activeChar.sendPacket(new OnEventTrigger(this, getOpen()));
+				activeChar.sendPacket(new OnEventTrigger(this, !getOpen()));
 			}
 			
 			activeChar.sendPacket(new StaticObject(this, activeChar.isGM()));

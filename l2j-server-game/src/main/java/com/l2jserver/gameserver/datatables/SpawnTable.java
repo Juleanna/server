@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -249,10 +249,9 @@ public final class SpawnTable implements IXmlReader {
 	 * @return count NPC instances, spawned by this spawn
 	 */
 	private int addSpawn(StatsSet spawnInfo, Map<String, Integer> AIData) {
-		L2Spawn spawnDat;
 		int ret = 0;
 		try {
-			spawnDat = new L2Spawn(spawnInfo.getInt("npcTemplateid"));
+			final var spawnDat = new L2Spawn(spawnInfo.getInt("npcTemplateid"));
 			spawnDat.setAmount(spawnInfo.getInt("count", 1));
 			spawnDat.setX(spawnInfo.getInt("x", 0));
 			spawnDat.setY(spawnInfo.getInt("y", 0));
@@ -395,7 +394,7 @@ public final class SpawnTable implements IXmlReader {
 	 * @param spawn the NPC spawn to add
 	 */
 	private void addSpawn(L2Spawn spawn) {
-		_spawnTable.computeIfAbsent(spawn.getId(), k -> ConcurrentHashMap.newKeySet(1)).add(spawn);
+		_spawnTable.computeIfAbsent(spawn.getId(), _ -> ConcurrentHashMap.newKeySet(1)).add(spawn);
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,7 +22,9 @@ import static com.l2jserver.gameserver.config.Configuration.customs;
 
 import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.logging.Level;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.xml.impl.DoorData;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
@@ -38,21 +40,25 @@ import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
-import com.l2jserver.gameserver.model.entity.Castle;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.zone.L2ZoneType;
 import com.l2jserver.gameserver.network.SystemMessageId;
-import com.l2jserver.gameserver.network.SystemMessageId.SMLocalisation;
 
 /**
+ * Abstract Message Packet.
  * @author UnAfraid
- * @param <T>
+ * @author Zoey76
+ * @param <T> message packet type (SystemMessage or ConfirmDlg)
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractMessagePacket<T extends AbstractMessagePacket<?>> extends L2GameServerPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractMessagePacket.class);
+	
 	private static final SMParam[] EMPTY_PARAM_ARRAY = new SMParam[0];
+	
+	private static final int SINGLE_PARAM = 1;
 	
 	private static final class SMParam {
 		private final byte _type;
@@ -131,7 +137,7 @@ public abstract class AbstractMessagePacket<T extends AbstractMessagePacket<?>> 
 		if (_paramIndex >= _params.length) {
 			_params = Arrays.copyOf(_params, _paramIndex + 1);
 			_smId.setParamCount(_paramIndex + 1);
-			_log.log(Level.INFO, "Wrong parameter count '" + (_paramIndex + 1) + "' for SystemMessageId: " + _smId);
+			LOG.info("Wrong parameter count '{}' for SystemMessageId: {}", _paramIndex + 1, _smId);
 		}
 		
 		_params[_paramIndex++] = param;
@@ -310,12 +316,31 @@ public abstract class AbstractMessagePacket<T extends AbstractMessagePacket<?>> 
 	}
 	
 	protected final void writeMe() {
+		// The way System Message translation works, is by checking and getting
+		// the translation from the XML for the player's language, and
+		// sending it back to the client as a text with all the parameters hardcoded,
+		// and preventing the original System Message from being delivered.
+		
+		// TODO(Zoey76): Emulate on-screen messages such as THE_SERVER_WILL_BE_COMING_DOWN_IN_S1_SECONDS.
+		// TODO(Zoey76): Find a way to translate dialogs, such as YOU_HAVE_BEEN_DISCONNECTED.
+		if (customs().multiLangEnable() && customs().multiLangSystemMessageEnable()) {
+			final var lang = getClient().getActiveChar().getLang();
+			if (customs().getMultiLangSystemMessageAllowed().contains(lang)) {
+				final var sml = getLocalizedMessage(lang);
+				if (sml != null) {
+					writeD(SystemMessageId.S1.getId());
+					writeD(SINGLE_PARAM);
+					writeD(TYPE_TEXT);
+					writeS(sml);
+					return;
+				}
+			}
+		}
+		
 		writeD(getId());
 		writeD(_params.length);
-		SMParam param;
 		for (int i = 0; i < _paramIndex; i++) {
-			param = _params[i];
-			
+			final var param = _params[i];
 			writeD(param.getType());
 			switch (param.getType()) {
 				case TYPE_TEXT, TYPE_PLAYER_NAME -> writeS(param.getStringValue());
@@ -338,11 +363,10 @@ public abstract class AbstractMessagePacket<T extends AbstractMessagePacket<?>> 
 	
 	public final void printMe(PrintStream out) {
 		out.println(0x62);
-		
 		out.println(getId());
 		out.println(_params.length);
 		
-		for (SMParam param : _params) {
+		for (var param : _params) {
 			switch (param.getType()) {
 				case TYPE_TEXT, TYPE_PLAYER_NAME -> out.println(param.getStringValue());
 				case TYPE_LONG_NUMBER -> out.println(param.getLongValue());
@@ -362,62 +386,59 @@ public abstract class AbstractMessagePacket<T extends AbstractMessagePacket<?>> 
 		}
 	}
 	
-	public final T getLocalizedMessage(final String lang) {
+	public final String getLocalizedMessage(String lang) {
 		if (!customs().multiLangSystemMessageEnable() || (getSystemMessageId() == SystemMessageId.S1)) {
-			return (T) this;
+			return null;
 		}
 		
-		final SMLocalisation sml = getSystemMessageId().getLocalisation(lang);
+		final var sml = getSystemMessageId().getLocalisation(lang);
 		if (sml == null) {
-			return (T) this;
+			return null;
 		}
 		
 		final Object[] params = new Object[_paramIndex];
-		
-		SMParam param;
 		for (int i = 0; i < _paramIndex; i++) {
-			param = _params[i];
+			final var param = _params[i];
 			switch (param.getType()) {
 				case TYPE_TEXT, TYPE_PLAYER_NAME -> params[i] = param.getValue();
 				case TYPE_LONG_NUMBER -> params[i] = param.getValue();
 				case TYPE_ITEM_NAME -> {
-					final L2Item item = ItemTable.getInstance().getTemplate(param.getIntValue());
+					final var item = ItemTable.getInstance().getTemplate(param.getIntValue());
 					params[i] = item == null ? "Unknown" : item.getName();
 				}
 				case TYPE_CASTLE_NAME -> {
-					final Castle castle = CastleManager.getInstance().getCastleById(param.getIntValue());
+					final var castle = CastleManager.getInstance().getCastleById(param.getIntValue());
 					params[i] = castle == null ? "Unknown" : castle.getName();
 				}
 				case TYPE_INT_NUMBER -> params[i] = param.getValue();
 				case TYPE_NPC_NAME -> {
-					final L2NpcTemplate template = NpcData.getInstance().getTemplate(param.getIntValue());
+					final var template = NpcData.getInstance().getTemplate(param.getIntValue());
 					params[i] = template == null ? "Unknown" : template.getName();
 				}
 				case TYPE_ELEMENT_NAME -> params[i] = Elementals.getElementName((byte) param.getIntValue());
 				case TYPE_SYSTEM_STRING -> params[i] = "SYS-S-" + param.getIntValue(); // writeD(param.getIntValue());
 				case TYPE_INSTANCE_NAME -> {
-					final String instanceName = InstanceManager.getInstance().getInstanceIdName(param.getIntValue());
+					final var instanceName = InstanceManager.getInstance().getInstanceIdName(param.getIntValue());
 					params[i] = instanceName == null ? "Unknown" : instanceName;
 				}
 				case TYPE_DOOR_NAME -> {
-					final L2DoorInstance door = DoorData.getInstance().getDoor(param.getIntValue());
+					final var door = DoorData.getInstance().getDoor(param.getIntValue());
 					params[i] = door == null ? "Unknown" : door.getName();
 				}
 				case TYPE_SKILL_NAME -> {
-					final int[] array = param.getIntArrayValue();
-					final Skill skill = SkillData.getInstance().getSkill(array[0], array[1]);
+					final var array = param.getIntArrayValue();
+					final var skill = SkillData.getInstance().getSkill(array[0], array[1]);
 					params[i] = skill == null ? "Unknown" : skill.getName();
 				}
 				case TYPE_ZONE_NAME -> {
-					final int[] array = param.getIntArrayValue();
-					final L2ZoneType zone = ZoneManager.getInstance().getZone(array[0], array[1], array[2], L2ZoneType.class);
+					final var array = param.getIntArrayValue();
+					final var zone = ZoneManager.getInstance().getZone(array[0], array[1], array[2], L2ZoneType.class);
 					params[i] = zone == null ? "Unknown ZONE-N-" + Arrays.toString(array) : zone.getName();
 				}
 			}
 			i++;
 		}
 		
-		addString(sml.getLocalisation(params));
-		return (T) this;
+		return sml.build(params);
 	}
 }

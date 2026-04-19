@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.character;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.enums.PrivateStoreType;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PetInstance;
@@ -31,6 +34,8 @@ import com.l2jserver.gameserver.util.Util;
  * @since 2005/03/29 23:15:33
  */
 public final class RequestGiveItemToPet extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestGiveItemToPet.class);
+	
 	private static final String _C__95_REQUESTCIVEITEMTOPET = "[C] 95 RequestGiveItemToPet";
 	
 	private int _objectId;
@@ -105,7 +110,7 @@ public final class RequestGiveItemToPet extends L2GameClientPacket {
 		}
 		
 		if (player.transferItem("Transfer", _objectId, _amount, pet.getInventory(), pet) == null) {
-			_log.warning("Invalid item transfer request: " + pet.getName() + "(pet) --> " + player.getName());
+			LOG.warn("Invalid item transfer request: {}(pet) --> {}", pet.getName(), player.getName());
 		}
 	}
 	

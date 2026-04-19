@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -25,6 +25,7 @@ import static com.l2jserver.gameserver.config.Configuration.npc;
 import static com.l2jserver.gameserver.config.Configuration.olympiad;
 import static com.l2jserver.gameserver.config.Configuration.rates;
 import static com.l2jserver.gameserver.enums.InstanceType.L2Npc;
+import static com.l2jserver.gameserver.model.events.EventType.NPC_EVENT_RECEIVED;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -67,7 +68,6 @@ import com.l2jserver.gameserver.model.actor.instance.L2DoormenInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2MerchantInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2TeleporterInstance;
-import com.l2jserver.gameserver.model.actor.instance.L2TrainerInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2WarehouseInstance;
 import com.l2jserver.gameserver.model.actor.knownlist.NpcKnownList;
 import com.l2jserver.gameserver.model.actor.stat.NpcStat;
@@ -78,11 +78,11 @@ import com.l2jserver.gameserver.model.entity.Fort;
 import com.l2jserver.gameserver.model.entity.clanhall.SiegableHall;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
 import com.l2jserver.gameserver.model.events.EventType;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcCanBeSeen;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcEventReceived;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcSkillFinished;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcSpawn;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcTeleport;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcCanBeSeen;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcEventReceived;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillFinished;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSpawn;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcTeleport;
 import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.items.L2Item;
@@ -158,8 +158,8 @@ public class L2Npc extends L2Character {
 	 * Creates a NPC.
 	 * @param template the NPC template
 	 */
-	public L2Npc(L2NpcTemplate template) {
-		super(template);
+	public L2Npc(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(L2Npc);
 		initCharStatusUpdateValues();
 		
@@ -184,8 +184,8 @@ public class L2Npc extends L2Character {
 	 * Creates a NPC.
 	 * @param npcId the NPC ID
 	 */
-	public L2Npc(int npcId) {
-		this(NpcData.getInstance().getTemplate(npcId));
+	public L2Npc(int objectId, int npcId) {
+		this(objectId, NpcData.getInstance().getTemplate(npcId));
 	}
 	
 	public int getSoulShotChance() {
@@ -772,7 +772,7 @@ public class L2Npc extends L2Character {
 		String temp = "data/html/default/" + pom + ".htm";
 		
 		if (!general().lazyCache()) {
-			// If not running lazy cache the file must be in the cache or it doesnt exist
+			// If not running lazy cache the file must be in the cache or it doesn't exist
 			if (HtmCache.getInstance().contains(temp)) {
 				return temp;
 			}
@@ -822,10 +822,12 @@ public class L2Npc extends L2Character {
 			player.sendPacket(ActionFailed.STATIC_PACKET);
 			return;
 		}
+		
 		if (player.isCursedWeaponEquipped() && (!(player.getTarget() instanceof L2ClanHallManagerInstance) || !(player.getTarget() instanceof L2DoormenInstance))) {
 			player.setTarget(player);
 			return;
 		}
+		
 		if (player.getKarma() > 0) {
 			if (!character().karmaPlayerCanShop() && (this instanceof L2MerchantInstance)) {
 				if (showPkDenyChatWindow(player, "merchant")) {
@@ -882,7 +884,7 @@ public class L2Npc extends L2Character {
 				if (player.isNoble()) {
 					filename = Olympiad.OLYMPIAD_HTML_PATH + "noble_main.htm";
 				} else {
-					filename = (getHtmlPath(npcId, val));
+					filename = getHtmlPath(npcId, val);
 				}
 				break;
 			case 31690:
@@ -893,7 +895,7 @@ public class L2Npc extends L2Character {
 				if (player.isHero() || player.isNoble()) {
 					filename = Olympiad.OLYMPIAD_HTML_PATH + "hero_main.htm";
 				} else {
-					filename = (getHtmlPath(npcId, val));
+					filename = getHtmlPath(npcId, val);
 				}
 				break;
 			case 36402:
@@ -905,9 +907,9 @@ public class L2Npc extends L2Character {
 				break;
 			case 30298: // Blacksmith Pinter
 				if (player.isAcademyMember()) {
-					filename = (getHtmlPath(npcId, 1));
+					filename = getHtmlPath(npcId, 1);
 				} else {
-					filename = (getHtmlPath(npcId, val));
+					filename = getHtmlPath(npcId, val);
 				}
 				break;
 			default:
@@ -915,7 +917,7 @@ public class L2Npc extends L2Character {
 					return;
 				}
 				// Get the text of the selected HTML file in function of the npcId and of the page number
-				filename = (getHtmlPath(npcId, val));
+				filename = getHtmlPath(npcId, val);
 				break;
 		}
 		
@@ -1019,10 +1021,10 @@ public class L2Npc extends L2Character {
 		_killingBlowWeaponId = 0;
 		
 		if (isTeleporting()) {
-			EventDispatcher.getInstance().notifyEventAsync(new OnNpcTeleport(this), this);
+			EventDispatcher.getInstance().notifyEventAsync(new NpcTeleport(this), this);
 		} else {
 			WalkingManager.getInstance().onSpawn(this);
-			EventDispatcher.getInstance().notifyEventAsync(new OnNpcSpawn(this), this);
+			EventDispatcher.getInstance().notifyEventAsync(new NpcSpawn(this), this);
 		}
 	}
 	
@@ -1198,31 +1200,6 @@ public class L2Npc extends L2Character {
 		}
 	}
 	
-	public void showNoTeachHtml(L2PcInstance player) {
-		int npcId = getId();
-		String html = "";
-		
-		if (this instanceof L2WarehouseInstance) {
-			html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(), "data/html/warehouse/" + npcId + "-noteach.htm");
-		} else if (this instanceof L2TrainerInstance) {
-			html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(), "data/html/trainer/" + npcId + "-noteach.htm");
-			// Trainer Healer?
-			if (html == null) {
-				html = HtmCache.getInstance().getHtm(player.getHtmlPrefix(), "com/l2jserver/datapack/ai/npc/Trainers/HealerTrainer/" + npcId + "-noteach.html");
-			}
-		}
-		
-		final NpcHtmlMessage noTeachMsg = new NpcHtmlMessage(getObjectId());
-		if (html == null) {
-			LOG.warn("Npc {} missing noTeach html!", npcId);
-			noTeachMsg.setHtml("<html><body>I cannot teach you any skills.<br>You must find your current class teachers.</body></html>");
-		} else {
-			noTeachMsg.setHtml(html);
-			noTeachMsg.replace("%objectId%", String.valueOf(getObjectId()));
-		}
-		player.sendPacket(noTeachMsg);
-	}
-	
 	public L2Npc scheduleDespawn(long delay) {
 		ThreadPoolManager.getInstance().scheduleGeneral(() -> {
 			if (!isDecayed()) {
@@ -1235,7 +1212,7 @@ public class L2Npc extends L2Character {
 	@Override
 	protected final void notifyQuestEventSkillFinished(Skill skill, L2Object target) {
 		if ((target != null) && target.isPlayable()) {
-			EventDispatcher.getInstance().notifyEventAsync(new OnNpcSkillFinished(this, target.getActingPlayer(), skill), this);
+			EventDispatcher.getInstance().notifyEventAsync(new NpcSkillFinished(this, target.getActingPlayer(), skill), this);
 		}
 	}
 	
@@ -1397,27 +1374,61 @@ public class L2Npc extends L2Character {
 	}
 	
 	/**
-	 * Send an "event" to all NPC's within given radius
-	 * @param eventName - name of event
-	 * @param radius - radius to send event
-	 * @param reference - L2Object to pass, if needed
+	 * Broadcasts a script event to all NPCs within a specified radius of the current object.
+	 * @param eventName the name of the event to broadcast
+	 * @param radius the radius within which to search for NPCs
 	 */
-	public void broadcastEvent(String eventName, int radius, L2Object reference) {
-		for (L2Object obj : L2World.getInstance().getVisibleObjects(this, radius)) {
-			if (obj.isNpc() && obj.hasListener(EventType.ON_NPC_EVENT_RECEIVED)) {
-				EventDispatcher.getInstance().notifyEventAsync(new OnNpcEventReceived(eventName, this, (L2Npc) obj, reference), obj);
+	public void broadcastScriptEvent(String eventName, int radius) {
+		broadcastScriptEvent(eventName, radius, null, 0, 0);
+	}
+	
+	/**
+	 * Broadcasts a script event to all NPCs within a specified radius of the current object.
+	 * @param eventName the name of the event to broadcast
+	 * @param radius the radius within which to search for NPCs
+	 * @param reference an optional reference object to provide additional context for the event
+	 */
+	public void broadcastScriptEvent(String eventName, int radius, L2Object reference) {
+		broadcastScriptEvent(eventName, radius, reference, 0, 0);
+	}
+	
+	/**
+	 * Broadcasts a script event to all NPCs within a specified radius of the current object.
+	 * @param eventName the name of the event to broadcast
+	 * @param radius the radius within which to search for NPCs
+	 * @param arg1 an integer argument associated with the event
+	 */
+	public void broadcastScriptEvent(String eventName, int radius, int arg1) {
+		broadcastScriptEvent(eventName, radius, null, arg1, 0);
+	}
+	
+	/**
+	 * Broadcasts a script event to all NPCs within a specified radius of the current object.<br>
+	 * NPCs that are within the radius and have registered a listener for the {@code NPC_EVENT_RECEIVED} event will receive the event asynchronously.<br>
+	 * This method also supports passing a reference object and additional arguments.
+	 * @param eventName the name of the event to broadcast
+	 * @param radius the radius within which to search for NPCs
+	 * @param reference an optional reference object to provide additional context for the event
+	 * @param arg1 an integer argument associated with the event
+	 * @param arg2 an integer argument associated with the event
+	 */
+	public void broadcastScriptEvent(String eventName, int radius, L2Object reference, int arg1, int arg2) {
+		for (var obj : L2World.getInstance().getVisibleObjects(this, radius)) {
+			if (obj instanceof L2Npc npc && npc.hasListener(NPC_EVENT_RECEIVED)) {
+				EventDispatcher.getInstance().notifyEventAsync(new NpcEventReceived(eventName, this, npc, reference, arg1, arg2), npc);
 			}
 		}
 	}
 	
 	/**
-	 * Sends an event to a given object.
-	 * @param eventName the event name
-	 * @param receiver the receiver
-	 * @param reference the reference
+	 * Sends a script event to a specific receiver asynchronously.<br>
+	 * This method triggers the {@code NPC_EVENT_RECEIVED} event for the specified receiver.
+	 * @param eventName the name of the event to send
+	 * @param receiver the {@link L2Object} that will receive the event
+	 * @param reference an optional reference object to provide additional context for the event
 	 */
 	public void sendScriptEvent(String eventName, L2Object receiver, L2Object reference) {
-		EventDispatcher.getInstance().notifyEventAsync(new OnNpcEventReceived(eventName, this, (L2Npc) receiver, reference), receiver);
+		EventDispatcher.getInstance().notifyEventAsync(new NpcEventReceived(eventName, this, (L2Npc) receiver, reference, 0, 0), receiver);
 	}
 	
 	/**
@@ -1500,14 +1511,14 @@ public class L2Npc extends L2Character {
 	}
 	
 	@Override
-	public boolean isVisibleFor(L2PcInstance player) {
-		if (hasListener(EventType.ON_NPC_CAN_BE_SEEN)) {
-			final TerminateReturn term = EventDispatcher.getInstance().notifyEvent(new OnNpcCanBeSeen(this, player), this, TerminateReturn.class);
+	public boolean isVisibleFor(L2Character character) {
+		if (hasListener(EventType.NPC_CAN_BE_SEEN)) {
+			final TerminateReturn term = EventDispatcher.getInstance().notifyEvent(new NpcCanBeSeen(this, character), this, TerminateReturn.class);
 			if (term != null) {
 				return term.terminate();
 			}
 		}
-		return super.isVisibleFor(player);
+		return super.isVisibleFor(character);
 	}
 	
 	/**

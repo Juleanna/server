@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -52,10 +52,10 @@ import com.l2jserver.gameserver.model.holders.SkillHolder;
 public interface TvTConfiguration extends Reloadable {
 	
 	@Key("Enabled")
-	Boolean enabled();
+	boolean enabled();
 	
 	@Key("Instanced")
-	Boolean instanced();
+	boolean instanced();
 	
 	@Key("InstanceFile")
 	String getInstanceFile();
@@ -63,14 +63,16 @@ public interface TvTConfiguration extends Reloadable {
 	@Key("Interval")
 	List<String> getInterval();
 	
+	// TODO(Zoey76): Convert to milliseconds.
 	@Key("ParticipationTime")
-	Integer getParticipationTime();
+	int getParticipationTime();
 	
+	// TODO(Zoey76): Convert to milliseconds.
 	@Key("RunningTime")
-	Integer getRunningTime();
+	int getRunningTime();
 	
 	@Key("ParticipationNpcId")
-	Integer getParticipationNpcId();
+	int getParticipationNpcId();
 	
 	@Key("ParticipationFee")
 	@ConverterClass(ItemHolderConverter.class)
@@ -81,24 +83,24 @@ public interface TvTConfiguration extends Reloadable {
 	Location getParticipationNpcLoc();
 	
 	@Key("MinPlayersInTeams")
-	Integer getMinPlayersInTeams();
+	int getMinPlayersInTeams();
 	
 	@Key("MaxPlayersInTeams")
-	Integer getMaxPlayersInTeams();
+	int getMaxPlayersInTeams();
 	
 	@Key("MinPlayerLevel")
-	Integer getMinPlayerLevel();
+	int getMinPlayerLevel();
 	
 	@Key("MaxPlayerLevel")
-	Integer getMaxPlayerLevel();
+	int getMaxPlayerLevel();
 	
 	@Key("RespawnTeleportDelay")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getRespawnTeleportDelay();
+	long getRespawnTeleportDelay();
 	
 	@Key("StartLeaveTeleportDelay")
 	@ConverterClass(Seconds2MillisecondsConverter.class)
-	Integer getStartLeaveTeleportDelay();
+	long getStartLeaveTeleportDelay();
 	
 	@Key("Team1Name")
 	String getTeam1Name();
@@ -120,16 +122,17 @@ public interface TvTConfiguration extends Reloadable {
 	List<ItemHolder> getReward();
 	
 	@Key("AllowTargetTeamMember")
-	Boolean allowTargetTeamMember();
+	boolean allowTargetTeamMember();
 	
 	@Key("AllowScroll")
-	Boolean allowScroll();
+	boolean allowScroll();
 	
 	@Key("AllowPotion")
-	Boolean allowPotion();
+	boolean allowPotion();
 	
+	// TODO(Zoey76): Implement AllowSummonByItem configuration.
 	@Key("AllowSummonByItem")
-	Boolean allowSummonByItem();
+	boolean allowSummonByItem();
 	
 	@Key("DoorsToOpen")
 	List<Integer> getDoorsToOpen();
@@ -138,10 +141,10 @@ public interface TvTConfiguration extends Reloadable {
 	List<Integer> getDoorsToClose();
 	
 	@Key("RewardTeamTie")
-	Boolean rewardTeamTie();
+	boolean rewardTeamTie();
 	
 	@Key("EffectsRemoval")
-	Integer getEffectsRemoval();
+	int getEffectsRemoval();
 	
 	@Separator(";")
 	@Key("FighterBuffs")
@@ -154,8 +157,8 @@ public interface TvTConfiguration extends Reloadable {
 	List<SkillHolder> getMageBuffs();
 	
 	@Key("MaxParticipantsPerIP")
-	Integer getMaxParticipantsPerIP();
+	int getMaxParticipantsPerIP();
 	
 	@Key("AllowVoicedInfoCommand")
-	Boolean allowVoicedInfoCommand();
+	boolean allowVoicedInfoCommand();
 }

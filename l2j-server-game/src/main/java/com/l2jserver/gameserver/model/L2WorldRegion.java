@@ -1,18 +1,18 @@
 /*
- * Copyright © 2004-2023 L2J Server
- * 
+ * Copyright © 2004-2026 L2J Server
+ *
  * This file is part of L2J Server.
- * 
+ *
  * L2J Server is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * L2J Server is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,7 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.datatables.SpawnTable;
@@ -41,7 +43,7 @@ import com.l2jserver.gameserver.model.zone.L2ZoneType;
 import com.l2jserver.gameserver.model.zone.type.L2PeaceZone;
 
 public final class L2WorldRegion {
-	private static final Logger _log = Logger.getLogger(L2WorldRegion.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2WorldRegion.class);
 	
 	/** Map containing all playable characters in game in this world region. */
 	private final Map<Integer, L2Playable> _allPlayable = new ConcurrentHashMap<>();
@@ -61,6 +63,14 @@ public final class L2WorldRegion {
 		
 		// default a newly initialized region to inactive, unless always on is specified
 		_active = general().gridsAlwaysOn();
+	}
+	
+	public int getTileX() {
+		return _tileX;
+	}
+	
+	public int getTileY() {
+		return _tileY;
 	}
 	
 	public List<L2ZoneType> getZones() {
@@ -216,7 +226,7 @@ public final class L2WorldRegion {
 					vehicle.getKnownList().removeAllKnownObjects();
 				}
 			}
-			_log.fine(c + " mobs were turned off");
+			LOG.debug("{} mobs were turned off", c);
 		} else {
 			for (L2Object o : _visibleObjects.values()) {
 				if (o instanceof L2Attackable attackable) {
@@ -227,7 +237,7 @@ public final class L2WorldRegion {
 					npc.startRandomAnimationTimer();
 				}
 			}
-			_log.fine(c + " mobs were turned on");
+			LOG.debug("{} mobs were turned on", c);
 		}
 	}
 	
@@ -271,9 +281,9 @@ public final class L2WorldRegion {
 		// TODO
 		// turn the geodata on or off to match the region's activation.
 		if (value) {
-			_log.fine("Starting Grid " + _tileX + "," + _tileY);
+			LOG.debug("Starting Grid {}, {}", _tileX, _tileY);
 		} else {
-			_log.fine("Stoping Grid " + _tileX + "," + _tileY);
+			LOG.debug("Stopping Grid {}, {}", _tileX, _tileY);
 		}
 	}
 	
@@ -292,7 +302,7 @@ public final class L2WorldRegion {
 			}
 			
 			// then, set a timer to activate the neighbors
-			_neighborsTask = ThreadPoolManager.getInstance().scheduleGeneral(new NeighborsTask(true), 1000 * general().getGridNeighborTurnOnTime());
+			_neighborsTask = ThreadPoolManager.getInstance().scheduleGeneral(new NeighborsTask(true), 1000L * general().getGridNeighborTurnOnTime());
 		}
 	}
 	
@@ -309,7 +319,7 @@ public final class L2WorldRegion {
 			
 			// start a timer to "suggest" a deactivate to self and neighbors.
 			// suggest means: first check if a neighbor has L2PcInstances in it. If not, deactivate.
-			_neighborsTask = ThreadPoolManager.getInstance().scheduleGeneral(new NeighborsTask(false), 1000 * general().getGridNeighborTurnOffTime());
+			_neighborsTask = ThreadPoolManager.getInstance().scheduleGeneral(new NeighborsTask(false), 1000L * general().getGridNeighborTurnOffTime());
 		}
 	}
 	
@@ -388,7 +398,7 @@ public final class L2WorldRegion {
 	 * Deleted all spawns in the world.
 	 */
 	public void deleteVisibleNpcSpawns() {
-		_log.fine("Deleting all visible NPC's in Region: " + getName());
+		LOG.debug("Deleting all visible NPCs in Region: {}", getName());
 		for (L2Object obj : _visibleObjects.values()) {
 			if (obj instanceof L2Npc target) {
 				target.deleteMe();
@@ -397,9 +407,9 @@ public final class L2WorldRegion {
 					spawn.stopRespawn();
 					SpawnTable.getInstance().deleteSpawn(spawn, false);
 				}
-				_log.finest("Removed NPC " + target.getObjectId());
+				LOG.trace("Removed NPC {}", target.getObjectId());
 			}
 		}
-		_log.info("All visible NPC's deleted in Region: " + getName());
+		LOG.info("All visible NPCs deleted in Region: {}", getName());
 	}
 }

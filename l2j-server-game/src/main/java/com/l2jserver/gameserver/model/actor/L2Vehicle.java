@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -63,8 +63,8 @@ public abstract class L2Vehicle extends L2Character {
 	protected VehiclePathPoint[] _currentPath = null;
 	protected int _runState = 0;
 	
-	public L2Vehicle(L2CharTemplate template) {
-		super(template);
+	public L2Vehicle(int objectId, L2CharTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2Vehicle);
 		setIsFlying(true);
 	}

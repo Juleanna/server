@@ -1,18 +1,18 @@
 /*
- * Copyright © 2004-2023 L2J Server
- * 
+ * Copyright © 2004-2026 L2J Server
+ *
  * This file is part of L2J Server.
- * 
+ *
  * L2J Server is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * L2J Server is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -35,8 +35,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.GeoData;
 import com.l2jserver.gameserver.config.Configuration;
@@ -52,7 +53,8 @@ import com.l2jserver.gameserver.util.Util;
  * @author -Nemesiss-
  */
 public class GeoPathFinding extends PathFinding {
-	private static final Logger _log = Logger.getLogger(GeoPathFinding.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(GeoPathFinding.class);
+	
 	private static final Map<Short, ByteBuffer> _pathNodes = new HashMap<>();
 	private static final Map<Short, IntBuffer> _pathNodesIndex = new HashMap<>();
 	
@@ -105,7 +107,7 @@ public class GeoPathFinding extends PathFinding {
 		return searchByClosest2(start, end);
 	}
 	
-	public List<AbstractNodeLoc> searchByClosest2(GeoNode start, GeoNode end) {
+	private List<AbstractNodeLoc> searchByClosest2(GeoNode start, GeoNode end) {
 		// Always continues checking from the closest to target non-blocked
 		// node from to_visit list. There's extra length in path if needed
 		// to go backwards/sideways but when moving generally forwards, this is extra fast
@@ -171,7 +173,7 @@ public class GeoPathFinding extends PathFinding {
 		return null;
 	}
 	
-	public List<AbstractNodeLoc> constructPath2(AbstractNode<GeoNodeLoc> node) {
+	private List<AbstractNodeLoc> constructPath2(AbstractNode<GeoNodeLoc> node) {
 		LinkedList<AbstractNodeLoc> path = new LinkedList<>();
 		int previousDirectionX = -1000;
 		int previousDirectionY = -1000;
@@ -311,7 +313,7 @@ public class GeoPathFinding extends PathFinding {
 		byte nodes = pn.get(idx);
 		idx += (layer * 10) + 1;// byte + layer*10byte
 		if (nodes < layer) {
-			_log.warning("SmthWrong!");
+			LOG.warn("SmthWrong!");
 		}
 		short node_z = pn.getShort(idx);
 		idx += 2;
@@ -345,43 +347,39 @@ public class GeoPathFinding extends PathFinding {
 		return new GeoNode(new GeoNodeLoc(node_x, node_y, last_z), idx2);
 	}
 	
-	protected GeoPathFinding() {
-		try {
-			_log.info("Path Engine: - Loading Path Nodes...");
-			//@formatter:off
-			Files.lines(Paths.get(geodata().getPathnodePath().getPath(), "pn_index.txt"), UTF_8)
-				.map(String::trim)
+	private GeoPathFinding() {
+		try (var fileLines = Files.lines(Paths.get(geodata().getPathnodePath().getPath(), "pn_index.txt"), UTF_8)) {
+			LOG.info("Path Engine: - Loading Path Nodes...");
+			fileLines.map(String::trim)
 				.filter(l -> !l.isEmpty())
 				.forEach(line -> {
 					final String[] parts = line.split("_");
 					
 					if ((parts.length < 2)
 						|| !Util.isDigit(parts[0])
-						|| !Util.isDigit(parts[1]))
-					{
-						_log.warning("Invalid pathnode entry: '" + line + "', must be in format 'XX_YY', where X and Y - integers");
+						|| !Util.isDigit(parts[1])) {
+						LOG.warn("Invalid pathnode entry: '{}', must be in format 'XX_YY', where X and Y - integers", line);
 						return;
 					}
 					
 					byte rx = Byte.parseByte(parts[0]);
 					byte ry = Byte.parseByte(parts[1]);
-					LoadPathNodeFile(rx, ry);
+					loadPathNodeFile(rx, ry);
 				});
-			//@formatter:on
 		} catch (IOException e) {
-			_log.log(Level.WARNING, "", e);
+			LOG.warn(e.getMessage(), e);
 			throw new Error("Failed to read pn_index file.");
 		}
 	}
 	
-	private void LoadPathNodeFile(byte rx, byte ry) {
+	private void loadPathNodeFile(byte rx, byte ry) {
 		if ((rx < L2World.TILE_X_MIN) || (rx > L2World.TILE_X_MAX) || (ry < L2World.TILE_Y_MIN) || (ry > L2World.TILE_Y_MAX)) {
-			_log.warning("Failed to Load PathNode File: invalid region " + rx + "," + ry + Configuration.EOL);
+			LOG.warn("Failed to Load PathNode File: invalid region {},{}{}", rx, ry, Configuration.EOL);
 			return;
 		}
 		short regionoffset = getRegionOffset(rx, ry);
 		File file = new File(geodata().getPathnodePath(), rx + "_" + ry + ".pn");
-		_log.info("Path Engine: - Loading: " + file.getName() + " -> region offset: " + regionoffset + " X: " + rx + " Y: " + ry);
+		LOG.info("Path Engine: - Loading: {} -> region offset: {} X: {} Y: {}", file.getName(), regionoffset, rx, ry);
 		int node = 0, size, index = 0;
 		
 		// Create a read-only memory-mapped file
@@ -407,7 +405,7 @@ public class GeoPathFinding extends PathFinding {
 			_pathNodesIndex.put(regionoffset, indexs);
 			_pathNodes.put(regionoffset, nodes);
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Failed to Load PathNode File: " + file.getAbsolutePath() + " : " + e.getMessage(), e);
+			LOG.warn("Failed to Load PathNode File: {} : {}", file.getAbsolutePath(), e.getMessage(), e);
 		}
 	}
 	

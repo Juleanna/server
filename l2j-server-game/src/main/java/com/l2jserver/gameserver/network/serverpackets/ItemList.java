@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -50,7 +50,7 @@ public final class ItemList extends AbstractItemPacket {
 			}
 			
 			final var agathion = AgathionRepository.getInstance().getByItemId(item.getId());
-			if ((agathion != null) && (agathion.getMaxEnergy() > 0)) {
+			if ((agathion != null) && (agathion.maxEnergy() > 0)) {
 				agathions.add(item);
 			}
 		}

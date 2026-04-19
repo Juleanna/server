@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,7 +22,9 @@ import static com.l2jserver.gameserver.config.Configuration.castle;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Level;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.instancemanager.CastleManager;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -36,6 +38,8 @@ import com.l2jserver.gameserver.util.Broadcast;
  * @author UnAfraid
  */
 public class RequestSetCastleSiegeTime extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestSetCastleSiegeTime.class);
+	
 	private int _castleId;
 	private long _time;
 	
@@ -51,16 +55,16 @@ public class RequestSetCastleSiegeTime extends L2GameClientPacket {
 		final L2PcInstance activeChar = getClient().getActiveChar();
 		final Castle castle = CastleManager.getInstance().getCastleById(_castleId);
 		if ((activeChar == null) || (castle == null)) {
-			_log.log(Level.WARNING, getType() + ": activeChar: " + activeChar + " castle: " + castle + " castleId: " + _castleId);
+			LOG.warn("activeChar: {} castle: {} castleId: {}", activeChar, castle, _castleId);
 			return;
 		}
 		if ((castle.getOwnerId() > 0) && (castle.getOwnerId() != activeChar.getClanId())) {
-			_log.log(Level.WARNING, getType() + ": activeChar: " + activeChar + " castle: " + castle + " castleId: " + _castleId + " is trying to change siege date of not his own castle!");
+			LOG.warn("activeChar: {} castle: {} castleId: {} is trying to change siege date of not his own castle!", activeChar, castle, _castleId);
 			return;
 		}
 		
 		if (!activeChar.isClanLeader()) {
-			_log.log(Level.WARNING, getType() + ": activeChar: " + activeChar + " castle: " + castle + " castleId: " + _castleId + " is trying to change siege date but is not clan leader!");
+			LOG.warn("activeChar: {} castle: {} castleId: {} is trying to change siege date but is not clan leader!", activeChar, castle, _castleId);
 			return;
 		}
 		
@@ -74,10 +78,10 @@ public class RequestSetCastleSiegeTime extends L2GameClientPacket {
 				Broadcast.toAllOnlinePlayers(msg);
 				activeChar.sendPacket(new SiegeInfo(castle));
 			} else {
-				_log.log(Level.WARNING, getType() + ": activeChar: " + activeChar + " castle: " + castle + " castleId: " + _castleId + " is trying to an invalid time (" + new Date(_time) + " !");
+				LOG.warn("activeChar: {} castle: {} castleId: {} is trying to an invalid time ({} !", activeChar, castle, _castleId, new Date(_time));
 			}
 		} else {
-			_log.log(Level.WARNING, getType() + ": activeChar: " + activeChar + " castle: " + castle + " castleId: " + _castleId + " is trying to change siege date but currently not possible!");
+			LOG.warn("activeChar: {} castle: {} castleId: {} is trying to change siege date but currently not possible!", activeChar, castle, _castleId);
 		}
 	}
 	

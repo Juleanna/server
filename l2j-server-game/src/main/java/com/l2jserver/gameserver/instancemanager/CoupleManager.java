@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,8 +20,9 @@ package com.l2jserver.gameserver.instancemanager;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.model.L2World;
@@ -34,11 +35,11 @@ import com.l2jserver.gameserver.model.entity.Couple;
  */
 public final class CoupleManager {
 	
-	private static final Logger _log = Logger.getLogger(CoupleManager.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(CoupleManager.class);
 	
 	private final List<Couple> _couples = new CopyOnWriteArrayList<>();
 	
-	protected CoupleManager() {
+	private CoupleManager() {
 		load();
 	}
 	
@@ -54,9 +55,9 @@ public final class CoupleManager {
 			while (rs.next()) {
 				getCouples().add(new Couple(rs.getInt("id")));
 			}
-			_log.info(getClass().getSimpleName() + ": Loaded: " + getCouples().size() + " couples(s)");
+			LOG.info("Loaded: {} couples(s)", getCouples().size());
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: CoupleManager.load(): " + e.getMessage(), e);
+			LOG.error("Exception: CoupleManager.load(): {}", e.getMessage(), e);
 		}
 	}
 	

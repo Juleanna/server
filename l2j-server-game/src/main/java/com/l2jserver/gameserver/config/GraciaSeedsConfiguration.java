@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -44,9 +44,9 @@ import com.l2jserver.gameserver.config.converter.Minutes2MillisecondsConverter;
 public interface GraciaSeedsConfiguration extends Reloadable {
 	
 	@Key("TiatKillCountForNextState")
-	Integer getTiatKillCountForNextState();
+	int getTiatKillCountForNextState();
 	
 	@Key("Stage2Length")
 	@ConverterClass(Minutes2MillisecondsConverter.class)
-	Integer getStage2Length();
+	long getStage2Length();
 }

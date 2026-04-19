@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -18,6 +18,7 @@
  */
 package com.l2jserver.gameserver.model.skills.targets;
 
+import static com.l2jserver.gameserver.model.skills.targets.AffectObjectStaticImpl.FRIEND;
 import static com.l2jserver.gameserver.model.skills.targets.AffectScope.BALAKAS_SCOPE;
 import static com.l2jserver.gameserver.model.skills.targets.AffectScope.DEAD_PLEDGE;
 import static com.l2jserver.gameserver.model.skills.targets.AffectScope.DEAD_UNION;
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -70,7 +72,7 @@ import com.l2jserver.gameserver.util.Util;
 
 /**
  * Affect Scope test.
- * @author Zoey76
+ * @author Zoey76, Kita
  * @version 2.6.3.0
  */
 @ExtendWith(MockitoExtension.class)
@@ -331,17 +333,17 @@ class AffectScopeTest {
 		when(affectObject.affectObject(caster, player2)).thenReturn(true);
 		when(GeoData.getInstance()).thenReturn(geoData);
 		when(geoData.canSeeTarget(caster, player2)).thenReturn(false);
-
+		
 		when(npc1.isCharacter()).thenReturn(true);
 		when(npc1.isDead()).thenReturn(true);
-
+		
 		when(npc2.isCharacter()).thenReturn(true);
 		when(npc2.isDead()).thenReturn(false);
 		when(Util.calculateAngleFrom(caster, npc2)).thenReturn(323.53);
 		when(affectObject.affectObject(caster, npc2)).thenReturn(true);
 		when(GeoData.getInstance()).thenReturn(geoData);
 		when(geoData.canSeeTarget(caster, npc2)).thenReturn(true);
-
+		
 		when(npc3.isCharacter()).thenReturn(true);
 		when(npc3.isDead()).thenReturn(false);
 		when(Util.calculateAngleFrom(caster, npc3)).thenReturn(323.53);
@@ -529,16 +531,16 @@ class AffectScopeTest {
 	}
 	
 	@Test
-	@DisplayName("Test POINT_BLANK scope.")
-	void testPointBlankScope() {
+	@DisplayName("Test POINT_BLANK scope using caster as point of origin.")
+	void testPointBlankScopeFromCaster() {
 		when(caster.isCharacter()).thenReturn(true);
 		when(skill.getAffectLimit()).thenReturn(AFFECT_LIMIT);
 		when(skill.getAffectObject()).thenReturn(affectObject);
 		when(skill.getAffectRange()).thenReturn(AFFECT_RANGE);
 		
 		when(L2World.getInstance()).thenReturn(world);
-		when(world.getVisibleObjects(caster, AFFECT_RANGE)) //
-			.thenReturn(List.of(caster, npc2, npc3, summon));
+		when(world.getVisibleObjectsStream(caster, AFFECT_RANGE, true)) //
+			.thenReturn(Stream.of(caster, npc2, npc3, summon));
 		
 		when(affectObject.affectObject(caster, caster)).thenReturn(true);
 		when(affectObject.affectObject(caster, npc2)).thenReturn(false);
@@ -549,6 +551,27 @@ class AffectScopeTest {
 	}
 	
 	@Test
+	@DisplayName("Test POINT_BLANK scope using summon as point of origin.")
+	void testPointBlankScopeFromSummon() {
+		when(summon.isCharacter()).thenReturn(true);
+		
+		when(skill.getAffectLimit()).thenReturn(AFFECT_LIMIT);
+		when(skill.getAffectObject()).thenReturn(affectObject);
+		when(skill.getAffectRange()).thenReturn(AFFECT_RANGE);
+		
+		when(L2World.getInstance()).thenReturn(world);
+		when(world.getVisibleObjectsStream(summon, AFFECT_RANGE, true)) //
+			.thenReturn(Stream.of(caster, summon, npc2, npc3));
+		
+		when(affectObject.affectObject(caster, caster)).thenReturn(false);
+		when(affectObject.affectObject(caster, summon)).thenReturn(false);
+		when(affectObject.affectObject(caster, npc2)).thenReturn(true);
+		when(affectObject.affectObject(caster, npc3)).thenReturn(true);
+		
+		assertEquals(List.of(npc2, npc3), POINT_BLANK.affectTargets(caster, summon, skill));
+	}
+	
+	@Test
 	@DisplayName("Test RANGE scope.")
 	void testRangeScope() {
 		when(skill.getAffectLimit()).thenReturn(AFFECT_LIMIT);
@@ -556,7 +579,11 @@ class AffectScopeTest {
 		when(skill.getAffectObject()).thenReturn(affectObject);
 		
 		when(L2World.getInstance()).thenReturn(world);
-		when(world.getVisibleObjects(caster, target, AFFECT_RANGE)).thenReturn(List.of(object1, servitor, player2, player3, player4, player5, player6, player7, player8));
+		when(world.getVisibleObjectsStream(target, AFFECT_RANGE, false)).thenReturn(Stream.of(target, object1, servitor, player2, player3, player4, player5, player6, player7, player8));
+
+		when(target.isCharacter()).thenReturn(true);
+		when(target.isDead()).thenReturn(false);
+		when(affectObject.affectObject(caster, target)).thenReturn(true);
 		
 		when(object1.isCharacter()).thenReturn(false);
 		
@@ -579,11 +606,7 @@ class AffectScopeTest {
 		when(player5.isDead()).thenReturn(false);
 		when(affectObject.affectObject(caster, player5)).thenReturn(true);
 		
-		when(player6.isCharacter()).thenReturn(true);
-		when(player6.isDead()).thenReturn(false);
-		when(affectObject.affectObject(caster, player6)).thenReturn(false);
-		
-		assertEquals(List.of(player2, player3, player4, player5), RANGE.affectTargets(caster, target, skill));
+		assertEquals(List.of(target, player2, player3, player4, player5), RANGE.affectTargets(caster, target, skill));
 	}
 	
 	@Test
@@ -591,28 +614,27 @@ class AffectScopeTest {
 	void testRangeSortByHpScope() {
 		when(skill.getAffectLimit()).thenReturn(AFFECT_LIMIT);
 		when(skill.getAffectRange()).thenReturn(AFFECT_RANGE);
+		when(skill.getAffectObject()).thenReturn(FRIEND);
 		when(L2World.getInstance()).thenReturn(world);
-		when(world.getVisibleObjects(caster, target, AFFECT_RANGE)).thenReturn(List.of(target, object1, servitor, player2, player3));
-		
-		when(object1.isCharacter()).thenReturn(false);
+		when(world.getVisibleObjectsStream(target, AFFECT_RANGE, false)).thenReturn(Stream.of(target, object1, servitor, player2, player3, npc1));
 		
 		when(servitor.isCharacter()).thenReturn(true);
 		when(servitor.isDead()).thenReturn(true);
 		
 		when(player2.isCharacter()).thenReturn(true);
-		when(player2.isDead()).thenReturn(false);
 		when(player2.getCurrentHp()).thenReturn(1000.0);
 		when(player2.getMaxHp()).thenReturn(1000);
 		
 		when(player3.isCharacter()).thenReturn(true);
-		when(player3.isDead()).thenReturn(false);
 		when(player3.getCurrentHp()).thenReturn(1900.0);
 		when(player3.getMaxHp()).thenReturn(2000);
 		
 		when(target.isCharacter()).thenReturn(true);
-		when(target.isDead()).thenReturn(false);
 		when(target.getCurrentHp()).thenReturn(500.0);
 		when(target.getMaxHp()).thenReturn(1000);
+		
+		when(npc1.isCharacter()).thenReturn(true);
+		when(npc1.isAutoAttackable(caster)).thenReturn(true);
 		
 		assertEquals(List.of(target, player3, player2), RANGE_SORT_BY_HP.affectTargets(caster, target, skill));
 	}

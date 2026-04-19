@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,8 +18,8 @@
  */
 package com.l2jserver.gameserver.util;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -35,7 +35,7 @@ import com.l2jserver.gameserver.network.serverpackets.RelationChanged;
  * @since 2004/06/27 08:12:59
  */
 public final class Broadcast {
-	private static final Logger _log = Logger.getLogger(Broadcast.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(Broadcast.class);
 	
 	/**
 	 * Send a packet to all L2PcInstance in the _KnownPlayers of the L2Character that have the Character targeted.<BR>
@@ -83,7 +83,7 @@ public final class Broadcast {
 					}
 				}
 			} catch (NullPointerException e) {
-				_log.log(Level.WARNING, e.getMessage(), e);
+				LOG.warn(e.getMessage(), e);
 			}
 		}
 		

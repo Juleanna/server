@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,12 +20,12 @@ package com.l2jserver.gameserver.network.serverpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.character;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.l2jserver.gameserver.model.L2SkillLearn;
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.base.AcquireSkillType;
-import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.skills.CommonSkill;
 
 /**
@@ -33,88 +33,51 @@ import com.l2jserver.gameserver.model.skills.CommonSkill;
  * @author Zoey76
  */
 public class AcquireSkillInfo extends L2GameServerPacket {
-	private final AcquireSkillType _type;
-	private final int _id;
-	private final int _level;
-	private final int _spCost;
-	private final List<Req> _reqs;
+	private final AcquireSkillType type;
+	private final int id;
+	private final int level;
+	private final int cost;
+	private final List<Requirements> requirements;
 	
-	/**
-	 * Private class containing learning skill requisites.
-	 */
-	private static class Req {
-		public int itemId;
-		public long count;
-		public int type;
-		public int unk;
-		
-		/**
-		 * @param pType TODO identify.
-		 * @param pItemId the item Id.
-		 * @param itemCount the item count.
-		 * @param pUnk TODO identify.
-		 */
-		public Req(int pType, int pItemId, long itemCount, int pUnk) {
-			itemId = pItemId;
-			type = pType;
-			count = itemCount;
-			unk = pUnk;
-		}
+	private record Requirements(int type, int id, long count, int unk) {
 	}
 	
 	/**
 	 * Constructor for the acquire skill info object.
-	 * @param skillType the skill learning type.
-	 * @param skillLearn the skill learn.
+	 * @param player the player
+	 * @param skillType the skill learning type
+	 * @param skillLearn the skill to learn
 	 */
-	public AcquireSkillInfo(AcquireSkillType skillType, L2SkillLearn skillLearn) {
-		_id = skillLearn.getSkillId();
-		_level = skillLearn.getSkillLevel();
-		_spCost = skillLearn.getLevelUpSp();
-		_type = skillType;
-		_reqs = new ArrayList<>();
+	public AcquireSkillInfo(L2PcInstance player, AcquireSkillType skillType, L2SkillLearn skillLearn) {
+		id = skillLearn.getSkillId();
+		level = skillLearn.getSkillLevel();
+		cost = skillLearn.getCalculatedLevelUpSp(player.getClassId(), player.getLearningClass());
+		type = skillType;
+		requirements = new LinkedList<>();
 		
 		if ((skillType != AcquireSkillType.PLEDGE) || character().lifeCrystalNeeded()) {
-			for (ItemHolder item : skillLearn.getRequiredItems()) {
-				if (!character().divineInspirationSpBookNeeded() && (_id == CommonSkill.DIVINE_INSPIRATION.getId())) {
+			for (var item : skillLearn.getRequiredItems()) {
+				if (!character().divineInspirationSpBookNeeded() && (id == CommonSkill.DIVINE_INSPIRATION.getId())) {
 					continue;
 				}
-				_reqs.add(new Req(99, item.getId(), item.getCount(), 50));
+				requirements.add(new Requirements(99, item.getId(), item.getCount(), 50));
 			}
-		}
-	}
-	
-	/**
-	 * Special constructor for Alternate Skill Learning system.<br>
-	 * Sets a custom amount of SP.
-	 * @param skillType the skill learning type.
-	 * @param skillLearn the skill learn.
-	 * @param sp the custom SP amount.
-	 */
-	public AcquireSkillInfo(AcquireSkillType skillType, L2SkillLearn skillLearn, int sp) {
-		_id = skillLearn.getSkillId();
-		_level = skillLearn.getSkillLevel();
-		_spCost = sp;
-		_type = skillType;
-		_reqs = new ArrayList<>();
-		for (ItemHolder item : skillLearn.getRequiredItems()) {
-			_reqs.add(new Req(99, item.getId(), item.getCount(), 50));
 		}
 	}
 	
 	@Override
 	protected final void writeImpl() {
 		writeC(0x91);
-		writeD(_id);
-		writeD(_level);
-		writeD(_spCost);
-		writeD(_type.ordinal());
-		writeD(_reqs.size());
-		for (Req temp : _reqs) {
-			writeD(temp.type);
-			writeD(temp.itemId);
-			writeQ(temp.count);
-			writeD(temp.unk);
+		writeD(id);
+		writeD(level);
+		writeD(cost);
+		writeD(type.ordinal());
+		writeD(requirements.size());
+		for (var requirement : requirements) {
+			writeD(requirement.type);
+			writeD(requirement.id);
+			writeQ(requirement.count);
+			writeD(requirement.unk);
 		}
 	}
 }

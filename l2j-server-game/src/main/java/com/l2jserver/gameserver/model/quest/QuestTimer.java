@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,15 +19,16 @@
 package com.l2jserver.gameserver.model.quest;
 
 import java.util.concurrent.ScheduledFuture;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 public class QuestTimer {
-	protected static final Logger _log = Logger.getLogger(QuestTimer.class.getName());
+	protected static final Logger LOG = LoggerFactory.getLogger(QuestTimer.class);
 	
 	public class ScheduleTimerTask implements Runnable {
 		@Override
@@ -42,7 +43,7 @@ public class QuestTimer {
 				}
 				getQuest().notifyEvent(getName(), getNpc(), getPlayer());
 			} catch (Exception e) {
-				_log.log(Level.SEVERE, "", e);
+				LOG.error(e.getMessage(), e);
 			}
 		}
 	}

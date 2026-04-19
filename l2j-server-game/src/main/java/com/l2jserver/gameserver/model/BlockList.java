@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -32,8 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.data.sql.impl.CharNameTable;
@@ -42,8 +43,7 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 // TODO(Zoey76): Rewrite this class in an OOP style.
 public class BlockList {
-	
-	private static final Logger _log = Logger.getLogger(BlockList.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(BlockList.class);
 	
 	private static final Map<Integer, List<Integer>> OFFLINE_LIST = new ConcurrentHashMap<>();
 	
@@ -89,7 +89,7 @@ public class BlockList {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Error found in " + ObjId + " FriendList while loading BlockList: " + e.getMessage(), e);
+			LOG.warn("Error found in {} FriendList while loading BlockList: {}", ObjId, e.getMessage(), e);
 		}
 		return list;
 	}
@@ -101,7 +101,7 @@ public class BlockList {
 			ps.setInt(2, targetId);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not remove blocked player: " + e.getMessage(), e);
+			LOG.warn("Could not remove blocked player: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -112,12 +112,12 @@ public class BlockList {
 			ps.setInt(2, targetId);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not add blocked player: " + e.getMessage(), e);
+			LOG.warn("Could not add blocked player: {}", e.getMessage(), e);
 		}
 	}
 	
 	public boolean isInBlockList(L2PcInstance target) {
-		return _blockList.contains(target.getObjectId());
+		return isInBlockList(target.getObjectId());
 	}
 	
 	public boolean isInBlockList(int targetId) {

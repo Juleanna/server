@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -53,48 +53,48 @@ class TriggerAttackTypeTest {
 	}
 	
 	@Test
-    void testEnemyAll() {
-        when(target.isCharacter()).thenReturn(true);
-        when(target.isAutoAttackable(trigger)).thenReturn(true);
-        assertTrue(ENEMY_ALL.check(trigger, target));
-    }
+	void testEnemyAll() {
+		when(target.isCharacter()).thenReturn(true);
+		when(target.isAutoAttackable(trigger)).thenReturn(true);
+		assertTrue(ENEMY_ALL.check(trigger, target));
+	}
 	
 	@Test
-    void testEnemyAllTargetIsNotACharacter() {
-        when(target.isCharacter()).thenReturn(false);
-        assertFalse(ENEMY_ALL.check(trigger, target));
-    }
+	void testEnemyAllTargetIsNotACharacter() {
+		when(target.isCharacter()).thenReturn(false);
+		assertFalse(ENEMY_ALL.check(trigger, target));
+	}
 	
 	@Test
-    void testEnemyAllTargetIsNotAnEnemy() {
-        when(target.isCharacter()).thenReturn(true);
-        when(target.isAutoAttackable(trigger)).thenReturn(false);
-        assertFalse(ENEMY_ALL.check(trigger, target));
-    }
+	void testEnemyAllTargetIsNotAnEnemy() {
+		when(target.isCharacter()).thenReturn(true);
+		when(target.isAutoAttackable(trigger)).thenReturn(false);
+		assertFalse(ENEMY_ALL.check(trigger, target));
+	}
 	
 	@Test
-    void testMobTargetIsMonster() {
-        when(target.isAttackable()).thenReturn(true);
-        assertTrue(MOB.check(trigger, target));
-    }
+	void testMobTargetIsMonster() {
+		when(target.isAttackable()).thenReturn(true);
+		assertTrue(MOB.check(trigger, target));
+	}
 	
 	@Test
-    void testPKTargetIsPlayer() {
-        when(target.isPlayer()).thenReturn(true);
-        assertTrue(PK.check(trigger, target));
-    }
+	void testPKTargetIsPlayer() {
+		when(target.isPlayer()).thenReturn(true);
+		assertTrue(PK.check(trigger, target));
+	}
 	
 	@Test
-    void testPKTargetIsSummon() {
-        when(target.isPlayer()).thenReturn(false);
-        when(target.isSummon()).thenReturn(true);
-        assertTrue(PK.check(trigger, target));
-    }
+	void testPKTargetIsSummon() {
+		when(target.isPlayer()).thenReturn(false);
+		when(target.isSummon()).thenReturn(true);
+		assertTrue(PK.check(trigger, target));
+	}
 	
 	@Test
-    void testPKTargetIsNotPlayerOrSummon() {
-        when(target.isPlayer()).thenReturn(false);
-        when(target.isSummon()).thenReturn(false);
-        assertFalse(PK.check(trigger, target));
-    }
+	void testPKTargetIsNotPlayerOrSummon() {
+		when(target.isPlayer()).thenReturn(false);
+		when(target.isSummon()).thenReturn(false);
+		assertFalse(PK.check(trigger, target));
+	}
 }

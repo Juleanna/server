@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -39,10 +39,10 @@ import com.l2jserver.gameserver.model.quest.QuestDroplist.QuestDropInfo;
 
 /**
  * Quest Droplist test.
- * @author Noé Caratini aka Kita
+ * @author Kita (Noé Caratini)
  */
 @ExtendWith(MockitoExtension.class)
-public class QuestDroplistTest {
+class QuestDroplistTest {
 	private static final QuestItemChanceHolder QUEST_ITEM_1 = new QuestItemChanceHolder(1, 25.0, 2L, 70L);
 	private static final QuestItemChanceHolder QUEST_ITEM_2 = new QuestItemChanceHolder(2, 50.0);
 	private static final QuestItemChanceHolder QUEST_ITEM_3 = new QuestItemChanceHolder(3, 50.0, 2L, 0L);
@@ -51,28 +51,28 @@ public class QuestDroplistTest {
 	private L2Npc npc;
 	
 	@Test
-    public void shouldBuildDroplistAndRetrieveInfo() {
-        when(npc.getId()).thenReturn(1);
-
-        QuestDroplist dropList = QuestDroplist.builder()
-                .addSingleDrop(1, QUEST_ITEM_1)
-                .build();
-
-        QuestDropInfo dropInfo = dropList.get(1);
-        assertThat(dropInfo).isNotNull();
-        assertThat(dropInfo.item()).isEqualTo(QUEST_ITEM_1);
-        assertThat(dropInfo.getLimit()).isEqualTo(QUEST_ITEM_1.getLimit());
-
-        QuestDropInfo dropInfo2 = dropList.get(npc);
-        assertThat(dropInfo2).isNotNull();
-        assertThat(dropInfo2.item()).isEqualTo(QUEST_ITEM_1);
-        assertThat(dropInfo2.getLimit()).isEqualTo(QUEST_ITEM_1.getLimit());
-
-        assertThat(dropList.getNpcIds()).containsExactly(1);
-    }
+	void shouldBuildDroplistAndRetrieveInfo() {
+		when(npc.getId()).thenReturn(1);
+		
+		QuestDroplist dropList = QuestDroplist.builder()
+			.addSingleDrop(1, QUEST_ITEM_1)
+			.build();
+		
+		QuestDropInfo dropInfo = dropList.get(1);
+		assertThat(dropInfo).isNotNull();
+		assertThat(dropInfo.item()).isEqualTo(QUEST_ITEM_1);
+		assertThat(dropInfo.getLimit()).isEqualTo(QUEST_ITEM_1.getLimit());
+		
+		QuestDropInfo dropInfo2 = dropList.get(npc);
+		assertThat(dropInfo2).isNotNull();
+		assertThat(dropInfo2.item()).isEqualTo(QUEST_ITEM_1);
+		assertThat(dropInfo2.getLimit()).isEqualTo(QUEST_ITEM_1.getLimit());
+		
+		assertThat(dropList.getNpcIds()).containsExactly(1);
+	}
 	
 	@Test
-	public void shouldAddSingleDropWithAmount() {
+	void shouldAddSingleDropWithAmount() {
 		long amount = 5;
 		
 		QuestDroplist dropList = QuestDroplist.builder()
@@ -90,7 +90,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddSingleDropWithChance() {
+	void shouldAddSingleDropWithChance() {
 		double chance = 75.0;
 		
 		QuestDroplist dropList = QuestDroplist.builder()
@@ -108,7 +108,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddSingleDropWithAmountAndChance() {
+	void shouldAddSingleDropWithAmountAndChance() {
 		long amount = 5;
 		double chance = 75.0;
 		
@@ -127,7 +127,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddSingleDropWithItemId() {
+	void shouldAddSingleDropWithItemId() {
 		int itemId = 2;
 		
 		QuestDroplist dropList = QuestDroplist.builder()
@@ -144,7 +144,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddSingleDropWithItemIdAndAmount() {
+	void shouldAddSingleDropWithItemIdAndAmount() {
 		int itemId = 2;
 		long amount = 5;
 		
@@ -162,7 +162,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddSingleDropWithItemIdAndChance() {
+	void shouldAddSingleDropWithItemIdAndChance() {
 		int itemId = 2;
 		double chance = 50.0;
 		
@@ -180,7 +180,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddSingleDropWithItemIdAndAmountAndChance() {
+	void shouldAddSingleDropWithItemIdAndAmountAndChance() {
 		int itemId = 2;
 		long amount = 5;
 		double chance = 50.0;
@@ -199,7 +199,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddSingleDropWithRequiredItems() {
+	void shouldAddSingleDropWithRequiredItems() {
 		int[] requiredItemIds = {
 			10,
 			11
@@ -218,7 +218,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddRequiredItemsWithoutDuplicates() {
+	void shouldAddRequiredItemsWithoutDuplicates() {
 		int[] requiredItemIds = {
 			10,
 			11
@@ -237,14 +237,14 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldThrowExceptionWhenAddingRequiredItemsWithoutDrop() {
+	void shouldThrowExceptionWhenAddingRequiredItemsWithoutDrop() {
 		assertThatIllegalStateException().isThrownBy(() -> QuestDroplist.builder()
 			.withRequiredItems(1, 2)
 			.build());
 	}
 	
 	@Test
-	public void shouldOverwriteRequiredItemsIfCalledTwice() {
+	void shouldOverwriteRequiredItemsIfCalledTwice() {
 		int[] requiredItemIds = {
 			2,
 			3
@@ -264,7 +264,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldBulkAddSingleDrop() {
+	void shouldBulkAddSingleDrop() {
 		QuestDroplist dropList = QuestDroplist.builder()
 			.addSingleDrop(1, QUEST_ITEM_1)
 			.bulkAddSingleDrop(QUEST_ITEM_1)
@@ -283,7 +283,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldBulkAddSingleDropWithChance() {
+	void shouldBulkAddSingleDropWithChance() {
 		double chance = 10.0;
 		
 		QuestDroplist dropList = QuestDroplist.builder()
@@ -308,7 +308,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldBulkAddSingleDropWithItemIdAndChance() {
+	void shouldBulkAddSingleDropWithItemIdAndChance() {
 		double chance = 10.0;
 		
 		QuestDroplist dropList = QuestDroplist.builder()
@@ -333,7 +333,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldBulkAddSingleDropWithRequiredItems() {
+	void shouldBulkAddSingleDropWithRequiredItems() {
 		int[] requiredItemIds = {
 			10,
 			11,
@@ -357,7 +357,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddGroupedDrop() {
+	void shouldAddGroupedDrop() {
 		QuestDroplist dropList = QuestDroplist.builder()
 			.addSingleDrop(1, QUEST_ITEM_1)
 			.addGroupedDrop(2, 100.0)
@@ -388,7 +388,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddGroupedDropWithAmount() {
+	void shouldAddGroupedDropWithAmount() {
 		long amount = 5;
 		
 		QuestDroplist dropList = QuestDroplist.builder()
@@ -414,7 +414,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddGroupedDropWithChance() {
+	void shouldAddGroupedDropWithChance() {
 		double chance = 80.0;
 		
 		QuestDroplist dropList = QuestDroplist.builder()
@@ -440,7 +440,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddGroupedDropWithItemIdAndChance() {
+	void shouldAddGroupedDropWithItemIdAndChance() {
 		double chance = 80.0;
 		
 		QuestDroplist dropList = QuestDroplist.builder()
@@ -466,7 +466,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddGroupedDropWithItemIdAmountAndChance() {
+	void shouldAddGroupedDropWithItemIdAmountAndChance() {
 		long amount = 5;
 		double chance = 80.0;
 		
@@ -493,7 +493,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddGroupedDropWithAmountAndChance() {
+	void shouldAddGroupedDropWithAmountAndChance() {
 		long amount = 5;
 		double chance = 80.0;
 		
@@ -520,7 +520,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddGroupedDropWithRequiredItems() {
+	void shouldAddGroupedDropWithRequiredItems() {
 		int[] requiredItemIds = {
 			10,
 			11,
@@ -542,7 +542,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddGroupedDropForSingleItem() {
+	void shouldAddGroupedDropForSingleItem() {
 		long amount1 = 3;
 		long amount2 = 5;
 		double chance1 = 20.0;
@@ -577,7 +577,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldAddGroupedDropForSingleItemUsingOrElse() {
+	void shouldAddGroupedDropForSingleItemUsingOrElse() {
 		long amount1 = 3;
 		long amount2 = 5;
 		double chance1 = 20.0;
@@ -611,7 +611,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldGenerateSingleDropItem() {
+	void shouldGenerateSingleDropItem() {
 		IDropItem dropItem = QuestDroplist.singleDropItem(QUEST_ITEM_1);
 		
 		assertThat(dropItem).isInstanceOf(GeneralDropItem.class);
@@ -624,7 +624,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldGenerateSingleDropItemWithChance() {
+	void shouldGenerateSingleDropItemWithChance() {
 		double chance = 75.0;
 		
 		IDropItem dropItem = QuestDroplist.singleDropItem(QUEST_ITEM_1, chance);
@@ -639,7 +639,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldGenerateSingleDropItemWithAmount() {
+	void shouldGenerateSingleDropItemWithAmount() {
 		long amount = 10;
 		
 		IDropItem dropItem = QuestDroplist.singleDropItem(QUEST_ITEM_1, amount);
@@ -654,7 +654,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldGenerateSingleDropItemWithItemIdAndAmount() {
+	void shouldGenerateSingleDropItemWithItemIdAndAmount() {
 		long amount = 10;
 		
 		IDropItem dropItem = QuestDroplist.singleDropItem(QUEST_ITEM_1.getId(), amount);
@@ -669,7 +669,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldGenerateSingleDropItemWithItemIdAndChance() {
+	void shouldGenerateSingleDropItemWithItemIdAndChance() {
 		double chance = 75.0;
 		
 		IDropItem dropItem = QuestDroplist.singleDropItem(QUEST_ITEM_1.getId(), chance);
@@ -684,7 +684,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldGenerateSingleDropItemWithItemIdMinMaxAndChance() {
+	void shouldGenerateSingleDropItemWithItemIdMinMaxAndChance() {
 		int itemId = 2;
 		long min = 1;
 		long max = 5;
@@ -702,7 +702,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldGenerateGroupedDropItem() {
+	void shouldGenerateGroupedDropItem() {
 		double chance = 75.0;
 		IDropItem group = QuestDroplist.groupedDropItem(chance, QUEST_ITEM_2, QUEST_ITEM_3);
 		
@@ -725,29 +725,29 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-    public void shouldAddDropToExistingNpcAndRetrieveInfo() {
-        when(npc.getId()).thenReturn(1);
-
-        QuestDroplist dropList = QuestDroplist.builder()
-                .addSingleDrop(1, QUEST_ITEM_1)
-                .addSingleDrop(1, QUEST_ITEM_2)
-                .build();
-
-        QuestDropInfo dropInfo = dropList.get(1, QUEST_ITEM_1.getId());
-        assertThat(dropInfo).isNotNull();
-        assertThat(dropInfo.item()).isEqualTo(QUEST_ITEM_1);
-
-        QuestDropInfo dropInfo2 = dropList.get(1, QUEST_ITEM_2);
-        assertThat(dropInfo2).isNotNull();
-        assertThat(dropInfo2.item()).isEqualTo(QUEST_ITEM_2);
-
-        QuestDropInfo dropInfo3 = dropList.get(npc, QUEST_ITEM_2);
-        assertThat(dropInfo3).isNotNull();
-        assertThat(dropInfo3.item()).isEqualTo(QUEST_ITEM_2);
-    }
+	void shouldAddDropToExistingNpcAndRetrieveInfo() {
+		when(npc.getId()).thenReturn(1);
+		
+		QuestDroplist dropList = QuestDroplist.builder()
+			.addSingleDrop(1, QUEST_ITEM_1)
+			.addSingleDrop(1, QUEST_ITEM_2)
+			.build();
+		
+		QuestDropInfo dropInfo = dropList.get(1, QUEST_ITEM_1.getId());
+		assertThat(dropInfo).isNotNull();
+		assertThat(dropInfo.item()).isEqualTo(QUEST_ITEM_1);
+		
+		QuestDropInfo dropInfo2 = dropList.get(1, QUEST_ITEM_2);
+		assertThat(dropInfo2).isNotNull();
+		assertThat(dropInfo2.item()).isEqualTo(QUEST_ITEM_2);
+		
+		QuestDropInfo dropInfo3 = dropList.get(npc, QUEST_ITEM_2);
+		assertThat(dropInfo3).isNotNull();
+		assertThat(dropInfo3.item()).isEqualTo(QUEST_ITEM_2);
+	}
 	
 	@Test
-	public void shouldReturnNullForInvalidKeys() {
+	void shouldReturnNullForInvalidKeys() {
 		QuestDroplist dropList = QuestDroplist.builder()
 			.addSingleDrop(1, QUEST_ITEM_1)
 			.addSingleDrop(1, QUEST_ITEM_2)
@@ -764,7 +764,7 @@ public class QuestDroplistTest {
 	}
 	
 	@Test
-	public void shouldGetAllItemIds() {
+	void shouldGetAllItemIds() {
 		QuestDroplist dropList = QuestDroplist.builder()
 			.addSingleDrop(1, QUEST_ITEM_1)
 			.addGroupedDrop(2, 100.0)

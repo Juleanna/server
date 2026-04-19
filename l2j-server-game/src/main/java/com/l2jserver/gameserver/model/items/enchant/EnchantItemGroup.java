@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,8 +20,9 @@ package com.l2jserver.gameserver.model.items.enchant;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.model.holders.RangeChanceHolder;
 
@@ -29,7 +30,8 @@ import com.l2jserver.gameserver.model.holders.RangeChanceHolder;
  * @author UnAfraid
  */
 public final class EnchantItemGroup {
-	private static final Logger _log = Logger.getLogger(EnchantItemGroup.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(EnchantItemGroup.class);
+	
 	private final List<RangeChanceHolder> _chances = new ArrayList<>();
 	private final String _name;
 	
@@ -62,10 +64,10 @@ public final class EnchantItemGroup {
 					return holder.getChance();
 				}
 			}
-			_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't match proper chance for item group: " + _name, new IllegalStateException());
-			return _chances.get(_chances.size() - 1).getChance();
+			LOG.warn("Couldn't match proper chance for item group: {}", _name, new IllegalStateException());
+			return _chances.getLast().getChance();
 		}
-		_log.log(Level.WARNING, getClass().getSimpleName() + ": item group: " + _name + " doesn't have any chances!");
+		LOG.warn("Item group: {} doesn't have any chances!", _name);
 		return -1;
 	}
 }

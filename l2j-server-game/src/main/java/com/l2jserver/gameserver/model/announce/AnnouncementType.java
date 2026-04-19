@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,8 +18,8 @@
  */
 package com.l2jserver.gameserver.model.announce;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author UnAfraid
@@ -31,7 +31,7 @@ public enum AnnouncementType {
 	AUTO_NORMAL,
 	AUTO_CRITICAL;
 	
-	private static final Logger _log = Logger.getLogger(AnnouncementType.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(AnnouncementType.class);
 	
 	public static AnnouncementType findById(int id) {
 		for (AnnouncementType type : values()) {
@@ -39,7 +39,7 @@ public enum AnnouncementType {
 				return type;
 			}
 		}
-		_log.log(Level.WARNING, AnnouncementType.class.getSimpleName() + ": Nonexistent id specified: " + id + "!", new IllegalStateException());
+		LOG.warn("Nonexistent id specified: {}!", id, new IllegalStateException());
 		return NORMAL;
 	}
 	
@@ -49,7 +49,7 @@ public enum AnnouncementType {
 				return type;
 			}
 		}
-		_log.log(Level.WARNING, AnnouncementType.class.getSimpleName() + ": Nonexistent name specified: " + name + "!", new IllegalStateException());
+		LOG.warn("Nonexistent name specified: {}!", name, new IllegalStateException());
 		return NORMAL;
 	}
 }

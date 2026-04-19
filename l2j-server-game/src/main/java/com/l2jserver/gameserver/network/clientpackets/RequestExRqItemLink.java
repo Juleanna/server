@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.network.serverpackets.ExRpItemLink;
@@ -28,6 +31,8 @@ import com.l2jserver.gameserver.network.serverpackets.ExRpItemLink;
  * @author KenM
  */
 public class RequestExRqItemLink extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestExRqItemLink.class);
+	
 	private static final String _C__D0_1E_REQUESTEXRQITEMLINK = "[C] D0:1E RequestExRqItemLink";
 	private int _objectId;
 	
@@ -51,7 +56,7 @@ public class RequestExRqItemLink extends L2GameClientPacket {
 		if (item.isPublished()) {
 			client.sendPacket(new ExRpItemLink(item));
 		} else if (general().debug()) {
-			_log.info(getClient() + " requested item link for item which wasn't published! ID:" + _objectId);
+			LOG.info("{} requested item link for item which wasn't published! ID: {}", getClient(), _objectId);
 		}
 	}
 	

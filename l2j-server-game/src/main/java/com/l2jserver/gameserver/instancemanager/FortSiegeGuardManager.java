@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,8 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.model.L2Spawn;
@@ -31,7 +32,7 @@ import com.l2jserver.gameserver.model.entity.Fort;
 
 public final class FortSiegeGuardManager {
 	
-	private static final Logger _log = Logger.getLogger(FortSiegeGuardManager.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(FortSiegeGuardManager.class);
 	
 	private final Fort _fort;
 	
@@ -55,7 +56,7 @@ public final class FortSiegeGuardManager {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Error spawning siege guards for fort " + getFort().getName() + ":" + e.getMessage(), e);
+			LOG.warn("Error spawning siege guards for fort {}: {}", getFort().getName(), e.getMessage(), e);
 		}
 	}
 	
@@ -74,7 +75,7 @@ public final class FortSiegeGuardManager {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Error unspawning siege guards for fort " + getFort().getName() + ":" + e.getMessage(), e);
+			LOG.warn("Error despawning siege guards for fort {}: {}", getFort().getName(), e.getMessage(), e);
 		}
 	}
 	
@@ -101,7 +102,7 @@ public final class FortSiegeGuardManager {
 				_siegeGuards.put(fortId, siegeGuardSpawns);
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Error loading siege guard for fort " + getFort().getName() + ": " + e.getMessage(), e);
+			LOG.warn("Error loading siege guard for fort {}: {}", getFort().getName(), e.getMessage(), e);
 		}
 	}
 	

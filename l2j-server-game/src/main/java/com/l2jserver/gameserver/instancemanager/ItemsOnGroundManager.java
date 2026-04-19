@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,8 +22,9 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ItemsAutoDestroy;
@@ -37,11 +38,11 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
  */
 public final class ItemsOnGroundManager implements Runnable {
 	
-	private static final Logger _log = Logger.getLogger(ItemsOnGroundManager.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(ItemsOnGroundManager.class);
 	
 	private final List<L2ItemInstance> _items = new CopyOnWriteArrayList<>();
 	
-	protected ItemsOnGroundManager() {
+	private ItemsOnGroundManager() {
 		if (general().getSaveDroppedItemInterval() > 0) {
 			ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(this, general().getSaveDroppedItemInterval(), general().getSaveDroppedItemInterval());
 		}
@@ -74,7 +75,7 @@ public final class ItemsOnGroundManager implements Runnable {
 				ps.setLong(1, System.currentTimeMillis());
 				ps.execute();
 			} catch (Exception e) {
-				_log.log(Level.SEVERE, getClass().getSimpleName() + ": Error while updating table ItemsOnGround " + e.getMessage(), e);
+				LOG.error("Error while updating table ItemsOnGround: {}", e.getMessage(), e);
 			}
 		}
 		
@@ -115,9 +116,9 @@ public final class ItemsOnGroundManager implements Runnable {
 					}
 				}
 			}
-			_log.info(getClass().getSimpleName() + ": Loaded " + count + " items.");
+			LOG.info("Loaded {} items.", count);
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, getClass().getSimpleName() + ": Error while loading ItemsOnGround " + e.getMessage(), e);
+			LOG.error("Error while loading ItemsOnGround: {}", e.getMessage(), e);
 		}
 		
 		if (general().emptyDroppedItemTableAfterLoad()) {
@@ -146,12 +147,12 @@ public final class ItemsOnGroundManager implements Runnable {
 		_items.clear();
 	}
 	
-	public void emptyTable() {
+	private void emptyTable() {
 		try (var con = ConnectionFactory.getInstance().getConnection();
 			var s = con.createStatement()) {
 			s.executeUpdate("DELETE FROM itemsonground");
 		} catch (Exception e1) {
-			_log.log(Level.SEVERE, getClass().getSimpleName() + ": Error while cleaning table ItemsOnGround " + e1.getMessage(), e1);
+			LOG.error("Error while cleaning table ItemsOnGround: {}", e1.getMessage(), e1);
 		}
 	}
 	
@@ -191,11 +192,11 @@ public final class ItemsOnGroundManager implements Runnable {
 					ps.execute();
 					ps.clearParameters();
 				} catch (Exception e) {
-					_log.log(Level.SEVERE, getClass().getSimpleName() + ": Error while inserting into table ItemsOnGround: " + e.getMessage(), e);
+					LOG.error("Error while inserting into table ItemsOnGround: {}", e.getMessage(), e);
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, getClass().getSimpleName() + ": SQL error while storing items on ground: " + e.getMessage(), e);
+			LOG.error("SQL error while storing items on ground: {}", e.getMessage(), e);
 		}
 	}
 	

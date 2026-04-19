@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -292,6 +292,7 @@ public abstract class IdFactory {
 			}
 			LOG.info("Cleaned {} expired timestamps from database.", cleanCount);
 		} catch (Exception e) {
+			LOG.warn("Could not clean up expired timestamps!", e);
 		}
 	}
 	

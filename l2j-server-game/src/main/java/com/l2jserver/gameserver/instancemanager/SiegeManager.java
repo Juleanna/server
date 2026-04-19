@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -46,20 +46,6 @@ public final class SiegeManager {
 	private final Map<Integer, List<TowerSpawn>> _controlTowers = new HashMap<>();
 	
 	private final Map<Integer, List<TowerSpawn>> _flameTowers = new HashMap<>();
-	
-	private final int _attackerMaxClans = siege().getAttackerMaxClans();
-	
-	private final int _attackerRespawnDelay = siege().getAttackerRespawn();
-	
-	private final int _defenderMaxClans = siege().getDefenderMaxClans();
-	
-	private final int _flagMaxCount = siege().getMaxFlags();
-	
-	private final int _siegeClanMinLevel = siege().getClanMinLevel();
-	
-	private final int _siegeLength = siege().getSiegeLength();
-	
-	private final int _bloodAllianceReward = siege().getBloodAllianceReward();
 	
 	protected SiegeManager() {
 		load();
@@ -188,19 +174,19 @@ public final class SiegeManager {
 	}
 	
 	public int getAttackerMaxClans() {
-		return _attackerMaxClans;
+		return siege().getAttackerMaxClans();
 	}
 	
 	public int getAttackerRespawnDelay() {
-		return _attackerRespawnDelay;
+		return siege().getAttackerRespawn();
 	}
 	
 	public int getDefenderMaxClans() {
-		return _defenderMaxClans;
+		return siege().getDefenderMaxClans();
 	}
 	
 	public int getFlagMaxCount() {
-		return _flagMaxCount;
+		return siege().getMaxFlags();
 	}
 	
 	public Siege getSiege(ILocational loc) {
@@ -221,15 +207,15 @@ public final class SiegeManager {
 	}
 	
 	public int getSiegeClanMinLevel() {
-		return _siegeClanMinLevel;
+		return siege().getClanMinLevel();
 	}
 	
 	public int getSiegeLength() {
-		return _siegeLength;
+		return siege().getSiegeLength();
 	}
 	
 	public int getBloodAllianceReward() {
-		return _bloodAllianceReward;
+		return siege().getBloodAllianceReward();
 	}
 	
 	public List<Siege> getSieges() {

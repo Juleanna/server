@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -54,8 +54,8 @@ public final class L2AuctioneerInstance extends L2Npc {
 	
 	private final Map<Integer, Auction> _pendingAuctions = new ConcurrentHashMap<>();
 	
-	public L2AuctioneerInstance(L2NpcTemplate template) {
-		super(template);
+	public L2AuctioneerInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2AuctioneerInstance);
 	}
 	

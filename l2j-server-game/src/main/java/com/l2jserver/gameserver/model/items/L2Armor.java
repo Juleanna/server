@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,18 +18,22 @@
  */
 package com.l2jserver.gameserver.model.items;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.items.type.ArmorType;
 import com.l2jserver.gameserver.model.items.type.ItemType1;
 import com.l2jserver.gameserver.model.items.type.ItemType2;
 import com.l2jserver.gameserver.model.skills.Skill;
-import com.l2jserver.gameserver.util.StringUtil;
 
 /**
  * This class is dedicated to the management of armors.
  */
 public final class L2Armor extends L2Item {
+	private static final Logger LOG = LoggerFactory.getLogger(L2Armor.class);
+	
 	/**
 	 * Skill that activates when armor is enchanted +4.
 	 */
@@ -69,7 +73,7 @@ public final class L2Armor extends L2Item {
 					level = Integer.parseInt(info[1]);
 				} catch (Exception nfe) {
 					// Incorrect syntax, don't add new skill
-					_log.info(StringUtil.concat("> Couldn't parse ", skill, " in armor enchant skills! item ", toString()));
+					LOG.warn("Couldn't parse {} in armor enchant skills! item {}!", skill, this);
 				}
 				if ((id > 0) && (level > 0)) {
 					_enchant4Skill = new SkillHolder(id, level);

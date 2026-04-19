@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -37,7 +37,7 @@ public final class PunishmentHolder {
 	public void addPunishment(PunishmentTask task) {
 		if (!task.isExpired()) {
 			final String key = String.valueOf(task.getKey());
-			_holder.computeIfAbsent(key, k -> new ConcurrentHashMap<>()).put(task.getType(), task);
+			_holder.computeIfAbsent(key, _ -> new ConcurrentHashMap<>()).put(task.getType(), task);
 		}
 	}
 	

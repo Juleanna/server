@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.enums.HtmlActionScope;
@@ -29,6 +30,8 @@ import com.l2jserver.gameserver.util.Util;
  * @author HorridoJoho
  */
 public abstract class AbstractHtmlPacket extends L2GameServerPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractHtmlPacket.class);
+	
 	public static final char VAR_PARAM_START_CHAR = '$';
 	
 	private final int _npcObjId;
@@ -67,7 +70,7 @@ public abstract class AbstractHtmlPacket extends L2GameServerPacket {
 	
 	public final void setHtml(String html) {
 		if (html.length() > 17200) {
-			_log.log(Level.WARNING, "Html is too long! this will crash the client!", new Throwable());
+			LOG.warn("Html is too long! this will crash the client!", new Throwable());
 			_html = html.substring(0, 17200);
 		}
 		
@@ -82,7 +85,7 @@ public abstract class AbstractHtmlPacket extends L2GameServerPacket {
 		String content = HtmCache.getInstance().getHtm(prefix, path);
 		if (content == null) {
 			setHtml("<html><body>My Text is missing:<br>" + path + "</body></html>");
-			_log.warning("missing html page " + path);
+			LOG.warn("Missing html page {}", path);
 			return false;
 		}
 		

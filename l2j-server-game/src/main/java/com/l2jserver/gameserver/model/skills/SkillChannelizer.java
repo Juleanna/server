@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,7 +21,9 @@ package com.l2jserver.gameserver.model.skills;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.GeoData;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -39,7 +41,7 @@ import com.l2jserver.gameserver.util.Util;
  * @author UnAfraid
  */
 public class SkillChannelizer implements Runnable {
-	private static final Logger _log = Logger.getLogger(SkillChannelizer.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(SkillChannelizer.class);
 	
 	private final L2Character _channelizer;
 	private List<L2Character> _channelized;
@@ -67,7 +69,7 @@ public class SkillChannelizer implements Runnable {
 	public void startChanneling(Skill skill) {
 		// Verify for same status.
 		if (isChanneling()) {
-			_log.warning("Character: " + _channelizer + " is attempting to channel skill but he already does!");
+			LOG.warn("Character: {} is attempting to channel skill but he already does!", _channelizer);
 			return;
 		}
 		
@@ -75,7 +77,7 @@ public class SkillChannelizer implements Runnable {
 		if (skill.getAffectScope() == AffectScope.SINGLE) {
 			final var creatures = skill.getTargets(_channelizer);
 			if (!creatures.isEmpty()) {
-				final var creature = creatures.get(0); // Get the first target to lock it on
+				final var creature = creatures.getFirst(); // Get the first target to lock it on
 				_initialChannelized = ((L2Character) creature);
 				_initialChannelized.getSkillChannelized().addChannelizer(skill.getChannelingSkillId(), getChannelizer());
 			}
@@ -89,7 +91,7 @@ public class SkillChannelizer implements Runnable {
 	public void stopChanneling() {
 		// Verify for same status.
 		if (!isChanneling()) {
-			_log.warning("Character: " + _channelizer + " is attempting to stop channel skill but he does not!");
+			LOG.warn("Character: {} is attempting to stop channel skill but he does not!", _channelizer);
 			return;
 		}
 		
@@ -147,7 +149,7 @@ public class SkillChannelizer implements Runnable {
 			if (_skill.getChannelingSkillId() > 0) {
 				final Skill baseSkill = SkillData.getInstance().getSkill(_skill.getChannelingSkillId(), 1);
 				if (baseSkill == null) {
-					_log.warning(getClass().getSimpleName() + ": skill " + _skill + " couldn't find effect id skill: " + _skill.getChannelingSkillId() + " !");
+					LOG.warn("Skill {} couldn't find effect id skill: {} !", _skill, _skill.getChannelingSkillId());
 					_channelizer.abortCast();
 					return;
 				}
@@ -194,7 +196,7 @@ public class SkillChannelizer implements Runnable {
 						if ((info == null) || (info.getSkill().getLevel() < skillLevel)) {
 							final Skill skill = SkillData.getInstance().getSkill(_skill.getChannelingSkillId(), skillLevel);
 							if (skill == null) {
-								_log.warning(getClass().getSimpleName() + ": Non existent channeling skill requested: " + _skill);
+								LOG.warn("Non existent channeling skill requested: {}", _skill);
 								_channelizer.abortCast();
 								return;
 							}
@@ -221,7 +223,7 @@ public class SkillChannelizer implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			_log.warning("Error while channelizing skill: " + _skill + " channelizer: " + _channelizer + " channelized: " + _channelized + "; " + e.getMessage());
+			LOG.warn("Error while channelizing skill: {} channelizer: {} channelized: {}; {}", _skill, _channelizer, _channelized, e.getMessage(), e);
 		}
 	}
 	

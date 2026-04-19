@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -26,8 +26,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -61,8 +62,7 @@ import com.l2jserver.gameserver.network.serverpackets.PledgeShowInfoUpdate;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 public final class Castle extends AbstractResidence {
-	
-	private static final Logger _log = Logger.getLogger(Castle.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(Castle.class);
 	
 	private final List<L2DoorInstance> _doors = new ArrayList<>();
 	private int _ownerId = 0;
@@ -72,6 +72,8 @@ public final class Castle extends AbstractResidence {
 	private Calendar _siegeTimeRegistrationEndDate; // last siege end date + 1 day
 	private int _taxPercent = 0;
 	private double _taxRate = 0;
+	private int _nextTaxPercent = 0;
+	private long _nextTaxTime = 0;
 	private long _treasury = 0;
 	private boolean _showNpcCrest = false;
 	private L2SiegeZone _zone = null;
@@ -82,11 +84,18 @@ public final class Castle extends AbstractResidence {
 	private int _ticketBuyCount = 0;
 	
 	/** Castle Functions */
-	public static final int FUNC_TELEPORT = 1;
-	public static final int FUNC_RESTORE_HP = 2;
-	public static final int FUNC_RESTORE_MP = 3;
+	public static final int FUNC_RESTORE_HP = 1;
+	public static final int FUNC_RESTORE_MP = 2;
+	public static final int FUNC_RESTORE_CP = 3;
 	public static final int FUNC_RESTORE_EXP = 4;
-	public static final int FUNC_SUPPORT = 5;
+	public static final int FUNC_TELEPORT = 5;
+	public static final int FUNC_BROADCAST = 6;
+	public static final int FUNC_DECO_CURTAINS = 7;
+	public static final int FUNC_DECO_HANGING = 8;
+	public static final int FUNC_SUPPORT = 9;
+	public static final int FUNC_DECO_OUTERFLAG = 10;
+	public static final int FUNC_DECO_FRONTPLATEFORM = 11;
+	public static final int FUNC_ITEM_CREATE = 12;
 	
 	public class CastleFunction {
 		private final int _type;
@@ -179,7 +188,7 @@ public final class Castle extends AbstractResidence {
 						removeFunction(getType());
 					}
 				} catch (Exception e) {
-					_log.log(Level.SEVERE, "", e);
+					LOG.error(e.getMessage(), e);
 				}
 			}
 		}
@@ -195,7 +204,7 @@ public final class Castle extends AbstractResidence {
 				ps.setLong(6, getEndTime());
 				ps.execute();
 			} catch (Exception e) {
-				_log.log(Level.SEVERE, "Exception: Castle.updateFunctions(int type, int lvl, int lease, long rate, long time, boolean addNew): " + e.getMessage(), e);
+				LOG.error("Exception: Castle.updateFunctions(int type, int lvl, int lease, long rate, long time, boolean addNew): {}", e.getMessage(), e);
 			}
 		}
 	}
@@ -233,10 +242,8 @@ public final class Castle extends AbstractResidence {
 		getSiege().announceToPlayer(msg, true);
 	}
 	
-	// This method add to the treasury
 	/**
 	 * Add amount to castle instance's treasury (warehouse).
-	 * @param amount
 	 */
 	public void addToTreasury(long amount) {
 		// check if owned
@@ -272,8 +279,6 @@ public final class Castle extends AbstractResidence {
 	
 	/**
 	 * Add amount to castle instance's treasury (warehouse), no tax paying.
-	 * @param amount
-	 * @return
 	 */
 	public boolean addToTreasuryNoTax(long amount) {
 		if (getOwnerId() <= 0) {
@@ -300,7 +305,7 @@ public final class Castle extends AbstractResidence {
 			ps.setInt(2, getResidenceId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 		return true;
 	}
@@ -314,10 +319,6 @@ public final class Castle extends AbstractResidence {
 	
 	/**
 	 * Return true if object is inside the zone
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
 	 */
 	public boolean checkIfInZone(int x, int y, int z) {
 		return getZone().isInsideZone(x, y, z);
@@ -358,8 +359,6 @@ public final class Castle extends AbstractResidence {
 	
 	/**
 	 * Get the objects distance to this castle
-	 * @param obj
-	 * @return
 	 */
 	public double getDistance(L2Object obj) {
 		return getZone().getDistanceToZone(obj);
@@ -418,7 +417,7 @@ public final class Castle extends AbstractResidence {
 						}
 					}
 				} catch (Exception e) {
-					_log.log(Level.WARNING, "Exception in setOwner: " + e.getMessage(), e);
+					LOG.warn("Exception in setOwner: {}", e.getMessage(), e);
 				}
 				oldOwner.setCastleId(0); // Unset has castle flag for old owner
 				for (L2PcInstance member : oldOwner.getOnlineMembers(0)) {
@@ -437,7 +436,7 @@ public final class Castle extends AbstractResidence {
 		}
 		
 		if (getSiege().isInProgress()) {
-			getSiege().midVictory(); // Mid victory phase of siege
+			getSiege().midVictory(); // Mid-victory phase of siege
 		}
 		
 		TerritoryWarManager.getInstance().getTerritory(getResidenceId()).setOwnerClan(clan);
@@ -485,7 +484,20 @@ public final class Castle extends AbstractResidence {
 			ps.setInt(2, getResidenceId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
+		}
+	}
+	
+	public void setNextTaxPercent(int taxPercent) {
+		_nextTaxPercent = taxPercent;
+		
+		try (var con = ConnectionFactory.getInstance().getConnection();
+			var ps = con.prepareStatement("UPDATE castle SET next_tax = ? WHERE id = ?")) {
+			ps.setInt(1, taxPercent);
+			ps.setInt(2, getResidenceId());
+			ps.execute();
+		} catch (Exception e) {
+			LOG.warn(e.getMessage(), e);
 		}
 	}
 	
@@ -523,7 +535,6 @@ public final class Castle extends AbstractResidence {
 			try (var rs = ps1.executeQuery()) {
 				while (rs.next()) {
 					setName(rs.getString("name"));
-					// _OwnerId = rs.getInt("ownerId");
 					
 					_siegeDate = Calendar.getInstance();
 					_siegeDate.setTimeInMillis(rs.getLong("siegeDate"));
@@ -532,6 +543,8 @@ public final class Castle extends AbstractResidence {
 					_isTimeRegistrationOver = rs.getBoolean("regTimeOver");
 					
 					_taxPercent = rs.getInt("taxPercent");
+					_nextTaxPercent = rs.getInt("next_tax");
+					_nextTaxTime = rs.getLong("next_tax_time");
 					_treasury = rs.getLong("treasury");
 					
 					_showNpcCrest = rs.getBoolean("showNpcCrest");
@@ -548,7 +561,7 @@ public final class Castle extends AbstractResidence {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: loadCastleData(): " + e.getMessage(), e);
+			LOG.warn("Exception: loadCastleData(): {}", e.getMessage(), e);
 		}
 	}
 	
@@ -563,13 +576,12 @@ public final class Castle extends AbstractResidence {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: Castle.loadFunctions(): " + e.getMessage(), e);
+			LOG.error("Exception: Castle.loadFunctions(): {}", e.getMessage(), e);
 		}
 	}
 	
 	/**
 	 * Remove function In List and in DB
-	 * @param functionType
 	 */
 	public void removeFunction(int functionType) {
 		_function.remove(functionType);
@@ -579,7 +591,7 @@ public final class Castle extends AbstractResidence {
 			ps.setInt(2, functionType);
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.SEVERE, "Exception: Castle.removeFunctions(int functionType): " + e.getMessage(), e);
+			LOG.error("Exception: Castle.removeFunctions(int functionType): {}", e.getMessage(), e);
 		}
 	}
 	
@@ -636,7 +648,7 @@ public final class Castle extends AbstractResidence {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: loadCastleDoorUpgrade(): " + e.getMessage(), e);
+			LOG.warn("Exception: loadCastleDoorUpgrade(): {}", e.getMessage(), e);
 		}
 	}
 	
@@ -651,7 +663,7 @@ public final class Castle extends AbstractResidence {
 			ps.setInt(1, getResidenceId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: removeDoorUpgrade(): " + e.getMessage(), e);
+			LOG.warn("Exception: removeDoorUpgrade(): {}", e.getMessage(), e);
 		}
 	}
 	
@@ -672,7 +684,7 @@ public final class Castle extends AbstractResidence {
 				ps.setInt(3, getResidenceId());
 				ps.execute();
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Exception: setDoorUpgrade(int doorId, int ratio, int castleId): " + e.getMessage(), e);
+				LOG.warn("Exception: setDoorUpgrade(int doorId, int ratio, int castleId): {}", e.getMessage(), e);
 			}
 		}
 	}
@@ -705,7 +717,7 @@ public final class Castle extends AbstractResidence {
 				clan.broadcastToOnlineMembers(Music.SIEGE_VICTORY.getPacket());
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: updateOwnerInDB(L2Clan clan): " + e.getMessage(), e);
+			LOG.warn("Exception: updateOwnerInDB(L2Clan clan): {}", e.getMessage(), e);
 		}
 	}
 	
@@ -768,6 +780,14 @@ public final class Castle extends AbstractResidence {
 		return _taxRate;
 	}
 	
+	public int getNextTaxPercent() {
+		return _nextTaxPercent;
+	}
+	
+	public long getNextTaxTime() {
+		return _nextTaxTime;
+	}
+	
 	public long getTreasury() {
 		return _treasury;
 	}
@@ -810,7 +830,7 @@ public final class Castle extends AbstractResidence {
 			ps.setInt(2, getResidenceId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.info("Error saving showNpcCrest for castle " + getName() + ": " + e.getMessage());
+			LOG.info("Error saving showNpcCrest for castle " + getName() + ": " + e.getMessage());
 		}
 	}
 	
@@ -825,7 +845,7 @@ public final class Castle extends AbstractResidence {
 					if (sk != null) {
 						player.addSkill(sk, false);
 					} else {
-						_log.warning("Trying to add a null skill for Territory Ward Id: " + wardId + ", skill Id: " + s.getSkillId() + " level: " + s.getSkillLevel() + "!");
+						LOG.warn("Trying to add a null skill for Territory Ward Id: {}, skill Id: {} level: {}!", wardId, s.getSkillId(), s.getSkillLevel());
 					}
 				}
 			}
@@ -843,7 +863,7 @@ public final class Castle extends AbstractResidence {
 					if (sk != null) {
 						player.removeSkill(sk, false, true);
 					} else {
-						_log.warning("Trying to remove a null skill for Territory Ward Id: " + wardId + ", skill Id: " + s.getSkillId() + " level: " + s.getSkillLevel() + "!");
+						LOG.warn("Trying to remove a null skill for Territory Ward Id: {}, skill Id: {} level: {}!", wardId, s.getSkillId(), s.getSkillLevel());
 					}
 				}
 			}
@@ -853,7 +873,6 @@ public final class Castle extends AbstractResidence {
 	
 	/**
 	 * Register Artefact to castle
-	 * @param artefact
 	 */
 	public void registerArtefact(L2ArtefactInstance artefact) {
 		_artefacts.add(artefact);
@@ -884,7 +903,7 @@ public final class Castle extends AbstractResidence {
 			ps.setInt(2, getResidenceId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 	}
 	
@@ -902,7 +921,7 @@ public final class Castle extends AbstractResidence {
 				ps.setInt(3, level);
 				ps.execute();
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Exception: setTrapUpgradeLevel(int towerIndex, int level, int castleId): " + e.getMessage(), e);
+				LOG.warn("Exception: setTrapUpgradeLevel(int towerIndex, int level, int castleId): {}", e.getMessage(), e);
 			}
 		}
 		final TowerSpawn spawn = SiegeManager.getInstance().getFlameTowers(getResidenceId()).get(towerIndex);
@@ -921,7 +940,7 @@ public final class Castle extends AbstractResidence {
 			ps.setInt(1, getResidenceId());
 			ps.execute();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception: removeDoorUpgrade(): " + e.getMessage(), e);
+			LOG.warn("Exception: removeDoorUpgrade(): {}", e.getMessage(), e);
 		}
 	}
 	

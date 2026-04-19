@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -31,7 +31,6 @@ import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.instance.L2DefenderInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.entity.Castle;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 
@@ -171,7 +170,8 @@ public final class MercTicketManager {
 						if ((castle != null) && !(castle.getSiege().isInProgress())) {
 							itemId = ITEM_IDS[i];
 							// create the ticket in the gameworld
-							L2ItemInstance dropticket = new L2ItemInstance(IdFactory.getInstance().getNextId(), itemId);
+							final var objectId = IdFactory.getInstance().getNextId();
+							final var dropticket = new L2ItemInstance(objectId, itemId);
 							dropticket.setItemLocation(ItemLocation.VOID);
 							dropticket.dropMe(null, x, y, z);
 							dropticket.setDropTime(0); // avoids it from being removed by the auto item destroyer
@@ -280,15 +280,16 @@ public final class MercTicketManager {
 		}
 		
 		for (int i = 0; i < ITEM_IDS.length; i++) {
-			if (ITEM_IDS[i] == itemId) // Find the index of the item used
-			{
+			// Find the index of the item used
+			if (ITEM_IDS[i] == itemId) {
 				spawnMercenary(NPC_IDS[i], x, y, z, 3000);
 				
 				// Hire merc for this castle. NpcId is at the same index as the item used.
 				castle.getSiege().getSiegeGuardManager().hireMerc(x, y, z, heading, NPC_IDS[i]);
 				
 				// create the ticket in the gameworld
-				L2ItemInstance dropticket = new L2ItemInstance(IdFactory.getInstance().getNextId(), itemId);
+				final var objectId = IdFactory.getInstance().getNextId();
+				final var dropticket = new L2ItemInstance(objectId, itemId);
 				dropticket.setItemLocation(ItemLocation.VOID);
 				dropticket.dropMe(null, x, y, z);
 				dropticket.setDropTime(0); // avoids it from beeing removed by the auto item destroyer
@@ -303,9 +304,10 @@ public final class MercTicketManager {
 	}
 	
 	private void spawnMercenary(int npcId, int x, int y, int z, int despawnDelay) {
-		L2NpcTemplate template = NpcData.getInstance().getTemplate(npcId);
+		final var template = NpcData.getInstance().getTemplate(npcId);
 		if (template != null) {
-			final L2DefenderInstance npc = new L2DefenderInstance(template);
+			final var objectId = IdFactory.getInstance().getNextId();
+			final var npc = new L2DefenderInstance(objectId, template);
 			npc.setCurrentHpMp(npc.getMaxHp(), npc.getMaxMp());
 			npc.setDecayed(false);
 			npc.spawnMe(x, y, (z + 20));

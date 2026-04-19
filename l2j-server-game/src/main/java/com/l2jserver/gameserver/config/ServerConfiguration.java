@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -42,35 +42,37 @@ import com.l2jserver.gameserver.idfactory.IdFactoryType;
 @Sources({
 	"file:${L2J_HOME}/custom/game/config/server.properties",
 	"file:./config/server.properties",
-	"classpath:config/server.properties"
+	"classpath:config/server.properties",
+	"system:properties",
+	"system:env"
 })
 @LoadPolicy(MERGE)
 @HotReload(value = 20, unit = MINUTES, type = ASYNC)
 public interface ServerConfiguration extends Mutable, Reloadable {
 	
 	@Key("EnableUPnP")
-	Boolean enableUPnP();
+	boolean enableUPnP();
 	
 	@Key("LoginHost")
 	String getLoginHost();
 	
 	@Key("LoginPort")
-	Integer getLoginPort();
+	int getLoginPort();
 	
 	@Key("Host")
 	String getHost();
 	
 	@Key("Port")
-	Integer getPort();
+	int getPort();
 	
 	@Key("RequestServerId")
-	Integer getRequestServerId();
+	int getRequestServerId();
 	
 	@Key("AcceptAlternateId")
-	Boolean acceptAlternateId();
+	boolean acceptAlternateId();
 	
 	@Key("ReserveHostOnLogin")
-	Boolean reserveHostOnLogin();
+	boolean reserveHostOnLogin();
 	
 	@Key("DatapackRoot")
 	@ConverterClass(FileConverter.class)
@@ -80,7 +82,7 @@ public interface ServerConfiguration extends Mutable, Reloadable {
 	File getScriptRoot();
 	
 	@Key("MaxOnlineUsers")
-	Integer getMaxOnlineUsers();
+	int getMaxOnlineUsers();
 	
 	@Key("AllowedProtocolRevisions")
 	Set<Integer> getAllowedProtocolRevisions();
@@ -89,5 +91,8 @@ public interface ServerConfiguration extends Mutable, Reloadable {
 	IdFactoryType getIdFactory();
 	
 	@Key("BadIdChecking")
-	Boolean badIdChecking();
+	boolean badIdChecking();
+	
+	@Key("L2J_HOME")
+	String getL2jHome();
 }

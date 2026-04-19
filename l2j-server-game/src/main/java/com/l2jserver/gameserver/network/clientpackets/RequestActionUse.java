@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,6 +21,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.ai.CtrlEvent;
@@ -63,6 +66,8 @@ import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
  * @author Zoey76
  */
 public final class RequestActionUse extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestActionUse.class);
+	
 	private static final String _C__56_REQUESTACTIONUSE = "[C] 56 RequestActionUse";
 	
 	private static final int SIN_EATER_ID = 12564;
@@ -93,7 +98,7 @@ public final class RequestActionUse extends L2GameClientPacket {
 		}
 		
 		if (general().debug()) {
-			_log.info(getType() + ": " + activeChar + " requested action use ID: " + _actionId + " Ctrl pressed:" + _ctrlPressed + " Shift pressed:" + _shiftPressed);
+			LOG.info("{}: {} requested action use ID: {} Ctrl pressed:{} Shift pressed:{}", getType(), activeChar, _actionId, _ctrlPressed, _shiftPressed);
 		}
 		
 		// Don't do anything if player is dead or confused
@@ -118,7 +123,7 @@ public final class RequestActionUse extends L2GameClientPacket {
 			int[] allowedActions = activeChar.isTransformed() ? ExBasicActionList.ACTIONS_ON_TRANSFORM : ExBasicActionList.DEFAULT_ACTION_LIST;
 			if (!(Arrays.binarySearch(allowedActions, _actionId) >= 0)) {
 				sendPacket(ActionFailed.STATIC_PACKET);
-				_log.warning("Player " + activeChar + " used action which he does not have! Id = " + _actionId + " transform: " + activeChar.getTransformation());
+				LOG.warn("Player {} used action which he does not have! Id = {} transform: {}", activeChar, _actionId, activeChar.getTransformation());
 				return;
 			}
 		}
@@ -701,7 +706,7 @@ public final class RequestActionUse extends L2GameClientPacket {
 				tryBroadcastSocial(15);
 				break;
 			default:
-				_log.warning(activeChar.getName() + ": unhandled action type " + _actionId);
+				LOG.warn("{}: unhandled action type {}", activeChar.getName(), _actionId);
 				break;
 		}
 	}
@@ -798,13 +803,13 @@ public final class RequestActionUse extends L2GameClientPacket {
 		
 		final SkillHolder skillHolder = summon.getTemplate().getParameters().getSkillHolder(skillName);
 		if (skillHolder == null) {
-			_log.warning(summon + " requested missing skill " + skillName + "!");
+			LOG.warn("{} requested missing skill {}!", summon, skillName);
 			return;
 		}
 		
 		final Skill skill = skillHolder.getSkill();
 		if (skill == null) {
-			_log.warning(summon + " requested missing skill " + skillHolder + "!");
+			LOG.warn("{} requested missing skill {}!", summon, skillHolder);
 			return;
 		}
 		

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -19,16 +19,22 @@
 
 package com.l2jserver.gameserver.network.clientpackets;
 
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import static com.l2jserver.gameserver.model.actor.L2Npc.INTERACTION_DISTANCE;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.gameserver.util.Util;
 
 /**
+ * RequestLinkHtml client packet implementation.
  * @author zabbix
  * @author HorridoJoho
  */
 public final class RequestLinkHtml extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestLinkHtml.class);
+	
 	private static final String _C__22_REQUESTLINKHTML = "[C] 22 RequestLinkHtml";
 	private String _link;
 	
@@ -39,35 +45,36 @@ public final class RequestLinkHtml extends L2GameClientPacket {
 	
 	@Override
 	public void runImpl() {
-		L2PcInstance actor = getClient().getActiveChar();
+		final var actor = getClient().getActiveChar();
 		if (actor == null) {
 			return;
 		}
 		
 		if (_link.isEmpty()) {
-			_log.warning("Player " + actor.getName() + " sent empty html link!");
+			LOG.warn("Player {} sent empty html link!", actor.getName());
 			return;
 		}
 		
 		if (_link.contains("..")) {
-			_log.warning("Player " + actor.getName() + " sent invalid html link: link " + _link);
+			LOG.warn("Player {} sent invalid html link: link {}", actor.getName(), _link);
 			return;
 		}
 		
 		int htmlObjectId = actor.validateHtmlAction("link " + _link);
 		if (htmlObjectId == -1) {
-			_log.warning("Player " + actor.getName() + " sent non cached  html link: link " + _link);
+			LOG.warn("Player {} sent non cached  html link: link {}", actor.getName(), _link);
 			return;
 		}
 		
-		if ((htmlObjectId > 0) && !Util.isInsideRangeOfObjectId(actor, htmlObjectId, L2Npc.INTERACTION_DISTANCE)) {
+		if ((htmlObjectId > 0) && !Util.isInsideRangeOfObjectId(actor, htmlObjectId, INTERACTION_DISTANCE)) {
 			// No logging here, this could be a common case
 			return;
 		}
 		
-		String filename = "data/html/" + _link;
-		final NpcHtmlMessage msg = new NpcHtmlMessage(htmlObjectId);
+		final var filename = "data/html/" + _link;
+		final var msg = new NpcHtmlMessage(htmlObjectId);
 		msg.setFile(actor.getHtmlPrefix(), filename);
+		msg.replace("%objectId%", String.valueOf(htmlObjectId));
 		sendPacket(msg);
 	}
 	

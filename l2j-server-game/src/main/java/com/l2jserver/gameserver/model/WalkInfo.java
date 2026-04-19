@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,7 +24,7 @@ import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.instancemanager.WalkingManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcMoveRouteFinished;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcMoveRouteFinished;
 
 /**
  * Holds info about current walk progress.
@@ -84,7 +84,7 @@ public class WalkInfo {
 			if (_currentNode == getRoute().getNodesCount()) // Last node arrived
 			{
 				// Notify quest
-				EventDispatcher.getInstance().notifyEventAsync(new OnNpcMoveRouteFinished(npc), npc);
+				EventDispatcher.getInstance().notifyEventAsync(new NpcMoveRouteFinished(npc), npc);
 				npc.sendDebugMessage("Route: " + getRoute().getName() + ", last node arrived");
 				
 				if (!getRoute().repeatWalk()) {

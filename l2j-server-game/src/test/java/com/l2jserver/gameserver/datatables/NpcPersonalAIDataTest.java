@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -33,10 +33,10 @@ import com.l2jserver.gameserver.model.L2Spawn;
 
 /**
  * Npc Personal AI Data test.
- * @author Noé Caratini aka Kita
+ * @author Kita (Noé Caratini)
  */
 @ExtendWith(MockitoExtension.class)
-public class NpcPersonalAIDataTest {
+class NpcPersonalAIDataTest {
 	private static final String SPAWN1_NAME = "spawn1";
 	private static final String PARAM_1 = "param1";
 	private static final String PARAM_2 = "param2";
@@ -48,30 +48,30 @@ public class NpcPersonalAIDataTest {
 	private NpcPersonalAIData aiData;
 	
 	@BeforeEach
-    void setUp() {
-        when(spawn.getName()).thenReturn(SPAWN1_NAME);
-
-        aiData = new NpcPersonalAIData();
-
-        aiData.storeData(spawn, SPAWN1_DATA);
-    }
+	void setUp() {
+		when(spawn.getName()).thenReturn(SPAWN1_NAME);
+		
+		aiData = new NpcPersonalAIData();
+		
+		aiData.storeData(spawn, SPAWN1_DATA);
+	}
 	
 	@Test
-	public void shouldReturnNegativeAIValueForInvalidSpawnName() {
+	void shouldReturnNegativeAIValueForInvalidSpawnName() {
 		final int aiValue = aiData.getAIValue("invalid", "invalid");
 		
 		assertThat(aiValue).isNegative();
 	}
 	
 	@Test
-	public void shouldReturnNegativeAIValueForInvalidParamName() {
+	void shouldReturnNegativeAIValueForInvalidParamName() {
 		final int aiValue = aiData.getAIValue(SPAWN1_NAME, "invalid");
 		
 		assertThat(aiValue).isNegative();
 	}
 	
 	@Test
-	public void shouldReturnAIValue() {
+	void shouldReturnAIValue() {
 		final int aiValue1 = aiData.getAIValue(SPAWN1_NAME, PARAM_1);
 		final int aiValue2 = aiData.getAIValue(SPAWN1_NAME, PARAM_2);
 		

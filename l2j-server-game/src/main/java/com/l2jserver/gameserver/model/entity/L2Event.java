@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -32,8 +32,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
@@ -52,10 +53,11 @@ import com.l2jserver.gameserver.network.serverpackets.UserInfo;
 
 /**
  * @author Nik
- * @Since 2011/05/17 21:51:39
+ * @since 2011/05/17 21:51:39
  */
 public class L2Event {
-	protected static final Logger _log = Logger.getLogger(L2Event.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2Event.class);
+	
 	public static EventState eventState = EventState.OFF;
 	public static String _eventName = "";
 	public static String _eventCreator = "";
@@ -74,7 +76,6 @@ public class L2Event {
 	}
 	
 	/**
-	 * @param player
 	 * @return The team ID where the player is in, or -1 if player is null or team not found.
 	 */
 	public static int getPlayerTeamId(L2PcInstance player) {
@@ -136,7 +137,7 @@ public class L2Event {
 				html.replace("%eventInfo%", _eventInfo);
 				player.sendPacket(html);
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Exception on showEventHtml(): " + e.getMessage(), e);
+				LOG.warn("Exception on showEventHtml(): {}", e.getMessage(), e);
 			}
 		}
 	}
@@ -168,7 +169,7 @@ public class L2Event {
 			// _npcs.add(spawn.getLastSpawn());
 			
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception on spawn(): " + e.getMessage(), e);
+			LOG.warn("Exception on spawn(): {}", e.getMessage(), e);
 		}
 		
 	}
@@ -215,7 +216,6 @@ public class L2Event {
 	
 	/**
 	 * Adds the player to the list of participants. If the event state is NOT STANDBY, the player wont be registered.
-	 * @param player
 	 */
 	public static void registerPlayer(L2PcInstance player) {
 		if (eventState != EventState.STANDBY) {
@@ -232,7 +232,6 @@ public class L2Event {
 	
 	/**
 	 * Removes the player from the participating players and the teams and restores his init stats before he registered at the event (loc, pvp, pk, title etc)
-	 * @param player
 	 */
 	public static void removeAndResetPlayer(L2PcInstance player) {
 		
@@ -269,13 +268,12 @@ public class L2Event {
 				_teams.get(teamId).remove(player);
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Error at unregisterAndResetPlayer in the event:" + e.getMessage(), e);
+			LOG.warn("Error at unregisterAndResetPlayer in the event:{}", e.getMessage(), e);
 		}
 	}
 	
 	/**
 	 * The player's event status will be saved at _connectionLossData
-	 * @param player
 	 */
 	public static void savePlayerEventStatus(L2PcInstance player) {
 		_connectionLossData.put(player, player.getEventStatus());
@@ -283,7 +281,6 @@ public class L2Event {
 	
 	/**
 	 * If _connectionLossData contains the player, it will restore the player's event status. Also it will remove the player from the _connectionLossData.
-	 * @param player
 	 */
 	public static void restorePlayerEventStatus(L2PcInstance player) {
 		if (_connectionLossData.containsKey(player)) {
@@ -344,7 +341,7 @@ public class L2Event {
 				}
 			}
 		} catch (Exception e) {
-			_log.warning("L2Event: " + e.getMessage());
+			LOG.warn(e.getMessage(), e);
 			return "Cannot start event participation, an error has occurred.";
 		}
 		
@@ -404,7 +401,7 @@ public class L2Event {
 			}
 			
 		} catch (Exception e) {
-			_log.warning("L2Event: " + e.getMessage());
+			LOG.warn(e.getMessage(), e);
 			return "Cannot start event, an error has occurred.";
 		}
 		

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,8 +22,9 @@ import static com.l2jserver.gameserver.config.Configuration.olympiad;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.commons.util.Rnd;
@@ -32,7 +33,7 @@ import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.olympiad.OnOlympiadMatchResult;
+import com.l2jserver.gameserver.model.events.impl.olympiad.OlympiadMatchResult;
 import com.l2jserver.gameserver.model.zone.type.L2OlympiadStadiumZone;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ExOlympiadMatchResult;
@@ -46,12 +47,13 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @author DS
  */
 public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
+	private static final Logger LOG = LoggerFactory.getLogger(OlympiadGameNormal.class);
 	
-	protected int _damageP1 = 0;
-	protected int _damageP2 = 0;
+	private int _damageP1 = 0;
+	private int _damageP2 = 0;
 	
-	protected Participant _playerOne;
-	protected Participant _playerTwo;
+	private Participant _playerOne;
+	private Participant _playerTwo;
 	
 	protected OlympiadGameNormal(int id, Participant[] opponents) {
 		super(id);
@@ -126,10 +128,10 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 	protected final boolean portPlayersToArena(List<Location> spawns) {
 		boolean result;
 		try {
-			result = portPlayerToArena(_playerOne, spawns.get(0), _stadiumID);
+			result = portPlayerToArena(_playerOne, spawns.getFirst(), _stadiumID);
 			result &= portPlayerToArena(_playerTwo, spawns.get(spawns.size() / 2), _stadiumID);
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "", e);
+			LOG.warn(e.getMessage(), e);
 			return false;
 		}
 		return result;
@@ -289,21 +291,10 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 						winside = 2;
 						
 						if (olympiad().logFights()) {
-							LogRecord record = new LogRecord(Level.INFO, _playerOne.getName() + " default");
-							record.setParameters(new Object[] {
-								_playerOne.getName(),
-								_playerTwo.getName(),
-								0,
-								0,
-								0,
-								0,
-								points,
-								getType().toString()
-							});
-							_logResults.log(record);
+							LOG_RESULTS.info("{} default, {}, {}, {}, {}, {}, {}, {}, {}", _playerOne.getName(), _playerOne.getName(), _playerTwo.getName(), 0, 0, 0, 0, points, getType().toString());
 						}
 					} catch (Exception e) {
-						_log.log(Level.WARNING, "Exception on validateWinner(): " + e.getMessage(), e);
+						LOG.warn("Exception on validateWinner(): {}", e.getMessage(), e);
 					}
 				}
 				if (_playerTwo.isDefaulted()) {
@@ -319,21 +310,10 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 						}
 						
 						if (olympiad().logFights()) {
-							LogRecord record = new LogRecord(Level.INFO, _playerTwo.getName() + " default");
-							record.setParameters(new Object[] {
-								_playerOne.getName(),
-								_playerTwo.getName(),
-								0,
-								0,
-								0,
-								0,
-								points,
-								getType().toString()
-							});
-							_logResults.log(record);
+							LOG_RESULTS.info("{} default, {}, {}, {}, {}, {}, {}, {}, {}", _playerTwo.getName(), _playerOne.getName(), _playerTwo.getName(), 0, 0, 0, 0, points, getType().toString());
 						}
 					} catch (Exception e) {
-						_log.log(Level.WARNING, "Exception on validateWinner(): " + e.getMessage(), e);
+						LOG.warn("Exception on validateWinner(): {}", e.getMessage(), e);
 					}
 				}
 				if (winside == 1) {
@@ -344,7 +324,7 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 				stadium.broadcastPacket(result);
 				return;
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Exception on validateWinner(): " + e.getMessage(), e);
+				LOG.warn("Exception on validateWinner(): {}", e.getMessage(), e);
 				return;
 			}
 		}
@@ -370,22 +350,11 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 					rewardParticipant(_playerOne.getPlayer(), getReward());
 					
 					if (olympiad().logFights()) {
-						LogRecord record = new LogRecord(Level.INFO, _playerTwo.getName() + " crash");
-						record.setParameters(new Object[] {
-							_playerOne.getName(),
-							_playerTwo.getName(),
-							0,
-							0,
-							0,
-							0,
-							pointDiff,
-							getType().toString()
-						});
-						_logResults.log(record);
+						LOG_RESULTS.info("{} crash, {}, {}, {}, {}, {}, {}, {}, {}", _playerTwo.getName(), _playerOne.getName(), _playerTwo.getName(), 0, 0, 0, 0, pointDiff, getType().toString());
 					}
 					
 					// Notify to scripts
-					EventDispatcher.getInstance().notifyEventAsync(new OnOlympiadMatchResult(_playerOne, _playerTwo, getType()), Olympiad.getInstance());
+					EventDispatcher.getInstance().notifyEventAsync(new OlympiadMatchResult(_playerOne, _playerTwo, getType()), Olympiad.getInstance());
 				} else if (!_pTwoCrash) {
 					sm = SystemMessage.getSystemMessage(SystemMessageId.C1_HAS_WON_THE_GAME);
 					sm.addString(_playerTwo.getName());
@@ -404,21 +373,10 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 					rewardParticipant(_playerTwo.getPlayer(), getReward());
 					
 					if (olympiad().logFights()) {
-						LogRecord record = new LogRecord(Level.INFO, _playerOne.getName() + " crash");
-						record.setParameters(new Object[] {
-							_playerOne.getName(),
-							_playerTwo.getName(),
-							0,
-							0,
-							0,
-							0,
-							pointDiff,
-							getType().toString()
-						});
-						_logResults.log(record);
+						LOG_RESULTS.info("{} crash, {}, {}, {}, {}, {}, {}, {}, {}", _playerOne.getName(), _playerOne.getName(), _playerTwo.getName(), 0, 0, 0, 0, pointDiff, getType().toString());
 					}
 					// Notify to scripts
-					EventDispatcher.getInstance().notifyEventAsync(new OnOlympiadMatchResult(_playerTwo, _playerOne, getType()), Olympiad.getInstance());
+					EventDispatcher.getInstance().notifyEventAsync(new OlympiadMatchResult(_playerTwo, _playerOne, getType()), Olympiad.getInstance());
 				} else {
 					stadium.broadcastPacket(SystemMessage.getSystemMessage(SystemMessageId.THE_GAME_ENDED_IN_A_TIE));
 					
@@ -433,18 +391,7 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 					tie = true;
 					
 					if (olympiad().logFights()) {
-						LogRecord record = new LogRecord(Level.INFO, "both crash");
-						record.setParameters(new Object[] {
-							_playerOne.getName(),
-							_playerTwo.getName(),
-							0,
-							0,
-							0,
-							0,
-							pointDiff,
-							getType().toString()
-						});
-						_logResults.log(record);
+						LOG_RESULTS.info("both crash, {}, {}, {}, {}, {}, {}, {}, {}", _playerOne.getName(), _playerTwo.getName(), 0, 0, 0, 0, pointDiff, getType().toString());
 					}
 				}
 				
@@ -463,11 +410,11 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 				stadium.broadcastPacket(result);
 				
 				// Notify to scripts
-				EventDispatcher.getInstance().notifyEventAsync(new OnOlympiadMatchResult(null, _playerOne, getType()), Olympiad.getInstance());
-				EventDispatcher.getInstance().notifyEventAsync(new OnOlympiadMatchResult(null, _playerTwo, getType()), Olympiad.getInstance());
+				EventDispatcher.getInstance().notifyEventAsync(new OlympiadMatchResult(null, _playerOne, getType()), Olympiad.getInstance());
+				EventDispatcher.getInstance().notifyEventAsync(new OlympiadMatchResult(null, _playerTwo, getType()), Olympiad.getInstance());
 				return;
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "Exception on validateWinner(): " + e.getMessage(), e);
+				LOG.warn("Exception on validateWinner(): {}", e.getMessage(), e);
 				return;
 			}
 		}
@@ -525,7 +472,7 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 				rewardParticipant(_playerOne.getPlayer(), getReward());
 				
 				// Notify to scripts
-				EventDispatcher.getInstance().notifyEventAsync(new OnOlympiadMatchResult(_playerOne, _playerTwo, getType()), Olympiad.getInstance());
+				EventDispatcher.getInstance().notifyEventAsync(new OlympiadMatchResult(_playerOne, _playerTwo, getType()), Olympiad.getInstance());
 			} else if ((_playerOne.getPlayer() == null) || !_playerOne.getPlayer().isOnline() || ((playerOneHp == 0) && (playerTwoHp != 0)) || ((_damageP2 > _damageP1) && (playerOneHp != 0) && (playerTwoHp != 0))) {
 				sm = SystemMessage.getSystemMessage(SystemMessageId.C1_HAS_WON_THE_GAME);
 				sm.addString(_playerTwo.getName());
@@ -548,7 +495,7 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 				rewardParticipant(_playerTwo.getPlayer(), getReward());
 				
 				// Notify to scripts
-				EventDispatcher.getInstance().notifyEventAsync(new OnOlympiadMatchResult(_playerTwo, _playerOne, getType()), Olympiad.getInstance());
+				EventDispatcher.getInstance().notifyEventAsync(new OlympiadMatchResult(_playerTwo, _playerOne, getType()), Olympiad.getInstance());
 			} else {
 				// Save Fight Result
 				saveResults(_playerOne, _playerTwo, 0, _startTime, _fightTime, getType());
@@ -583,21 +530,10 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 			stadium.broadcastPacket(result);
 			
 			if (olympiad().logFights()) {
-				LogRecord record = new LogRecord(Level.INFO, winner);
-				record.setParameters(new Object[] {
-					_playerOne.getName(),
-					_playerTwo.getName(),
-					playerOneHp,
-					playerTwoHp,
-					_damageP1,
-					_damageP2,
-					pointDiff,
-					getType().toString()
-				});
-				_logResults.log(record);
+				LOG_RESULTS.info("{}, {}, {}, {}, {}, {}, {}, {}, {}", winner, _playerOne.getName(), _playerTwo.getName(), playerOneHp, playerTwoHp, _damageP1, _damageP2, pointDiff, getType().toString());
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Exception on validateWinner(): " + e.getMessage(), e);
+			LOG.warn("Exception on validateWinner(): {}", e.getMessage(), e);
 		}
 	}
 	
@@ -652,7 +588,7 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 		_damageP2 = 0;
 	}
 	
-	protected static void saveResults(Participant one, Participant two, int winner, long startTime, long fightTime, CompetitionType type) {
+	private static void saveResults(Participant one, Participant two, int winner, long startTime, long fightTime, CompetitionType type) {
 		try (var con = ConnectionFactory.getInstance().getConnection();
 			var ps = con.prepareStatement("INSERT INTO olympiad_fights (charOneId, charTwoId, charOneClass, charTwoClass, winner, start, time, classed) values(?,?,?,?,?,?,?,?)")) {
 			ps.setInt(1, one.getObjectId());
@@ -665,9 +601,7 @@ public abstract class OlympiadGameNormal extends AbstractOlympiadGame {
 			ps.setInt(8, (type == CompetitionType.CLASSED ? 1 : 0));
 			ps.execute();
 		} catch (Exception e) {
-			if (_log.isLoggable(Level.SEVERE)) {
-				_log.log(Level.SEVERE, "SQL exception while saving olympiad fight.", e);
-			}
+			LOG.error("SQL exception while saving olympiad fight.", e);
 		}
 	}
 }

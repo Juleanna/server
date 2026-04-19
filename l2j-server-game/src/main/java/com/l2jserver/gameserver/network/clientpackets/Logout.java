@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -36,7 +36,7 @@ import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
  * @since 2005/03/27 15:29:30
  */
 public final class Logout extends L2GameClientPacket {
-	
+	private static final Logger LOG = LoggerFactory.getLogger(Logout.class);
 	private static final Logger LOG_ACCOUNTING = LoggerFactory.getLogger("accounting");
 	
 	private static final String _C__00_LOGOUT = "[C] 00 Logout";
@@ -55,14 +55,14 @@ public final class Logout extends L2GameClientPacket {
 		
 		if ((player.getActiveEnchantItemId() != L2PcInstance.ID_NONE) || (player.getActiveEnchantAttrItemId() != L2PcInstance.ID_NONE)) {
 			if (general().debug()) {
-				_log.fine("Player " + player.getName() + " tried to logout while enchanting.");
+				LOG.debug("Player {} tried to logout while enchanting.", player.getName());
 			}
 			player.sendPacket(ActionFailed.STATIC_PACKET);
 			return;
 		}
 		
 		if (player.isLocked()) {
-			_log.warning("Player " + player.getName() + " tried to logout during class change.");
+			LOG.warn("Player {} tried to logout during class change.", player.getName());
 			player.sendPacket(ActionFailed.STATIC_PACKET);
 			return;
 		}
@@ -74,7 +74,7 @@ public final class Logout extends L2GameClientPacket {
 			}
 			
 			if (general().debug()) {
-				_log.fine("Player " + player.getName() + " tried to logout while fighting.");
+				LOG.debug("Player {} tried to logout while fighting.", player.getName());
 			}
 			
 			player.sendPacket(SystemMessageId.CANT_LOGOUT_WHILE_FIGHTING);

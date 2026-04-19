@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -46,28 +46,28 @@ import com.l2jserver.gameserver.config.converter.MapIntegerFloatConverter;
 public interface RatesConfiguration extends Reloadable {
 	
 	@Key("DeathDropAmountMultiplier")
-	Double getDeathDropAmountMultiplier();
+	double getDeathDropAmountMultiplier();
 	
 	@Key("CorpseDropAmountMultiplier")
-	Double getCorpseDropAmountMultiplier();
+	double getCorpseDropAmountMultiplier();
 	
 	@Key("HerbDropAmountMultiplier")
-	Double getHerbDropAmountMultiplier();
+	double getHerbDropAmountMultiplier();
 	
 	@Key("RaidDropAmountMultiplier")
-	Double getRaidDropAmountMultiplier();
+	double getRaidDropAmountMultiplier();
 	
 	@Key("DeathDropChanceMultiplier")
-	Double getDeathDropChanceMultiplier();
+	double getDeathDropChanceMultiplier();
 	
 	@Key("CorpseDropChanceMultiplier")
-	Double getCorpseDropChanceMultiplier();
+	double getCorpseDropChanceMultiplier();
 	
 	@Key("HerbDropChanceMultiplier")
-	Double getHerbDropChanceMultiplier();
+	double getHerbDropChanceMultiplier();
 	
 	@Key("RaidDropChanceMultiplier")
-	Double getRaidDropChanceMultiplier();
+	double getRaidDropChanceMultiplier();
 	
 	@Key("DropAmountMultiplierByItemId")
 	@ConverterClass(MapIntegerFloatConverter.class)
@@ -78,107 +78,109 @@ public interface RatesConfiguration extends Reloadable {
 	Map<Integer, Float> getDropChanceMultiplierByItemId();
 	
 	@Key("RateXp")
-	Float getRateXp();
+	float getRateXp();
 	
 	@Key("RateSp")
-	Float getRateSp();
+	float getRateSp();
 	
 	@Key("RatePartyXp")
-	Float getRatePartyXp();
+	float getRatePartyXp();
 	
 	@Key("RatePartySp")
-	Float getRatePartySp();
+	float getRatePartySp();
 	
+	// TODO(Zoey76): Should this be int instead of float?
 	@Key("RateDropManor")
-	Integer getRateDropManor();
+	int getRateDropManor();
 	
 	@Key("RateKarmaLost")
-	Double getRateKarmaLost();
+	double getRateKarmaLost();
 	
 	@Key("RateKarmaExpLost")
-	Double getRateKarmaExpLost();
+	double getRateKarmaExpLost();
 	
 	@Key("RateSiegeGuardsPrice")
-	Double getRateSiegeGuardsPrice();
+	double getRateSiegeGuardsPrice();
 	
 	@Key("RateExtractable")
-	Float getRateExtractable();
+	float getRateExtractable();
 	
 	@Key("RateHellboundTrustIncrease")
-	Float getRateHellboundTrustIncrease();
+	float getRateHellboundTrustIncrease();
 	
 	@Key("RateHellboundTrustDecrease")
-	Float getRateHellboundTrustDecrease();
+	float getRateHellboundTrustDecrease();
 	
 	@Key("QuestDropChanceMultiplier")
-	Float getQuestDropChanceMultiplier();
+	float getQuestDropChanceMultiplier();
 	
 	@Key("QuestDropAmountMultiplier")
-	Float getQuestDropAmountMultiplier();
+	float getQuestDropAmountMultiplier();
 	
 	@Key("RateQuestRewardXP")
-	Float getRateQuestRewardXP();
+	float getRateQuestRewardXP();
 	
 	@Key("RateQuestRewardSP")
-	Float getRateQuestRewardSP();
+	float getRateQuestRewardSP();
 	
 	@Key("RateQuestRewardAdena")
-	Float getRateQuestRewardAdena();
+	float getRateQuestRewardAdena();
 	
 	@Key("UseQuestRewardMultipliers")
-	Boolean useQuestRewardMultipliers();
+	boolean useQuestRewardMultipliers();
 	
 	@Key("RateQuestReward")
-	Float getRateQuestReward();
+	float getRateQuestReward();
 	
 	@Key("RateQuestRewardPotion")
-	Float getRateQuestRewardPotion();
+	float getRateQuestRewardPotion();
 	
 	@Key("RateQuestRewardScroll")
-	Float getRateQuestRewardScroll();
+	float getRateQuestRewardScroll();
 	
 	@Key("RateQuestRewardRecipe")
-	Float getRateQuestRewardRecipe();
+	float getRateQuestRewardRecipe();
 	
 	@Key("RateQuestRewardMaterial")
-	Float getRateQuestRewardMaterial();
+	float getRateQuestRewardMaterial();
 	
 	@Key("PlayerDropLimit")
-	Integer getPlayerDropLimit();
+	int getPlayerDropLimit();
 	
 	@Key("PlayerRateDrop")
-	Integer getPlayerRateDrop();
+	int getPlayerRateDrop();
 	
 	@Key("PlayerRateDropItem")
-	Integer getPlayerRateDropItem();
+	int getPlayerRateDropItem();
 	
 	@Key("PlayerRateDropEquip")
-	Integer getPlayerRateDropEquip();
+	int getPlayerRateDropEquip();
 	
 	@Key("PlayerRateDropEquipWeapon")
-	Integer getPlayerRateDropEquipWeapon();
+	int getPlayerRateDropEquipWeapon();
 	
 	@Key("KarmaDropLimit")
-	Integer getKarmaDropLimit();
+	int getKarmaDropLimit();
 	
 	@Key("KarmaRateDrop")
-	Integer getKarmaRateDrop();
+	int getKarmaRateDrop();
 	
 	@Key("KarmaRateDropItem")
-	Integer getKarmaRateDropItem();
+	int getKarmaRateDropItem();
 	
 	@Key("KarmaRateDropEquip")
-	Integer getKarmaRateDropEquip();
+	int getKarmaRateDropEquip();
 	
 	@Key("KarmaRateDropEquipWeapon")
-	Integer getKarmaRateDropEquipWeapon();
+	int getKarmaRateDropEquipWeapon();
 	
 	@Key("PetXpRate")
-	Double getPetXpRate();
+	double getPetXpRate();
 	
+	// TODO(Zoey76): Should PetFoodRate be float?
 	@Key("PetFoodRate")
-	Integer getPetFoodRate();
+	int getPetFoodRate();
 	
 	@Key("SinEaterXpRate")
-	Double getSinEaterXpRate();
+	double getSinEaterXpRate();
 }

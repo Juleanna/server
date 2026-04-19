@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.dao.PetDAO;
 import com.l2jserver.gameserver.data.xml.impl.PetDataTable;
-import com.l2jserver.gameserver.model.L2PetLevelData;
+import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PetInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
@@ -37,6 +37,8 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 public class PetDAOMySQLImpl implements PetDAO {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(PetDAOMySQLImpl.class);
+	
+	private static final String SELECT = "SELECT item_obj_id, name, level, curHp, curMp, exp, sp, fed FROM pets WHERE item_obj_id=?";
 	
 	private static final String UPDATE_FOOD = "UPDATE pets SET fed=? WHERE item_obj_id=?";
 	
@@ -75,20 +77,20 @@ public class PetDAOMySQLImpl implements PetDAO {
 	@Override
 	public L2PetInstance load(L2ItemInstance control, L2NpcTemplate template, L2PcInstance owner) {
 		try (var con = ConnectionFactory.getInstance().getConnection();
-			var ps = con.prepareStatement("SELECT item_obj_id, name, level, curHp, curMp, exp, sp, fed FROM pets WHERE item_obj_id=?")) {
+			var ps = con.prepareStatement(SELECT)) {
 			ps.setInt(1, control.getObjectId());
 			try (var rs = ps.executeQuery()) {
-				L2PetInstance pet;
+				final var objectId = IdFactory.getInstance().getNextId();
 				if (!rs.next()) {
-					return new L2PetInstance(template, owner, control);
+					return new L2PetInstance(objectId, template, owner, control);
 				}
 				
-				pet = new L2PetInstance(template, owner, control, rs.getByte("level"));
+				final var pet = new L2PetInstance(objectId, template, owner, control, rs.getByte("level"));
 				pet.setRespawned(true);
 				pet.setName(rs.getString("name"));
 				
 				long exp = rs.getLong("exp");
-				L2PetLevelData info = PetDataTable.getInstance().getPetLevelData(pet.getId(), pet.getLevel());
+				final var info = PetDataTable.getInstance().getPetLevelData(pet.getId(), pet.getLevel());
 				// DS: update experience based by level
 				// Avoiding pet delevels due to exp per level values changed.
 				if ((info != null) && (exp < info.getPetMaxExp())) {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,6 +21,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 import static com.l2jserver.gameserver.config.Configuration.general;
 import static com.l2jserver.gameserver.config.Configuration.geodata;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.zone.ZoneId;
@@ -31,6 +34,8 @@ import com.l2jserver.gameserver.network.serverpackets.ValidateLocation;
  * @version 2005/03/27 15:29:30
  */
 public class ValidatePosition extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(ValidatePosition.class);
+	
 	private static final String _C__59_VALIDATEPOSITION = "[C] 59 ValidatePosition";
 	
 	private int _x;
@@ -60,8 +65,8 @@ public class ValidatePosition extends L2GameClientPacket {
 		int realZ = activeChar.getZ();
 		
 		if (general().developer()) {
-			_log.fine("client pos: " + _x + " " + _y + " " + _z + " head " + _heading);
-			_log.fine("server pos: " + realX + " " + realY + " " + realZ + " head " + activeChar.getHeading());
+			LOG.debug("Client pos: {} {} {} head {}", _x, _y, _z, _heading);
+			LOG.debug("Server pos: {} {} {} head {}", realX, realY, realZ, activeChar.getHeading());
 		}
 		
 		if ((_x == 0) && (_y == 0)) {
@@ -166,7 +171,7 @@ public class ValidatePosition extends L2GameClientPacket {
 					realZ = _z;
 				} else {
 					if (general().developer()) {
-						_log.info(activeChar.getName() + ": Synchronizing position Server --> Client");
+						LOG.info("{}: Synchronizing position Server --> Client", activeChar.getName());
 					}
 					
 					activeChar.sendPacket(new ValidateLocation(activeChar));

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -34,8 +34,8 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 public final class L2TerritoryWardInstance extends L2Attackable {
 	private static final Logger LOG = LoggerFactory.getLogger(L2TerritoryWardInstance.class);
 	
-	public L2TerritoryWardInstance(L2NpcTemplate template) {
-		super(template);
+	public L2TerritoryWardInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		
 		disableCoreAI(true);
 	}

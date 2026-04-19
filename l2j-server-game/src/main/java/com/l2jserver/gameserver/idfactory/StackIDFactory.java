@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,7 +22,8 @@ import static com.l2jserver.gameserver.config.Configuration.server;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,9 @@ public class StackIDFactory extends IdFactory {
 	
 	private int _tempOID;
 	
-	private final Stack<Integer> _freeOIDStack = new Stack<>();
+	// ArrayDeque — неблокирующая LIFO-структура. Внешняя синхронизация getNextId/releaseId
+	// уже даёт thread-safety; Stack (Vector) добавлял ненужный per-op лок в hot path.
+	private final Deque<Integer> _freeOIDStack = new ArrayDeque<>();
 	
 	protected StackIDFactory() {
 		_curOID = FIRST_OID;
@@ -115,7 +118,7 @@ public class StackIDFactory extends IdFactory {
 	@Override
 	public synchronized int getNextId() {
 		int id;
-		if (!_freeOIDStack.empty()) {
+		if (!_freeOIDStack.isEmpty()) {
 			id = _freeOIDStack.pop();
 		} else {
 			id = _curOID;

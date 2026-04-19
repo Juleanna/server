@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.model.stats.functions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.skills.Skill;
@@ -28,6 +31,8 @@ import com.l2jserver.gameserver.model.stats.Stats;
  * @author Zoey76
  */
 public class FuncDiv extends AbstractFunction {
+	private static final Logger LOG = LoggerFactory.getLogger(FuncDiv.class);
+	
 	public FuncDiv(Stats stat, int order, Object owner, double value, Condition applyCond) {
 		super(stat, order, owner, value, applyCond);
 	}
@@ -38,7 +43,7 @@ public class FuncDiv extends AbstractFunction {
 			try {
 				return initVal / getValue();
 			} catch (Exception e) {
-				LOG.warning(FuncDiv.class.getSimpleName() + ": Division by zero: " + getValue() + "!");
+				LOG.warn("Division by zero: {}!", getValue());
 			}
 		}
 		return initVal;

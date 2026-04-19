@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -21,8 +21,9 @@ package com.l2jserver.gameserver.model.punishment;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 import java.util.concurrent.ScheduledFuture;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -34,11 +35,9 @@ import com.l2jserver.gameserver.instancemanager.PunishmentManager;
  * @author UnAfraid
  */
 public class PunishmentTask implements Runnable {
-	
-	private static final Logger _log = Logger.getLogger(PunishmentTask.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(PunishmentTask.class);
 	
 	private static final String INSERT_QUERY = "INSERT INTO punishments (`key`, `affect`, `type`, `expiration`, `reason`, `punishedBy`) VALUES (?, ?, ?, ?, ?, ?)";
-	
 	private static final String UPDATE_QUERY = "UPDATE punishments SET expiration = ? WHERE id = ?";
 	
 	private int _id;
@@ -180,7 +179,7 @@ public class PunishmentTask implements Runnable {
 				}
 				_isStored = true;
 			} catch (Exception e) {
-				_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't store punishment task for: " + _affect + " " + _key, e);
+				LOG.warn("Couldn't store punishment task for: {} {}", _affect, _key, e);
 			}
 		}
 		
@@ -201,7 +200,7 @@ public class PunishmentTask implements Runnable {
 				ps.setLong(2, _id);
 				ps.execute();
 			} catch (Exception e) {
-				_log.log(Level.WARNING, getClass().getSimpleName() + ": Couldn't update punishment task for: " + _affect + " " + _key + " id: " + _id, e);
+				LOG.warn("Couldn't update punishment task for: {} {} id: {}", _affect, _key, _id, e);
 			}
 		}
 		

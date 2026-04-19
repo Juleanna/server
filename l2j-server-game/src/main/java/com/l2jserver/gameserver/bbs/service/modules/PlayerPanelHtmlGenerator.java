@@ -595,22 +595,20 @@ public class PlayerPanelHtmlGenerator {
         html.append("<div class=\"currency-amount\">").append(formatNumber(player.getAdena())).append("</div>");
         html.append("</div>");
         
-        html.append("<div class=\"currency-item\">");
-        html.append("<span class=\"currency-icon\">💎</span>");
-        html.append("<div>L2-Coin</div>");
-        html.append("<div class=\"currency-amount\">").append(formatNumber(player.getFame())).append("</div>");
-        html.append("</div>");
-        
-        html.append("<div class=\"currency-item\">");
-        html.append("<span class=\"currency-icon\">🏆</span>");
-        html.append("<div>Honor</div>");
-        html.append("<div class=\"currency-amount\">").append(formatNumber(player.getFame())).append("</div>");
-        html.append("</div>");
-        
+        // Было три "валюты" подряд (L2-Coin / Honor / Fame), каждая рендерила
+        // один и тот же player.getFame() — copy-paste. L2J не имеет отдельных
+        // L2-Coin и Honor, поэтому показываем только реально существующие:
+        // Fame и PvP счётчик.
         html.append("<div class=\"currency-item\">");
         html.append("<span class=\"currency-icon\">⭐</span>");
         html.append("<div>Fame</div>");
         html.append("<div class=\"currency-amount\">").append(formatNumber(player.getFame())).append("</div>");
+        html.append("</div>");
+
+        html.append("<div class=\"currency-item\">");
+        html.append("<span class=\"currency-icon\">⚔️</span>");
+        html.append("<div>PvP</div>");
+        html.append("<div class=\"currency-amount\">").append(formatNumber(player.getPvpKills())).append("</div>");
         html.append("</div>");
         
         html.append("</div>");
@@ -739,44 +737,54 @@ public class PlayerPanelHtmlGenerator {
         html.append("<div class=\"content-section\">");
         html.append("<h2 class=\"section-title\">🛒 Магазин</h2>");
         html.append("<div class=\"shop-grid\">");
-        
+
         // Получаем список доступных предметов из конфигурации
         String[] availableItems = _config.getShopAvailableItems().split(",");
-        
-        // Предопределенные предметы магазина
-        String[][] shopItems = {
-            {"1", "⚔️", "Demon Sword", "150000", "Мощный меч демонов"},
-            {"2", "🛡️", "Mithril Armor", "200000", "Легкая, но прочная броня"},
-            {"3", "📜", "Enchant Scroll", "5000", "Свиток для заточки оружия"},
-            {"4", "🧪", "Healing Potion", "500", "Восстанавливает здоровье"},
-            {"5", "💍", "Power Ring", "75000", "Кольцо увеличивающее силу"},
-            {"6", "💎", "Soul Crystal", "25000", "Кристалл души для улучшений"},
-            {"7", "🏹", "Elven Bow", "120000", "Эльфийский лук высокого качества"},
-            {"8", "🗡️", "Dagger Set", "80000", "Набор кинжалов для ассасина"},
-            {"9", "⚡", "Magic Staff", "180000", "Посох для заклинателей"},
-            {"10", "🎭", "Blessed Scroll", "15000", "Благословенный свиток заточки"}
+
+        // Иконки и описания для shopId 1..10 (оформление, не цены).
+        // Цены и имена берутся из серверного каталога PlayerPanelShopModule.CATALOG,
+        // чтобы HTML и сервер показывали и списывали одну и ту же сумму.
+        final String[][] shopMeta = {
+            {"1",  "⚔️", "Мощный меч демонов"},
+            {"2",  "🛡️", "Лёгкая, но прочная броня"},
+            {"3",  "📜", "Свиток для заточки оружия"},
+            {"4",  "🧪", "Восстанавливает здоровье"},
+            {"5",  "💍", "Кольцо, увеличивающее силу"},
+            {"6",  "💎", "Кристалл души для улучшений"},
+            {"7",  "🏹", "Эльфийский лук высокого качества"},
+            {"8",  "🗡️", "Набор кинжалов для ассасина"},
+            {"9",  "⚡", "Посох для заклинателей"},
+            {"10", "🎭", "Благословенный свиток заточки"}
         };
-        
-        for (String[] item : shopItems) {
-            String itemId = item[0];
-            
-            // Проверяем, доступен ли предмет
-            if (!Arrays.asList(availableItems).contains(itemId)) {
+
+        for (String[] meta : shopMeta) {
+            final String shopId = meta[0];
+
+            if (!Arrays.asList(availableItems).contains(shopId)) {
                 continue;
             }
-            
-            long basePrice = Long.parseLong(item[3]);
-            long actualPrice = (long)(basePrice * _config.getShopPriceMultiplier());
-            
+
+            final PlayerPanelShopModule.ShopEntry entry = PlayerPanelShopModule.CATALOG.get(shopId);
+            if (entry == null) {
+                continue;
+            }
+
+            final long actualPrice = (long) Math.max(1, Math.round(entry.price * _config.getShopPriceMultiplier()));
+
             html.append("<div class=\"shop-item\">");
-            html.append("<div class=\"item-image\">").append(item[1]).append("</div>");
-            html.append("<div class=\"item-name\">").append(item[2]).append("</div>");
-            html.append("<div style=\"color: #b0b0b0; margin: 10px 0; font-size: 0.9rem;\">").append(item[4]).append("</div>");
+            html.append("<div class=\"item-image\">").append(meta[1]).append("</div>");
+            html.append("<div class=\"item-name\">").append(entry.name);
+            if (entry.quantity > 1) {
+                html.append(" x").append(entry.quantity);
+            }
+            html.append("</div>");
+            html.append("<div style=\"color: #b0b0b0; margin: 10px 0; font-size: 0.9rem;\">").append(meta[2]).append("</div>");
             html.append("<div class=\"item-price\">").append(formatNumber(actualPrice)).append(" Adena</div>");
-            
-            // Проверяем, может ли игрок купить
+
             if (player.getAdena() >= actualPrice) {
-                html.append("<a href=\"bypass _bbsshop;buy;").append(itemId).append(";").append(actualPrice).append("\" class=\"enchant-button\">Купить</a>");
+                // Серверный обработчик игнорирует цену из bypass; передаём её
+                // только для совместимости старого формата.
+                html.append("<a href=\"bypass _bbsshop;buy;").append(shopId).append(";").append(actualPrice).append("\" class=\"enchant-button\">Купить</a>");
             } else {
                 html.append("<div class=\"enchant-button\" style=\"background: #666; cursor: not-allowed;\">Недостаточно Adena</div>");
             }

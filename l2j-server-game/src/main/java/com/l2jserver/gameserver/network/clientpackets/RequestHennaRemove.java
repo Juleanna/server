@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,6 +18,9 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.items.L2Henna;
 import com.l2jserver.gameserver.network.SystemMessageId;
@@ -26,6 +29,8 @@ import com.l2jserver.gameserver.network.SystemMessageId;
  * @author Zoey76
  */
 public final class RequestHennaRemove extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(RequestHennaRemove.class);
+	
 	private static final String _C__72_REQUESTHENNAREMOVE = "[C] 72 RequestHennaRemove";
 	private int _symbolId;
 	
@@ -63,7 +68,7 @@ public final class RequestHennaRemove extends L2GameClientPacket {
 		}
 		// TODO: Test.
 		if (!found) {
-			_log.warning(getClass().getSimpleName() + ": Player " + activeChar + " requested Henna Draw remove without any henna.");
+			LOG.warn("Player {} requested Henna Draw remove without any henna.", activeChar);
 			sendActionFailed();
 		}
 	}

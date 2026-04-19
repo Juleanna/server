@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,8 +20,8 @@ package com.l2jserver.gameserver.model.olympiad;
 
 import static com.l2jserver.gameserver.config.Configuration.olympiad;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.model.zone.type.L2OlympiadStadiumZone;
@@ -32,10 +32,7 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  * @author DS
  */
 public final class OlympiadGameTask implements Runnable {
-	
-	protected static final Logger _log = Logger.getLogger(OlympiadGameTask.class.getName());
-	
-	protected static final long BATTLE_PERIOD = olympiad().getBattlePeriod();
+	private static final Logger LOG = LoggerFactory.getLogger(OlympiadGameTask.class);
 	
 	private static final int[] TELEPORT_TO_ARENA_TIMES = {
 		120,
@@ -144,7 +141,7 @@ public final class OlympiadGameTask implements Runnable {
 	
 	public void attachGame(AbstractOlympiadGame game) {
 		if ((game != null) && (_state != GameState.IDLE)) {
-			_log.log(Level.WARNING, "Attempt to overwrite non-finished game in state " + _state);
+			LOG.warn("Attempt to overwrite non-finished game in state {}", _state);
 			return;
 		}
 		
@@ -281,18 +278,18 @@ public final class OlympiadGameTask implements Runnable {
 					return;
 				}
 			}
-			ThreadPoolManager.getInstance().scheduleGeneral(this, delay * 1000);
+			ThreadPoolManager.getInstance().scheduleGeneral(this, delay * 1000L);
 		} catch (Exception e) {
 			switch (_state) {
 				case GAME_STOPPED, TELEPORT_TO_TOWN, CLEANUP, IDLE -> {
-					_log.log(Level.WARNING, "Unable to return players back in town, exception: " + e.getMessage());
+					LOG.warn("Unable to return players back in town, exception: {}", e.getMessage());
 					_state = GameState.IDLE;
 					_game = null;
 					return;
 				}
 			}
 			
-			_log.log(Level.WARNING, "Exception in " + _state + ", trying to port players back: " + e.getMessage(), e);
+			LOG.warn("Exception in {}, trying to port players back: {}", _state, e.getMessage(), e);
 			_state = GameState.GAME_STOPPED;
 			ThreadPoolManager.getInstance().scheduleGeneral(this, 1000);
 		}
@@ -310,7 +307,7 @@ public final class OlympiadGameTask implements Runnable {
 			_countDown = time;
 			return delay;
 		}
-		// should not happens
+		// should not happen
 		_countDown = -1;
 		return 1;
 	}
@@ -340,7 +337,7 @@ public final class OlympiadGameTask implements Runnable {
 			OlympiadGameManager.getInstance().startBattle(); // inform manager
 			return true;
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 		return false;
 	}
@@ -353,7 +350,7 @@ public final class OlympiadGameTask implements Runnable {
 			_game.resetDamage();
 			_zone.openDoors();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 	}
 	
@@ -375,20 +372,19 @@ public final class OlympiadGameTask implements Runnable {
 				return true;
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 		return false;
 	}
 	
 	/**
 	 * Fifth stage: battle is running, returns true if winner found.
-	 * @return
 	 */
 	private boolean checkBattle() {
 		try {
 			return _game.haveWinner();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 		
 		return true;
@@ -401,19 +397,19 @@ public final class OlympiadGameTask implements Runnable {
 		try {
 			_game.validateWinner(_zone);
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 		
 		try {
 			_zone.updateZoneStatusForCharactersInside();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 		
 		try {
 			_game.cleanEffects();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 	}
 	
@@ -424,25 +420,25 @@ public final class OlympiadGameTask implements Runnable {
 		try {
 			_game.playersStatusBack();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 		
 		try {
 			_game.portPlayersBack();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 		
 		try {
 			_game.clearPlayers();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 		
 		try {
 			_zone.closeDoors();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, e.getMessage(), e);
+			LOG.warn(e.getMessage(), e);
 		}
 	}
 }

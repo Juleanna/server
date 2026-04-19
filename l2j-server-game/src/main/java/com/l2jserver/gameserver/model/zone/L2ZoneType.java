@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -23,7 +23,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
@@ -32,8 +34,8 @@ import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
 import com.l2jserver.gameserver.model.events.ListenersContainer;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureZoneEnter;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureZoneExit;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureZoneEnter;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureZoneExit;
 import com.l2jserver.gameserver.model.interfaces.ILocational;
 import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
 
@@ -42,7 +44,7 @@ import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
  * @author durgus
  */
 public abstract class L2ZoneType extends ListenersContainer {
-	protected static final Logger _log = Logger.getLogger(L2ZoneType.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(L2ZoneType.class);
 	
 	private final int _id;
 	protected L2ZoneForm _zone;
@@ -87,8 +89,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Setup new parameters for this zone
-	 * @param name
-	 * @param value
 	 */
 	public void setParameter(String name, String value) {
 		_checkAffected = true;
@@ -169,7 +169,7 @@ public abstract class L2ZoneType extends ListenersContainer {
 				_enabled = Boolean.parseBoolean(value);
 				break;
 			default:
-				_log.info(getClass().getSimpleName() + ": Unknown parameter - " + name + " in zone: " + getId());
+				LOG.info("Unknown parameter - {} in zone: {}", name, getId());
 				break;
 		}
 	}
@@ -235,7 +235,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Set the zone for this L2ZoneType Instance
-	 * @param zone
 	 */
 	public void setZone(L2ZoneForm zone) {
 		if (_zone != null) {
@@ -254,7 +253,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Set the zone name.
-	 * @param name
 	 */
 	public void setName(String name) {
 		_name = name;
@@ -262,7 +260,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Returns zone name
-	 * @return
 	 */
 	public String getName() {
 		return _name;
@@ -270,7 +267,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Set the zone instanceId.
-	 * @param instanceId
 	 */
 	public void setInstanceId(int instanceId) {
 		_instanceId = instanceId;
@@ -278,7 +274,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Returns zone instanceId
-	 * @return
 	 */
 	public int getInstanceId() {
 		return _instanceId;
@@ -286,7 +281,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Returns zone instanceTemplate
-	 * @return
 	 */
 	public String getInstanceTemplate() {
 		return _instanceTemplate;
@@ -294,9 +288,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Checks if the given coordinates are within zone's plane
-	 * @param x
-	 * @param y
-	 * @return
 	 */
 	public boolean isInsideZone(int x, int y) {
 		return _zone.isInsideZone(x, y, _zone.getHighZ());
@@ -304,8 +295,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Checks if the given coordinates are within the zone, ignores instanceId check
-	 * @param loc
-	 * @return
 	 */
 	public boolean isInsideZone(ILocational loc) {
 		return _zone.isInsideZone(loc.getX(), loc.getY(), loc.getZ());
@@ -313,10 +302,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Checks if the given coordinates are within the zone, ignores instanceId check
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
 	 */
 	public boolean isInsideZone(int x, int y, int z) {
 		return _zone.isInsideZone(x, y, z);
@@ -324,11 +309,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Checks if the given coordinates are within the zone and the instanceId used matched the zone's instanceId
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param instanceId
-	 * @return
 	 */
 	public boolean isInsideZone(int x, int y, int z, int instanceId) {
 		// It will check if coords are within the zone if the given instanceId or
@@ -342,8 +322,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Checks if the given object is inside the zone.
-	 * @param object
-	 * @return
 	 */
 	public boolean isInsideZone(L2Object object) {
 		return isInsideZone(object.getX(), object.getY(), object.getZ(), object.getInstanceId());
@@ -370,7 +348,7 @@ public abstract class L2ZoneType extends ListenersContainer {
 			// Was the character not yet inside this zone?
 			if (!_characterList.containsKey(character.getObjectId())) {
 				// Notify to scripts.
-				EventDispatcher.getInstance().notifyEventAsync(new OnCreatureZoneEnter(character, this), this);
+				EventDispatcher.getInstance().notifyEventAsync(new CreatureZoneEnter(character, this), this);
 				
 				// Register player.
 				_characterList.put(character.getObjectId(), character);
@@ -385,13 +363,12 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Force fully removes a character from the zone Should use during teleport / logoff
-	 * @param character
 	 */
 	public void removeCharacter(L2Character character) {
 		// Was the character inside this zone?
 		if (_characterList.containsKey(character.getObjectId())) {
 			// Notify to scripts.
-			EventDispatcher.getInstance().notifyEventAsync(new OnCreatureZoneExit(character, this), this);
+			EventDispatcher.getInstance().notifyEventAsync(new CreatureZoneExit(character, this), this);
 			
 			// Unregister player.
 			_characterList.remove(character.getObjectId());
@@ -403,8 +380,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Will scan the zones char list for the character
-	 * @param character
-	 * @return
 	 */
 	public boolean isCharacterInZone(L2Character character) {
 		return _characterList.containsKey(character.getObjectId());
@@ -458,7 +433,6 @@ public abstract class L2ZoneType extends ListenersContainer {
 	
 	/**
 	 * Broadcasts packet to all players inside the zone
-	 * @param packet
 	 */
 	public void broadcastPacket(L2GameServerPacket packet) {
 		if (_characterList.isEmpty()) {

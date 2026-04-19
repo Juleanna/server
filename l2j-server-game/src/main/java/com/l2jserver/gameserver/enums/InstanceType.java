@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -81,7 +81,6 @@ public enum InstanceType {
 	L2FortLogisticsInstance(L2MerchantInstance),
 	L2FortManagerInstance(L2MerchantInstance),
 	// City NPCs
-	L2AdventurerInstance(L2NpcInstance),
 	L2AuctioneerInstance(L2Npc),
 	L2ClanHallManagerInstance(L2MerchantInstance),
 	L2FishermanInstance(L2MerchantInstance),
@@ -90,7 +89,6 @@ public enum InstanceType {
 	L2PetManagerInstance(L2MerchantInstance),
 	L2RaceManagerInstance(L2Npc),
 	L2TeleporterInstance(L2Npc),
-	L2TrainerInstance(L2NpcInstance),
 	L2VillageMasterInstance(L2NpcInstance),
 	// Doormens
 	L2DoormenInstance(L2NpcInstance),

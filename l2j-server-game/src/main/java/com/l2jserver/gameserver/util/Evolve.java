@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,8 +18,8 @@
  */
 package com.l2jserver.gameserver.util;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -44,7 +44,7 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  */
 public final class Evolve {
 	
-	private static final Logger _log = Logger.getLogger(Evolve.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(Evolve.class);
 	
 	public static boolean doEvolve(L2PcInstance player, L2Npc npc, int itemIdtake, int itemIdgive, int petminlvl) {
 		if ((itemIdtake == 0) || (itemIdgive == 0) || (petminlvl == 0)) {
@@ -258,7 +258,7 @@ public final class Evolve {
 					_petSummon.startFeed();
 				}
 			} catch (Exception e) {
-				_log.log(Level.WARNING, "", e);
+				LOG.warn(e.getMessage(), e);
 			}
 		}
 	}
@@ -279,7 +279,7 @@ public final class Evolve {
 				_petSummon.setFollowStatus(true);
 				_petSummon.setShowSummonAnimation(false);
 			} catch (Throwable e) {
-				_log.log(Level.WARNING, "", e);
+				LOG.warn(e.getMessage(), e);
 			}
 		}
 	}

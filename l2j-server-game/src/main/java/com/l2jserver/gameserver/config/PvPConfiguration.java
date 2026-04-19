@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -44,7 +44,7 @@ import org.aeonbits.owner.Reloadable;
 public interface PvPConfiguration extends Reloadable {
 	
 	@Key("CanGMDropEquipment")
-	Boolean canGMDropEquipment();
+	boolean canGMDropEquipment();
 	
 	@Key("PetItems")
 	Set<Integer> getPetItems();
@@ -53,14 +53,14 @@ public interface PvPConfiguration extends Reloadable {
 	Set<Integer> getNonDroppableItems();
 	
 	@Key("MinimumPKRequiredToDrop")
-	Integer getMinimumPKRequiredToDrop();
+	int getMinimumPKRequiredToDrop();
 	
 	@Key("AwardPKKillPVPPoint")
-	Boolean awardPKKillPVPPoint();
+	boolean awardPKKillPVPPoint();
 	
 	@Key("PvPVsNormalTime")
-	Integer getPvPVsNormalTime();
+	int getPvPVsNormalTime();
 	
 	@Key("PvPVsPvPTime")
-	Integer getPvPVsPvPTime();
+	int getPvPVsPvPTime();
 }

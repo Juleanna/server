@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -844,11 +844,11 @@ public abstract class L2Object extends ListenersContainer implements IIdentifiab
 	}
 	
 	/**
-	 * @param player
-	 * @return {@code true} if player can see an invisible object if it's invisible, {@code false} otherwise.
+	 * @param character The character we are checking visibility for.
+	 * @return {@code true} if character can see an invisible object if it's invisible, {@code false} otherwise.
 	 */
-	public boolean isVisibleFor(L2PcInstance player) {
-		return !isInvisible() || player.canOverrideCond(PcCondOverride.SEE_ALL_PLAYERS);
+	public boolean isVisibleFor(final L2Character character) {
+		return !isInvisible() || character.canOverrideCond(PcCondOverride.SEE_ALL_PLAYERS);
 	}
 	
 	/**

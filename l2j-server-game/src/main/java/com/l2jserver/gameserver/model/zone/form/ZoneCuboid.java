@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -31,7 +31,7 @@ import com.l2jserver.gameserver.model.zone.L2ZoneForm;
  */
 public class ZoneCuboid extends L2ZoneForm {
 	private final int _z1, _z2;
-	Rectangle _r;
+	private final Rectangle _r;
 	
 	public ZoneCuboid(int x1, int x2, int y1, int y2, int z1, int z2) {
 		int _x1 = Math.min(x1, x2);
@@ -43,6 +43,11 @@ public class ZoneCuboid extends L2ZoneForm {
 		
 		_z1 = Math.min(z1, z2);
 		_z2 = Math.max(z1, z2);
+	}
+	
+	@Override
+	public Rectangle getBoundingBox() {
+		return _r;
 	}
 	
 	@Override

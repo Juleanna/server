@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -30,17 +30,17 @@ import com.l2jserver.gameserver.model.Location;
  * @author Zoey76
  * @version 2.6.3.0
  */
-public class LocationConverterTest {
+class LocationConverterTest {
 	
 	private static final LocationConverter CONVERTER = new LocationConverter();
 	
 	@ParameterizedTest
 	@MethodSource("provideLocations")
-	public void convertTest(String input, Location expected) {
+	void convertTest(String input, Location expected) {
 		assertEquals(CONVERTER.convert(null, input), expected);
 	}
 	
-	public static Object[][] provideLocations() {
+	private static Object[][] provideLocations() {
 		return new Object[][] {
 			{
 				"83425,148585,-3406",

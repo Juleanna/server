@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -25,10 +25,6 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  * @author JIV
  */
 public abstract class Event extends Quest {
-	public Event(String name, String descr) {
-		super(-1, name, descr);
-	}
-	
 	public abstract boolean eventStart(L2PcInstance eventMaker);
 	
 	public abstract boolean eventStop();

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  *
  * This file is part of L2J Server.
  *
@@ -52,7 +52,7 @@ public interface HexIdConfiguration extends Mutable, Reloadable, Accessible {
 	String HEXID_KEY = "HexID";
 	
 	@Key(SERVERID_KEY)
-	Integer getServerID();
+	int getServerID();
 	
 	@Key(HEXID_KEY)
 	@ConverterClass(HexIdConverter.class)

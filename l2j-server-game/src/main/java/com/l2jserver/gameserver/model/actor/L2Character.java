@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -61,7 +61,6 @@ import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.ShotType;
 import com.l2jserver.gameserver.enums.Team;
-import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.instancemanager.MapRegionManager;
 import com.l2jserver.gameserver.instancemanager.TerritoryWarManager;
@@ -96,15 +95,15 @@ import com.l2jserver.gameserver.model.entity.Instance;
 import com.l2jserver.gameserver.model.events.Containers;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
 import com.l2jserver.gameserver.model.events.EventType;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureAttack;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureAttackAvoid;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureAttacked;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureDamageDealt;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureDamageReceived;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureKill;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureSkillUse;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureTeleported;
-import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcSkillSee;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureAttack;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureAttackAvoid;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureAttacked;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureDamageDealt;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureDamageReceived;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureKill;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureSkillUse;
+import com.l2jserver.gameserver.model.events.impl.character.CreatureTeleported;
+import com.l2jserver.gameserver.model.events.impl.character.npc.NpcSkillSee;
 import com.l2jserver.gameserver.model.events.listeners.AbstractEventListener;
 import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.holders.InvulSkillHolder;
@@ -280,14 +279,6 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	/** Future Skill Cast */
 	protected Future<?> _skillCast;
 	protected Future<?> _skillCast2;
-	
-	/**
-	 * Creates a creature.
-	 * @param template the creature template
-	 */
-	public L2Character(L2CharTemplate template) {
-		this(IdFactory.getInstance().getNextId(), template);
-	}
 	
 	/**
 	 * Constructor of L2Character.<br>
@@ -499,7 +490,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 			spawnMe(getX(), getY(), getZ());
 			setIsTeleporting(false);
-			EventDispatcher.getInstance().notifyEventAsync(new OnCreatureTeleported(this), this);
+			EventDispatcher.getInstance().notifyEventAsync(new CreatureTeleported(this), this);
 		} finally {
 			_teleportLock.unlock();
 		}
@@ -801,7 +792,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 			
 			// Notify to scripts
-			final TerminateReturn attackReturn = EventDispatcher.getInstance().notifyEvent(new OnCreatureAttack(this, target), this, TerminateReturn.class);
+			final TerminateReturn attackReturn = EventDispatcher.getInstance().notifyEvent(new CreatureAttack(this, target), this, TerminateReturn.class);
 			if ((attackReturn != null) && attackReturn.terminate()) {
 				getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
 				sendPacket(ActionFailed.STATIC_PACKET);
@@ -809,7 +800,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 			
 			// Notify to scripts
-			final TerminateReturn attackedReturn = EventDispatcher.getInstance().notifyEvent(new OnCreatureAttacked(this, target), target, TerminateReturn.class);
+			final TerminateReturn attackedReturn = EventDispatcher.getInstance().notifyEvent(new CreatureAttacked(this, target), target, TerminateReturn.class);
 			if ((attackedReturn != null) && attackedReturn.terminate()) {
 				getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
 				sendPacket(ActionFailed.STATIC_PACKET);
@@ -1463,7 +1454,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			return;
 		}
 		
-		final var term = EventDispatcher.getInstance().notifyEvent(new OnCreatureSkillUse(this, skill, simultaneously, target, targets), this, TerminateReturn.class);
+		final var term = EventDispatcher.getInstance().notifyEvent(new CreatureSkillUse(this, skill, simultaneously, target, targets), this, TerminateReturn.class);
 		if ((term != null) && term.terminate()) {
 			if (simultaneously) {
 				setIsCastingSimultaneouslyNow(false);
@@ -2034,7 +2025,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	 * @return false if the player is already dead.
 	 */
 	public boolean doDie(L2Character killer) {
-		final TerminateReturn returnBack = EventDispatcher.getInstance().notifyEvent(new OnCreatureKill(killer, this), this, TerminateReturn.class);
+		final TerminateReturn returnBack = EventDispatcher.getInstance().notifyEvent(new CreatureKill(killer, this), this, TerminateReturn.class);
 		if ((returnBack != null) && returnBack.terminate()) {
 			return false;
 		}
@@ -4401,7 +4392,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			addStatFuncs(newSkill.getStatFuncs(null, this));
 			
 			if (newSkill.isPassive()) {
-				newSkill.applyEffects(this, this, false, true, false, 0);
+				newSkill.applyEffects(this, this, -1, false, true, false, 0);
 			}
 		}
 		return oldSkill;
@@ -4884,7 +4875,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 					if ((spMob != null) && spMob.isNpc()) {
 						final L2Npc npcMob = (L2Npc) spMob;
 						if ((npcMob.isInsideRadius(player, 1000, true, true))) {
-							EventDispatcher.getInstance().notifyEventAsync(new OnNpcSkillSee(npcMob, player, skill, targets, isSummon()), npcMob);
+							EventDispatcher.getInstance().notifyEventAsync(new NpcSkillSee(npcMob, player, skill, targets, isSummon()), npcMob);
 							
 							// On Skill See logic
 							if (npcMob.isAttackable()) {
@@ -5550,8 +5541,8 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	 * @param damageOverTime
 	 */
 	public void notifyDamageReceived(double damage, L2Character attacker, Skill skill, boolean critical, boolean damageOverTime, boolean isReflect) {
-		EventDispatcher.getInstance().notifyEventAsync(new OnCreatureDamageReceived(attacker, this, damage, skill, critical, damageOverTime, isReflect), this);
-		EventDispatcher.getInstance().notifyEventAsync(new OnCreatureDamageDealt(attacker, this, damage, skill, critical, damageOverTime, isReflect), attacker);
+		EventDispatcher.getInstance().notifyEventAsync(new CreatureDamageReceived(attacker, this, damage, skill, critical, damageOverTime, isReflect), this);
+		EventDispatcher.getInstance().notifyEventAsync(new CreatureDamageDealt(attacker, this, damage, skill, critical, damageOverTime, isReflect), attacker);
 	}
 	
 	/**
@@ -5560,7 +5551,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	 * @param isDot
 	 */
 	public void notifyAttackAvoid(final L2Character target, final boolean isDot) {
-		EventDispatcher.getInstance().notifyEventAsync(new OnCreatureAttackAvoid(this, target, isDot), target);
+		EventDispatcher.getInstance().notifyEventAsync(new CreatureAttackAvoid(this, target, isDot), target);
 	}
 	
 	/**

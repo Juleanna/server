@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -20,6 +20,9 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import static com.l2jserver.gameserver.config.Configuration.general;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.TradeList;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -29,6 +32,8 @@ import com.l2jserver.gameserver.network.SystemMessageId;
  * This packet manages the trade response.
  */
 public final class TradeDone extends L2GameClientPacket {
+	private static final Logger LOG = LoggerFactory.getLogger(TradeDone.class);
+	
 	private int _response;
 	
 	@Override
@@ -51,7 +56,7 @@ public final class TradeDone extends L2GameClientPacket {
 		final TradeList trade = player.getActiveTradeList();
 		if (trade == null) {
 			if (general().debug()) {
-				_log.warning("player.getTradeList == null in " + getType() + " for player " + player.getName());
+				LOG.warn("player.getTradeList == null in {} for player {}", getType(), player.getName());
 			}
 			return;
 		}

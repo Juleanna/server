@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -22,8 +22,9 @@ import static com.l2jserver.gameserver.config.Configuration.general;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.datatables.ItemTable;
@@ -44,8 +45,7 @@ import com.l2jserver.gameserver.util.StringUtil;
  * @since 2005/03/29 23:15:15
  */
 public abstract class Inventory extends ItemContainer {
-	
-	private static final Logger _log = Logger.getLogger(Inventory.class.getName());
+	private static final Logger LOG = LoggerFactory.getLogger(Inventory.class);
 	
 	// Common Items
 	public static final int ADENA_ID = 57;
@@ -455,7 +455,7 @@ public abstract class Inventory extends ItemContainer {
 	 */
 	public L2ItemInstance unEquipItemInBodySlot(int slot) {
 		if (general().debug()) {
-			_log.info(Inventory.class.getSimpleName() + ": Unequip body slot:" + slot);
+			LOG.info("Unequip body slot: {}", slot);
 		}
 		
 		int pdollSlot = -1;
@@ -486,8 +486,8 @@ public abstract class Inventory extends ItemContainer {
 			case L2Item.SLOT_DECO -> pdollSlot = PAPERDOLL_DECO1;
 			case L2Item.SLOT_BELT -> pdollSlot = PAPERDOLL_BELT;
 			default -> {
-				_log.info("Unhandled slot type: " + slot);
-				_log.info(StringUtil.getTraceString(Thread.currentThread().getStackTrace()));
+				LOG.info("Unhandled slot type: {}", slot);
+				LOG.info(StringUtil.getTraceString(Thread.currentThread().getStackTrace()));
 			}
 		}
 		if (pdollSlot >= 0) {
@@ -524,13 +524,11 @@ public abstract class Inventory extends ItemContainer {
 	 * @param item : L2ItemInstance designating the item and slot used.
 	 */
 	public void equipItem(L2ItemInstance item) {
-		if ((getOwner() instanceof L2PcInstance) && (((L2PcInstance) getOwner()).getPrivateStoreType() != PrivateStoreType.NONE)) {
+		if ((getOwner() instanceof L2PcInstance player) && (player.getPrivateStoreType() != PrivateStoreType.NONE)) {
 			return;
 		}
 		
-		if (getOwner() instanceof L2PcInstance) {
-			L2PcInstance player = (L2PcInstance) getOwner();
-			
+		if (getOwner() instanceof L2PcInstance player) {
 			if (!player.canOverrideCond(PcCondOverride.ITEM_CONDITIONS) && !player.isHero() && item.isHeroItem()) {
 				return;
 			}
@@ -647,7 +645,7 @@ public abstract class Inventory extends ItemContainer {
 				setPaperdollItem(PAPERDOLL_GLOVES, null);
 				setPaperdollItem(PAPERDOLL_CHEST, item);
 			}
-			default -> _log.warning("Unknown body slot " + targetSlot + " for Item ID:" + item.getId());
+			default -> LOG.warn("Unknown body slot {} for Item ID:{}", targetSlot, item.getId());
 		}
 	}
 	
@@ -733,9 +731,7 @@ public abstract class Inventory extends ItemContainer {
 						continue;
 					}
 					
-					if (getOwner() instanceof L2PcInstance) {
-						L2PcInstance player = (L2PcInstance) getOwner();
-						
+					if (getOwner() instanceof L2PcInstance player) {
 						if (!player.canOverrideCond(PcCondOverride.ITEM_CONDITIONS) && !player.isHero() && item.isHeroItem()) {
 							item.setItemLocation(ItemLocation.INVENTORY);
 						}
@@ -753,7 +749,7 @@ public abstract class Inventory extends ItemContainer {
 			}
 			refreshWeight();
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "Could not restore inventory: " + e.getMessage(), e);
+			LOG.warn("Could not restore inventory: {}", e.getMessage(), e);
 		}
 	}
 	
@@ -867,7 +863,7 @@ public abstract class Inventory extends ItemContainer {
 		 * @return L2ItemInstance[] : array of altered items
 		 */
 		public L2ItemInstance[] getChangedItems() {
-			return _changed.toArray(new L2ItemInstance[_changed.size()]);
+			return _changed.toArray(new L2ItemInstance[0]);
 		}
 	}
 	

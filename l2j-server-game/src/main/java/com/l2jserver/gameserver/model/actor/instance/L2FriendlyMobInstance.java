@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -30,8 +30,8 @@ import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
  */
 public class L2FriendlyMobInstance extends L2Attackable {
 	
-	public L2FriendlyMobInstance(L2NpcTemplate template) {
-		super(template);
+	public L2FriendlyMobInstance(int objectId, L2NpcTemplate template) {
+		super(objectId, template);
 		setInstanceType(InstanceType.L2FriendlyMobInstance);
 	}
 	

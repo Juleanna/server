@@ -1,5 +1,5 @@
 /*
- * Copyright © 2004-2023 L2J Server
+ * Copyright © 2004-2026 L2J Server
  * 
  * This file is part of L2J Server.
  * 
@@ -18,7 +18,8 @@
  */
 package com.l2jserver.gameserver.model.itemcontainer;
 
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.enums.ItemLocation;
@@ -31,6 +32,7 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
  * @author DS
  */
 public class Mail extends ItemContainer {
+	private static final Logger LOG = LoggerFactory.getLogger(Mail.class);
 	
 	private final int _ownerId;
 	
@@ -123,7 +125,7 @@ public class Mail extends ItemContainer {
 				}
 			}
 		} catch (Exception e) {
-			_log.log(Level.WARNING, "could not restore container:", e);
+			LOG.warn("Could not restore container:", e);
 		}
 	}
 	
